@@ -1,0 +1,8 @@
+Saskatoon,52.1579,-106.6702
+Regina,50.4452,-104.6189
+Prince Albert,53.2033,-105.7531
+Moose Jaw,50.393333,-105.551941
+North Battleford,52.7765,-108.2975
+Yorkton,51.2174,-102.4739
+Swift Current,50.2851,-107.7972
+Weyburn,49.7,-103.8
