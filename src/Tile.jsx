@@ -10,7 +10,7 @@ const Mappa = window.Mappa;
 const options = {
     lat: 52,
     lng: -103,
-    zoom: 4,
+    zoom: 6,
     style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
   }
 
@@ -30,13 +30,24 @@ const Tile = (
                         : getManualInterval(dataBrackets, selections[rectValues.NUM_COLOURS], dataType)
     const [p5, setP5] = useState(null)
     const [map, setMap] = useState(null)
+    const [redrawMap, setRedrawMap] = useState(null)
     const mappa = new Mappa('Leaflet');
 
     useEffect(() => {
         if (p5) {
-            draw(p5)
+           if (view === views.MAP.val) {
+                drawLocationClusters()
+            } else {
+                draw(p5)
+            }
         }
-    }, [selections, p5, map, view])
+    }, [selections, p5, map, view, mapPin])
+
+    useEffect(() => {
+        if (redrawMap) {
+            drawLocationClusters()
+        }
+    }, [redrawMap])
 
     const getLocationData = (id) => {
         return data[id].data.slice(
@@ -46,8 +57,14 @@ const Tile = (
             data[id].data.length)
     }
 
-    const drawSpiral = (x, y, id) => {
-        const locationData = getLocationData(id)
+    const drawSpiral = (x, y, ids) => {
+        let locationData = []
+        if (ids.length === 1) {
+            locationData = getLocationData(ids[0])
+        } else {
+            locationData = averageData(ids)
+        }
+
         const radius = Math.abs(p5.sin(-1.5 + radianPerDay * 365 * locationData.length)
             * (selections[spiralValues.CORE_SIZE] + selections[spiralValues.SPACE_BETWEEN_SPIRAL] * 365 * locationData.length))
             + selections[spiralValues.SPIRAL_WIDTH]/2
@@ -62,8 +79,14 @@ const Tile = (
         spiral(dataType, interval, locationData, x, y, mapPin, p5, radius, selections, x, startY)
     }
 
-    const drawRect = (x, y, id) => {
-        const locationData = getLocationData(id)
+    const drawRect = (x, y, ids) => {
+        let locationData = []
+        if (ids.length === 1) {
+            locationData = getLocationData(ids[0])
+        } else {
+            locationData = averageData(ids)
+        }
+
         const daysPerRow = Math.ceil(365/selections[rectValues.NUM_ROWS])
 
         let startX = x - daysPerRow * selections[rectValues.DAY_WIDTH]/2;
@@ -81,6 +104,7 @@ const Tile = (
 
             let tileMap = mappa.tileMap(options)
             tileMap.overlay(p5.createCanvas(800, 600).parent(parent))
+            tileMap.onChange(() => setRedrawMap(true))
             setMap(tileMap)
         } else {
             setP5(p5)
@@ -90,8 +114,9 @@ const Tile = (
 
     const draw = (p5) => {
         if (view === views.MAP.val) {
-            map.onChange(drawLocations)
+            drawLocationClusters()
         } else {
+            p5.clear()
             p5.stroke(0)
             p5.fill(255)
             p5.rect(0, 0, canvasSize, canvasSize)
@@ -109,6 +134,7 @@ const Tile = (
     }
 
     const drawLocations = () => {
+        p5.clear()
         if (map !== null && locations) {
             p5.noStroke()
             locations.forEach(item => {
@@ -120,7 +146,117 @@ const Tile = (
                     drawRect(location.x, location.y, item.id)
                 }
             })
-        } 
+        }
+    } 
+
+    const drawLocationClusters = () => {
+        if (p5) {
+            p5.clear()
+            p5.noStroke()
+            const clusters = []
+    
+            if (map.ready) {
+                locations.forEach((item) => {
+                    const location = map.latLngToPixel(item.x, item.y)
+                    clusters.push({x: location.x, y: location.y, locations: [item.id]})
+            
+                })
+        
+                let shouldCluster = true
+            
+                while (shouldCluster) {
+                    shouldCluster = cluster(clusters)
+            
+                    if (!!shouldCluster) {
+                        let newCluster = {
+                            x: (shouldCluster[0].x + shouldCluster[1].x)/2,
+                            y: (shouldCluster[0].y + shouldCluster[1].y)/2,
+                            locations: shouldCluster[0].locations.concat(shouldCluster[1].locations)
+                        }
+    
+                        clusters.splice(clusters.indexOf(shouldCluster[0]), 1)
+                        clusters.splice(clusters.indexOf(shouldCluster[1]), 1)
+                        clusters.push(newCluster)
+                        averageData(newCluster.locations)
+                    }
+                }
+    
+                clusters.forEach(cluster => {
+                    if (shape === formats.SPIRAL.id) {
+                        drawSpiral(cluster.x, cluster.y, cluster.locations)
+                    } else {
+                        drawRect(cluster.x, cluster.y, cluster.locations)
+                    }
+                })
+            }
+        }
+
+        setRedrawMap(false)
+    }
+        
+    const cluster = (clusters) => {
+        let minDistanceX;
+        let minDistanceY;
+
+        if (shape === formats.SPIRAL.id) {
+            const radius = Math.abs(p5.sin(-1.5 + radianPerDay * 365 * selections[spiralValues.NUM_YEARS])
+                * (selections[spiralValues.CORE_SIZE] + selections[spiralValues.SPACE_BETWEEN_SPIRAL] * 365 * selections[spiralValues.NUM_YEARS]))
+                + selections[spiralValues.SPIRAL_WIDTH]/2
+            minDistanceX = radius * 2
+            minDistanceY = radius * 2
+        } else {
+            const daysPerRow = Math.ceil(365/selections[rectValues.NUM_ROWS])
+            minDistanceX = daysPerRow * selections[rectValues.DAY_WIDTH]
+            minDistanceY = ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * selections[rectValues.NUM_YEARS])
+        }
+        
+        let result = false
+        for (let c = 0; c < clusters.length; c++) {
+            for (let i = c + 1; i < clusters.length; i++) {
+                if (Math.abs(clusters[c].x - clusters[i].x ) < minDistanceX && Math.abs(clusters[c].y - clusters[i].y ) < minDistanceY) {
+                    result = [clusters[c], clusters[i]]
+                    break
+                }
+            }
+
+            if (result !== false) {
+                break
+            }
+        }
+    
+        return result
+    }
+
+    const averageData = (locations) => {
+        let data = []
+        let newData = []
+
+        locations.forEach(id => {
+            data.push(getLocationData(id))
+        })
+
+        for (let year = 0; year < selections[rectValues.NUM_YEARS]; year++) {
+            let newYear = []
+            for (let day = 0; day < 365; day++) {
+                let sum = 0
+                let counter = 0
+    
+                for (let loc = 0; loc < data.length; loc++) {
+                    if (data[loc][year][day]) {
+                        sum += data[loc][year][day]
+                        counter++
+                    } 
+                }
+
+                if (counter !== 0) {
+                    newYear.push(Math.ceil(sum/counter * 100) / 100)
+                }
+            }
+
+            newData.push(newYear)
+        }
+
+        return newData
     }
 
     const drawLegend = (p5, x, y) => {
