@@ -81,7 +81,6 @@ const Tile = (
 
             let tileMap = mappa.tileMap(options)
             tileMap.overlay(p5.createCanvas(800, 600).parent(parent))
-            
             setMap(tileMap)
         } else {
             setP5(p5)
@@ -90,22 +89,8 @@ const Tile = (
     }
 
     const draw = (p5) => {
-        p5.clear()
-
         if (view === views.MAP.val) {
-            if (map !== null && locations) {
-                p5.noStroke()
-                locations.forEach(item => {
-                    const location = map.latLngToPixel(item.x, item.y)
-    
-                    if (shape === formats.SPIRAL.id) {
-                        drawSpiral(location.x, location.y, item.id)
-                    } else {
-                        drawRect(location.x, location.y, item.id)
-                    }
-                })
-            } 
-
+            map.onChange(drawLocations)
         } else {
             p5.stroke(0)
             p5.fill(255)
@@ -118,8 +103,24 @@ const Tile = (
             }
     
             drawLegend(p5, canvasSize/2, 1)
-            p5.noLoop()
         }
+
+        p5.noLoop()
+    }
+
+    const drawLocations = () => {
+        if (map !== null && locations) {
+            p5.noStroke()
+            locations.forEach(item => {
+                const location = map.latLngToPixel(item.x, item.y)
+
+                if (shape === formats.SPIRAL.id) {
+                    drawSpiral(location.x, location.y, item.id)
+                } else {
+                    drawRect(location.x, location.y, item.id)
+                }
+            })
+        } 
     }
 
     const drawLegend = (p5, x, y) => {
