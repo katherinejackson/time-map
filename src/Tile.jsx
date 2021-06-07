@@ -242,7 +242,7 @@ const Tile = (
                 let counter = 0
     
                 for (let loc = 0; loc < data.length; loc++) {
-                    if (data[loc][year][day]) {
+                    if (data[loc] && data[loc][year] && data[loc][year][day]) {
                         sum += data[loc][year][day]
                         counter++
                     } 
@@ -253,7 +253,9 @@ const Tile = (
                 }
             }
 
-            newData.push(newYear)
+            if (newYear.length) {
+                newData.push(newYear)
+            }
         }
 
         return newData
