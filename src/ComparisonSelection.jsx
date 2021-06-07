@@ -32,7 +32,7 @@ const ComparisonSelection = ({ data, dataType, format, locations }) => {
 
     useEffect(() => {
         setSelections(getDefaultSelections(format, dataType))
-    }, [format])
+    }, [format, dataType])
 
     const handleSelect = (event, id) => {
         setSelections({ ...selections, [id]: parseFloat(event.currentTarget.value)})
@@ -104,7 +104,7 @@ const ComparisonSelection = ({ data, dataType, format, locations }) => {
                                       data={data}
                                       dataBrackets={dataBrackets}
                                       dataType={dataType}
-                                      key={`x-` + xval + `y-` + yval}
+                                      key={`${dataType}-xval: ${xval} yval: ${yval}`}
                                       locations={locations}
                                       mapPin={pinView}
                                       selections={{...selections, [axis["x-axis"]]: xval, [axis["y-axis"]]: yval}}

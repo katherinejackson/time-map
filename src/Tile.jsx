@@ -122,9 +122,9 @@ const Tile = (
             p5.rect(0, 0, canvasSize, canvasSize)
             p5.noStroke()
             if (shape === formats.SPIRAL.id) {
-                drawSpiral(canvasSize/2, canvasSize/2, locations[0].id)
+                drawSpiral(canvasSize/2, canvasSize/2, [locations[0].id])
             } else {
-                drawRect(canvasSize/2, canvasSize/2, locations[0].id)
+                drawRect(canvasSize/2, canvasSize/2, [locations[0].id])
             }
     
             drawLegend(p5, canvasSize/2, 1)
@@ -315,7 +315,6 @@ const Tile = (
 
         p5.line(xStart + counter * length, y, xStart + counter * length, y + 8)
         p5.noStroke()
-
         p5.text(interval.highest, xStart + counter * length, y + 15)
     }
 

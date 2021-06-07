@@ -27,7 +27,7 @@ const MapSelection = ({ data, dataType, format, locations }) => {
 
     useEffect(() => {
         setSelections(getDefaultSelections(format, dataType))
-    }, [format])
+    }, [format, dataType])
 
     const handleSelect = (event, id) => {
         setSelections({ ...selections, [id]: parseFloat(event.currentTarget.value)})

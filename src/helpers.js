@@ -18,7 +18,7 @@ export const getManualIntervalColour = (pt, colourSet, intervalSet) => {
     try{
         bracket = intervalSet[counter]
     } catch (e) {
-        console.log('error')
+        console.log('error', pt, colourSet, intervalSet)
     }
 
 
