@@ -15,7 +15,7 @@ const options = {
     lng: -103,
     zoom: 6,
     style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
-  }
+}
 
 const getMinDistance = (selections, shape) => {
     let minDistanceX;
@@ -53,6 +53,7 @@ const Tile = (
     const [p5, setP5] = useState(null)
     const [map, setMap] = useState(null)
     const [clusters, setClusters] = useState([])
+    const [hover, setHover] = useState(null)
     const [{ minDistanceX, minDistanceY }, setMinDistance] = useState(getMinDistance(selections))
     const [redrawMap, setRedrawMap] = useState(null)
     const mappa = new Mappa('Leaflet');
@@ -161,6 +162,20 @@ const Tile = (
         p5.noLoop()
     }
 
+    const mouseMoved = (p5) => {
+        let hoverFound = false
+        clusters.forEach((cluster, index)=> {
+            if (Math.abs(cluster.x - p5.mouseX) < minDistanceX && Math.abs(cluster.y - p5.mouseY) < minDistanceY) {
+                setHover(index)
+                hoverFound = true
+            }
+        })
+
+        if (!hoverFound) {
+            setHover(null)
+        }
+    }
+
     const drawLocations = () => {
         p5.clear()
         if (map !== null && locations) {
@@ -208,7 +223,7 @@ const Tile = (
                         averageData(newCluster.locations)
                     }
                 }
-    
+
                 setClusters(newClusters)
     
                 newClusters.forEach(cluster => {
@@ -218,8 +233,11 @@ const Tile = (
                         drawRect(cluster.x, cluster.y, cluster.locations)
                     }
                 })
+
+                if (hover !== null) {
+                    drawHover()
+                }
             }
-        }
         }
 
         drawLegend(mapWidth/2, mapHeight - 40)
@@ -243,6 +261,19 @@ const Tile = (
         }
     
         return result
+    }
+
+    const drawHover = () => {
+        const ids = clusters[hover].locations
+        p5.fill('white')
+        p5.rect(mapWidth - 80, 0, 80, ids.length * 15)
+        p5.fill('black')
+        p5.textAlign(p5.LEFT, p5.TOP)
+        
+        ids.forEach((id, index) => {
+            p5.text(locations[id]?.name, mapWidth - 78, index * 15)
+        })
+
     }
 
     const averageData = (locations) => {
@@ -352,7 +383,7 @@ const Tile = (
         p5.text(interval.lowest, xStart + interval.range * width, y + 15)
     }
 
-    return <Sketch draw={draw} setup={setup} />
+    return <Sketch draw={draw} mouseMoved={mouseMoved} setup={setup} />
 }
 
 export default Tile
