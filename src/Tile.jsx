@@ -7,12 +7,34 @@ import {rectangle, spiral} from "./shapes";
 
 const Mappa = window.Mappa;
 
+const mapWidth = 800
+const mapHeight = 600
+
 const options = {
     lat: 52,
     lng: -103,
     zoom: 6,
     style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
   }
+
+const getMinDistance = (selections, shape) => {
+    let minDistanceX;
+    let minDistanceY;
+
+    if (shape === formats.SPIRAL.id) {
+        const radius = Math.abs(Math.sin(-1.5 + radianPerDay * 365 * selections[spiralValues.NUM_YEARS])
+            * (selections[spiralValues.CORE_SIZE] + selections[spiralValues.SPACE_BETWEEN_SPIRAL] * 365 * selections[spiralValues.NUM_YEARS]))
+            + selections[spiralValues.SPIRAL_WIDTH]/2
+        minDistanceX = radius * 2
+        minDistanceY = radius * 2
+    } else {
+        const daysPerRow = Math.ceil(365/selections[rectValues.NUM_ROWS])
+        minDistanceX = daysPerRow * selections[rectValues.DAY_WIDTH]
+        minDistanceY = ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * selections[rectValues.NUM_YEARS])
+    }
+
+    return {minDistanceX, minDistanceY}
+}
 
 const Tile = (
     {
@@ -30,6 +52,8 @@ const Tile = (
                         : getManualInterval(dataBrackets, selections[rectValues.NUM_COLOURS], dataType)
     const [p5, setP5] = useState(null)
     const [map, setMap] = useState(null)
+    const [clusters, setClusters] = useState([])
+    const [{ minDistanceX, minDistanceY }, setMinDistance] = useState(getMinDistance(selections))
     const [redrawMap, setRedrawMap] = useState(null)
     const mappa = new Mappa('Leaflet');
 
@@ -41,9 +65,13 @@ const Tile = (
                 draw(p5)
             }
         }
-    }, [selections, p5, map, view, mapPin])
+
+        setMinDistance(getMinDistance(selections, shape))
+    }, [selections, p5, map, view, mapPin, hover])
 
     useEffect(() => {
+        setMinDistance(getMinDistance(selections, shape))
+
         if (redrawMap) {
             drawLocationClusters()
         }
@@ -103,7 +131,7 @@ const Tile = (
             setP5(p5)
 
             let tileMap = mappa.tileMap(options)
-            tileMap.overlay(p5.createCanvas(800, 600).parent(parent))
+            tileMap.overlay(p5.createCanvas(mapWidth, mapHeight).parent(parent))
             tileMap.onChange(() => setRedrawMap(true))
             setMap(tileMap)
         } else {
@@ -153,19 +181,19 @@ const Tile = (
         if (p5) {
             p5.clear()
             p5.noStroke()
-            const clusters = []
+            const newClusters = []
     
             if (map.ready) {
                 locations.forEach((item) => {
                     const location = map.latLngToPixel(item.x, item.y)
-                    clusters.push({x: location.x, y: location.y, locations: [item.id]})
+                    newClusters.push({x: location.x, y: location.y, locations: [item.id]})
             
                 })
         
                 let shouldCluster = true
             
                 while (shouldCluster) {
-                    shouldCluster = cluster(clusters)
+                    shouldCluster = cluster(newClusters)
             
                     if (!!shouldCluster) {
                         let newCluster = {
@@ -174,14 +202,16 @@ const Tile = (
                             locations: shouldCluster[0].locations.concat(shouldCluster[1].locations)
                         }
     
-                        clusters.splice(clusters.indexOf(shouldCluster[0]), 1)
-                        clusters.splice(clusters.indexOf(shouldCluster[1]), 1)
-                        clusters.push(newCluster)
+                        newClusters.splice(newClusters.indexOf(shouldCluster[0]), 1)
+                        newClusters.splice(newClusters.indexOf(shouldCluster[1]), 1)
+                        newClusters.push(newCluster)
                         averageData(newCluster.locations)
                     }
                 }
     
-                clusters.forEach(cluster => {
+                setClusters(newClusters)
+    
+                newClusters.forEach(cluster => {
                     if (shape === formats.SPIRAL.id) {
                         drawSpiral(cluster.x, cluster.y, cluster.locations)
                     } else {
@@ -190,26 +220,14 @@ const Tile = (
                 })
             }
         }
+        }
+
+        drawLegend(mapWidth/2, mapHeight - 40)
 
         setRedrawMap(false)
     }
         
     const cluster = (clusters) => {
-        let minDistanceX;
-        let minDistanceY;
-
-        if (shape === formats.SPIRAL.id) {
-            const radius = Math.abs(p5.sin(-1.5 + radianPerDay * 365 * selections[spiralValues.NUM_YEARS])
-                * (selections[spiralValues.CORE_SIZE] + selections[spiralValues.SPACE_BETWEEN_SPIRAL] * 365 * selections[spiralValues.NUM_YEARS]))
-                + selections[spiralValues.SPIRAL_WIDTH]/2
-            minDistanceX = radius * 2
-            minDistanceY = radius * 2
-        } else {
-            const daysPerRow = Math.ceil(365/selections[rectValues.NUM_ROWS])
-            minDistanceX = daysPerRow * selections[rectValues.DAY_WIDTH]
-            minDistanceY = ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * selections[rectValues.NUM_YEARS])
-        }
-        
         let result = false
         for (let c = 0; c < clusters.length; c++) {
             for (let i = c + 1; i < clusters.length; i++) {
@@ -261,11 +279,11 @@ const Tile = (
         return newData
     }
 
-    const drawLegend = (p5, x, y) => {
+    const drawLegend = (x, y) => {
         if (dataType === 'WIND' || dataType === 'PRECIP') {
-            drawManualLegend(p5, x, y)
+            drawManualLegend(x, y)
         } else if (selections[rectValues.NUM_COLOURS] <= 2 || selections[rectValues.NUM_COLOURS] > 10) {
-            drawGradientLegend(p5, canvasSize/2, 1)
+            drawGradientLegend(x, y)
         } else {
             p5.stroke(1)
             const length = 25
@@ -293,7 +311,7 @@ const Tile = (
         }
     }
 
-    const drawManualLegend = (p5, x, y) => {
+    const drawManualLegend = (x, y) => {
         p5.stroke(1)
         const length = 25
         const xStart = x - selections[rectValues.NUM_COLOURS]*length/2
@@ -318,7 +336,7 @@ const Tile = (
         p5.text(interval.highest, xStart + counter * length, y + 15)
     }
 
-    const drawGradientLegend = (p5, x, y) => {
+    const drawGradientLegend = (x, y) => {
         const width = 2
         const xStart = x - interval.range/2 * width
         let counter = 0
