@@ -48,7 +48,7 @@ export const rectVariables = {
         6: { default: 1, id: 6, name: "Rows per Year", values: [1, 2, 3, 4, 6, 8, 10, 12] },
     },
     WIND: {
-        1: { default: 0.25, id: 1, name: "Day Width", values: [0.0625, 0.125, 0.25, 0.5, 1] },
+        1: { default: 0.125, id: 1, name: "Day Width", values: [0.0625, 0.125, 0.25, 0.5, 1] },
         2: { default: 10, id: 2, name: "Row Height", values: [2, 4, 6, 8, 10, 12, 14] },
         3: { default: 1, id: 3, name: "Space Between Rows", values: [0, 1, 2] },
         4: { default: 2, id: 4, name: "Number of Colours", values: [2, 3, 4] },
@@ -56,7 +56,7 @@ export const rectVariables = {
         6: { default: 1, id: 6, name: "Rows per Year", values: [1, 2, 3, 4, 6, 8, 10, 12] },
     },
     PRECIP: {
-        1: { default: 0.25, id: 1, name: "Day Width", values: [0.0625, 0.125, 0.25, 0.5, 1] },
+        1: { default: 0.125, id: 1, name: "Day Width", values: [0.0625, 0.125, 0.25, 0.5, 1] },
         2: { default: 10, id: 2, name: "Row Height", values: [2, 4, 6, 8, 10, 12, 14] },
         3: { default: 1, id: 3, name: "Space Between Rows", values: [0, 1, 2] },
         4: { default: 2, id: 4, name: "Number of Colours", values: [2, 3, 4] },
