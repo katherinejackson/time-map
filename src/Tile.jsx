@@ -17,6 +17,12 @@ const options = {
     style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
 }
 
+const getSpiralSize = (selections, ids) => {
+    let spiralWidth = selections[spiralValues.SPIRAL_WIDTH] + (ids.length * 3)
+    let spiralTightness = spiralWidth/600
+    return {spiralWidth, spiralTightness}
+}
+
 const getRadius = (selections, locationData) => {
     let numYears = locationData ? locationData.length : selections[rectValues.NUM_YEARS]
     return Math.abs(Math.sin(-1.5 + radianPerDay * 365 * numYears)
@@ -113,12 +119,20 @@ const Tile = (
             locationData = averageData(ids)
         }
 
+        let {spiralWidth, spiralTightness} = getSpiralSize(selections, ids)
+
+        const newSelections = {
+            ...selections, 
+            [spiralValues.SPIRAL_WIDTH]: spiralWidth,
+            [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
+        }
+
         let startY = y
         if (mapPin) {
-            startY = startY - getPinAdjustment(selections, shape, locationData)
+            startY = startY - getPinAdjustment(newSelections, shape, locationData)
         }
          
-        spiral(dataType, interval, locationData, x, y, mapPin, p5, getRadius(selections), selections, x, startY)
+        spiral(dataType, interval, locationData, x, y, mapPin, p5, getRadius(newSelections), newSelections, x, startY)
     }
 
     const drawRect = (x, y, ids) => {
@@ -219,8 +233,15 @@ const Tile = (
     
             if (map.ready) {
                 locations.forEach((item) => {
+                    let {minDistanceX, minDistanceY} = getMinDistance(selections, shape)
                     const location = map.latLngToPixel(item.x, item.y)
-                    newClusters.push({x: location.x, y: location.y, locations: [item.id]})
+                    newClusters.push({
+                        x: location.x, 
+                        y: location.y, 
+                        locations: [item.id], 
+                        minDistanceX,
+                        minDistanceY
+                    })
             
                 })
         
@@ -230,16 +251,26 @@ const Tile = (
                     shouldCluster = cluster(newClusters)
             
                     if (!!shouldCluster) {
+                        let {spiralWidth, spiralTightness} = getSpiralSize(selections, shouldCluster[0].locations.concat(shouldCluster[1].locations))
+
+                        const newSelections = {
+                            ...selections, 
+                            [spiralValues.SPIRAL_WIDTH]: spiralWidth,
+                            [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
+                        }
+
+                        let {minDistanceX, minDistanceY} = getMinDistance(newSelections, shape)
                         let newCluster = {
                             x: (shouldCluster[0].x + shouldCluster[1].x)/2,
                             y: (shouldCluster[0].y + shouldCluster[1].y)/2,
-                            locations: shouldCluster[0].locations.concat(shouldCluster[1].locations)
+                            locations: shouldCluster[0].locations.concat(shouldCluster[1].locations),
+                            minDistanceX,
+                            minDistanceY,
                         }
     
                         newClusters.splice(newClusters.indexOf(shouldCluster[0]), 1)
                         newClusters.splice(newClusters.indexOf(shouldCluster[1]), 1)
                         newClusters.push(newCluster)
-                        averageData(newCluster.locations)
                     }
                 }
 
@@ -268,7 +299,8 @@ const Tile = (
         let result = false
         for (let c = 0; c < clusters.length; c++) {
             for (let i = c + 1; i < clusters.length; i++) {
-                if (Math.abs(clusters[c].x - clusters[i].x ) < minDistanceX && Math.abs(clusters[c].y - clusters[i].y ) < minDistanceY) {
+                if (Math.abs(clusters[c].x - clusters[i].x ) < Math.max(clusters[c].minDistanceX, clusters[i].minDistanceX) 
+                    && Math.abs(clusters[c].y - clusters[i].y ) < Math.max(clusters[c].minDistanceY, clusters[i].minDistanceY)) {
                     result = [clusters[c], clusters[i]]
                     break
                 }

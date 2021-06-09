@@ -109,7 +109,7 @@ export const spiralValues = {
 
 export const formats = {
     SPIRAL: { id: 1, name: "Spiral" },
-    RECT: { id: 2, name: "Rectangle" },
+    RECT: { id: 2, name: "Row" },
 }
 
 export const viewOptions = {
