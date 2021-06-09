@@ -1,4 +1,4 @@
-import {manualIntervals} from './constants'
+import {formats, manualIntervals, spiralValues, spiralVariables, rectValues, rectVariables} from './constants'
 
 export const sortData = (pt) => {
     if (pt < -15) {
@@ -122,4 +122,19 @@ export const getRoundedInterval = (dataBrackets, numColours) => {
     const newLow = Math.ceil((dataBrackets.lowest - difference/2)/5) * 5
 
     return {interval, highest: newHigh, lowest: newLow, range}
+}
+
+export const getDefaultSelections = (format, dataType) => {
+    let selections = {}
+    if (format === formats.SPIRAL.id) {
+        Object.keys(spiralValues).forEach(val => {
+            selections[spiralValues[val]] = spiralVariables[dataType][spiralValues[val]].default
+        })
+    } else {
+        Object.keys(rectValues).forEach(val => {
+            selections[rectValues[val]] = rectVariables[dataType][rectValues[val]].default
+        })
+    }
+
+    return selections
 }

@@ -2,7 +2,7 @@ import Sketch from "react-p5";
 import React, {useEffect, useState} from "react";
 
 import {canvasSize, colours, formats, radianPerDay, rectValues, spiralValues, views} from './constants'
-import {fillColourGradient, getColour, getInterval, getManualInterval} from "./helpers";
+import {fillColourGradient, getColour, getDefaultSelections, getInterval, getManualInterval} from "./helpers";
 import {rectangle, spiral} from "./shapes";
 
 const Mappa = window.Mappa;
@@ -79,7 +79,6 @@ const Tile = (
     const [map, setMap] = useState(null)
     const [clusters, setClusters] = useState([])
     const [hover, setHover] = useState(null)
-    const [{ minDistanceX, minDistanceY }, setMinDistance] = useState(getMinDistance(selections))
     const [redrawMap, setRedrawMap] = useState(null)
     const mappa = new Mappa('Leaflet');
 
@@ -92,12 +91,9 @@ const Tile = (
             }
         }
 
-        setMinDistance(getMinDistance(selections, shape))
     }, [selections, p5, map, view, mapPin, hover])
 
     useEffect(() => {
-        setMinDistance(getMinDistance(selections, shape))
-
         if (redrawMap) {
             drawLocationClusters()
         }
@@ -135,7 +131,8 @@ const Tile = (
         spiral(dataType, interval, locationData, x, y, mapPin, p5, getRadius(newSelections), newSelections, x, startY)
     }
 
-    const drawRect = (x, y, ids) => {
+    const drawRect = (x, y, ids, manualSelections) => {
+        let newSelections = manualSelections ? manualSelections : selections
         let locationData = []
         if (ids.length === 1) {
             locationData = getLocationData(ids[0])
@@ -143,15 +140,17 @@ const Tile = (
             locationData = averageData(ids)
         }
 
-        const daysPerRow = Math.ceil(365/selections[rectValues.NUM_ROWS])
+        const daysPerRow = Math.ceil(365/newSelections[rectValues.NUM_ROWS])
 
-        let startX = x - daysPerRow * selections[rectValues.DAY_WIDTH]/2;
-        let startY = y - ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * locationData.length)/2
-        if (mapPin) {
-            startY = y - getPinAdjustment(selections, shape, locationData)
+        let startX = x - daysPerRow * newSelections[rectValues.DAY_WIDTH]/2;
+        let startY = y - ((newSelections[rectValues.NUM_ROWS] * (newSelections[rectValues.SPACE_BETWEEN_ROWS] + newSelections[rectValues.ROW_HEIGHT])) * locationData.length)/2
+        let drawPin = false
+        if (mapPin && !manualSelections) {
+            startY = y - getPinAdjustment(newSelections, shape, locationData)
+            drawPin = true
         }
 
-        rectangle(dataType, interval, locationData, x, y, mapPin, p5, selections, startX, startY)
+        rectangle(dataType, interval, locationData, x, y, drawPin, p5, newSelections, startX, startY)
     }
 
     const setup = (p5, parent) => {
@@ -198,7 +197,7 @@ const Tile = (
         }
 
         clusters.forEach((cluster, index)=> {
-            if (Math.abs(p5.mouseX - cluster.x) < minDistanceX/2 && Math.abs(p5.mouseY - cluster.y + pinAdjustment) < minDistanceY/2) {
+            if (Math.abs(p5.mouseX - cluster.x) < cluster.minDistanceX/2 && Math.abs(p5.mouseY - cluster.y + pinAdjustment) < cluster.minDistanceY/2) {
                 setHover(index)
                 hoverFound = true
             }
@@ -208,22 +207,6 @@ const Tile = (
             setHover(null)
         }
     }
-
-    const drawLocations = () => {
-        p5.clear()
-        if (map !== null && locations) {
-            p5.noStroke()
-            locations.forEach(item => {
-                const location = map.latLngToPixel(item.x, item.y)
-
-                if (shape === formats.SPIRAL.id) {
-                    drawSpiral(location.x, location.y, item.id)
-                } else {
-                    drawRect(location.x, location.y, item.id)
-                }
-            })
-        }
-    } 
 
     const drawLocationClusters = () => {
         if (p5) {
@@ -315,14 +298,20 @@ const Tile = (
     }
 
     const drawHover = () => {
+        let newSelections = getDefaultSelections(formats.RECT.id, dataType)
+        newSelections = {...newSelections, [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS]}
         const ids = clusters[hover].locations
+        const {minDistanceY} = getMinDistance(newSelections, formats.RECT.id)
+        const rowHeight = 20 + minDistanceY * 2
+
         p5.fill('white')
-        p5.rect(mapWidth - 80, 0, 80, ids.length * 15)
-        p5.fill('black')
+        p5.rect(mapWidth - 150, 0, 150, ids.length * rowHeight)
         p5.textAlign(p5.LEFT, p5.TOP)
         
         ids.forEach((id, index) => {
-            p5.text(locations[id]?.name, mapWidth - 78, index * 15)
+            p5.fill('black')
+            p5.text(locations[id]?.name, mapWidth - 150, index * rowHeight)
+            drawRect(mapWidth - 75, index * rowHeight + 20, [id], newSelections)
         })
 
     }
