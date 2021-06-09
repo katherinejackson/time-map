@@ -17,14 +17,19 @@ const options = {
     style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
 }
 
+const getRadius = (selections, locationData) => {
+    let numYears = locationData ? locationData.length : selections[rectValues.NUM_YEARS]
+    return Math.abs(Math.sin(-1.5 + radianPerDay * 365 * numYears)
+        * (selections[spiralValues.CORE_SIZE] + selections[spiralValues.SPACE_BETWEEN_SPIRAL] * 365 * numYears))
+        + selections[spiralValues.SPIRAL_WIDTH]/2
+}
+
 const getMinDistance = (selections, shape) => {
     let minDistanceX;
     let minDistanceY;
 
     if (shape === formats.SPIRAL.id) {
-        const radius = Math.abs(Math.sin(-1.5 + radianPerDay * 365 * selections[spiralValues.NUM_YEARS])
-            * (selections[spiralValues.CORE_SIZE] + selections[spiralValues.SPACE_BETWEEN_SPIRAL] * 365 * selections[spiralValues.NUM_YEARS]))
-            + selections[spiralValues.SPIRAL_WIDTH]/2
+        const radius = getRadius(selections)
         minDistanceX = radius * 2
         minDistanceY = radius * 2
     } else {
@@ -34,6 +39,20 @@ const getMinDistance = (selections, shape) => {
     }
 
     return {minDistanceX, minDistanceY}
+}
+
+const getPinAdjustment = (selections, shape, locationData) => {
+    let numYears = locationData ? locationData.length : selections[rectValues.NUM_YEARS]
+    let startY = 0
+
+    if (shape === formats.SPIRAL.id) {
+        const radius = getRadius(selections, locationData)
+        startY = radius + 15
+    } else {
+        startY = 5 + ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * numYears)
+    }
+
+    return startY
 }
 
 const Tile = (
@@ -94,18 +113,12 @@ const Tile = (
             locationData = averageData(ids)
         }
 
-        const radius = Math.abs(p5.sin(-1.5 + radianPerDay * 365 * locationData.length)
-            * (selections[spiralValues.CORE_SIZE] + selections[spiralValues.SPACE_BETWEEN_SPIRAL] * 365 * locationData.length))
-            + selections[spiralValues.SPIRAL_WIDTH]/2
-
         let startY = y
-        if (mapPin && view === views.COMPARISON.val) {
-            y = y + radius + 15
-        } else if (mapPin && view === views.MAP.val) {
-            startY = startY - radius - 15
+        if (mapPin) {
+            startY = startY - getPinAdjustment(selections, shape, locationData)
         }
-
-        spiral(dataType, interval, locationData, x, y, mapPin, p5, radius, selections, x, startY)
+         
+        spiral(dataType, interval, locationData, x, y, mapPin, p5, getRadius(selections), selections, x, startY)
     }
 
     const drawRect = (x, y, ids) => {
@@ -121,7 +134,7 @@ const Tile = (
         let startX = x - daysPerRow * selections[rectValues.DAY_WIDTH]/2;
         let startY = y - ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * locationData.length)/2
         if (mapPin) {
-            startY = y - 5 - ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * locationData.length)
+            startY = y - getPinAdjustment(selections, shape, locationData)
         }
 
         rectangle(dataType, interval, locationData, x, y, mapPin, p5, selections, startX, startY)
@@ -164,8 +177,14 @@ const Tile = (
 
     const mouseMoved = (p5) => {
         let hoverFound = false
+        let pinAdjustment = 0
+
+        if (mapPin) {
+            pinAdjustment = getPinAdjustment(selections, shape)
+        }
+
         clusters.forEach((cluster, index)=> {
-            if (Math.abs(cluster.x - p5.mouseX) < minDistanceX && Math.abs(cluster.y - p5.mouseY) < minDistanceY) {
+            if (Math.abs(p5.mouseX - cluster.x) < minDistanceX/2 && Math.abs(p5.mouseY - cluster.y + pinAdjustment) < minDistanceY/2) {
                 setHover(index)
                 hoverFound = true
             }

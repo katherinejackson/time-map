@@ -1,4 +1,4 @@
-import {colours, manualIntervals} from './constants'
+import {manualIntervals} from './constants'
 
 export const sortData = (pt) => {
     if (pt < -15) {
