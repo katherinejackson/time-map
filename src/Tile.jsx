@@ -376,7 +376,7 @@ const Tile = (
                 let counter = 0
     
                 for (let loc = 0; loc < data.length; loc++) {
-                    if (data[loc] && data[loc][year] && data[loc][year][day]) {
+                    if (data[loc] && data[loc][year] && data[loc][year].length > day) {
                         sum += data[loc][year][day]
                         counter++
                     } 
