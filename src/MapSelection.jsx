@@ -1,23 +1,8 @@
 import React, {useEffect, useState} from "react";
 
 import Tile from "./Tile"
-import { getDataBrackets } from "./helpers";
-import {formats, rectValues, rectVariables, spiralValues, spiralVariables, views} from './constants'
-
-const getDefaultSelections = (format, dataType) => {
-    let selections = {}
-    if (format === formats.SPIRAL.id) {
-        Object.keys(spiralValues).forEach(val => {
-            selections[spiralValues[val]] = spiralVariables[dataType][spiralValues[val]].default
-        })
-    } else {
-        Object.keys(rectValues).forEach(val => {
-            selections[rectValues[val]] = rectVariables[dataType][rectValues[val]].default
-        })
-    }
-
-    return selections
-}
+import { getDataBrackets, getDefaultSelections } from "./helpers";
+import {formats, rectVariables, spiralVariables, views} from './constants'
 
 const MapSelection = ({ data, dataType, format, locations }) => {
     const dataBrackets = getDataBrackets(data)

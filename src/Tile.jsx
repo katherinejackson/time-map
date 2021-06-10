@@ -17,8 +17,8 @@ const options = {
     style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
 }
 
-const getSpiralSize = (selections, ids) => {
-    let spiralWidth = selections[spiralValues.SPIRAL_WIDTH] + (ids.length * 3)
+const getSpiralSize = (selections, numLocations) => {
+    let spiralWidth = selections[spiralValues.SPIRAL_WIDTH] + (numLocations * 3)
     let spiralTightness = spiralWidth/600
     return {spiralWidth, spiralTightness}
 }
@@ -30,11 +30,11 @@ const getRadius = (selections, locationData) => {
         + selections[spiralValues.SPIRAL_WIDTH]/2
 }
 
-const getRowSize = (selections, ids) => {
+const getRowSize = (selections, numLocations) => {
     const daysPerRow = Math.ceil(365/selections[rectValues.NUM_ROWS])
-    const dayWidth = selections[rectValues.DAY_WIDTH] + ids.length / 25
+    const dayWidth = selections[rectValues.DAY_WIDTH] + numLocations/ 25
     const rowWidth = daysPerRow * dayWidth
-    const rowHeight = selections[rectValues.ROW_HEIGHT] + ids.length * 1.5
+    const rowHeight = selections[rectValues.ROW_HEIGHT] + numLocations * 1.5
 
     return {dayWidth, rowWidth, rowHeight}
 }
@@ -96,7 +96,10 @@ const Tile = (
     const [p5, setP5] = useState(null)
     const [map, setMap] = useState(null)
     const [clusters, setClusters] = useState([])
+    const [detailed, setDetailed] = useState([])
+    const [detailedHeight, setDetailedHeight] = useState(0)
     const [hover, setHover] = useState(null)
+    const [animated, setAnimated] = useState({index: null, x: 0, y: 0, numDays: 0, width: selections[spiralValues.SPIRAL_WIDTH]})
     const [redrawMap, setRedrawMap] = useState(null)
     const mappa = new Mappa('Leaflet');
 
@@ -117,6 +120,18 @@ const Tile = (
         }
     }, [redrawMap])
 
+    useEffect(() => {
+        if (animated.index !== null) {
+            draw(p5)
+        }
+    }, [animated.index])
+
+    useEffect(() => {
+        if (p5) {
+            draw(p5)
+        }
+    }, [detailed])
+
     const getLocationData = (id) => {
         return data[id].data.slice(
             data[id].data.length - selections[spiralValues.NUM_YEARS] > 0
@@ -125,7 +140,19 @@ const Tile = (
             data[id].data.length)
     }
 
-    const drawSpiral = (x, y, ids) => {
+    const getHoverTransform = (numLocations) => {
+        return numLocations + 5
+    }
+
+    const drawPin = (x, y, ids, hover=false) => {
+        if (shape === formats.SPIRAL.id) {
+            drawSpiral(x, y, ids, hover)
+        } else {
+            drawRect(x, y, ids, hover)
+        }
+    }
+
+    const drawSpiral = (x, y, ids, hover=false) => {
         let locationData = []
         if (ids.length === 1) {
             locationData = getLocationData(ids[0])
@@ -133,7 +160,8 @@ const Tile = (
             locationData = averageData(ids)
         }
 
-        let {spiralWidth, spiralTightness} = getSpiralSize(selections, ids)
+        let numLocations = hover ? getHoverTransform(ids.length) : ids.length
+        let {spiralWidth, spiralTightness} = getSpiralSize(selections, numLocations)
 
         const newSelections = {
             ...selections, 
@@ -145,11 +173,11 @@ const Tile = (
         if (mapPin) {
             startY = startY - getPinAdjustment(newSelections, shape, locationData)
         }
-         
+
         spiral(dataType, interval, locationData, x, y, mapPin, p5, getRadius(newSelections), newSelections, x, startY)
     }
 
-    const drawRect = (x, y, ids) => {
+    const drawRect = (x, y, ids, hover=false) => {
         let locationData = []
         if (ids.length === 1) {
             locationData = getLocationData(ids[0])
@@ -157,7 +185,8 @@ const Tile = (
             locationData = averageData(ids)
         }
 
-        let {dayWidth, rowWidth, rowHeight} = getRowSize(selections, ids)
+        let numLocations = hover ? getHoverTransform(ids.length) : ids.length
+        let {dayWidth, rowWidth, rowHeight} = getRowSize(selections, numLocations)
         const newSelections = {
             ...selections, 
             [rectValues.DAY_WIDTH]: dayWidth,
@@ -183,6 +212,29 @@ const Tile = (
         rectangle(dataType, interval, locationData, x, y, false, p5, hoverSelections, startX, startY)
     }
 
+    const drawAnimatedRect = (x, y, ids, animSelections, numDays) => {
+        let locationData = []
+        if (ids.length === 1) {
+            locationData = getLocationData(ids[0])
+        } else {
+            locationData = averageData(ids)
+        }
+
+        let newData = []
+        locationData.forEach(year => {
+            if (numDays < year.length) {
+                newData.push(year.slice(year.length - numDays))
+            } else {
+                newData.push(year)
+            }
+        })
+
+        let startX = x;
+        let startY = y - ((animSelections[rectValues.NUM_ROWS] * (animSelections[rectValues.SPACE_BETWEEN_ROWS] + animSelections[rectValues.ROW_HEIGHT])) * newData.length)/2
+
+        rectangle(dataType, interval, newData, x, y, false, p5, animSelections, startX, startY)
+    }
+
     const setup = (p5, parent) => {
         if (view === views.MAP.val) {
             setP5(p5)
@@ -200,7 +252,7 @@ const Tile = (
     const draw = (p5) => {
         if (view === views.MAP.val) {
             drawLocationClusters()
-        } else {
+        } else{
             p5.clear()
             p5.stroke(0)
             p5.fill(255)
@@ -215,7 +267,40 @@ const Tile = (
             drawLegend(p5, canvasSize/2, 1)
         }
 
-        p5.noLoop()
+        if (animated.index !== null) {
+            p5.loop()
+            let cluster = clusters[animated.index]
+            let newSelections = getDefaultSelections(formats.RECT.id, dataType)
+            newSelections = {
+                ...newSelections, 
+                [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],
+                [rectValues.DAY_WIDTH]: 0.25,
+                [rectValues.ROW_HEIGHT]: animated.width,
+            }
+
+            drawAnimatedRect(animated.x, animated.y, cluster.locations, newSelections, animated.numDays)
+            if (animated.numDays < 365) {
+                setAnimated({...animated, numDays: animated.numDays + 80})
+            } else if (animated.x < mapWidth - 125) {
+                setAnimated({...animated, x: animated.x + 30})
+            } else {
+                setAnimated({...animated, y: animated.y - 30})
+            }
+
+            if (animated.y < detailedHeight * (detailed.length + 1) ) {
+                let newDetailed = [...detailed]
+                clusters[animated.index].locations.forEach(id => {
+                    if (!detailed.includes(id)) {
+                        newDetailed.push(id)
+                    }
+                })
+
+                setAnimated({index: null, x: 0, y: 0, numDays: 0})
+                setDetailed(newDetailed)
+            }
+        } else {
+            p5.noLoop()
+        }
     }
 
     const mouseMoved = (p5) => {
@@ -236,6 +321,44 @@ const Tile = (
         if (!hoverFound) {
             setHover(null)
         }
+    }
+
+    const mouseClicked = (p5) => {
+        let pinAdjustment = 0
+
+        if (mapPin) {
+            pinAdjustment = getPinAdjustment(selections, shape)
+        }
+
+        clusters.forEach((cluster, index)=> {
+            if (Math.abs(p5.mouseX - cluster.x) < cluster.minDistanceX/2 && Math.abs(p5.mouseY - cluster.y + pinAdjustment) < cluster.minDistanceY/2) {
+                let allDisplayed = true
+                cluster.locations.forEach(id => {
+                    if (!detailed.includes(id)) {
+                        allDisplayed = false
+                    }
+                })
+
+                if (allDisplayed) {
+                    let newDetailed = [...detailed]
+                    cluster.locations.forEach(id => {
+                        let index = newDetailed.indexOf(id)
+                        newDetailed.splice(index, 1)
+                    })
+                    setDetailed(newDetailed)
+                } else {
+                    let {spiralWidth, spiralTightness} = getSpiralSize(selections, getHoverTransform(clusters[index].locations.length))
+
+                    const newSelections = {
+                        ...selections, 
+                        [spiralValues.SPIRAL_WIDTH]: spiralWidth,
+                        [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
+                    }
+                    setAnimated({...animated, index, x: clusters[index].x, y: clusters[index].y - getRadius(newSelections), width: spiralWidth/2})
+                }
+
+            }
+        })
     }
 
     const drawLocationClusters = () => {
@@ -265,8 +388,9 @@ const Tile = (
             
                     if (!!shouldCluster) {
                         let newSelections;
+                        let numLocations = (shouldCluster[0].locations.concat(shouldCluster[1].locations)).length
                         if (shape === formats.SPIRAL.id) {
-                            let {spiralWidth, spiralTightness} = getSpiralSize(selections, shouldCluster[0].locations.concat(shouldCluster[1].locations))
+                            let {spiralWidth, spiralTightness} = getSpiralSize(selections, numLocations)
 
                             newSelections = {
                                 ...selections, 
@@ -274,7 +398,7 @@ const Tile = (
                                 [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
                             }
                         } else {
-                            let {dayWidth, rowHeight} = getRowSize(selections, shouldCluster[0].locations.concat(shouldCluster[1].locations))
+                            let {dayWidth, rowHeight} = getRowSize(selections, numLocations)
                             
                             newSelections = {
                                 ...selections, 
@@ -300,16 +424,19 @@ const Tile = (
 
                 setClusters(newClusters)
     
-                newClusters.forEach(cluster => {
-                    if (shape === formats.SPIRAL.id) {
-                        drawSpiral(cluster.x, cluster.y, cluster.locations)
-                    } else {
-                        drawRect(cluster.x, cluster.y, cluster.locations)
+                newClusters.forEach((cluster, index) => {
+                    if (index !== hover) {
+                        drawPin(cluster.x, cluster.y, cluster.locations)
                     }
+                    
                 })
 
                 if (hover !== null) {
-                    drawHover()
+                    drawPin(clusters[hover].x, clusters[hover].y, clusters[hover].locations, true)
+                }
+
+                if (detailed.length) {
+                    drawDetailed()
                 }
             }
         }
@@ -339,13 +466,35 @@ const Tile = (
     }
 
     const drawHover = () => {
+        // let newSelections = getDefaultSelections(formats.RECT.id, dataType)
+        // newSelections = {
+        //     ...newSelections, 
+        //     [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],
+        //     [rectValues.DAY_WIDTH]: 0.25,
+        // }
+        // const ids = clusters[hover].locations
+        // const {minDistanceY} = getMinDistance(newSelections, formats.RECT.id)
+        // const rowHeight = 20 + minDistanceY * 2
+
+        // p5.fill('white')
+        // p5.rect(mapWidth - 150, 0, 150, ids.length * rowHeight)
+        // p5.textAlign(p5.LEFT, p5.TOP)
+        
+        // ids.forEach((id, index) => {
+        //     p5.fill('black')
+        //     p5.text(locations[id]?.name, mapWidth - 150, index * rowHeight)
+        //     drawHoverRect(mapWidth - 75, index * rowHeight + 20, id, newSelections)
+        // })
+    }
+
+    const drawDetailed = () => {
         let newSelections = getDefaultSelections(formats.RECT.id, dataType)
         newSelections = {
             ...newSelections, 
             [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],
             [rectValues.DAY_WIDTH]: 0.25,
         }
-        const ids = clusters[hover].locations
+        const ids = detailed
         const {minDistanceY} = getMinDistance(newSelections, formats.RECT.id)
         const rowHeight = 20 + minDistanceY * 2
 
@@ -355,10 +504,11 @@ const Tile = (
         
         ids.forEach((id, index) => {
             p5.fill('black')
-            p5.text(locations[id]?.name, mapWidth - 150, index * rowHeight)
+            p5.text(locations[id].name, mapWidth - 150, index * rowHeight)
             drawHoverRect(mapWidth - 75, index * rowHeight + 20, id, newSelections)
         })
 
+        setDetailedHeight(rowHeight)
     }
 
     const averageData = (locations) => {
@@ -468,7 +618,7 @@ const Tile = (
         p5.text(interval.lowest, xStart + interval.range * width, y + 15)
     }
 
-    return <Sketch draw={draw} mouseMoved={mouseMoved} setup={setup} />
+    return <Sketch draw={draw} mouseClicked={mouseClicked} mouseMoved={mouseMoved} setup={setup} />
 }
 
 export default Tile
