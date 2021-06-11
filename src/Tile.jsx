@@ -6,9 +6,8 @@ import {fillColourGradient, getColour, getDefaultSelections, getInterval, getMan
 import {rectangle, spiral} from "./shapes";
 
 const Mappa = window.Mappa;
-
-const mapWidth = 800
-const mapHeight = 600
+const mapWidth = window.innerWidth * 0.95
+const mapHeight = window.innerHeight * 0.75
 
 const options = {
     lat: 52,
@@ -86,6 +85,7 @@ const Tile = (
         dataType,
         locations,
         mapPin,
+        numX,
         selections,
         shape,
         view,
@@ -282,9 +282,9 @@ const Tile = (
             if (animated.numDays < 365) {
                 setAnimated({...animated, numDays: animated.numDays + 80})
             } else if (animated.x < mapWidth - 125) {
-                setAnimated({...animated, x: animated.x + 30})
+                setAnimated({...animated, x: animated.x + 50})
             } else {
-                setAnimated({...animated, y: animated.y - 30})
+                setAnimated({...animated, y: animated.y - 50})
             }
 
             if (animated.y < detailedHeight * (detailed.length + 1) ) {

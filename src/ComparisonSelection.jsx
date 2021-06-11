@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 
 import Tile from "./Tile";
+import FilterPanel from "./FilterPanel"
 import { getDataBrackets, getDefaultSelections } from "./helpers";
 import {formats, rectVariables, spiralVariables, views} from './constants'
 
@@ -39,44 +40,23 @@ const ComparisonSelection = ({ data, dataType, format, locations }) => {
     }
 
     return (
-        <div className="flex-row">
-            <div className="flex-col">
-                <label>x-axis</label>
-                <select defaultValue="select" id='x-axis' onChange={(e) => handleAxisSelect(e, 'x-axis')} name='x-axis'>
-                    <option disabled value="select" id="select"> -- select an option -- </option>
-                    {Object.keys(variables).map(id => <option key={`x-axis-${id}`} value={id}>{variables[id].name}</option>)}
-                </select>
-                <label>y-axis</label>
-                <select defaultValue="select" id='y-axis' onChange={(e) => handleAxisSelect(e, 'y-axis')} name='y-axis'>
-                    <option disabled value="select" id="select"> -- select an option -- </option>
-                    {Object.keys(variables).map(id => <option key={`y-axis-${id}`} value={id}>{variables[id].name}</option>)}
-                </select>
-                <hr />
-                <span className="flex-row">
-                    <input type="checkbox" defaultChecked={pinView} onChange={handlePinCheck}/>
-                    <label>View as map pin</label>
-                </span>
-            </div>
+        <div>
+            <FilterPanel 
+                axis={axis}
+                format={format}
+                handleSelect={handleSelect}
+                handleAxisSelect={handleAxisSelect}
+                handlePinCheck={handlePinCheck}
+                pinView={pinView}
+                selections={selections}
+                variables={variables}
+            />
 
-            <div className="flex-col">
-                {Object.keys(variables).map(id => (
-                    <div className="flex-col" key={`${format}-${id}`}>
-                        <label htmlFor={`${format}-${id}`}>{variables[id].name}</label>
-                        <select
-                            defaultValue={selections[id]}
-                            disabled={axis["x-axis"] === parseInt(id) || axis["y-axis"] === parseInt(id)}
-                            id={`${format}-${id}`}
-                            key={`${format}-${id}-${Math.random().toString().slice(0, 6)}`}
-                            onChange={(e) => handleSelect(e, id)}
-                            name={variables[id].name}
-                        >
-                            {variables[id].values.map(val => <option id={`${id}-${val}`} key={`${id}-${val}`} value={val}>{val}</option>)}
-                        </select>
-                    </div>
-                ))}
-            </div>
-
-            {error ? "Please make a valid selection" : (
+            {error ? (
+                <h3 className="text-danger">
+                    Please make a valid selection
+                </h3>
+                ) : (
                 <div className="flex-row">
                     {variables[axis["x-axis"]].values.map((xval) => (
                         <div className="flex-col" key={`x-${xval}`}>
@@ -92,6 +72,7 @@ const ComparisonSelection = ({ data, dataType, format, locations }) => {
                                       key={`${dataType}-xval: ${xval} yval: ${yval}`}
                                       locations={locations}
                                       mapPin={pinView}
+                                      numX={variables[axis["x-axis"]]?.values?.length}
                                       selections={{...selections, [axis["x-axis"]]: xval, [axis["y-axis"]]: yval}}
                                       shape={format}
                                       view={views.COMPARISON.val}

@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import Tile from "./Tile"
 import { getDataBrackets, getDefaultSelections } from "./helpers";
 import {formats, rectVariables, spiralVariables, views} from './constants'
+import FilterPanel from "./FilterPanel";
 
 const MapSelection = ({ data, dataType, format, locations }) => {
     const dataBrackets = getDataBrackets(data)
@@ -23,29 +24,15 @@ const MapSelection = ({ data, dataType, format, locations }) => {
     }
 
     return (
-        <div className="flex-row">
-            <div className="flex-col">
-                {Object.keys(variables).map(id => (
-                    <div className="flex-col" key={`${format}-${id}`}>
-                        <label htmlFor={`${format}-${id}`}>{variables[id].name}</label>
-                        <select
-                            defaultValue={selections[id]}
-                            id={`${format}-${id}`}
-                            key={`${format}-${id}-${Math.random().toString().slice(0, 6)}`}
-                            onChange={(e) => handleSelect(e, id)}
-                            name={variables[id].name}
-                        >
-                            {variables[id].values.map(val => <option id={`${id}-${val}`} key={`${id}-${val}`} value={val}>{val}</option>)}
-                        </select>
-                    </div>
-                ))}
-                <hr />
-
-                <span className="flex-row">
-                    <input type="checkbox" defaultChecked={pinView} onChange={handlePinCheck}/>
-                    <label>View as map pin</label>
-                </span>
-            </div>
+        <>
+            <FilterPanel 
+                format={format} 
+                handleSelect={handleSelect}
+                handlePinCheck={handlePinCheck}
+                pinView={pinView}
+                selections={selections}
+                variables={variables}
+            />
 
             <Tile
                 data={data}
@@ -57,7 +44,7 @@ const MapSelection = ({ data, dataType, format, locations }) => {
                 shape={format}
                 view={views.MAP.val}
             />
-        </div>
+        </>
     )
 }
 
