@@ -11,13 +11,13 @@ const FilterPanel = ({
 }) => (
     <div className="container row row-col-2 mt-3">
         {axis ? (
-            <div class="col">
+            <div className="col">
                 <div className="row mb-2">
                     <div className="col d-flex justify-content-end">
-                        <label for="x-axis" class="col-form-label w-auto">x-axis</label>
+                        <label htmlFor="x-axis" className="col-form-label w-auto">x-axis</label>
                     </div>
                     <div className="col">
-                        <select class="form-select" defaultValue="select" id='x-axis' onChange={(e) => handleAxisSelect(e, 'x-axis')} name='x-axis'>
+                        <select className="form-select" defaultValue="select" id='x-axis' onChange={(e) => handleAxisSelect(e, 'x-axis')} name='x-axis'>
                             <option disabled value="select" id="select-x"> -- select an option -- </option>
                             {Object.keys(variables).map(id => <option key={`x-axis-${id}`} value={id}>{variables[id].name}</option>)}
                         </select>
@@ -25,10 +25,10 @@ const FilterPanel = ({
                 </div>
                 <div className="row mb-2">
                     <div className="col d-flex justify-content-end">
-                        <label for="y-axis" class="col-form-label w-auto">y-axis</label>
+                        <label htmlFor="y-axis" className="col-form-label w-auto">y-axis</label>
                     </div>
                     <div className="col">
-                        <select class="form-select" defaultValue="select" id='y-axis' onChange={(e) => handleAxisSelect(e, 'y-axis')} name='y-axis'>
+                        <select className="form-select" defaultValue="select" id='y-axis' onChange={(e) => handleAxisSelect(e, 'y-axis')} name='y-axis'>
                             <option disabled value="select" id="select-y"> -- select an option -- </option>
                             {Object.keys(variables).map(id => <option key={`y-axis-${id}`} value={id}>{variables[id].name}</option>)}
                         </select>
@@ -41,7 +41,7 @@ const FilterPanel = ({
     {Object.keys(variables).map(id => (
         <div className="row mb-2" key={`${format}-${id}`}>
             <div className="col d-flex justify-content-end">
-                <label class="form-label" htmlFor={`${format}-${id}`}>{variables[id].name}</label>
+                <label className="form-label" htmlFor={`${format}-${id}`}>{variables[id].name}</label>
             </div>
             <div className="col">
                 <select
@@ -64,7 +64,7 @@ const FilterPanel = ({
             <label lass="col col-form-label w-auto">View as map pin</label>
         </div>
         <div className="col">
-            <input class="form-check" type="checkbox" defaultChecked={pinView} onChange={handlePinCheck} />
+            <input className="form-check" type="checkbox" defaultChecked={pinView} onChange={handlePinCheck} />
         </div>
     </div>
 </div>

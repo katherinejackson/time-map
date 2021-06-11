@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 
 import Tile from "./Tile";
+import Map from "./Map"
 import FilterPanel from "./FilterPanel"
 import { getDataBrackets, getDefaultSelections } from "./helpers";
-import { formats, rectVariables, spiralVariables, views } from './constants'
+import { formats, rectVariables, spiralVariables } from './constants'
 
 const Selection = ({ data, dataType, format, locations, map }) => {
     const dataBrackets = getDataBrackets(data)
@@ -53,7 +54,7 @@ const Selection = ({ data, dataType, format, locations, map }) => {
             />
 
             {map ? (
-                <Tile
+                <Map
                     data={data}
                     dataBrackets={dataBrackets}
                     dataType={dataType}
@@ -61,7 +62,6 @@ const Selection = ({ data, dataType, format, locations, map }) => {
                     mapPin={pinView}
                     selections={selections}
                     shape={format}
-                    view={views.MAP.val}
                 />
             ) : (
                 error ? (
@@ -87,7 +87,6 @@ const Selection = ({ data, dataType, format, locations, map }) => {
                                             numX={variables[axis["x-axis"]]?.values?.length}
                                             selections={{ ...selections, [axis["x-axis"]]: xval, [axis["y-axis"]]: yval }}
                                             shape={format}
-                                            view={views.COMPARISON.val}
                                         />
                                     </span>
                                 ))}

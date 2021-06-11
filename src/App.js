@@ -35,19 +35,19 @@ const App = () => {
     return (
         <div className="container-fluid my-5">
             <div className="row justify-content-center gap-3">
-                <label class="col-form-label w-auto">View</label>
-                <select class="form-select w-auto" defaultValue="select" onChange={handleViewChange} name="Display type">
+                <label className="col-form-label w-auto">View</label>
+                <select className="form-select w-auto" defaultValue="select" onChange={handleViewChange} name="Display type">
                     <option disabled value="select" id="select"> -- select an option -- </option>
                     {Object.keys(views).map(view => <option key={`views-${views[view].id}`} value={views[view].val}>{views[view].name}</option>)}
                 </select>
                 {view ? (
                     <div className="row justify-content-center">
-                        <label class="col-form-label w-auto">Display Type</label>
-                        <select class="form-select w-auto" defaultValue={format} onChange={handleFormatChange} name="Display type">
+                        <label className="col-form-label w-auto">Display Type</label>
+                        <select className="form-select w-auto" defaultValue={format} onChange={handleFormatChange} name="Display type">
                             {Object.keys(formats).map(format => <option key={`format-${formats[format].id}`} value={formats[format].id}>{formats[format].name}</option>)}
                         </select>
-                        <label class="col-form-label w-auto ms-3">Data Set</label>
-                        <select class="form-select w-auto" defaultValue={dataSet} onChange={handleDataSetChange} name="DataSet">
+                        <label className="col-form-label w-auto ms-3">Data Set</label>
+                        <select className="form-select w-auto" defaultValue={dataSet} onChange={handleDataSetChange} name="DataSet">
                             {Object.keys(dataSets).map(type => <option key={`dataset-${dataSets[type].id}`} value={dataSets[type].val}>{dataSets[type].name}</option>)}
                         </select>
                         <Selection data={data[dataSets[dataSet].id].data} dataType={dataSet} format={format} locations={locations} map={view === views.MAP.val}/>

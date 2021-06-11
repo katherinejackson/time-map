@@ -110,3 +110,25 @@ export const spiral = (
     })
 }
 
+export const getSpiralSize = (selections, numLocations) => {
+    let spiralWidth = selections[spiralValues.SPIRAL_WIDTH] + (numLocations * 3)
+    let spiralTightness = spiralWidth/600
+    return {spiralWidth, spiralTightness}
+}
+
+export const getRadius = (selections, locationData) => {
+    let numYears = locationData ? locationData.length : selections[rectValues.NUM_YEARS]
+    return Math.abs(Math.sin(-1.5 + radianPerDay * 365 * numYears)
+        * (selections[spiralValues.CORE_SIZE] + selections[spiralValues.SPACE_BETWEEN_SPIRAL] * 365 * numYears))
+        + selections[spiralValues.SPIRAL_WIDTH]/2
+}
+
+export const getRowSize = (selections, numLocations) => {
+    const daysPerRow = Math.ceil(365/selections[rectValues.NUM_ROWS])
+    const dayWidth = selections[rectValues.DAY_WIDTH] + numLocations/ 25
+    const rowWidth = daysPerRow * dayWidth
+    const rowHeight = selections[rectValues.ROW_HEIGHT] + numLocations * 1.5
+
+    return {dayWidth, rowWidth, rowHeight}
+}
+
