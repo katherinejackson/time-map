@@ -79,8 +79,9 @@ const Tile = (
         const daysPerRow = Math.ceil(365/selections[rectValues.NUM_ROWS])
         const dayWidth = selections[rectValues.DAY_WIDTH]
         const rowWidth = daysPerRow * dayWidth
+        const pinHeight = ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * locationData.length)
         let startX = x - rowWidth / 2;
-        let startY = y - ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * locationData.length) / 2
+        let startY = y -  pinHeight/ 2
         if (mapPin) {
             startY = y - getPinAdjustment(selections, shape, locationData)
         }
@@ -91,7 +92,7 @@ const Tile = (
         if (hover) {
             p5.textSize(16)
         }
-        p5.text("1", x, y + 5)
+        p5.text("1", x, y + pinHeight/2 + 5)
     }
 
     const setup = (p5, parent) => {
