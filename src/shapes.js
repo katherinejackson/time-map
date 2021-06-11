@@ -72,7 +72,7 @@ export const spiral = (
 ) => {
     let spiralWidth = selections[spiralValues.SPIRAL_WIDTH]
     let spiralTightness = selections[spiralValues.SPACE_BETWEEN_SPIRAL]
-    let angle = -1.5
+    let angle = -Math.PI/2
     let coreSize = selections[spiralValues.CORE_SIZE];
     if (mapPin) {
         p5.stroke(50)
