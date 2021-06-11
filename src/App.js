@@ -4,8 +4,7 @@ import './App.css';
 import { dataSets, formats, views } from "./constants";
 import raw from "./popdataSmall.txt";
 import textDecoder from "./textDecoder";
-import MapSelection from "./MapSelection";
-import ComparisonSelection from "./ComparisonSelection";
+import Selection from "./Selection";
 import { data } from "./data";
 
 const App = () => {
@@ -51,12 +50,7 @@ const App = () => {
                         <select class="form-select w-auto" defaultValue={dataSet} onChange={handleDataSetChange} name="DataSet">
                             {Object.keys(dataSets).map(type => <option key={`dataset-${dataSets[type].id}`} value={dataSets[type].val}>{dataSets[type].name}</option>)}
                         </select>
-                        {view === views.COMPARISON.val ? (
-                            <ComparisonSelection data={data[dataSets[dataSet].id].data} dataType={dataSet} format={format} locations={locations} />
-                        ) : (
-                            <MapSelection data={data[dataSets[dataSet].id].data} dataType={dataSet} format={format} locations={locations} />
-                        )}
-
+                        <Selection data={data[dataSets[dataSet].id].data} dataType={dataSet} format={format} locations={locations} map={view === views.MAP.val}/>
                     </div>
                 ) : null}
             </div>
