@@ -71,10 +71,10 @@ const Selection = ({ data, dataType, format, locations, map }) => {
                 ) : (
                     <div className="flex-row">
                         {variables[axis["x-axis"]].values.map((xval) => (
-                            <div className="flex-col" key={`x-${xval}`}>
+                            <div className="flex-col" key={`x-${axis["x-axis"]}-${xval}`}>
                                 {variables[axis["y-axis"]].values.map((yval) => (
                                     <span
-                                        key={`x-` + xval + `y-` + yval}
+                                        key={`x-${axis["x-axis"]}-${xval} y-${axis["y-axis"]}-${yval}`}
                                         title={variables[axis["x-axis"]].name + ': ' + xval + '  ' + variables[axis["y-axis"]].name + ': ' + yval}
                                     >
                                         <Tile

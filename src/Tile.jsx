@@ -1,7 +1,7 @@
 import Sketch from "react-p5";
 import React, { useEffect, useState } from "react";
 
-import { canvasSize, formats, rectValues, spiralValues } from './constants'
+import { formats, rectValues, spiralValues } from './constants'
 import { getInterval, getManualInterval } from "./helpers";
 import { rectangle, spiral, getRadius} from "./shapes";
 import { drawLegend } from "./legend";
@@ -27,6 +27,7 @@ const Tile = (
         dataType,
         locations,
         mapPin,
+        numX,
         selections,
         shape,
     }) => {
@@ -34,6 +35,7 @@ const Tile = (
         ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])
         : getManualInterval(dataBrackets, selections[rectValues.NUM_COLOURS], dataType)
     const [p5, setP5] = useState(null)
+    const canvasSize = window.innerWidth * 0.95 / numX
 
     useEffect(() => {
         if (p5) {
