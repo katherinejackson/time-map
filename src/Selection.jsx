@@ -16,7 +16,7 @@ const Selection = ({ data, dataType, format, locations, map }) => {
     const [selections, setSelections] = useState(getDefaultSelections(format, dataType))
     const [pinView, setPinView] = useState(false)
     const [opaque, setOpaque] = useState(false)
-    const [yearIndication, setYearIndication] = useState(yearIndicators.CLOCK.val)
+    const [yearIndication, setYearIndication] = useState(null)
     const variables = format === formats.SPIRAL.id ? spiralVariables[dataType] : rectVariables[dataType]
 
     useEffect(() => {
@@ -101,8 +101,10 @@ const Selection = ({ data, dataType, format, locations, map }) => {
                                             locations={locations}
                                             mapPin={pinView}
                                             numX={variables[axis["x-axis"]]?.values?.length}
+                                            opaque={opaque}
                                             selections={{ ...selections, [axis["x-axis"]]: xval, [axis["y-axis"]]: yval }}
                                             shape={format}
+                                            yearIndication={yearIndication}
                                         />
                                     </span>
                                 ))}

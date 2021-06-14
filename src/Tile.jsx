@@ -27,9 +27,11 @@ const Tile = (
         dataType,
         locations,
         mapPin,
+        opaque,
         numX,
         selections,
         shape,
+        yearIndication,
     }) => {
     const interval = dataType === 'TEMP'
         ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])
@@ -42,7 +44,7 @@ const Tile = (
             draw(p5)
         }
 
-    }, [selections, p5])
+    }, [selections, p5, opaque, yearIndication])
 
     const getLocationData = (id) => {
         return data[id].data.slice(
@@ -68,7 +70,7 @@ const Tile = (
             startY = startY - getPinAdjustment(selections, shape, locationData)
         }
 
-        spiral(dataType, interval, locationData, x, y, mapPin, p5, getRadius(selections), selections, x, startY)
+        spiral(dataType, interval, locationData, x, y, mapPin, p5, getRadius(selections), selections, x, startY, opaque, true, yearIndication )
         p5.fill('black')
         p5.textSize(10)
         p5.text("1", x - 2, startY)

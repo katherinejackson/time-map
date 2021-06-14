@@ -90,7 +90,8 @@ const FilterPanel = ({
                         <label htmlFor="yearIndication" className="col-form-label w-auto">Year Indication</label>
                     </div>
                     <div className="col">
-                        <select className="form-select" defaultValue={yearIndication} id='yearIndication' onChange={(e) => handleYearIndicationSelect(e)} name='yearIndication'>
+                        <select className="form-select" defaultValue="none" id='yearIndication' onChange={(e) => handleYearIndicationSelect(e)} name='yearIndication'>
+                            <option value="none" id="no-year">None</option>
                             {Object.keys(yearIndicators).map(id => <option key={`year-${id}`} value={id}>{yearIndicators[id].name}</option>)}
                         </select>
                     </div>

@@ -1,4 +1,4 @@
-import { colours, manualIntervals, radianPerDay, radianPerMonth, rectValues, spiralValues, months, yearIndicators, monthColours } from "./constants";
+import { colours, manualIntervals, radianPerDay, radianPerMonth, rectValues, spiralValues, months, yearIndicators, monthColours, abbreviatedMonths } from "./constants";
 import { fillColourGradient, getColour, getManualIntervalColour } from "./helpers";
 
 export const rectangle = (
@@ -83,7 +83,7 @@ export const spiral = (
     let angle = -Math.PI / 2
     let coreSize = selections[spiralValues.CORE_SIZE];
 
-    if (hover && yearIndicator === yearIndicators.CLOCK.val) {
+    if (hover && (yearIndicator === yearIndicators.CLOCK.val || yearIndicator === yearIndicators.PIZZA.val)) {
         let tempData = locationData
         tempData.push([])
         let newRadius = getRadius(selections, tempData)
@@ -114,7 +114,7 @@ export const spiral = (
 
 
     locationData.forEach(year => {
-        year.forEach(pt => {
+        year.forEach((pt, index) => {
             let x = startX + p5.cos(angle) * coreSize
             let y = startY + p5.sin(angle) * coreSize
 
@@ -133,19 +133,22 @@ export const spiral = (
                 }
             }
 
-            p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerDay * 50, p5.PIE)
+            p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerDay * 10, p5.PIE)
+
             angle += radianPerDay
             coreSize += spiralTightness
         })
     })
 
+
     if (hover && yearIndicator === yearIndicators.CLOCK.val) {
         p5.fill("black")
-        coreSize += spiralTightness * 365
+        let hoverCore = coreSize
+        hoverCore += spiralTightness * 365
         angle = -Math.PI/2
         for (let i = 0; i < 12; i++) {
-            let textCore = coreSize
-            textCore += spiralTightness/4 * 365
+            let textCore = hoverCore
+            textCore += spiralTightness/2 * 365
             let xText = startX + p5.cos(angle) * textCore
             let yText = startY + p5.sin(angle) * textCore
 
@@ -153,6 +156,40 @@ export const spiral = (
 
             angle += radianPerMonth
             coreSize += spiralTightness
+        }
+    }
+
+    if (hover && yearIndicator === yearIndicators.PIZZA.val) {
+        p5.fill("black")
+        let innerCore = selections[spiralValues.CORE_SIZE]
+        let outerCore = coreSize
+        outerCore += spiralTightness/2 * 365
+        let textCore = coreSize
+        textCore += spiralTightness/2 * 365
+        angle = -Math.PI/2
+        for (let i = 0; i < 24; i++) {
+            if (i % 2 === 0) {
+                let x1 = startX + p5.cos(angle) * innerCore
+                let y1 = startY + p5.sin(angle) * innerCore
+                let x2 = startX + p5.cos(angle) * outerCore
+                let y2 = startY + p5.sin(angle) * outerCore
+    
+                p5.stroke(0, 0, 0, 100)
+                p5.line(x1, y1, x2, y2)
+                p5.noStroke()
+            } else {
+                let xText = startX + p5.cos(angle) * textCore
+                let yText = startY + p5.sin(angle) * textCore
+    
+                p5.textSize(6)
+                p5.text(abbreviatedMonths[Math.floor(i/2)], xText, yText)
+            }
+
+            angle += radianPerMonth/2
+
+            innerCore += (spiralTightness * 15)
+            outerCore += (spiralTightness * 15)
+            textCore += (spiralTightness * 15)
         }
     }
 
