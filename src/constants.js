@@ -2,6 +2,12 @@ export const canvasSize = 200
 
 export const radianPerDay = 0.01721420632
 
+export const radianPerMonth = 0.52359877559
+
+export const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
+
+export const monthColours = ["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928"]
+
 //TODO: these colours are bad
 export const colours = {
     TEMP: {
@@ -126,4 +132,10 @@ export const dataSets = {
 export const views = {
     COMPARISON: {id: 1, name: 'Comparison', val: 'COMPARISON'},
     MAP: {id: 2, name: 'Map', val: 'MAP'}
+}
+
+export const yearIndicators = {
+    CLOCK: {id: 1, name: 'Clock on Hover', val: 'CLOCK'},
+    CIRCLE: {id: 2, name: 'Colour Circle', val: 'CIRCLE'},
+    TICKS: {id: 3, name: 'Tick Marks', val: 'TICKS'},
 }

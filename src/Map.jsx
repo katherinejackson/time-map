@@ -64,8 +64,10 @@ const Map = (
         dataType,
         locations,
         mapPin,
+        opaque,
         selections,
         shape,
+        yearIndication,
     }) => {
     const interval = dataType === 'TEMP'
         ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])
@@ -85,7 +87,7 @@ const Map = (
             drawLocationClusters()
         }
 
-    }, [selections, p5, map, mapPin, hover])
+    }, [selections, p5, map, mapPin, hover, opaque, yearIndication])
 
     useEffect(() => {
         if (redrawMap) {
@@ -147,13 +149,13 @@ const Map = (
             startY = startY - getPinAdjustment(newSelections, shape, locationData)
         }
 
-        spiral(dataType, interval, locationData, x, y, mapPin, p5, getRadius(newSelections), newSelections, x, startY)
+        spiral(dataType, interval, locationData, x, y, mapPin, p5, getRadius(newSelections), newSelections, x, startY, opaque, hover, yearIndication)
         p5.fill('black')
         p5.textSize(10)
         if (hover) {
-            p5.textSize(16)
+            p5.textSize(15)
         }
-        p5.text(ids.length, x - 2, startY)
+        p5.text(ids.length, x - 2, startY + 1)
     }
 
     const drawRect = (x, y, ids, hover = false) => {
@@ -178,13 +180,13 @@ const Map = (
             startY = y - getPinAdjustment(newSelections, shape, locationData)
         }
 
-        rectangle(dataType, interval, locationData, x, y, mapPin, p5, newSelections, startX, startY)
+        rectangle(dataType, interval, locationData, x, y, mapPin, p5, newSelections, startX, startY, opaque)
         p5.fill('black')
         p5.textSize(10)
         if (hover) {
             p5.textSize(16)
         }
-        p5.text(ids.length, x, y + 5)
+        p5.text(ids.length, x, y + rowHeight)
     }
 
     const drawHoverRect = (x, y, id, hoverSelections) => {

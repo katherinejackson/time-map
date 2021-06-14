@@ -4,7 +4,7 @@ import Tile from "./Tile";
 import Map from "./Map"
 import FilterPanel from "./FilterPanel"
 import { getDataBrackets, getDefaultSelections } from "./helpers";
-import { formats, rectVariables, spiralVariables } from './constants'
+import { formats, rectVariables, spiralVariables, yearIndicators } from './constants'
 
 const Selection = ({ data, dataType, format, locations, map }) => {
     const dataBrackets = getDataBrackets(data)
@@ -15,6 +15,8 @@ const Selection = ({ data, dataType, format, locations, map }) => {
     })
     const [selections, setSelections] = useState(getDefaultSelections(format, dataType))
     const [pinView, setPinView] = useState(false)
+    const [opaque, setOpaque] = useState(false)
+    const [yearIndication, setYearIndication] = useState(yearIndicators.CLOCK.val)
     const variables = format === formats.SPIRAL.id ? spiralVariables[dataType] : rectVariables[dataType]
 
     useEffect(() => {
@@ -30,8 +32,16 @@ const Selection = ({ data, dataType, format, locations, map }) => {
         setError(isError({ ...axis, [id]: parseInt(event.currentTarget.value) }))
     }
 
+    const handleYearIndicationSelect = (event) => {
+        setYearIndication(event.currentTarget.value)
+    }
+
     const handlePinCheck = () => {
         setPinView(!pinView)
+    }
+
+    const handleOpaqueCheck = () => {
+        setOpaque(!opaque)
     }
 
     const isError = (values) => {
@@ -48,9 +58,13 @@ const Selection = ({ data, dataType, format, locations, map }) => {
                 handleSelect={handleSelect}
                 handleAxisSelect={map ? null : handleAxisSelect}
                 handlePinCheck={handlePinCheck}
+                handleOpaqueCheck={handleOpaqueCheck}
+                handleYearIndicationSelect={handleYearIndicationSelect}
+                opaque={opaque}
                 pinView={pinView}
                 selections={selections}
                 variables={variables}
+                yearIndication={yearIndication}
             />
 
             {map ? (
@@ -60,8 +74,10 @@ const Selection = ({ data, dataType, format, locations, map }) => {
                     dataType={dataType}
                     locations={locations}
                     mapPin={pinView}
+                    opaque={opaque}
                     selections={selections}
                     shape={format}
+                    yearIndication={yearIndication}
                 />
             ) : (
                 error ? (
