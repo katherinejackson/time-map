@@ -279,7 +279,7 @@ const Map = (
         }
 
         clusters.forEach((cluster, index) => {
-            if (Math.abs(p5.mouseX - cluster.x) < cluster.minDistanceX / 2 && Math.abs(p5.mouseY - cluster.y + pinAdjustment) < cluster.minDistanceY / 2) {
+            if (Math.abs(p5.mouseX - cluster.x) < cluster.minDistanceX && Math.abs(p5.mouseY - cluster.y + pinAdjustment) < cluster.minDistanceY) {
                 setHover(index)
                 hoverFound = true
             }
@@ -298,7 +298,7 @@ const Map = (
         }
 
         clusters.forEach((cluster, index) => {
-            if (Math.abs(p5.mouseX - cluster.x) < cluster.minDistanceX / 2 && Math.abs(p5.mouseY - cluster.y + pinAdjustment) < cluster.minDistanceY / 2) {
+            if (Math.abs(p5.mouseX - cluster.x) < cluster.minDistanceX && Math.abs(p5.mouseY - cluster.y + pinAdjustment) < cluster.minDistanceY) {
                 let allDisplayed = true
                 cluster.locations.forEach(id => {
                     if (!detailed.includes(id)) {

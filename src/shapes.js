@@ -40,8 +40,6 @@ export const rectangle = (
         p5.rect(x - 2, y - 2, rowWidth + 4, pinHeight + 4, 5)
     } 
 
-
-
     let startX = x
     let startY = y
     let rowCounter = 1
@@ -190,7 +188,6 @@ export const spiral = (
             coreSize += spiralTightness
         })
     })
-
 
     if (hover && yearIndicator === yearIndicators.MONTHS.val) {
         p5.fill("black")
