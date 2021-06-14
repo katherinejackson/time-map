@@ -51,7 +51,7 @@ const getPinAdjustment = (selections, shape, locationData) => {
         const radius = getRadius(selections, locationData)
         startY = radius + 15
     } else {
-        startY = 5 + ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * numYears)
+        startY = 7 + ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * numYears)
     }
 
     return startY
@@ -180,13 +180,13 @@ const Map = (
             startY = y - getPinAdjustment(newSelections, shape, locationData)
         }
 
-        rectangle(dataType, interval, locationData, x, y, mapPin, p5, newSelections, startX, startY, opaque)
+        rectangle(dataType, interval, locationData, x, y, mapPin, p5, newSelections, startX, startY, opaque, hover, yearIndication)
         p5.fill('black')
         p5.textSize(10)
         if (hover) {
             p5.textSize(16)
         }
-        p5.text(ids.length, x, y + rowHeight)
+        // p5.text(ids.length, x, y + rowHeight)
     }
 
     const drawHoverRect = (x, y, id, hoverSelections) => {

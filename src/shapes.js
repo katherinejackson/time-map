@@ -13,8 +13,17 @@ export const rectangle = (
     x,
     y,
     opaque,
+    hover, 
+    yearIndication,
 ) => {
     const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
+    const rowWidth = daysPerRow * selections[rectValues.DAY_WIDTH]
+    const pinHeight = ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * locationData.length - selections[rectValues.SPACE_BETWEEN_ROWS])
+    if (hover && (yearIndication === yearIndicators.MONTHS.val || yearIndication === yearIndicators.MONTHS_TICKS.val) ) {
+        p5.fill(255, 255, 255)
+        p5.rect(x - 2, y - 10, rowWidth + 4, pinHeight + 10, 5)
+    }
+    
     if (mapPin) {
         p5.stroke(50)
         p5.fill(50)
@@ -24,11 +33,17 @@ export const rectangle = (
         } else {
             p5.noFill()
         }
-        p5.rect(x - 2, y - 2, daysPerRow * selections[rectValues.DAY_WIDTH] + 4, ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * locationData.length) + 4, 5)
+        p5.rect(x - 2, y - 2, rowWidth + 4, pinHeight + 4, 5)
         p5.noStroke()
-    }
+    } else if (opaque) {
+        p5.fill(255)
+        p5.rect(x - 2, y - 2, rowWidth + 4, pinHeight + 4, 5)
+    } 
+
+
 
     let startX = x
+    let startY = y
     let rowCounter = 1
     locationData.forEach(year => {
         year.forEach(pt => {
@@ -60,6 +75,42 @@ export const rectangle = (
             }
         })
     })
+
+    if (yearIndication === yearIndicators.TICKS.val) {
+        p5.stroke(50)
+        
+        const tickSpace = rowWidth/12
+        for (let i = startX; i <= startX + rowWidth; i = i + tickSpace) {
+            p5.line(i, startY - 3, i, startY - 1)
+        } 
+
+        p5.noStroke()
+    } else if (yearIndication === yearIndicators.COLOURS.val) {
+        const tickSpace = rowWidth/12
+        for (let i = 0; i < 12; i++) {
+            p5.fill(monthColours[i])
+            p5.rect(startX + i * tickSpace, startY - 4, tickSpace, 2)
+        } 
+
+        p5.noStroke()
+    } else if (yearIndication === yearIndicators.MONTHS.val && hover) {
+        const tickSpace = rowWidth/12
+        for (let i = 0; i < 12; i++) {
+            p5.textSize(6)
+            p5.fill(0)
+            p5.text(abbreviatedMonths[i],startX + i * tickSpace + tickSpace/2, startY - 6)
+        } 
+    } else if (yearIndication === yearIndicators.MONTHS_TICKS.val && hover) {
+        const tickSpace = rowWidth/12
+        for (let i = 0; i < 12; i++) {
+            p5.textSize(6)
+            p5.fill(0)
+            p5.text(abbreviatedMonths[i], startX + i * tickSpace + tickSpace/2, startY - 6)
+            p5.stroke(0, 0, 0, 150)
+            p5.line(startX + i * tickSpace, startY - 10, startX + i * tickSpace, startY + pinHeight)
+            p5.noStroke()
+        } 
+    }
 }
 
 export const spiral = (
@@ -83,7 +134,7 @@ export const spiral = (
     let angle = -Math.PI / 2
     let coreSize = selections[spiralValues.CORE_SIZE];
 
-    if (hover && (yearIndicator === yearIndicators.CLOCK.val || yearIndicator === yearIndicators.PIZZA.val)) {
+    if (hover && (yearIndicator === yearIndicators.MONTHS.val || yearIndicator === yearIndicators.MONTHS_TICKS.val)) {
         let tempData = locationData
         tempData.push([])
         let newRadius = getRadius(selections, tempData)
@@ -92,7 +143,7 @@ export const spiral = (
         p5.ellipse(startX, startY, newRadius * 2 + 20, newRadius * 2 + 20)
     } else {
         if (mapPin) {
-            if (yearIndicator !== yearIndicators.CIRCLE.val) {
+            if (yearIndicator !== yearIndicators.COLOURS.val) {
                 p5.stroke(50)
             }
             p5.fill(50)
@@ -114,7 +165,7 @@ export const spiral = (
 
 
     locationData.forEach(year => {
-        year.forEach((pt, index) => {
+        year.forEach(pt => {
             let x = startX + p5.cos(angle) * coreSize
             let y = startY + p5.sin(angle) * coreSize
 
@@ -141,7 +192,7 @@ export const spiral = (
     })
 
 
-    if (hover && yearIndicator === yearIndicators.CLOCK.val) {
+    if (hover && yearIndicator === yearIndicators.MONTHS.val) {
         p5.fill("black")
         let hoverCore = coreSize
         hoverCore += spiralTightness * 365
@@ -159,7 +210,7 @@ export const spiral = (
         }
     }
 
-    if (hover && yearIndicator === yearIndicators.PIZZA.val) {
+    if (hover && yearIndicator === yearIndicators.MONTHS_TICKS.val) {
         p5.fill("black")
         let innerCore = selections[spiralValues.CORE_SIZE]
         let outerCore = coreSize
@@ -193,7 +244,7 @@ export const spiral = (
         }
     }
 
-    if (yearIndicator === yearIndicators.CIRCLE.val) {
+    if (yearIndicator === yearIndicators.COLOURS.val) {
         coreSize += spiralTightness * 365
         angle = -Math.PI/2
         p5.stroke(50)

@@ -137,8 +137,8 @@ export const views = {
 }
 
 export const yearIndicators = {
-    CIRCLE: {id: 1, name: 'Colour Circle', val: 'CIRCLE'},
-    CLOCK: {id: 2, name: 'Clock on Hover', val: 'CLOCK'},
+    COLOURS: {id: 1, name: 'Colour Line', val: 'COLOURS'},
+    MONTHS: {id: 2, name: 'Month Names', val: 'MONTHS'},
     TICKS: {id: 3, name: 'Tick Marks', val: 'TICKS'},
-    PIZZA: {id: 4, name: 'Pizza on Hover', val: 'PIZZA'}
+    MONTHS_TICKS: {id: 4, name: 'Months and Ticks', val: 'MONTHS_TICKS'}
 }
