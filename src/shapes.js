@@ -290,7 +290,7 @@ export const spiral = (
 }
 
 export const getSpiralSize = (selections, numLocations) => {
-    let spiralWidth = selections[spiralValues.SPIRAL_WIDTH] + (numLocations * 3)
+    let spiralWidth = Math.min(selections[spiralValues.SPIRAL_WIDTH] + (numLocations * 2), 30)
     let spiralTightness = spiralWidth / 600
     return { spiralWidth, spiralTightness }
 }
@@ -304,9 +304,9 @@ export const getRadius = (selections, locationData) => {
 
 export const getRowSize = (selections, numLocations) => {
     const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
-    const dayWidth = selections[rectValues.DAY_WIDTH] + numLocations / 25
+    const dayWidth = Math.min(selections[rectValues.DAY_WIDTH] + numLocations / 25, 1)
     const rowWidth = daysPerRow * dayWidth
-    const rowHeight = selections[rectValues.ROW_HEIGHT] + numLocations * 1.5
+    const rowHeight = Math.min(selections[rectValues.ROW_HEIGHT] + numLocations * 1.5, 30)
 
     return { dayWidth, rowWidth, rowHeight }
 }
