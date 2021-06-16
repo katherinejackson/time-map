@@ -36,6 +36,8 @@ const getMinDistance = (selections, shape, mapPin = false) => {
         minDistanceY = ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * selections[rectValues.NUM_YEARS])
 
         if (mapPin) {
+            minDistanceY = minDistanceY + 12
+        } else {
             minDistanceY = minDistanceY + 4
         }
     }
@@ -108,11 +110,17 @@ const Map = (
     }, [detailed])
 
     const getLocationData = (id) => {
-        return data[id].data.slice(
-            data[id].data.length - selections[spiralValues.NUM_YEARS] > 0
-                ? data[id].data.length - selections[spiralValues.NUM_YEARS]
-                : 0,
-            data[id].data.length)
+        let newData = []
+        let years = Object.keys(data[id].data)
+        if (years.length - selections[spiralValues.NUM_YEARS] > 0) {
+            years = years.slice(years.length - selections[spiralValues.NUM_YEARS], years.length)
+        } 
+
+        years.forEach(year =>  {
+            newData.push(data[id].data[year])
+        })
+
+        return newData
     }
 
     const getHoverTransform = (numLocations) => {
@@ -174,8 +182,9 @@ const Map = (
             [rectValues.ROW_HEIGHT]: rowHeight,
         }
 
+        let pinHeight = ((newSelections[rectValues.NUM_ROWS] * (newSelections[rectValues.SPACE_BETWEEN_ROWS] + newSelections[rectValues.ROW_HEIGHT])) * locationData.length)
         let startX = x - rowWidth / 2;
-        let startY = y - ((newSelections[rectValues.NUM_ROWS] * (newSelections[rectValues.SPACE_BETWEEN_ROWS] + newSelections[rectValues.ROW_HEIGHT])) * locationData.length) / 2
+        let startY = y - pinHeight / 2
         if (mapPin) {
             startY = y - getPinAdjustment(newSelections, shape, locationData)
         }
@@ -186,7 +195,19 @@ const Map = (
         if (hover) {
             p5.textSize(16)
         }
-        // p5.text(ids.length, x, y + rowHeight)
+
+        if (mapPin) {
+            p5.fill(255, 255, 255, 250)
+            p5.ellipse(x, y + 8, 16, 16)
+            p5.fill(0)
+            p5.text(ids.length, x, y + 8)
+        } else {
+            p5.fill(255, 255, 255, 250)
+            p5.ellipse(x, y + pinHeight/2 + 8, 16, 16)
+            p5.fill(0)
+            p5.text(ids.length, x, y + pinHeight/2 + 8)
+        }
+
     }
 
     const drawHoverRect = (x, y, id, hoverSelections) => {
@@ -392,7 +413,8 @@ const Map = (
                 setClusters(newClusters)
 
                 newClusters.forEach((cluster, index) => {
-                    if (index !== hover) {
+                    let withinBounds = cluster.x > 0 && cluster.x < mapWidth && cluster.y > 0 && cluster.y < mapHeight
+                    if (index !== hover && withinBounds) {
                         drawPin(cluster.x, cluster.y, cluster.locations)
                     }
 
@@ -473,8 +495,10 @@ const Map = (
 
                 for (let loc = 0; loc < data.length; loc++) {
                     if (data[loc] && data[loc][year] && data[loc][year].length > day) {
-                        sum += data[loc][year][day]
-                        counter++
+                        if (data[loc][year][day] !== '') {
+                            sum += data[loc][year][day]
+                            counter++
+                        }
                     }
                 }
 

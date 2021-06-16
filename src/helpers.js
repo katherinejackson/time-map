@@ -44,7 +44,13 @@ export const getColour = (pt, highest, interval, colourSet) => {
         bracket = colourSet.length - 1
     }
 
-    return colourSet[bracket]
+    if (colourSet[bracket]) {
+        return colourSet[bracket]
+    } else {
+        return 'white'
+    }
+
+
 }
 
 export const fillColourGradient = (p5, pt, interval, numColours) => {
@@ -75,14 +81,16 @@ export const getDataBrackets = (data) => {
     let lowest;
 
     Object.keys(data).forEach(id => {
-        data[id].data.forEach(year => {
-            year.forEach(pt => {
-                if (!highest || pt > highest) {
-                    highest = pt
-                }
-
-                if (!lowest || pt < lowest) {
-                    lowest = pt
+        Object.keys(data[id].data).forEach(year => {
+            data[id].data[year].forEach(pt => {
+                if (pt) {
+                    if (!highest || pt > highest) {
+                        highest = pt
+                    }
+    
+                    if (!lowest || pt < lowest) {
+                        lowest = pt
+                    }
                 }
             })
         })

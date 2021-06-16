@@ -4,10 +4,10 @@ function textDecoder(text) {
     lines.forEach((line, index) => {
         const vals = line.split(',')
         locations.push({
-            id: index,
-            name: vals[0],
-            x: parseFloat(vals[1]),
-            y: parseFloat(vals[2])
+            id: vals[0],
+            name: vals[1],
+            x: parseFloat(vals[2]),
+            y: parseFloat(vals[3])
         })
     })
 
