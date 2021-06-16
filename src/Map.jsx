@@ -397,10 +397,12 @@ const Map = (
                         }
 
                         let { minDistanceX, minDistanceY } = getMinDistance(newSelections, shape, mapPin)
+                        let newLocations = shouldCluster[0].locations.concat(shouldCluster[1].locations)
+                        let {x, y} = averageCoords(newLocations)
                         let newCluster = {
-                            x: (shouldCluster[0].x + shouldCluster[1].x) / 2,
-                            y: (shouldCluster[0].y + shouldCluster[1].y) / 2,
-                            locations: shouldCluster[0].locations.concat(shouldCluster[1].locations),
+                            x: x,
+                            y: y,
+                            locations: newLocations,
                             minDistanceX,
                             minDistanceY,
                         }
@@ -516,6 +518,20 @@ const Map = (
         }
 
         return newData
+    }
+
+    const averageCoords = (ids) => {
+        let x = 0
+        let y = 0
+
+        ids.forEach(id => {
+            x = x + locations[id].x
+            y = y + locations[id].y
+        })
+
+        let newLocation = map.latLngToPixel(x/ids.length, y/ids.length)
+
+        return {x: newLocation.x, y: newLocation.y}
     }
 
 
