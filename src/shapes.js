@@ -15,6 +15,7 @@ export const rectangle = (
     opaque,
     hover, 
     yearIndication,
+    fillMissing,
 ) => {
     const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
     const rowWidth = daysPerRow * selections[rectValues.DAY_WIDTH]
@@ -62,6 +63,11 @@ export const rectangle = (
                 }
     
                 p5.rect(x, y, 1, selections[rectValues.ROW_HEIGHT])
+            } else {
+                if (fillMissing) {
+                    p5.fill(150, 150, 150, 100)
+                    p5.rect(x, y, 1, selections[rectValues.ROW_HEIGHT])
+                }
             }
             
             if (rowCounter >= daysPerRow) {
@@ -127,6 +133,7 @@ export const spiral = (
     opaque,
     hover,
     yearIndicator,
+    fillMissing,
 ) => {
     let spiralWidth = selections[spiralValues.SPIRAL_WIDTH]
     let spiralTightness = selections[spiralValues.SPACE_BETWEEN_SPIRAL]
@@ -162,13 +169,11 @@ export const spiral = (
         }
     }
 
-
     locationData.forEach(year => {
         year.forEach(pt => {
+            let x = startX + p5.cos(angle) * coreSize
+            let y = startY + p5.sin(angle) * coreSize
             if (pt) {
-                let x = startX + p5.cos(angle) * coreSize
-                let y = startY + p5.sin(angle) * coreSize
-    
                 if (dataType === 'WIND' || dataType === 'PRECIP') {
                     const colour = getManualIntervalColour(pt, colours[dataType][selections[spiralValues.NUM_COLOURS]], manualIntervals[dataType][selections[rectValues.NUM_COLOURS]])
                     p5.fill(colour)
@@ -185,8 +190,12 @@ export const spiral = (
                 }
     
                 p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerDay * 10, p5.PIE)
+            } else {
+                if (fillMissing) {
+                    p5.fill(150, 150, 150, 100)
+                    p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerDay * 10, p5.PIE)
+                }
             }
-
 
             angle += radianPerDay
             coreSize += spiralTightness

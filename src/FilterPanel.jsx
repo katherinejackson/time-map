@@ -2,9 +2,11 @@ import { yearIndicators } from "./constants"
 
 const FilterPanel = ({
     axis,
+    fillMissing,
     format,
     handleSelect,
     handleAxisSelect,
+    handleFillMissingCheck,
     handlePinCheck,
     handleOpaqueCheck,
     handleYearIndicationSelect,
@@ -12,7 +14,6 @@ const FilterPanel = ({
     opaque,
     selections,
     variables,
-    yearIndication
 }) => (
     <div className="container row row-col-3 mt-3">
         {axis ? (
@@ -82,6 +83,15 @@ const FilterPanel = ({
                 </div>
                 <div className="col">
                     <input className="form-check" type="checkbox" defaultChecked={opaque} onChange={handleOpaqueCheck} />
+                </div>
+            </div>
+
+            <div className="row">
+                <div className="col d-flex justify-content-end">
+                    <label lass="col col-form-label w-auto">Fill Missing Data</label>
+                </div>
+                <div className="col">
+                    <input className="form-check" type="checkbox" defaultChecked={fillMissing} onChange={handleFillMissingCheck} />
                 </div>
             </div>
 

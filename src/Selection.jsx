@@ -17,6 +17,7 @@ const Selection = ({ data, dataType, format, locations, map }) => {
     const [pinView, setPinView] = useState(false)
     const [opaque, setOpaque] = useState(false)
     const [yearIndication, setYearIndication] = useState(null)
+    const [fillMissing, setFillMissing] = useState(false)
     const variables = format === formats.SPIRAL.id ? spiralVariables[dataType] : rectVariables[dataType]
 
     useEffect(() => {
@@ -44,6 +45,10 @@ const Selection = ({ data, dataType, format, locations, map }) => {
         setOpaque(!opaque)
     }
 
+    const handleFillMissingCheck = () => {
+        setFillMissing(!fillMissing)
+    }
+
     const isError = (values) => {
         return values["x-axis"] === null
             || values["y-axis"] === null
@@ -54,9 +59,11 @@ const Selection = ({ data, dataType, format, locations, map }) => {
         <div>
             <FilterPanel
                 axis={map ? null : axis}
+                fillMissing={fillMissing}
                 format={format}
                 handleSelect={handleSelect}
                 handleAxisSelect={map ? null : handleAxisSelect}
+                handleFillMissingCheck={handleFillMissingCheck}
                 handlePinCheck={handlePinCheck}
                 handleOpaqueCheck={handleOpaqueCheck}
                 handleYearIndicationSelect={handleYearIndicationSelect}
@@ -72,6 +79,7 @@ const Selection = ({ data, dataType, format, locations, map }) => {
                     data={data}
                     dataBrackets={dataBrackets}
                     dataType={dataType}
+                    fillMissing={fillMissing}
                     locations={locations}
                     mapPin={pinView}
                     opaque={opaque}
@@ -97,6 +105,7 @@ const Selection = ({ data, dataType, format, locations, map }) => {
                                             data={data}
                                             dataBrackets={dataBrackets}
                                             dataType={dataType}
+                                            fillMissing={fillMissing}
                                             key={`${dataType}-xval: ${xval} yval: ${yval}`}
                                             locations={locations}
                                             mapPin={pinView}

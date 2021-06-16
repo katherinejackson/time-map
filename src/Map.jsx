@@ -64,6 +64,7 @@ const Map = (
         data,
         dataBrackets,
         dataType,
+        fillMissing,
         locations,
         mapPin,
         opaque,
@@ -89,7 +90,7 @@ const Map = (
             drawLocationClusters()
         }
 
-    }, [selections, p5, map, mapPin, hover, opaque, yearIndication])
+    }, [selections, p5, map, mapPin, hover, opaque, yearIndication, fillMissing])
 
     useEffect(() => {
         if (redrawMap) {
@@ -157,7 +158,7 @@ const Map = (
             startY = startY - getPinAdjustment(newSelections, shape, locationData)
         }
 
-        spiral(dataType, interval, locationData, x, y, mapPin, p5, getRadius(newSelections), newSelections, x, startY, opaque, hover, yearIndication)
+        spiral(dataType, interval, locationData, x, y, mapPin, p5, getRadius(newSelections), newSelections, x, startY, opaque, hover, yearIndication, fillMissing)
         p5.fill('black')
         p5.textSize(10)
         if (hover) {
@@ -189,7 +190,7 @@ const Map = (
             startY = y - getPinAdjustment(newSelections, shape, locationData)
         }
 
-        rectangle(dataType, interval, locationData, x, y, mapPin, p5, newSelections, startX, startY, opaque, hover, yearIndication)
+        rectangle(dataType, interval, locationData, x, y, mapPin, p5, newSelections, startX, startY, opaque, hover, yearIndication, fillMissing)
         p5.fill('black')
         p5.textSize(10)
         if (hover) {
@@ -217,7 +218,7 @@ const Map = (
         let startX = x - daysPerRow * hoverSelections[rectValues.DAY_WIDTH] / 2;
         let startY = y - ((hoverSelections[rectValues.NUM_ROWS] * (hoverSelections[rectValues.SPACE_BETWEEN_ROWS] + hoverSelections[rectValues.ROW_HEIGHT])) * locationData.length) / 2
 
-        rectangle(dataType, interval, locationData, x, y, false, p5, hoverSelections, startX, startY)
+        rectangle(dataType, interval, locationData, x, y, false, p5, hoverSelections, startX, startY, opaque, hover, yearIndication, fillMissing)
     }
 
     const drawAnimatedRect = (x, y, ids, animSelections, numDays) => {
@@ -240,7 +241,7 @@ const Map = (
         let startX = x;
         let startY = y - ((animSelections[rectValues.NUM_ROWS] * (animSelections[rectValues.SPACE_BETWEEN_ROWS] + animSelections[rectValues.ROW_HEIGHT])) * newData.length) / 2
 
-        rectangle(dataType, interval, newData, x, y, false, p5, animSelections, startX, startY)
+        rectangle(dataType, interval, newData, x, y, false, p5, animSelections, startX, startY, opaque, hover, yearIndication, fillMissing)
     }
 
     const setup = (p5, parent) => {
@@ -504,6 +505,8 @@ const Map = (
 
                 if (counter !== 0) {
                     newYear.push(Math.ceil(sum / counter * 100) / 100)
+                } else {
+                    newYear.push('')
                 }
             }
 
