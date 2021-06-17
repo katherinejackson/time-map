@@ -464,22 +464,21 @@ const Map = (
             [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],
             [rectValues.DAY_WIDTH]: 0.25,
         }
-        const ids = detailed
-        const { minDistanceY } = getMinDistance(newSelections, formats.RECT.id)
-        const rowHeight = 20 + minDistanceY * 2
+        const {pinHeight} = getRowSize(newSelections, detailed.length, selections[rectValues.NUM_YEARS])
+        const locationHeight = pinHeight + 20
 
         p5.fill('white')
-        p5.rect(mapWidth - 150, 0, 150, ids.length * rowHeight)
+        p5.rect(mapWidth - 150, 0, 150, locationHeight * detailed.length)
         p5.textAlign(p5.LEFT, p5.TOP)
 
-        ids.forEach((id, index) => {
+        detailed.forEach((id, index) => {
             p5.fill('black')
             p5.textSize(10)
-            p5.text(locations[id].name, mapWidth - 150, index * rowHeight)
-            drawHoverRect(mapWidth - 75, index * rowHeight + 20, id, newSelections)
+            p5.text(locations[id].name, mapWidth - 150, index * locationHeight)
+            drawHoverRect(mapWidth - 75, index * locationHeight + pinHeight/2 + 10, id, newSelections)
         })
 
-        setDetailedHeight(rowHeight)
+        setDetailedHeight(locationHeight)
     }
 
     const averageData = (locations) => {

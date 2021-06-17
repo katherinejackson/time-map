@@ -65,7 +65,7 @@ export const rectangle = (
                 p5.rect(x, y, 1, selections[rectValues.ROW_HEIGHT])
             } else {
                 if (fillMissing) {
-                    p5.fill(150, 150, 150, 100)
+                    p5.fill(175, 175, 175, 100)
                     p5.rect(x, y, 1, selections[rectValues.ROW_HEIGHT])
                 }
             }
@@ -302,12 +302,13 @@ export const getRadius = (selections, locationData) => {
         + selections[spiralValues.SPIRAL_WIDTH] / 2
 }
 
-export const getRowSize = (selections, numLocations) => {
+export const getRowSize = (selections, numLocations, numYears) => {
     const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
     const dayWidth = Math.min(selections[rectValues.DAY_WIDTH] + numLocations / 25, 1)
     const rowWidth = daysPerRow * dayWidth
     const rowHeight = Math.min(selections[rectValues.ROW_HEIGHT] + numLocations * 1.5, 30)
+    const pinHeight = (selections[rectValues.NUM_ROWS] * selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT]) * numYears
 
-    return { dayWidth, rowWidth, rowHeight }
+    return { dayWidth, rowWidth, rowHeight, pinHeight }
 }
 
