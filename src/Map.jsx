@@ -218,7 +218,7 @@ const Map = (
         let startX = x - daysPerRow * hoverSelections[rectValues.DAY_WIDTH] / 2;
         let startY = y - ((hoverSelections[rectValues.NUM_ROWS] * (hoverSelections[rectValues.SPACE_BETWEEN_ROWS] + hoverSelections[rectValues.ROW_HEIGHT])) * locationData.length) / 2
 
-        rectangle(dataType, interval, locationData, x, y, false, p5, hoverSelections, startX, startY, opaque, hover, yearIndication, fillMissing)
+        rectangle(dataType, interval, locationData, x, y, false, p5, hoverSelections, startX, startY, opaque, false, yearIndication, fillMissing)
     }
 
     const drawAnimatedRect = (x, y, ids, animSelections, numDays) => {
@@ -458,14 +458,18 @@ const Map = (
     }
 
     const drawDetailed = () => {
-        let newSelections = getDefaultSelections(formats.RECT.id, dataType)
-        newSelections = {
-            ...newSelections,
-            [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],
-            [rectValues.DAY_WIDTH]: 0.25,
+        let newSelections = selections
+        if (shape === formats.SPIRAL.id) {
+            newSelections = getDefaultSelections(formats.RECT.id, dataType)
+            newSelections = {
+                ...newSelections,
+                [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],
+                [rectValues.DAY_WIDTH]: 0.25,
+            }
         }
+        
         const {pinHeight} = getRowSize(newSelections, detailed.length, selections[rectValues.NUM_YEARS])
-        const locationHeight = pinHeight + 20
+        const locationHeight = pinHeight + 30
 
         p5.fill('white')
         p5.rect(mapWidth - 150, 0, 150, locationHeight * detailed.length)
@@ -475,7 +479,7 @@ const Map = (
             p5.fill('black')
             p5.textSize(10)
             p5.text(locations[id].name, mapWidth - 150, index * locationHeight)
-            drawHoverRect(mapWidth - 75, index * locationHeight + pinHeight/2 + 10, id, newSelections)
+            drawHoverRect(mapWidth - 75, index * locationHeight + pinHeight/2 + 15, id, newSelections)
         })
 
         setDetailedHeight(locationHeight)
