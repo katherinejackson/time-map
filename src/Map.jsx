@@ -158,7 +158,7 @@ const Map = (
             startY = startY - getPinAdjustment(newSelections, shape, locationData)
         }
 
-        spiral(dataType, interval, locationData, x, y, mapPin, p5, getRadius(newSelections), newSelections, x, startY, opaque, hover, yearIndication, fillMissing)
+        spiral(dataType, interval, locationData, x, y, mapPin, p5, newSelections, x, startY, opaque, hover, yearIndication, fillMissing)
         p5.fill('black')
         p5.textSize(10)
         if (hover) {

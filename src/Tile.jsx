@@ -25,6 +25,7 @@ const Tile = (
         data,
         dataBrackets,
         dataType,
+        fillMissing,
         locations,
         mapPin,
         opaque,
@@ -70,7 +71,7 @@ const Tile = (
             startY = startY - getPinAdjustment(selections, shape, locationData)
         }
 
-        spiral(dataType, interval, locationData, x, y, mapPin, p5, getRadius(selections), selections, x, startY, opaque, true, yearIndication )
+        spiral(dataType, interval, locationData, x, y, mapPin, p5, selections, x, startY, opaque, true, yearIndication, fillMissing)
         p5.fill('black')
         p5.textSize(10)
         p5.text("1", x - 2, startY)
@@ -88,7 +89,7 @@ const Tile = (
             startY = y - getPinAdjustment(selections, shape, locationData)
         }
 
-        rectangle(dataType, interval, locationData, x, y, mapPin, p5, selections, startX, startY)
+        rectangle(dataType, interval, locationData, x, y, mapPin, p5, selections, startX, startY, opaque, true, yearIndication, fillMissing)
         p5.fill('black')
         p5.textSize(10)
         if (hover) {

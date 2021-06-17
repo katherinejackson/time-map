@@ -126,7 +126,6 @@ export const spiral = (
     locationY,
     mapPin,
     p5,
-    radius,
     selections,
     startX,
     startY,
@@ -139,6 +138,7 @@ export const spiral = (
     let spiralTightness = selections[spiralValues.SPACE_BETWEEN_SPIRAL]
     let angle = -Math.PI / 2
     let coreSize = selections[spiralValues.CORE_SIZE];
+    let radius = getRadius(selections, locationData)
 
     if (hover && (yearIndicator === yearIndicators.MONTHS.val || yearIndicator === yearIndicators.MONTHS_TICKS.val)) {
         let tempData = locationData
