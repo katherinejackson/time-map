@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { drawLegend } from "./legend"
 import { formats, rectValues, spiralValues } from './constants'
 import { getDefaultSelections, getInterval, getManualInterval } from "./helpers";
-import { rectangle, spiral, getSpiralSize, getRadius, getRowSize } from "./shapes";
+import { rectangle, spiral, getSpiralSize, getRadius, getRowSize, getPinAdjustment } from "./shapes";
 
 const Mappa = window.Mappa;
 const mapWidth = window.innerWidth * 0.95
@@ -43,20 +43,6 @@ const getMinDistance = (selections, shape, mapPin = false) => {
     }
 
     return { minDistanceX, minDistanceY }
-}
-
-const getPinAdjustment = (selections, shape, locationData) => {
-    let numYears = locationData ? locationData.length : selections[rectValues.NUM_YEARS]
-    let startY = 0
-
-    if (shape === formats.SPIRAL.id) {
-        const radius = getRadius(selections, locationData)
-        startY = radius + 15
-    } else {
-        startY = 7 + ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * numYears)
-    }
-
-    return startY
 }
 
 const Map = (
@@ -176,7 +162,7 @@ const Map = (
         }
 
         let numLocations = hover ? getHoverTransform(ids.length) : ids.length
-        let { dayWidth, rowWidth, rowHeight } = getRowSize(selections, numLocations)
+        let { dayWidth, rowWidth, rowHeight } = getRowSize(selections, numLocations, locationData.length)
         const newSelections = {
             ...selections,
             [rectValues.DAY_WIDTH]: dayWidth,
@@ -387,7 +373,7 @@ const Map = (
                                 [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
                             }
                         } else {
-                            let { dayWidth, rowHeight } = getRowSize(selections, numLocations)
+                            let { dayWidth, rowHeight } = getRowSize(selections, numLocations, selections[rectValues.NUM_YEARS])
 
                             newSelections = {
                                 ...selections,

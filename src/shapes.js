@@ -1,4 +1,4 @@
-import { colours, manualIntervals, radianPerDay, radianPerMonth, rectValues, spiralValues, months, yearIndicators, monthColours, abbreviatedMonths } from "./constants";
+import { colours, manualIntervals, radianPerDay, radianPerMonth, rectValues, spiralValues, months, yearIndicators, monthColours, abbreviatedMonths, formats } from "./constants";
 import { fillColourGradient, getColour, getManualIntervalColour } from "./helpers";
 
 export const rectangle = (
@@ -314,5 +314,19 @@ export const getRowSize = (selections, numLocations, numYears) => {
     const pinHeight = (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT]) * selections[rectValues.NUM_ROWS] * numYears
 
     return { dayWidth, rowWidth, rowHeight, pinHeight }
+}
+
+export const getPinAdjustment = (selections, shape, locationData) => {
+    let numYears = locationData ? locationData.length : selections[rectValues.NUM_YEARS]
+    let startY = 0
+
+    if (shape === formats.SPIRAL.id) {
+        const radius = getRadius(selections, locationData)
+        startY = radius + 15
+    } else {
+        startY = 7 + ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * numYears)
+    }
+
+    return startY
 }
 

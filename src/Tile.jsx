@@ -3,22 +3,9 @@ import React, { useEffect, useState } from "react";
 
 import { formats, rectValues, spiralValues } from './constants'
 import { getInterval, getManualInterval } from "./helpers";
-import { rectangle, spiral, getRadius} from "./shapes";
+import { rectangle, spiral, getPinAdjustment, getRowSize} from "./shapes";
 import { drawLegend } from "./legend";
 
-const getPinAdjustment = (selections, shape, locationData) => {
-    let numYears = locationData ? locationData.length : selections[rectValues.NUM_YEARS]
-    let startY = 0
-
-    if (shape === formats.SPIRAL.id) {
-        const radius = getRadius(selections, locationData)
-        startY = radius + 15
-    } else {
-        startY = 5 + ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * numYears)
-    }
-
-    return startY
-}
 
 const Tile = (
     {
@@ -48,11 +35,17 @@ const Tile = (
     }, [selections, p5, opaque, yearIndication])
 
     const getLocationData = (id) => {
-        return data[id].data.slice(
-            data[id].data.length - selections[spiralValues.NUM_YEARS] > 0
-                ? data[id].data.length - selections[spiralValues.NUM_YEARS]
-                : 0,
-            data[id].data.length)
+        let newData = []
+        let years = Object.keys(data[id].data)
+        if (years.length - selections[spiralValues.NUM_YEARS] > 0) {
+            years = years.slice(years.length - selections[spiralValues.NUM_YEARS], years.length)
+        } 
+
+        years.forEach(year =>  {
+            newData.push(data[id].data[year])
+        })
+
+        return newData
     }
 
     const drawPin = (x, y, ids, hover = false) => {
@@ -82,6 +75,7 @@ const Tile = (
         const daysPerRow = Math.ceil(365/selections[rectValues.NUM_ROWS])
         const dayWidth = selections[rectValues.DAY_WIDTH]
         const rowWidth = daysPerRow * dayWidth
+
         const pinHeight = ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * locationData.length)
         let startX = x - rowWidth / 2;
         let startY = y -  pinHeight/ 2
@@ -109,8 +103,8 @@ const Tile = (
         p5.fill(255)
         p5.rect(0, 0, canvasSize, canvasSize)
         p5.noStroke()
-        drawPin(canvasSize / 2, canvasSize / 2, [locations[0].id])
-        drawLegend(p5, canvasSize / 2, 1, selections, interval, dataType)
+        drawPin(canvasSize/2, canvasSize /2, [locations[0].id])
+        drawLegend(p5, canvasSize/2, 1, selections, interval, dataType)
         p5.noLoop()
     }
 
