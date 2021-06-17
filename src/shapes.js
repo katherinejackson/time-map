@@ -82,35 +82,39 @@ export const rectangle = (
     })
 
     if (yearIndication === yearIndicators.TICKS.val) {
+        const ticksRequired = 12 * selections[rectValues.NUM_ROWS]
         p5.stroke(50)
         
-        const tickSpace = rowWidth/12
+        const tickSpace = rowWidth/ticksRequired
         for (let i = startX; i <= startX + rowWidth; i = i + tickSpace) {
             p5.line(i, startY - 3, i, startY - 1)
         } 
 
         p5.noStroke()
     } else if (yearIndication === yearIndicators.COLOURS.val) {
-        const tickSpace = rowWidth/12
-        for (let i = 0; i < 12; i++) {
-            p5.fill(monthColours[i])
+        const ticksRequired = 12 * selections[rectValues.NUM_ROWS]
+        const tickSpace = rowWidth/ticksRequired
+        for (let i = 0; i < ticksRequired; i++) {
+            p5.fill(monthColours[i%12])
             p5.rect(startX + i * tickSpace, startY - 4, tickSpace, 2)
         } 
 
         p5.noStroke()
     } else if (yearIndication === yearIndicators.MONTHS.val && hover) {
-        const tickSpace = rowWidth/12
-        for (let i = 0; i < 12; i++) {
+        const ticksRequired = 12 * selections[rectValues.NUM_ROWS]
+        const tickSpace = rowWidth/ticksRequired
+        for (let i = 0; i < ticksRequired; i++) {
             p5.textSize(6)
             p5.fill(0)
-            p5.text(abbreviatedMonths[i],startX + i * tickSpace + tickSpace/2, startY - 6)
+            p5.text(abbreviatedMonths[i%12],startX + i * tickSpace + tickSpace/2, startY - 6)
         } 
     } else if (yearIndication === yearIndicators.MONTHS_TICKS.val && hover) {
-        const tickSpace = rowWidth/12
-        for (let i = 0; i < 12; i++) {
+        const ticksRequired = 12 * selections[rectValues.NUM_ROWS]
+        const tickSpace = rowWidth/ticksRequired
+        for (let i = 0; i < ticksRequired; i++) {
             p5.textSize(6)
             p5.fill(0)
-            p5.text(abbreviatedMonths[i], startX + i * tickSpace + tickSpace/2, startY - 6)
+            p5.text(abbreviatedMonths[i%12], startX + i * tickSpace + tickSpace/2, startY - 6)
             p5.stroke(0, 0, 0, 150)
             p5.line(startX + i * tickSpace, startY - 10, startX + i * tickSpace, startY + pinHeight)
             p5.noStroke()
@@ -307,7 +311,7 @@ export const getRowSize = (selections, numLocations, numYears) => {
     const dayWidth = Math.min(selections[rectValues.DAY_WIDTH] + numLocations / 25, 1)
     const rowWidth = daysPerRow * dayWidth
     const rowHeight = Math.min(selections[rectValues.ROW_HEIGHT] + numLocations * 1.5, 30)
-    const pinHeight = (selections[rectValues.NUM_ROWS] * selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT]) * numYears
+    const pinHeight = (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT]) * selections[rectValues.NUM_ROWS] * numYears
 
     return { dayWidth, rowWidth, rowHeight, pinHeight }
 }
