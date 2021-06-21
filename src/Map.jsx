@@ -101,9 +101,9 @@ const Map = (
         let years = Object.keys(data[id].data)
         if (years.length - selections[spiralValues.NUM_YEARS] > 0) {
             years = years.slice(years.length - selections[spiralValues.NUM_YEARS], years.length)
-        } 
+        }
 
-        years.forEach(year =>  {
+        years.forEach(year => {
             newData.push(data[id].data[year])
         })
 
@@ -190,9 +190,9 @@ const Map = (
             p5.text(ids.length, x, y + 8)
         } else {
             p5.fill(255, 255, 255, 250)
-            p5.ellipse(x, y + pinHeight/2 + 8, 16, 16)
+            p5.ellipse(x, y + pinHeight / 2 + 8, 16, 16)
             p5.fill(0)
-            p5.text(ids.length, x, y + pinHeight/2 + 8)
+            p5.text(ids.length, x, y + pinHeight / 2 + 8)
         }
 
     }
@@ -384,7 +384,7 @@ const Map = (
 
                         let { minDistanceX, minDistanceY } = getMinDistance(newSelections, shape, mapPin)
                         let newLocations = shouldCluster[0].locations.concat(shouldCluster[1].locations)
-                        let {x, y} = averageCoords(newLocations)
+                        let { x, y } = averageCoords(newLocations)
                         let newCluster = {
                             x: x,
                             y: y,
@@ -453,8 +453,8 @@ const Map = (
                 [rectValues.DAY_WIDTH]: 0.25,
             }
         }
-        
-        const {pinHeight} = getRowSize(newSelections, detailed.length, selections[rectValues.NUM_YEARS])
+
+        const { pinHeight } = getRowSize(newSelections, detailed.length, selections[rectValues.NUM_YEARS])
         const locationHeight = pinHeight + 30
 
         p5.fill('white')
@@ -465,7 +465,7 @@ const Map = (
             p5.fill('black')
             p5.textSize(10)
             p5.text(locations[id].name, mapWidth - 150, index * locationHeight)
-            drawHoverRect(mapWidth - 75, index * locationHeight + pinHeight/2 + 15, id, newSelections)
+            drawHoverRect(mapWidth - 75, index * locationHeight + pinHeight / 2 + 15, id, newSelections)
         })
 
         setDetailedHeight(locationHeight)
@@ -518,9 +518,9 @@ const Map = (
             y = y + locations[id].y
         })
 
-        let newLocation = map.latLngToPixel(x/ids.length, y/ids.length)
+        let newLocation = map.latLngToPixel(x / ids.length, y / ids.length)
 
-        return {x: newLocation.x, y: newLocation.y}
+        return { x: newLocation.x, y: newLocation.y }
     }
 
 
