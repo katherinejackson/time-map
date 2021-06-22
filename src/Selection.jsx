@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import Tile from "./Tile";
-import Map from "./Map"
+import LeafletMap from "./LeafletMap"
 import FilterPanel from "./FilterPanel"
 import { getDataBrackets, getDefaultSelections } from "./helpers";
 import { formats, rectVariables, spiralVariables, yearIndicators } from './constants'
@@ -75,7 +75,7 @@ const Selection = ({ data, dataType, format, locations, map }) => {
             />
 
             {map ? (
-                <Map
+                <LeafletMap
                     data={data}
                     dataBrackets={dataBrackets}
                     dataType={dataType}
@@ -109,7 +109,7 @@ const Selection = ({ data, dataType, format, locations, map }) => {
                                             key={`${dataType}-xval: ${xval} yval: ${yval}`}
                                             locations={locations}
                                             mapPin={pinView}
-                                            numX={variables[axis["x-axis"]]?.values?.length}
+                                            // numX={variables[axis["x-axis"]]?.values?.length}
                                             opaque={opaque}
                                             selections={{ ...selections, [axis["x-axis"]]: xval, [axis["y-axis"]]: yval }}
                                             shape={format}

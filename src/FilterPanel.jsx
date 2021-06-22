@@ -1,3 +1,4 @@
+import React from "react";
 import { yearIndicators } from "./constants"
 
 const FilterPanel = ({
