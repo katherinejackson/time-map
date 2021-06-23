@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 
 import { formats, rectValues, spiralValues } from './constants'
 import { getInterval, getManualInterval } from "./helpers";
-import { rectangle, spiral, getPinAdjustment, getRowSize} from "./shapes";
+import { rectangle, spiral, getPinAdjustment } from "./shapes";
 import { drawLegend } from "./legend";
 
 
@@ -39,9 +39,9 @@ const Tile = (
         let years = Object.keys(data[id].data)
         if (years.length - selections[spiralValues.NUM_YEARS] > 0) {
             years = years.slice(years.length - selections[spiralValues.NUM_YEARS], years.length)
-        } 
+        }
 
-        years.forEach(year =>  {
+        years.forEach(year => {
             newData.push(data[id].data[year])
         })
 
@@ -72,13 +72,13 @@ const Tile = (
 
     const drawRect = (x, y, id, hover = false) => {
         let locationData = getLocationData(id)
-        const daysPerRow = Math.ceil(365/selections[rectValues.NUM_ROWS])
+        const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
         const dayWidth = selections[rectValues.DAY_WIDTH]
         const rowWidth = daysPerRow * dayWidth
 
         const pinHeight = ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * locationData.length)
         let startX = x - rowWidth / 2;
-        let startY = y -  pinHeight/ 2
+        let startY = y - pinHeight / 2
         if (mapPin) {
             startY = y - getPinAdjustment(selections, shape, locationData)
         }
@@ -89,7 +89,7 @@ const Tile = (
         if (hover) {
             p5.textSize(16)
         }
-        p5.text("1", x, y + pinHeight/2 + 5)
+        p5.text("1", x, y + pinHeight / 2 + 5)
     }
 
     const setup = (p5, parent) => {
@@ -103,8 +103,8 @@ const Tile = (
         p5.fill(255)
         p5.rect(0, 0, canvasSize, canvasSize)
         p5.noStroke()
-        drawPin(canvasSize/2, canvasSize /2, [locations[0].id])
-        drawLegend(p5, canvasSize/2, 1, selections, interval, dataType)
+        drawPin(canvasSize / 2, canvasSize / 2, [locations[0].id])
+        drawLegend(p5, canvasSize / 2, 1, selections, interval, dataType)
         p5.noLoop()
     }
 

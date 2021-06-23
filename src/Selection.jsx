@@ -4,7 +4,7 @@ import Tile from "./Tile";
 import LeafletMap from "./LeafletMap"
 import FilterPanel from "./FilterPanel"
 import { getDataBrackets, getDefaultSelections } from "./helpers";
-import { formats, rectVariables, spiralVariables, yearIndicators } from './constants'
+import { formats, rectVariables, spiralVariables } from './constants'
 
 const Selection = ({ data, dataType, format, locations, map }) => {
     const dataBrackets = getDataBrackets(data)

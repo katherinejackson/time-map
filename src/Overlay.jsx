@@ -75,15 +75,15 @@ const Overlay = ({
     }, [animated.index])
 
     useEffect(() => {
-        if (p5) {
-            draw(p5)
+        if (p5 && detailed.length) {
+            drawLocationClusters(p5, locationClusters)
         }
     }, [detailed])
 
     useEffect(() => {
         if (map && p5) {
             map.on('move', () => { 
-                resetClusters(true)
+                updateClusters(p5, locationClusters)
             })
             map.on('zoomstart', () => {
                 clearMap()
@@ -92,7 +92,7 @@ const Overlay = ({
                 resetClusters(true)
             })
         }
-    }, [map, p5, selections])
+    }, [map, p5, selections, mapPin, hover, opaque, yearIndication, fillMissing])
 
     const getLocationData = (id) => {
         let newData = []
@@ -148,6 +148,7 @@ const Overlay = ({
         if (hover) {
             p5.textSize(15)
         }
+        p5.textAlign(p5.CENTER, p5.CENTER)
         p5.text(ids.length, x - 2, startY + 1)
     }
 
@@ -177,6 +178,7 @@ const Overlay = ({
         rectangle(dataType, interval, locationData, x, y, mapPin, p5, newSelections, startX, startY, opaque, hover, yearIndication, fillMissing)
         p5.fill('black')
         p5.textSize(10)
+        p5.textAlign(p5.CENTER, p5.CENTER)
         if (hover) {
             p5.textSize(16)
         }
@@ -337,6 +339,18 @@ const Overlay = ({
         }
     }
 
+    const updateClusters = (p5, clusters) => {
+        let newClusters = []
+        clusters.forEach((cluster, index) => {
+            let updated = map.latLngToContainerPoint([cluster.lat, cluster.long])
+            newClusters[index] = {...cluster, x: updated.x, y: updated.y}
+        })
+
+        setClusters(newClusters)
+
+        drawLocationClusters(p5, newClusters)
+    }
+
     const resetClusters = (redraw=false) => {
         const newClusters = []
 
@@ -346,6 +360,8 @@ const Overlay = ({
             newClusters.push({
                 x: location.x,
                 y: location.y,
+                lat: item.x,
+                long: item.y,
                 locations: [item.id],
                 minDistanceX,
                 minDistanceY
@@ -381,10 +397,13 @@ const Overlay = ({
 
                 let { minDistanceX, minDistanceY } = getMinDistance(newSelections, shape, mapPin)
                 let newLocations = shouldCluster[0].locations.concat(shouldCluster[1].locations)
-                let { x, y } = averageCoords(newLocations)
+                let { x, y, lat, long } = averageCoords(newLocations)
+
                 let newCluster = {
                     x: x,
                     y: y,
+                    lat: lat, 
+                    long: long,
                     locations: newLocations,
                     minDistanceX,
                     minDistanceY,
@@ -543,7 +562,8 @@ const Overlay = ({
 
         let newLocation = map.latLngToContainerPoint([x / ids.length, y / ids.length])
 
-        return { x: newLocation.x, y: newLocation.y }
+
+        return { x: newLocation.x, y: newLocation.y, lat: x / ids.length, long: y / ids.length }
     }
 
     return (
