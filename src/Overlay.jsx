@@ -80,18 +80,19 @@ const Overlay = ({
         }
     }, [detailed])
 
-
     useEffect(() => {
         if (map && p5) {
-            map.on('move', () => { resetClusters(p5) })
+            map.on('move', () => { 
+                resetClusters(true)
+            })
             map.on('zoomstart', () => {
                 clearMap()
             })
             map.on('zoomend', () => {
-                resetClusters(p5)
+                resetClusters(true)
             })
         }
-    }, [map, p5])
+    }, [map, p5, selections])
 
     const getLocationData = (id) => {
         let newData = []
@@ -230,10 +231,11 @@ const Overlay = ({
     const setup = (p5, parent) => {
         p5.createCanvas(mapWidth, mapHeight).parent(parent)
         setP5(p5)
+        resetClusters()
     }
 
     const draw = (p5) => {
-        drawLocationClusters(p5)
+        drawLocationClusters(p5, locationClusters)
 
         if (animated.index !== null) {
             p5.loop()
@@ -298,133 +300,151 @@ const Overlay = ({
             pinAdjustment = getPinAdjustment(selections, shape)
         }
 
-        locationClusters.forEach((cluster, index) => {
-            if (Math.abs(p5.mouseX - cluster.x) < cluster.minDistanceX && Math.abs(p5.mouseY - cluster.y + pinAdjustment) < cluster.minDistanceY) {
-                let allDisplayed = true
-                cluster.locations.forEach(id => {
-                    if (!detailed.includes(id)) {
-                        allDisplayed = false
-                    }
-                })
-
-                if (allDisplayed) {
-                    let newDetailed = [...detailed]
+        if (p5.mouseX > 25 && p5.mouseX < 50 && p5.mouseY > 25 && p5.mouseY < 50) {
+            map.zoomIn()
+        } else if (p5.mouseX > 25 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 75) {
+            map.zoomOut()
+        } else {
+            locationClusters.forEach((cluster, index) => {
+                if (Math.abs(p5.mouseX - cluster.x) < cluster.minDistanceX && Math.abs(p5.mouseY - cluster.y + pinAdjustment) < cluster.minDistanceY) {
+                    let allDisplayed = true
                     cluster.locations.forEach(id => {
-                        let index = newDetailed.indexOf(id)
-                        newDetailed.splice(index, 1)
+                        if (!detailed.includes(id)) {
+                            allDisplayed = false
+                        }
                     })
-                    setDetailed(newDetailed)
-                } else {
-                    let { spiralWidth, spiralTightness } = getSpiralSize(selections, getHoverTransform(locationClusters[index].locations.length))
 
-                    const newSelections = {
-                        ...selections,
-                        [spiralValues.SPIRAL_WIDTH]: spiralWidth,
-                        [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
-                    }
-                    setAnimated({ ...animated, index, x: locationClusters[index].x, y: locationClusters[index].y - getRadius(newSelections), width: spiralWidth / 2 })
-                }
+                    if (allDisplayed) {
+                        let newDetailed = [...detailed]
+                        cluster.locations.forEach(id => {
+                            let index = newDetailed.indexOf(id)
+                            newDetailed.splice(index, 1)
+                        })
+                        setDetailed(newDetailed)
+                    } else {
+                        let { spiralWidth, spiralTightness } = getSpiralSize(selections, getHoverTransform(locationClusters[index].locations.length))
 
-            }
-        })
-    }
-
-    const resetClusters = (p5) => {
-        p5.clear()
-        p5.noStroke()
-        if (p5) {
-            const newClusters = []
-
-            locations.forEach((item) => {
-                let { minDistanceX, minDistanceY } = getMinDistance(selections, shape, mapPin)
-                const location = map.latLngToContainerPoint([item.x, item.y])
-                newClusters.push({
-                    x: location.x,
-                    y: location.y,
-                    locations: [item.id],
-                    minDistanceX,
-                    minDistanceY
-                })
-
-            })
-
-            let shouldCluster = true
-
-            while (shouldCluster) {
-                shouldCluster = cluster(newClusters)
-
-                if (!!shouldCluster) {
-                    let newSelections;
-                    let numLocations = (shouldCluster[0].locations.concat(shouldCluster[1].locations)).length
-                    if (shape === formats.SPIRAL.id) {
-                        let { spiralWidth, spiralTightness } = getSpiralSize(selections, numLocations)
-
-                        newSelections = {
+                        const newSelections = {
                             ...selections,
                             [spiralValues.SPIRAL_WIDTH]: spiralWidth,
                             [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
                         }
-                    } else {
-                        let { dayWidth, rowHeight } = getRowSize(selections, numLocations, selections[rectValues.NUM_YEARS])
-
-                        newSelections = {
-                            ...selections,
-                            [rectValues.DAY_WIDTH]: dayWidth,
-                            [rectValues.ROW_HEIGHT]: rowHeight,
-                        }
+                        setAnimated({ ...animated, index, x: locationClusters[index].x, y: locationClusters[index].y - getRadius(newSelections), width: spiralWidth / 2 })
                     }
 
-                    let { minDistanceX, minDistanceY } = getMinDistance(newSelections, shape, mapPin)
-                    let newLocations = shouldCluster[0].locations.concat(shouldCluster[1].locations)
-                    let { x, y } = averageCoords(newLocations)
-                    let newCluster = {
-                        x: x,
-                        y: y,
-                        locations: newLocations,
-                        minDistanceX,
-                        minDistanceY,
-                    }
-
-                    newClusters.splice(newClusters.indexOf(shouldCluster[0]), 1)
-                    newClusters.splice(newClusters.indexOf(shouldCluster[1]), 1)
-                    newClusters.push(newCluster)
                 }
+            })
+        }
+    }
+
+    const resetClusters = (redraw=false) => {
+        const newClusters = []
+
+        locations.forEach((item) => {
+            let { minDistanceX, minDistanceY } = getMinDistance(selections, shape, mapPin)
+            const location = map.latLngToContainerPoint([item.x, item.y])
+            newClusters.push({
+                x: location.x,
+                y: location.y,
+                locations: [item.id],
+                minDistanceX,
+                minDistanceY
+            })
+
+        })
+
+        let shouldCluster = true
+
+        while (shouldCluster) {
+            shouldCluster = cluster(newClusters)
+
+            if (!!shouldCluster) {
+                let newSelections;
+                let numLocations = (shouldCluster[0].locations.concat(shouldCluster[1].locations)).length
+                if (shape === formats.SPIRAL.id) {
+                    let { spiralWidth, spiralTightness } = getSpiralSize(selections, numLocations)
+
+                    newSelections = {
+                        ...selections,
+                        [spiralValues.SPIRAL_WIDTH]: spiralWidth,
+                        [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
+                    }
+                } else {
+                    let { dayWidth, rowHeight } = getRowSize(selections, numLocations, selections[rectValues.NUM_YEARS])
+
+                    newSelections = {
+                        ...selections,
+                        [rectValues.DAY_WIDTH]: dayWidth,
+                        [rectValues.ROW_HEIGHT]: rowHeight,
+                    }
+                }
+
+                let { minDistanceX, minDistanceY } = getMinDistance(newSelections, shape, mapPin)
+                let newLocations = shouldCluster[0].locations.concat(shouldCluster[1].locations)
+                let { x, y } = averageCoords(newLocations)
+                let newCluster = {
+                    x: x,
+                    y: y,
+                    locations: newLocations,
+                    minDistanceX,
+                    minDistanceY,
+                }
+
+                newClusters.splice(newClusters.indexOf(shouldCluster[0]), 1)
+                newClusters.splice(newClusters.indexOf(shouldCluster[1]), 1)
+                newClusters.push(newCluster)
             }
-
-            setClusters(newClusters)
-
-            drawLocationClusters(p5, newClusters)
         }
 
+        setClusters(newClusters)
+
+        if (redraw && p5) {
+            drawLocationClusters(p5, newClusters)
+        }
     }
 
     const drawLocationClusters = (p5, clusters) => {
         p5.clear()
         p5.noStroke()
 
-        clusters?.forEach((cluster, index) => {
-            let withinBounds = cluster.x > 0 && cluster.x < mapWidth && cluster.y > 0 && cluster.y < mapHeight
-            if (index !== hover && withinBounds) {
-                drawPin(cluster.x, cluster.y, cluster.locations)
+        if (clusters.length) {
+            clusters?.forEach((cluster, index) => {
+                let withinBounds = cluster.x > 0 && cluster.x < mapWidth && cluster.y > 0 && cluster.y < mapHeight
+                if (index !== hover && withinBounds) {
+                    drawPin(cluster.x, cluster.y, cluster.locations)
+                }
+
+            })
+
+            if (hover !== null) {
+                drawPin(clusters[hover].x, clusters[hover].y, clusters[hover].locations, true)
             }
 
-        })
-
-        if (hover !== null) {
-            drawPin(clusters[hover].x, clusters[hover].y, clusters[hover].locations, true)
-        }
-
-        if (detailed.length) {
-            drawDetailed()
+            if (detailed.length) {
+                drawDetailed()
+            }
         }
 
         drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType)
+        drawZoom(p5)
     }
 
     const clearMap = () => {
         if (p5) {
             p5.clear()
         }
+    }
+
+    const drawZoom = (p5) => {
+        p5.fill(255)
+        p5.stroke(50)
+        p5.rect(25, 25, 25, 25)
+        p5.rect(25, 50, 25, 25)
+
+        p5.fill(0)
+        p5.text("+", 37, 37)
+        p5.text("-", 37, 62)
+        p5.noStroke()
     }
 
     const cluster = (clusters) => {
