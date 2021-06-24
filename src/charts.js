@@ -1,5 +1,6 @@
 import { colours } from "./constants";
-import { getColour, sortData } from "./helpers";
+import { getColour, sortData } from "./helpers/colours";
+import { getColour} from "./helpers/data";
 
 export const drawBarChart = (p5, data, x, y) => {
     data.forEach((year, yearIndex) => {

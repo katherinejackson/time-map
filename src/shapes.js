@@ -1,5 +1,5 @@
 import { colours, manualIntervals, radianPerDay, radianPerMonth, rectValues, spiralValues, months, yearIndicators, monthColours, abbreviatedMonths, formats } from "./constants";
-import { fillColourGradient, getColour, getManualIntervalColour } from "./helpers";
+import { fillColourGradient, getColour, getManualIntervalColour } from "./helpers/colours";
 
 export const rectangle = (
     dataType,

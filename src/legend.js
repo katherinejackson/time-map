@@ -1,5 +1,5 @@
 import { colours, rectValues } from './constants'
-import { fillColourGradient, getColour } from "./helpers";
+import { fillColourGradient, getColour } from "./helpers/colours";
 
 export const drawLegend = (p5, x, y, selections, interval, dataType) => {
     if (dataType === 'WIND' || dataType === 'PRECIP') {

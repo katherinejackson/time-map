@@ -2,41 +2,16 @@ import Sketch from "react-p5";
 import React, { useEffect, useState } from "react";
 import { useMap } from "react-leaflet";
 
-import { drawLegend } from "./legend"
-import { formats, rectValues, spiralValues } from './constants'
-import { getDefaultSelections, getInterval, getManualInterval } from "./helpers";
+import { drawLegend } from "./legend";
+import { averageData, getLocationData } from "./helpers/data";
+import { getDefaultSelections} from "./helpers/selections";
+import { formats, rectValues, spiralValues } from "./constants";
+import { getInterval, getManualInterval } from "./helpers/intervals";
+import { cluster, averageCoords, getMinDistance } from "./helpers/cluster";
 import { rectangle, spiral, getSpiralSize, getRadius, getRowSize, getPinAdjustment } from "./shapes";
 
 const mapWidth = window.innerWidth * 0.95
 const mapHeight = window.innerHeight * 0.75
-
-const getMinDistance = (selections, shape, mapPin = false) => {
-    let minDistanceX;
-    let minDistanceY;
-
-    if (shape === formats.SPIRAL.id) {
-        let radius = getRadius(selections)
-
-        if (mapPin) {
-            radius = radius + 4
-        }
-
-        minDistanceX = radius * 2
-        minDistanceY = radius * 2
-    } else {
-        const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
-        minDistanceX = daysPerRow * selections[rectValues.DAY_WIDTH]
-        minDistanceY = ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * selections[rectValues.NUM_YEARS])
-
-        if (mapPin) {
-            minDistanceY = minDistanceY + 12
-        } else {
-            minDistanceY = minDistanceY + 4
-        }
-    }
-
-    return { minDistanceX, minDistanceY }
-}
 
 const Overlay = ({
     data,
@@ -60,10 +35,12 @@ const Overlay = ({
     const [detailedHeight, setDetailedHeight] = useState(0)
     const [hover, setHover] = useState(null)
     const [animated, setAnimated] = useState({ index: null, x: 0, y: 0, numDays: 0, width: selections[spiralValues.SPIRAL_WIDTH] })
+    const [redraw, setRedraw] = useState(false)
+    const [recluster, setRecluster] = useState(false)
 
     useEffect(() => {
         if (p5) {
-            drawLocationClusters(p5, locationClusters)
+            drawLocationClusters()
         }
 
     }, [selections, p5, map, mapPin, hover, opaque, yearIndication, fillMissing])
@@ -76,37 +53,45 @@ const Overlay = ({
 
     useEffect(() => {
         if (p5 && detailed.length) {
-            drawLocationClusters(p5, locationClusters)
+            drawLocationClusters()
         }
     }, [detailed])
 
     useEffect(() => {
+        if (redraw) {
+            updateClusters()
+            setRedraw(false)
+        }
+    }, [redraw])
+
+    useEffect(() => {
+        if (recluster) {
+            resetClusters(true)
+            setRecluster(false)
+        }
+    }, [recluster])
+
+    useEffect(() => {
         if (map && p5) {
-            map.on('move', () => { 
-                updateClusters(p5, locationClusters)
+            map.on('drag', () => {
+                setRedraw(true)
             })
+            // map.on('dragstart', () => {
+            //     clearMap()
+            //     // setRedraw(true)
+            //     // updateClusters()
+            // })
+            // map.on('dragend', () => {
+            //     setRedraw(true)
+            // })
             map.on('zoomstart', () => {
                 clearMap()
             })
             map.on('zoomend', () => {
-                resetClusters(true)
+                setRecluster(true)
             })
         }
-    }, [map, p5, selections, mapPin, hover, opaque, yearIndication, fillMissing])
-
-    const getLocationData = (id) => {
-        let newData = []
-        let years = Object.keys(data[id].data)
-        if (years.length - selections[spiralValues.NUM_YEARS] > 0) {
-            years = years.slice(years.length - selections[spiralValues.NUM_YEARS], years.length)
-        }
-
-        years.forEach(year => {
-            newData.push(data[id].data[year])
-        })
-
-        return newData
-    }
+    }, [map, p5])
 
     const getHoverTransform = (numLocations) => {
         return numLocations + 5
@@ -123,9 +108,9 @@ const Overlay = ({
     const drawSpiral = (x, y, ids, hover = false) => {
         let locationData = []
         if (ids.length === 1) {
-            locationData = getLocationData(ids[0])
+            locationData = getLocationData(ids[0], selections, data)
         } else {
-            locationData = averageData(ids)
+            locationData = averageData(ids, selections, data)
         }
 
         let numLocations = hover ? getHoverTransform(ids.length) : ids.length
@@ -155,9 +140,9 @@ const Overlay = ({
     const drawRect = (x, y, ids, hover = false) => {
         let locationData = []
         if (ids.length === 1) {
-            locationData = getLocationData(ids[0])
+            locationData = getLocationData(ids[0], selections, data)
         } else {
-            locationData = averageData(ids)
+            locationData = averageData(ids, selections, data)
         }
 
         let numLocations = hover ? getHoverTransform(ids.length) : ids.length
@@ -198,7 +183,7 @@ const Overlay = ({
     }
 
     const drawHoverRect = (x, y, id, hoverSelections) => {
-        let locationData = getLocationData(id)
+        let locationData = getLocationData(id, selections, data)
         const daysPerRow = Math.ceil(365 / hoverSelections[rectValues.NUM_ROWS])
 
         let startX = x - daysPerRow * hoverSelections[rectValues.DAY_WIDTH] / 2;
@@ -210,9 +195,9 @@ const Overlay = ({
     const drawAnimatedRect = (x, y, ids, animSelections, numDays) => {
         let locationData = []
         if (ids.length === 1) {
-            locationData = getLocationData(ids[0])
+            locationData = getLocationData(ids[0], selections, data)
         } else {
-            locationData = averageData(ids)
+            locationData = averageData(ids, selections, data)
         }
 
         let newData = []
@@ -237,7 +222,7 @@ const Overlay = ({
     }
 
     const draw = (p5) => {
-        drawLocationClusters(p5, locationClusters)
+        drawLocationClusters()
 
         if (animated.index !== null) {
             p5.loop()
@@ -339,19 +324,18 @@ const Overlay = ({
         }
     }
 
-    const updateClusters = (p5, clusters) => {
+    const updateClusters = () => {
         let newClusters = []
-        clusters.forEach((cluster, index) => {
+        locationClusters.forEach((cluster, index) => {
             let updated = map.latLngToContainerPoint([cluster.lat, cluster.long])
-            newClusters[index] = {...cluster, x: updated.x, y: updated.y}
+            newClusters[index] = { ...cluster, x: updated.x, y: updated.y }
         })
 
         setClusters(newClusters)
-
-        drawLocationClusters(p5, newClusters)
+        drawLocationClusters(newClusters)
     }
 
-    const resetClusters = (redraw=false) => {
+    const resetClusters = (redraw = false) => {
         const newClusters = []
 
         locations.forEach((item) => {
@@ -397,12 +381,12 @@ const Overlay = ({
 
                 let { minDistanceX, minDistanceY } = getMinDistance(newSelections, shape, mapPin)
                 let newLocations = shouldCluster[0].locations.concat(shouldCluster[1].locations)
-                let { x, y, lat, long } = averageCoords(newLocations)
+                let { x, y, lat, long } = averageCoords(newLocations, map, locations)
 
                 let newCluster = {
                     x: x,
                     y: y,
-                    lat: lat, 
+                    lat: lat,
                     long: long,
                     locations: newLocations,
                     minDistanceX,
@@ -418,34 +402,36 @@ const Overlay = ({
         setClusters(newClusters)
 
         if (redraw && p5) {
-            drawLocationClusters(p5, newClusters)
+            drawLocationClusters(newClusters)
         }
     }
 
-    const drawLocationClusters = (p5, clusters) => {
-        p5.clear()
-        p5.noStroke()
+    const drawLocationClusters = (clusters = locationClusters) => {
+        if (p5) {
+            p5.clear()
+            p5.noStroke()
 
-        if (clusters.length) {
-            clusters?.forEach((cluster, index) => {
-                let withinBounds = cluster.x > 0 && cluster.x < mapWidth && cluster.y > 0 && cluster.y < mapHeight
-                if (index !== hover && withinBounds) {
-                    drawPin(cluster.x, cluster.y, cluster.locations)
+            if (clusters.length) {
+                clusters?.forEach((cluster, index) => {
+                    let withinBounds = cluster.x > 0 && cluster.x < mapWidth && cluster.y > 0 && cluster.y < mapHeight
+                    if (index !== hover && withinBounds) {
+                        drawPin(cluster.x, cluster.y, cluster.locations)
+                    }
+
+                })
+
+                if (hover !== null && clusters[hover]) {
+                    drawPin(clusters[hover].x, clusters[hover].y, clusters[hover].locations, true)
                 }
 
-            })
-
-            if (hover !== null) {
-                drawPin(clusters[hover].x, clusters[hover].y, clusters[hover].locations, true)
+                if (detailed.length) {
+                    drawDetailed()
+                }
             }
 
-            if (detailed.length) {
-                drawDetailed()
-            }
+            drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType)
+            drawZoom(p5)
         }
-
-        drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType)
-        drawZoom(p5)
     }
 
     const clearMap = () => {
@@ -464,25 +450,6 @@ const Overlay = ({
         p5.text("+", 37, 37)
         p5.text("-", 37, 62)
         p5.noStroke()
-    }
-
-    const cluster = (clusters) => {
-        let result = false
-        for (let c = 0; c < clusters.length; c++) {
-            for (let i = c + 1; i < clusters.length; i++) {
-                if (Math.abs(clusters[c].x - clusters[i].x) < Math.max(clusters[c].minDistanceX, clusters[i].minDistanceX)
-                    && Math.abs(clusters[c].y - clusters[i].y) < Math.max(clusters[c].minDistanceY, clusters[i].minDistanceY)) {
-                    result = [clusters[c], clusters[i]]
-                    break
-                }
-            }
-
-            if (result !== false) {
-                break
-            }
-        }
-
-        return result
     }
 
     const drawDetailed = () => {
@@ -511,59 +478,6 @@ const Overlay = ({
         })
 
         setDetailedHeight(locationHeight)
-    }
-
-    const averageData = (locations) => {
-        let data = []
-        let newData = []
-
-        locations.forEach(id => {
-            data.push(getLocationData(id))
-        })
-
-        for (let year = 0; year < selections[rectValues.NUM_YEARS]; year++) {
-            let newYear = []
-            for (let day = 0; day < 365; day++) {
-                let sum = 0
-                let counter = 0
-
-                for (let loc = 0; loc < data.length; loc++) {
-                    if (data[loc] && data[loc][year] && data[loc][year].length > day) {
-                        if (data[loc][year][day] !== '') {
-                            sum += data[loc][year][day]
-                            counter++
-                        }
-                    }
-                }
-
-                if (counter !== 0) {
-                    newYear.push(Math.ceil(sum / counter * 100) / 100)
-                } else {
-                    newYear.push('')
-                }
-            }
-
-            if (newYear.length) {
-                newData.push(newYear)
-            }
-        }
-
-        return newData
-    }
-
-    const averageCoords = (ids) => {
-        let x = 0
-        let y = 0
-
-        ids.forEach(id => {
-            x = x + locations[id].x
-            y = y + locations[id].y
-        })
-
-        let newLocation = map.latLngToContainerPoint([x / ids.length, y / ids.length])
-
-
-        return { x: newLocation.x, y: newLocation.y, lat: x / ids.length, long: y / ids.length }
     }
 
     return (

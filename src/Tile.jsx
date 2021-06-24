@@ -2,7 +2,7 @@ import Sketch from "react-p5";
 import React, { useEffect, useState } from "react";
 
 import { formats, rectValues, spiralValues } from './constants'
-import { getInterval, getManualInterval } from "./helpers";
+import { getInterval, getManualInterval } from "./helpers/intervals";
 import { rectangle, spiral, getPinAdjustment } from "./shapes";
 import { drawLegend } from "./legend";
 

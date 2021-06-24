@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import Tile from "./Tile";
 import LeafletMap from "./LeafletMap"
 import FilterPanel from "./FilterPanel"
-import { getDataBrackets, getDefaultSelections } from "./helpers";
+import { getDefaultSelections } from "./helpers/selections";
+import { getDataBrackets } from "./helpers/data";
 import { formats, rectVariables, spiralVariables } from './constants'
 
 const Selection = ({ data, dataType, format, locations, map }) => {
@@ -93,9 +94,9 @@ const Selection = ({ data, dataType, format, locations, map }) => {
                         Please make a valid selection
                     </h3>
                 ) : (
-                    <div className="flex-row">
+                    <span className="d-flex flex-row">
                         {variables[axis["x-axis"]].values.map((xval) => (
-                            <div className="flex-col" key={`x-${axis["x-axis"]}-${xval}`}>
+                            <span className="flex-col" key={`x-${axis["x-axis"]}-${xval}`}>
                                 {variables[axis["y-axis"]].values.map((yval) => (
                                     <span
                                         key={`x-${axis["x-axis"]}-${xval} y-${axis["y-axis"]}-${yval}`}
@@ -109,7 +110,7 @@ const Selection = ({ data, dataType, format, locations, map }) => {
                                             key={`${dataType}-xval: ${xval} yval: ${yval}`}
                                             locations={locations}
                                             mapPin={pinView}
-                                            // numX={variables[axis["x-axis"]]?.values?.length}
+                                            numX={variables[axis["x-axis"]]?.values?.length}
                                             opaque={opaque}
                                             selections={{ ...selections, [axis["x-axis"]]: xval, [axis["y-axis"]]: yval }}
                                             shape={format}
@@ -117,9 +118,9 @@ const Selection = ({ data, dataType, format, locations, map }) => {
                                         />
                                     </span>
                                 ))}
-                            </div>
+                            </span>
                         ))}
-                    </div>
+                    </span>
                 )
             )}
         </div>
