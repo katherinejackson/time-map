@@ -7,7 +7,7 @@ import { averageData, getLocationData } from "./helpers/data";
 import { getDefaultSelections} from "./helpers/selections";
 import { formats, rectValues, spiralValues } from "./constants";
 import { getInterval, getManualInterval } from "./helpers/intervals";
-import { cluster, averageCoords, getMinDistance } from "./helpers/cluster";
+import { updateClusters, calculateClusters } from "./helpers/cluster";
 import { rectangle, spiral, getSpiralSize, getRadius, getRowSize, getPinAdjustment } from "./shapes";
 
 const mapWidth = window.innerWidth * 0.95
@@ -59,7 +59,7 @@ const Overlay = ({
 
     useEffect(() => {
         if (redraw) {
-            updateClusters()
+            panClusters()
             setRedraw(false)
         }
     }, [redraw])
@@ -324,80 +324,15 @@ const Overlay = ({
         }
     }
 
-    const updateClusters = () => {
-        let newClusters = []
-        locationClusters.forEach((cluster, index) => {
-            let updated = map.latLngToContainerPoint([cluster.lat, cluster.long])
-            newClusters[index] = { ...cluster, x: updated.x, y: updated.y }
-        })
+    const panClusters = () => {
+        const newClusters = updateClusters(map, locationClusters)
 
         setClusters(newClusters)
         drawLocationClusters(newClusters)
     }
 
     const resetClusters = (redraw = false) => {
-        const newClusters = []
-
-        locations.forEach((item) => {
-            let { minDistanceX, minDistanceY } = getMinDistance(selections, shape, mapPin)
-            const location = map.latLngToContainerPoint([item.x, item.y])
-            newClusters.push({
-                x: location.x,
-                y: location.y,
-                lat: item.x,
-                long: item.y,
-                locations: [item.id],
-                minDistanceX,
-                minDistanceY
-            })
-
-        })
-
-        let shouldCluster = true
-
-        while (shouldCluster) {
-            shouldCluster = cluster(newClusters)
-
-            if (!!shouldCluster) {
-                let newSelections;
-                let numLocations = (shouldCluster[0].locations.concat(shouldCluster[1].locations)).length
-                if (shape === formats.SPIRAL.id) {
-                    let { spiralWidth, spiralTightness } = getSpiralSize(selections, numLocations)
-
-                    newSelections = {
-                        ...selections,
-                        [spiralValues.SPIRAL_WIDTH]: spiralWidth,
-                        [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
-                    }
-                } else {
-                    let { dayWidth, rowHeight } = getRowSize(selections, numLocations, selections[rectValues.NUM_YEARS])
-
-                    newSelections = {
-                        ...selections,
-                        [rectValues.DAY_WIDTH]: dayWidth,
-                        [rectValues.ROW_HEIGHT]: rowHeight,
-                    }
-                }
-
-                let { minDistanceX, minDistanceY } = getMinDistance(newSelections, shape, mapPin)
-                let newLocations = shouldCluster[0].locations.concat(shouldCluster[1].locations)
-                let { x, y, lat, long } = averageCoords(newLocations, map, locations)
-
-                let newCluster = {
-                    x: x,
-                    y: y,
-                    lat: lat,
-                    long: long,
-                    locations: newLocations,
-                    minDistanceX,
-                    minDistanceY,
-                }
-
-                newClusters.splice(newClusters.indexOf(shouldCluster[0]), 1)
-                newClusters.splice(newClusters.indexOf(shouldCluster[1]), 1)
-                newClusters.push(newCluster)
-            }
-        }
+        const newClusters = calculateClusters(locations, selections, shape, mapPin, map)
 
         setClusters(newClusters)
 
