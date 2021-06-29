@@ -32,6 +32,7 @@ const LeafletMap = ({
                 style={style}
                 zoom={6}
                 zoomControl={false}
+                zoomSnap={0.5}
             >
                 <TileLayer
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

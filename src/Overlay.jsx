@@ -76,14 +76,6 @@ const Overlay = ({
             map.on('drag', () => {
                 setRedraw(true)
             })
-            // map.on('dragstart', () => {
-            //     clearMap()
-            //     // setRedraw(true)
-            //     // updateClusters()
-            // })
-            // map.on('dragend', () => {
-            //     setRedraw(true)
-            // })
             map.on('zoomstart', () => {
                 clearMap()
             })
@@ -288,9 +280,10 @@ const Overlay = ({
         }
 
         if (p5.mouseX > 25 && p5.mouseX < 50 && p5.mouseY > 25 && p5.mouseY < 50) {
-            map.zoomIn()
+            map.zoomIn(0.5)
+
         } else if (p5.mouseX > 25 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 75) {
-            map.zoomOut()
+            map.zoomOut(0.5)
         } else {
             locationClusters.forEach((cluster, index) => {
                 if (Math.abs(p5.mouseX - cluster.x) < cluster.minDistanceX && Math.abs(p5.mouseY - cluster.y + pinAdjustment) < cluster.minDistanceY) {
