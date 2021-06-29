@@ -6,6 +6,7 @@ import FilterPanel from "./FilterPanel"
 import { getDefaultSelections } from "./helpers/selections";
 import { getDataBrackets } from "./helpers/data";
 import { formats, rectVariables, spiralVariables } from './constants'
+import SelectionContext from "./SelectionContext";
 
 const Selection = ({ data, dataType, format, locations, map }) => {
     const dataBrackets = getDataBrackets(data)
@@ -57,73 +58,74 @@ const Selection = ({ data, dataType, format, locations, map }) => {
     }
 
     return (
-        <div>
-            <FilterPanel
-                axis={map ? null : axis}
-                fillMissing={fillMissing}
-                format={format}
-                handleSelect={handleSelect}
-                handleAxisSelect={map ? null : handleAxisSelect}
-                handleFillMissingCheck={handleFillMissingCheck}
-                handlePinCheck={handlePinCheck}
-                handleOpaqueCheck={handleOpaqueCheck}
-                handleYearIndicationSelect={handleYearIndicationSelect}
-                opaque={opaque}
-                pinView={pinView}
-                selections={selections}
-                variables={variables}
-                yearIndication={yearIndication}
-            />
-
-            {map ? (
-                <LeafletMap
-                    data={data}
-                    dataBrackets={dataBrackets}
-                    dataType={dataType}
+        <SelectionContext.Provider value={{ selections }}>
+            <div>
+                <FilterPanel
+                    axis={map ? null : axis}
                     fillMissing={fillMissing}
-                    locations={locations}
-                    mapPin={pinView}
+                    format={format}
+                    handleSelect={handleSelect}
+                    handleAxisSelect={map ? null : handleAxisSelect}
+                    handleFillMissingCheck={handleFillMissingCheck}
+                    handlePinCheck={handlePinCheck}
+                    handleOpaqueCheck={handleOpaqueCheck}
+                    handleYearIndicationSelect={handleYearIndicationSelect}
                     opaque={opaque}
+                    pinView={pinView}
                     selections={selections}
-                    shape={format}
+                    variables={variables}
                     yearIndication={yearIndication}
                 />
-            ) : (
-                error ? (
-                    <h3 className="text-danger">
-                        Please make a valid selection
-                    </h3>
+
+                {map ? (
+                    <LeafletMap
+                        data={data}
+                        dataBrackets={dataBrackets}
+                        dataType={dataType}
+                        fillMissing={fillMissing}
+                        locations={locations}
+                        mapPin={pinView}
+                        opaque={opaque}
+                        shape={format}
+                        yearIndication={yearIndication}
+                    />
                 ) : (
-                    <span className="d-flex flex-row">
-                        {variables[axis["x-axis"]].values.map((xval) => (
-                            <span className="flex-col" key={`x-${axis["x-axis"]}-${xval}`}>
-                                {variables[axis["y-axis"]].values.map((yval) => (
-                                    <span
-                                        key={`x-${axis["x-axis"]}-${xval} y-${axis["y-axis"]}-${yval}`}
-                                        title={variables[axis["x-axis"]].name + ': ' + xval + '  ' + variables[axis["y-axis"]].name + ': ' + yval}
-                                    >
-                                        <Tile
-                                            data={data}
-                                            dataBrackets={dataBrackets}
-                                            dataType={dataType}
-                                            fillMissing={fillMissing}
-                                            key={`${dataType}-xval: ${xval} yval: ${yval}`}
-                                            locations={locations}
-                                            mapPin={pinView}
-                                            numX={variables[axis["x-axis"]]?.values?.length}
-                                            opaque={opaque}
-                                            selections={{ ...selections, [axis["x-axis"]]: xval, [axis["y-axis"]]: yval }}
-                                            shape={format}
-                                            yearIndication={yearIndication}
-                                        />
-                                    </span>
-                                ))}
-                            </span>
-                        ))}
-                    </span>
-                )
-            )}
-        </div>
+                    error ? (
+                        <h3 className="text-danger">
+                            Please make a valid selection
+                        </h3>
+                    ) : (
+                        <span className="d-flex flex-row">
+                            {variables[axis["x-axis"]].values.map((xval) => (
+                                <span className="flex-col" key={`x-${axis["x-axis"]}-${xval}`}>
+                                    {variables[axis["y-axis"]].values.map((yval) => (
+                                        <span
+                                            key={`x-${axis["x-axis"]}-${xval} y-${axis["y-axis"]}-${yval}`}
+                                            title={variables[axis["x-axis"]].name + ': ' + xval + '  ' + variables[axis["y-axis"]].name + ': ' + yval}
+                                        >
+                                            <Tile
+                                                data={data}
+                                                dataBrackets={dataBrackets}
+                                                dataType={dataType}
+                                                fillMissing={fillMissing}
+                                                key={`${dataType}-xval: ${xval} yval: ${yval}`}
+                                                locations={locations}
+                                                mapPin={pinView}
+                                                numX={variables[axis["x-axis"]]?.values?.length}
+                                                opaque={opaque}
+                                                selections={{ ...selections, [axis["x-axis"]]: xval, [axis["y-axis"]]: yval }}
+                                                shape={format}
+                                                yearIndication={yearIndication}
+                                            />
+                                        </span>
+                                    ))}
+                                </span>
+                            ))}
+                        </span>
+                    )
+                )}
+            </div>
+        </SelectionContext.Provider>
     )
 }
 

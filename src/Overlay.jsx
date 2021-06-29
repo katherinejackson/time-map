@@ -1,5 +1,5 @@
 import Sketch from "react-p5";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useMap } from "react-leaflet";
 
 import { drawLegend } from "./legend";
@@ -9,6 +9,7 @@ import { formats, rectValues, spiralValues } from "./constants";
 import { getInterval, getManualInterval } from "./helpers/intervals";
 import { updateClusters, calculateClusters } from "./helpers/cluster";
 import { rectangle, spiral, getSpiralSize, getRadius, getRowSize, getPinAdjustment } from "./shapes";
+import SelectionContext from "./SelectionContext";
 
 const mapWidth = window.innerWidth * 0.95
 const mapHeight = window.innerHeight * 0.75
@@ -21,11 +22,11 @@ const Overlay = ({
     locations,
     mapPin,
     opaque,
-    selections,
     shape,
     yearIndication,
 }) => {
     const map = useMap()
+    const {selections} = useContext(SelectionContext)
     const [p5, setP5] = useState(null)
     const interval = dataType === 'TEMP'
         ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])
@@ -74,7 +75,8 @@ const Overlay = ({
     useEffect(() => {
         if (map && p5) {
             map.on('drag', () => {
-                setRedraw(true)
+                panClusters()
+                // setRedraw(true)
             })
             map.on('zoomstart', () => {
                 clearMap()

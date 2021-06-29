@@ -21,7 +21,6 @@ const LeafletMap = ({
     locations,
     mapPin,
     opaque,
-    selections,
     shape,
     yearIndication,
 }) => {
@@ -46,7 +45,6 @@ const LeafletMap = ({
                     locations={locations}
                     mapPin={mapPin}
                     opaque={opaque}
-                    selections={selections}
                     shape={shape}
                     yearIndication={yearIndication}
                 />
