@@ -12,30 +12,115 @@ export const sortData = (pt) => {
     }
 }
 
-export const getDataBrackets = (data) => {
-    let highest;
-    let lowest;
+// export const getDataBrackets = (data) => {
+//     let highest;
+//     let lowest;
+
+//     Object.keys(data).forEach(id => {
+//         Object.keys(data[id].data).forEach(year => {
+//             data[id].data[year].forEach(pt => {
+//                 if (pt) {
+//                     if (!highest || pt > highest) {
+//                         highest = pt
+//                     }
+
+//                     if (!lowest || pt < lowest) {
+//                         lowest = pt
+//                     }
+//                 }
+//             })
+//         })
+//     })
+
+//     lowest = Math.round(lowest * 100) /100
+//     highest = Math.round(highest * 100) /100
+
+//     return { lowest, highest }
+// }
+
+// export const getDataBrackets = (data, xVar, yVar, time) => {
+//     let xHigh;
+//     let xLow;
+//     let yHigh;
+//     let yLow;
+//     let timeHigh;
+//     let timeLow
+
+//     if (data.length) {
+//         data.forEach(entry => {
+//             if (!xHigh || entry[xVar] > xHigh) {
+//                 xHigh = entry[xVar]
+//             }
+
+//             if (!xLow || entry[xVar] < xLow) {
+//                 xLow = entry[xVar]
+//             }
+
+//             if (!yHigh || entry[yVar] > yHigh) {
+//                 yHigh = entry[yVar]
+//             }
+
+//             if (!yLow || entry[yVar] < yLow) {
+//                 yLow = entry[yVar]
+//             }
+
+//             entry[time].forEach(month => {
+//                 if (!timeHigh || month > timeHigh) {
+//                     timeHigh = month
+//                 }
+
+//                 if (!timeLow || month < timeLow) {
+//                     timeLow = month
+//                 }
+//             })
+//         })
+//     }
+
+//     return {xHigh, xLow, yHigh, yLow, timeHigh, timeLow}
+// }
+
+export const getVariableBrackets = (data, variable) => {
+    let high;
+    let low = 0;
 
     Object.keys(data).forEach(id => {
-        Object.keys(data[id].data).forEach(year => {
-            data[id].data[year].forEach(pt => {
-                if (pt) {
-                    if (!highest || pt > highest) {
-                        highest = pt
-                    }
-    
-                    if (!lowest || pt < lowest) {
-                        lowest = pt
-                    }
+        if (!high || data[id][variable] > high) {
+            high = data[id][variable]
+        }
+    })
+
+    return { high, low }
+}
+
+export const getDataBracketsMultiYear = (data, variable) => {
+    let high;
+    let low = 0;
+
+    Object.keys(data).forEach(id => {
+        Object.keys(data[id][variable]).forEach(year => {
+            data[id][variable][year].forEach(day => {
+                if (!high || day > high) {
+                    high = day
                 }
             })
         })
     })
 
-    lowest = Math.round(lowest * 100) /100
-    highest = Math.round(highest * 100) /100
+    return { high, low }
+}
 
-    return { lowest, highest }
+export const getDataCategories = (data, variable) => {
+    let categories = {}
+
+    Object.keys(data).forEach(id => {
+        if (!Object.keys(categories).includes(data[id][variable])) {
+            categories[data[id][variable]] = 1
+        } else {
+            categories[data[id][variable]] = categories[data[id][variable]] + 1
+        }
+    })
+
+    return categories
 }
 
 export const averageData = (locations, selections, allData) => {

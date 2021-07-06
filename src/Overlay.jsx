@@ -18,15 +18,10 @@ const Overlay = ({
     data,
     dataBrackets,
     dataType,
-    fillMissing,
     locations,
-    mapPin,
-    opaque,
-    shape,
-    yearIndication,
 }) => {
     const map = useMap()
-    const {selections} = useContext(SelectionContext)
+    const {selections, fillMissing, mapPin, opaque, shape, yearIndication} = useContext(SelectionContext)
     const [p5, setP5] = useState(null)
     const interval = dataType === 'TEMP'
         ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])

@@ -52,7 +52,7 @@ export const fillColourGradient = (p5, pt, interval, numColours) => {
         }
     } else if (numColours === 360) {
         const range = interval.highest - interval.lowest
-        const newPt = (range - (-1 * interval.lowest + pt)) * 270/range
+        const newPt = Math.floor((range - (-1 * interval.lowest + pt)) * 270/range)
         p5.colorMode(p5.HSB, 360, 100, 100)
         p5.fill(newPt, 100, 95)
     }

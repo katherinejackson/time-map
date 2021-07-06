@@ -122,6 +122,56 @@ export const rectangle = (
     }
 }
 
+export const monthSpiral = (p5, startX, startY, data, highest, lowest) => {
+    let spiralWidth = 30
+    let spiralTightness = 0.25
+    let angle = -Math.PI / 2
+    let coreSize = 0
+
+    data.forEach(month => {
+        let x = startX + p5.cos(angle) * coreSize
+        let y = startY + p5.sin(angle) * coreSize
+        
+        fillColourGradient(p5, month, {highest, lowest}, 360)
+        p5.noStroke()
+
+        p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerMonth, p5.PIE)
+
+        p5.fill('white')
+        p5.ellipse(startX, startY, 15, 15)
+
+        angle += radianPerMonth
+        coreSize += spiralTightness
+    })
+}
+
+export const scatterSpiral = (p5, startX, startY, data, highest, lowest) => {
+    let spiralWidth = 20
+    let spiralTightness = 0.025
+    let angle = -Math.PI / 2
+    let coreSize = 0
+
+    p5.noStroke()
+    data.forEach(day => {
+        let x = startX + p5.cos(angle) * coreSize
+        let y = startY + p5.sin(angle) * coreSize
+        
+        if (day !== '') {
+            let colour = getManualIntervalColour(day, colours['COVID'][8], manualIntervals['COVID'][8])
+            p5.fill(colour)
+        } else {
+            p5.fill(200)
+        }
+
+        p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerDay * 5, p5.PIE)
+
+
+        angle += radianPerDay
+        coreSize += spiralTightness
+    })
+}
+
+
 export const spiral = (
     dataType,
     interval,
