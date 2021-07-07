@@ -81,11 +81,15 @@ export const sortData = (pt) => {
 
 export const getVariableBrackets = (data, variable) => {
     let high;
-    let low = 0;
+    let low;
 
     Object.keys(data).forEach(id => {
         if (!high || data[id][variable] > high) {
             high = data[id][variable]
+        }
+
+        if (!low || data[id][variable] < low && data[id][variable] > 0) {
+            low = data[id][variable]
         }
     })
 

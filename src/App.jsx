@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import './App.css';
 import { dataSets, formats, views } from "./constants";
 import Selection from "./Selection";
-import { smallData as data } from "./covidData";
+import { bigData as data } from "./covidData";
 import DataContext from './DataContext';
 import { getVariableBrackets, getDataBracketsMultiYear, getDataCategories } from "./helpers/data";
 
@@ -11,10 +11,22 @@ const App = () => {
     const [format, setFormat] = useState(formats.SPIRAL.id)
     const [dataSet, setDataSet] = useState(dataSets.TEMP.val)
     const [view, setView] = useState(null)
+    const [totalDataPts, setTotalDataPts] = useState(null)
 
     const yBrackets = getVariableBrackets(data, 'population')
     const dataBrackets = getDataBracketsMultiYear(data, 'cases')
     const categories = getDataCategories(data, 'continent')
+
+    useEffect(() => {
+        if (!totalDataPts && categories) {
+            let total = 0
+            Object.keys(categories).forEach(cat => {
+                total += categories[cat]
+            })
+
+            setTotalDataPts(total)
+        }
+    }, [categories])
 
     const handleFormatChange = (event) => {
         setFormat(parseInt(event.target.value))
@@ -29,7 +41,7 @@ const App = () => {
     }
 
     return (
-        <DataContext.Provider value={{data, dataType: 'COVID', yBrackets, dataBrackets, categories}}>
+        <DataContext.Provider value={{data, dataType: 'COVID', yBrackets, dataBrackets, categories, totalDataPts}}>
             <div className="container-fluid my-5">
                 <div className="row justify-content-center gap-3">
                     <div className="row justify-content-center">

@@ -122,10 +122,10 @@ export const spiralVariables = {
         5: { default: 1, id: 5, name: "Number of Years", values: [1, 2, 3] },
     },
     COVID: {
-        1: { default: 4, id: 1, name: "Core size", values: [0, 1, 2, 3, 4, 5, 6, 7, 8] },
+        1: { default: 0, id: 1, name: "Core size", values: [0, 1, 2, 3, 4] },
         2: { default: 10, id: 2, name: "Width of spiral", values: [2, 4, 6, 8, 10, 12, 14, 16] },
         3: { default: 0.02, id: 3, name: "Tightness of Spiral", values: [0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04] },
-        4: { default: 1, id: 4, name: "Number of Colours", values: [1, 8, 256] },
+        4: { default: 8, id: 4, name: "Number of Colours", values: [1, 8, 256] },
         5: { default: 1, id: 5, name: "Number of Years", values: [1] },
     }
 }

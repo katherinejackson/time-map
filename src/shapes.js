@@ -145,13 +145,13 @@ export const monthSpiral = (p5, startX, startY, data, highest, lowest) => {
     })
 }
 
-export const scatterSpiral = (p5, startX, startY, data, selections) => {
-    let spiralWidth = 20
-    let spiralTightness = 0.025
+export const scatterSpiral = (p5, startX, startY, data, selections, dataType) => {
+    let spiralWidth = selections[spiralValues.SPIRAL_WIDTH]
+    let spiralTightness = selections[spiralValues.SPACE_BETWEEN_SPIRAL]
     let angle = -Math.PI / 2
-    let coreSize = 0
+    let coreSize = selections[spiralValues.CORE_SIZE]
     let numColours = selections[spiralValues.NUM_COLOURS]
-    
+
     p5.noStroke()
     data.forEach(day => {
         let x = startX + p5.cos(angle) * coreSize
@@ -163,7 +163,7 @@ export const scatterSpiral = (p5, startX, startY, data, selections) => {
             if (numColours === 256 || numColours === 1) {
                 fillLogColourGradient(p5, day, 6, numColours)
             } else if (numColours === 8) {
-                let colour = getManualIntervalColour(day, colours['COVID'][numColours], manualIntervals['COVID'][numColours])
+                let colour = getManualIntervalColour(day, colours[dataType][numColours], manualIntervals[dataType][numColours])
                 p5.fill(colour)
             } 
         }
@@ -196,12 +196,12 @@ export const spiral = (
     let spiralTightness = selections[spiralValues.SPACE_BETWEEN_SPIRAL]
     let angle = -Math.PI / 2
     let coreSize = selections[spiralValues.CORE_SIZE];
-    let radius = getRadius(selections, locationData)
+    let radius = getRadius(selections, locationData.length)
 
     if (hover && (yearIndicator === yearIndicators.MONTHS.val || yearIndicator === yearIndicators.MONTHS_TICKS.val)) {
         let tempData = locationData
         tempData.push([])
-        let newRadius = getRadius(selections, tempData)
+        let newRadius = getRadius(selections, tempData.length)
 
         p5.fill(255, 255, 255, 150)
         p5.ellipse(startX, startY, newRadius * 2 + 20, newRadius * 2 + 20)
@@ -353,8 +353,7 @@ export const getSpiralSize = (selections, numLocations) => {
     return { spiralWidth, spiralTightness }
 }
 
-export const getRadius = (selections, locationData) => {
-    let numYears = locationData ? locationData.length : selections[rectValues.NUM_YEARS]
+export const getRadius = (selections, numYears) => {
     return Math.abs(Math.sin(-1.5 + radianPerDay * 365 * numYears)
         * (selections[spiralValues.CORE_SIZE] + selections[spiralValues.SPACE_BETWEEN_SPIRAL] * 365 * numYears))
         + selections[spiralValues.SPIRAL_WIDTH] / 2
@@ -375,7 +374,7 @@ export const getPinAdjustment = (selections, shape, locationData) => {
     let startY = 0
 
     if (shape === formats.SPIRAL.id) {
-        const radius = getRadius(selections, locationData)
+        const radius = getRadius(selections, locationData.length)
         startY = radius + 15
     } else {
         startY = 7 + ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * numYears)
