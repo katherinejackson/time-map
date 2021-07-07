@@ -1,5 +1,5 @@
 import { colours, manualIntervals, radianPerDay, radianPerMonth, rectValues, spiralValues, months, yearIndicators, monthColours, abbreviatedMonths, formats } from "./constants";
-import { fillColourGradient, getColour, getManualIntervalColour } from "./helpers/colours";
+import { fillColourGradient, getColour, getManualIntervalColour, fillLogColourGradient } from "./helpers/colours";
 
 export const rectangle = (
     dataType,
@@ -13,18 +13,18 @@ export const rectangle = (
     x,
     y,
     opaque,
-    hover, 
+    hover,
     yearIndication,
     fillMissing,
 ) => {
     const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
     const rowWidth = daysPerRow * selections[rectValues.DAY_WIDTH]
     const pinHeight = ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * locationData.length - selections[rectValues.SPACE_BETWEEN_ROWS])
-    if (hover && (yearIndication === yearIndicators.MONTHS.val || yearIndication === yearIndicators.MONTHS_TICKS.val) ) {
+    if (hover && (yearIndication === yearIndicators.MONTHS.val || yearIndication === yearIndicators.MONTHS_TICKS.val)) {
         p5.fill(255, 255, 255)
         p5.rect(x - 2, y - 10, rowWidth + 4, pinHeight + 10, 5)
     }
-    
+
     if (mapPin) {
         p5.stroke(50)
         p5.fill(50)
@@ -39,7 +39,7 @@ export const rectangle = (
     } else if (opaque) {
         p5.fill(255)
         p5.rect(x - 2, y - 2, rowWidth + 4, pinHeight + 4, 5)
-    } 
+    }
 
     let startX = x
     let startY = y
@@ -61,7 +61,7 @@ export const rectangle = (
                         p5.fill(colour)
                     }
                 }
-    
+
                 p5.rect(x, y, 1, selections[rectValues.ROW_HEIGHT])
             } else {
                 if (fillMissing) {
@@ -69,7 +69,7 @@ export const rectangle = (
                     p5.rect(x, y, 1, selections[rectValues.ROW_HEIGHT])
                 }
             }
-            
+
             if (rowCounter >= daysPerRow) {
                 x = startX
                 y = y + selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT]
@@ -84,41 +84,41 @@ export const rectangle = (
     if (yearIndication === yearIndicators.TICKS.val) {
         const ticksRequired = 12 * selections[rectValues.NUM_ROWS]
         p5.stroke(50)
-        
-        const tickSpace = rowWidth/ticksRequired
+
+        const tickSpace = rowWidth / ticksRequired
         for (let i = startX; i <= startX + rowWidth; i = i + tickSpace) {
             p5.line(i, startY - 3, i, startY - 1)
-        } 
+        }
 
         p5.noStroke()
     } else if (yearIndication === yearIndicators.COLOURS.val) {
         const ticksRequired = 12 * selections[rectValues.NUM_ROWS]
-        const tickSpace = rowWidth/ticksRequired
+        const tickSpace = rowWidth / ticksRequired
         for (let i = 0; i < ticksRequired; i++) {
-            p5.fill(monthColours[i%12])
+            p5.fill(monthColours[i % 12])
             p5.rect(startX + i * tickSpace, startY - 4, tickSpace, 2)
-        } 
+        }
 
         p5.noStroke()
     } else if (yearIndication === yearIndicators.MONTHS.val && hover) {
         const ticksRequired = 12 * selections[rectValues.NUM_ROWS]
-        const tickSpace = rowWidth/ticksRequired
+        const tickSpace = rowWidth / ticksRequired
         for (let i = 0; i < ticksRequired; i++) {
             p5.textSize(6)
             p5.fill(0)
-            p5.text(abbreviatedMonths[i%12],startX + i * tickSpace + tickSpace/2, startY - 6)
-        } 
+            p5.text(abbreviatedMonths[i % 12], startX + i * tickSpace + tickSpace / 2, startY - 6)
+        }
     } else if (yearIndication === yearIndicators.MONTHS_TICKS.val && hover) {
         const ticksRequired = 12 * selections[rectValues.NUM_ROWS]
-        const tickSpace = rowWidth/ticksRequired
+        const tickSpace = rowWidth / ticksRequired
         for (let i = 0; i < ticksRequired; i++) {
             p5.textSize(6)
             p5.fill(0)
-            p5.text(abbreviatedMonths[i%12], startX + i * tickSpace + tickSpace/2, startY - 6)
+            p5.text(abbreviatedMonths[i % 12], startX + i * tickSpace + tickSpace / 2, startY - 6)
             p5.stroke(0, 0, 0, 150)
             p5.line(startX + i * tickSpace, startY - 10, startX + i * tickSpace, startY + pinHeight)
             p5.noStroke()
-        } 
+        }
     }
 }
 
@@ -131,8 +131,8 @@ export const monthSpiral = (p5, startX, startY, data, highest, lowest) => {
     data.forEach(month => {
         let x = startX + p5.cos(angle) * coreSize
         let y = startY + p5.sin(angle) * coreSize
-        
-        fillColourGradient(p5, month, {highest, lowest}, 360)
+
+        fillColourGradient(p5, month, { highest, lowest }, 360)
         p5.noStroke()
 
         p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerMonth, p5.PIE)
@@ -145,26 +145,30 @@ export const monthSpiral = (p5, startX, startY, data, highest, lowest) => {
     })
 }
 
-export const scatterSpiral = (p5, startX, startY, data, highest, lowest) => {
+export const scatterSpiral = (p5, startX, startY, data, selections) => {
     let spiralWidth = 20
     let spiralTightness = 0.025
     let angle = -Math.PI / 2
     let coreSize = 0
-
+    let numColours = selections[spiralValues.NUM_COLOURS]
+    
     p5.noStroke()
     data.forEach(day => {
         let x = startX + p5.cos(angle) * coreSize
         let y = startY + p5.sin(angle) * coreSize
-        
-        if (day !== '') {
-            let colour = getManualIntervalColour(day, colours['COVID'][8], manualIntervals['COVID'][8])
-            p5.fill(colour)
-        } else {
+
+        if (day === '') {
             p5.fill(200)
+        } else {
+            if (numColours === 256 || numColours === 1) {
+                fillLogColourGradient(p5, day, 6, numColours)
+            } else if (numColours === 8) {
+                let colour = getManualIntervalColour(day, colours['COVID'][numColours], manualIntervals['COVID'][numColours])
+                p5.fill(colour)
+            } 
         }
 
         p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerDay * 5, p5.PIE)
-
 
         angle += radianPerDay
         coreSize += spiralTightness
@@ -208,13 +212,13 @@ export const spiral = (
             }
             p5.fill(50)
             p5.triangle(locationX, locationY, locationX - 5, locationY - 15, locationX + 5, locationY - 15)
-    
+
             if (opaque) {
                 p5.fill(255)
             } else {
                 p5.noFill()
             }
-    
+
             p5.ellipse(startX, startY, radius * 2, radius * 2 + 2)
             p5.noStroke()
         } else if (opaque) {
@@ -242,7 +246,7 @@ export const spiral = (
                         p5.fill(colour)
                     }
                 }
-    
+
                 p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerDay * 10, p5.PIE)
             } else {
                 if (fillMissing) {
@@ -260,10 +264,10 @@ export const spiral = (
         p5.fill("black")
         let hoverCore = coreSize
         hoverCore += spiralTightness * 365
-        angle = -Math.PI/2
+        angle = -Math.PI / 2
         for (let i = 0; i < 12; i++) {
             let textCore = hoverCore
-            textCore += spiralTightness/2 * 365
+            textCore += spiralTightness / 2 * 365
             let xText = startX + p5.cos(angle) * textCore
             let yText = startY + p5.sin(angle) * textCore
 
@@ -278,29 +282,29 @@ export const spiral = (
         p5.fill("black")
         let innerCore = selections[spiralValues.CORE_SIZE]
         let outerCore = coreSize
-        outerCore += spiralTightness/2 * 365
+        outerCore += spiralTightness / 2 * 365
         let textCore = coreSize
-        textCore += spiralTightness/2 * 365
-        angle = -Math.PI/2
+        textCore += spiralTightness / 2 * 365
+        angle = -Math.PI / 2
         for (let i = 0; i < 24; i++) {
             if (i % 2 === 0) {
                 let x1 = startX + p5.cos(angle) * innerCore
                 let y1 = startY + p5.sin(angle) * innerCore
                 let x2 = startX + p5.cos(angle) * outerCore
                 let y2 = startY + p5.sin(angle) * outerCore
-    
+
                 p5.stroke(0, 0, 0, 100)
                 p5.line(x1, y1, x2, y2)
                 p5.noStroke()
             } else {
                 let xText = startX + p5.cos(angle) * textCore
                 let yText = startY + p5.sin(angle) * textCore
-    
+
                 p5.textSize(6)
-                p5.text(abbreviatedMonths[Math.floor(i/2)], xText, yText)
+                p5.text(abbreviatedMonths[Math.floor(i / 2)], xText, yText)
             }
 
-            angle += radianPerMonth/2
+            angle += radianPerMonth / 2
 
             innerCore += (spiralTightness * 15)
             outerCore += (spiralTightness * 15)
@@ -310,7 +314,7 @@ export const spiral = (
 
     if (yearIndicator === yearIndicators.COLOURS.val) {
         coreSize += spiralTightness * 365
-        angle = -Math.PI/2
+        angle = -Math.PI / 2
         p5.stroke(50)
         for (let i = 0; i < 12; i++) {
             p5.noFill()
@@ -323,10 +327,10 @@ export const spiral = (
     } else if (yearIndicator === yearIndicators.TICKS.val) {
         p5.fill("black")
         coreSize += spiralTightness * 365
-        angle = -Math.PI/2
+        angle = -Math.PI / 2
         for (let i = 0; i < 12; i++) {
             let lineCore = coreSize
-            lineCore += spiralTightness/4 * 365
+            lineCore += spiralTightness / 4 * 365
             let x1 = startX + p5.cos(angle) * coreSize
             let y1 = startY + p5.sin(angle) * coreSize
             let x2 = startX + p5.cos(angle) * lineCore

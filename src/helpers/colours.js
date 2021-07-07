@@ -1,7 +1,9 @@
+import { colours } from "../constants";
+
 export const getManualIntervalColour = (pt, colourSet, intervalSet) => {
     let counter = 0
     let bracket;
-    try{
+    try {
         bracket = intervalSet[counter]
     } catch (e) {
         console.log('error', pt, colourSet, intervalSet)
@@ -43,8 +45,8 @@ export const fillColourGradient = (p5, pt, interval, numColours) => {
         p5.colorMode(p5.HSB, 255, interval.range, 1)
         p5.fill(0, scaledPt, 1)
     } else if (numColours === 2) {
-        const middle = interval.lowest + interval.range/2
-        p5.colorMode(p5.HSB, 360, interval.range/2, 1)
+        const middle = interval.lowest + interval.range / 2
+        p5.colorMode(p5.HSB, 360, interval.range / 2, 1)
         if (pt > middle) {
             p5.fill(0, Math.abs(middle - pt), 1)
         } else {
@@ -52,11 +54,29 @@ export const fillColourGradient = (p5, pt, interval, numColours) => {
         }
     } else if (numColours === 360) {
         const range = interval.highest - interval.lowest
-        const newPt = Math.floor((range - (-1 * interval.lowest + pt)) * 270/range)
+        const newPt = Math.floor((range - (-1 * interval.lowest + pt)) * 270 / range)
         p5.colorMode(p5.HSB, 360, 100, 100)
         p5.fill(newPt, 100, 95)
     }
 
     p5.colorMode(p5.RGB)
+}
+
+export const fillLogColourGradient = (p5, pt, max, numColours) => {
+    let scaledPt = 0
+    if (pt > 0) {
+        scaledPt = Math.floor(Math.log10(pt) / max * 256)
+    }
+
+    if (numColours === 1) {
+        p5.colorMode(p5.HSB, 255, 255, 1)
+        p5.fill(0, scaledPt, 1)
+        p5.colorMode(p5.RGB)
+    } else if (numColours === 256) {
+        p5.fill(colours['COVID'][256][scaledPt])
+    }
+
+
+
 }
 

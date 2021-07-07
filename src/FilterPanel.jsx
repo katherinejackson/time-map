@@ -16,7 +16,7 @@ const FilterPanel = ({
 
     return (
         <div className="container row row-col-3 mt-3">
-            {axis ? (
+            {/* {axis ? (
                 <div className="col">
                     <div className="row mb-2">
                         <div className="col d-flex justify-content-end">
@@ -41,7 +41,7 @@ const FilterPanel = ({
                         </div>
                     </div>
                 </div>
-            ) : null}
+            ) : null} */}
 
             <div className="flex col justify-content-center gap-3">
                 {Object.keys(variables).map(id => (

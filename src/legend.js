@@ -1,8 +1,17 @@
-import { colours, manualIntervals, rectValues } from './constants'
-import { fillColourGradient, getColour } from "./helpers/colours";
+import { colours, manualIntervals, rectValues, spiralValues } from './constants'
+import { fillColourGradient, fillLogColourGradient, getColour } from "./helpers/colours";
 
-export const drawLegend = (p5, x, y, selections, interval, dataType) => {
-    if (dataType === 'WIND' || dataType === 'PRECIP') {
+export const drawLegend = (p5, x, y, selections, interval, dataType, brackets) => {
+    if (dataType === 'COVID') {
+        if (selections[spiralValues.NUM_COLOURS] === 8) {
+            drawManualLegend(p5, x, y, selections, dataType)
+        } else if (selections[spiralValues.NUM_COLOURS] === 256) {
+            drawLogarithmicLegend(p5, x, y)
+        } else if (selections[spiralValues.NUM_COLOURS] === 1) {
+            drawLogarithmicSingleColourLegend(p5, x, y, brackets)
+        }
+    }
+    else if (dataType === 'WIND' || dataType === 'PRECIP') {
         drawManualLegend(p5, x, y, selections, interval, dataType)
     } else if (selections[rectValues.NUM_COLOURS] <= 2 || selections[rectValues.NUM_COLOURS] > 10) {
         drawGradientLegend(p5, x, y, selections, interval, dataType)
@@ -58,12 +67,12 @@ export const drawLegend = (p5, x, y, selections, interval, dataType) => {
 //     p5.text(interval.highest, xStart + counter * length, y + 15)
 // }
 
-export const drawManualLegend = (p5, x, y, brackets, dataType) => {
+export const drawManualLegend = (p5, x, y, selections, dataType) => {
     p5.stroke(1)
-    const numColours = 8
+    const numColours = selections[spiralValues.NUM_COLOURS]
     const length = 75
     const xStart = x - numColours*length/2
-    const intervals = manualIntervals.COVID[numColours]
+    const intervals = manualIntervals[dataType][numColours]
     let counter = 0
 
     p5.textSize(10)
@@ -101,22 +110,51 @@ const drawGradientLegend = (p5, x, y, selections, interval) => {
     p5.text(interval.lowest, xStart + interval.range * width, y + 15)
 }
 
-export const draw360GradientLegend = (p5, x, y, brackets) => {
+export const drawLogarithmicLegend = (p5, x, y) => {
+    const width = 2
+    let colourList = colours['COVID'][256]
+    const range = colourList.length * width
+    const xStart = x - colourList.length/2 * width
+
+    p5.textAlign(p5.CENTER, p5.CENTER)
+    p5.noStroke()
+
+    let counter = 0
+    colourList.forEach(colour => {
+        p5.fill(colour)
+        p5.rect(xStart + counter, y, width, 5)
+        counter = counter + width
+    })
+
+    let intervals = [1, 10, 100, 1000, 10000, 100000, 1000000]
+
+    intervals.forEach(pt => {
+        p5.fill(0)
+        p5.text(pt, xStart + Math.log10(pt)/6 * range, y + 15)
+    })
+
+}
+
+export const drawLogarithmicSingleColourLegend = (p5, x, y, brackets) => {
     const width = 2
     const range = brackets.high - brackets.low
     const xStart = x - 270/2 * width
     let counter = 0
     let increase = Math.ceil(range/270)
+    let interval = {highest: brackets.high, lowest: brackets.low, range: brackets.high - brackets.low}
 
     p5.noStroke()
-    for (let i =  brackets.high; i > brackets.low; i = i - increase) {
+    for (let i =  brackets.low; i < brackets.high; i = i + increase) {
         p5.textAlign(p5.CENTER, p5.CENTER)
-        fillColourGradient(p5, i, {highest: brackets.high, lowest: brackets.low}, 360)
+        fillColourGradient(p5, i, interval, 1)
         p5.rect(xStart + counter, y, width, 5)
         counter = counter + width
     }
-    p5.textSize(10)
-    p5.fill(0)
-    p5.text(brackets.high, xStart, y + 15)
-    p5.text(brackets.low, xStart + 270 * width, y + 15)
+
+    let intervals = [1, 10, 100, 1000, 10000, 100000, 1000000]
+
+    intervals.forEach(pt => {
+        p5.fill(0)
+        p5.text(pt, xStart + Math.log10(pt)/6 * 270*width, y + 15)
+    })
 }
