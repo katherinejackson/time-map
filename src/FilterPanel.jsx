@@ -67,7 +67,7 @@ const FilterPanel = ({
 
             </div>
 
-            <div className="col">
+            {/* <div className="col">
                 <div className="row">
                     <div className="col d-flex justify-content-end">
                         <label lass="col col-form-label w-auto">View as map pin</label>
@@ -106,7 +106,7 @@ const FilterPanel = ({
                         </select>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </div >
     )
 }
