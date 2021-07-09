@@ -6,11 +6,12 @@ import SelectionContext from "./SelectionContext";
 import { getRadius, scatterSpiral } from "./shapes";
 import DataContext from "./DataContext";
 import { spiralValues } from "./constants";
+import { formatPopulation } from "./helpers/numbers"
 
 const canvasWidth = window.innerWidth * 0.95
-const canvasHeight = window.innerHeight * 0.75
+const canvasHeight = window.innerHeight
 
-const xBorder = 20
+const xBorder = 50
 const graphWidth = canvasWidth - xBorder * 2
 
 const yBorder = 50
@@ -91,6 +92,7 @@ const Canvas = ({ }) => {
 
     const draw = (p5) => {
         p5.clear()
+        p5.background(230)
         p5.stroke(50)
         p5.line(xBorder, yBorder, xBorder, canvasHeight - yBorder)
         p5.line(xBorder, canvasHeight - yBorder, canvasWidth - xBorder, canvasHeight - yBorder)
@@ -111,10 +113,13 @@ const Canvas = ({ }) => {
             p5.text(cat, xCounters[cat] + (spacePerPt * categories[cat]) / 2, canvasHeight - 40)
         })
 
+        drawYAxis(p5)
+
         let newPts = {}
         Object.keys(data).forEach(id => {
             let x = xCounters[data[id]['continent']]
-            let y = canvasHeight - yBorder - (Math.log2(data[id]['population']) * graphHeight / Math.log2(yBrackets.high - yBrackets.low))
+            let y = calcY(id)
+
             drawSpiral(p5, data[id], x, y)
             xCounters[data[id]['continent']] = xCounters[data[id]['continent']] + spacePerPt
             newPts[id] = {
@@ -131,10 +136,35 @@ const Canvas = ({ }) => {
         p5.noLoop()
     }
 
+    const calcY = (id) => {
+        const bottom = canvasHeight - yBorder - radius
+        const yRange = yBrackets.high - yBrackets.low
+        const graphRange = graphHeight - radius * 2
+        let logLow = Math.floor(Math.log2(yBrackets.low))
+        let logHigh = Math.ceil(Math.log2(yBrackets.high))
+        let logRange = logHigh - logLow
+
+        return bottom - ((Math.log2(data[id]['population']) - logLow) * graphRange / logRange)
+    }
+
+    const drawYAxis = (p5) => {
+        let logLow = Math.floor(Math.log2(yBrackets.low))
+        let logHigh = Math.ceil(Math.log2(yBrackets.high))
+        let numSteps = logHigh - logLow
+        let spacePer = graphHeight / numSteps
+
+        let yWalker = canvasHeight - yBorder
+        for (let i = 0; i < numSteps; i = i + 1) {
+            p5.textAlign(p5.RIGHT, p5.CENTER)
+            p5.text(formatPopulation(Math.pow(2, i + logLow)), xBorder - 2, yWalker)
+            yWalker = yWalker - spacePer
+        }
+    }
+
     const mouseClicked = () => {
         let ptFound = null
         let distance = null
-        
+
         Object.keys(pts).forEach(id => {
             if (Math.abs(pts[id]['x'] - p5.mouseX) < radius + clickTolerance && Math.abs(pts[id]['y'] - p5.mouseY) < radius + clickTolerance) {
                 let newDistance = Math.pow(pts[id]['x'] - p5.mouseX, 2) + Math.pow(pts[id]['y'] - p5.mouseY, 2)
