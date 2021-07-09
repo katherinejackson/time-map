@@ -4,16 +4,12 @@ import Tile from "./Tile";
 import LeafletMap from "./LeafletMap"
 import FilterPanel from "./FilterPanel"
 import { getDefaultSelections } from "./helpers/selections";
-import { getVariableBrackets, getDataBracketsMultiYear, getDataCategories } from "./helpers/data";
 import { formats, rectVariables, spiralVariables } from './constants'
 import SelectionContext from "./SelectionContext";
-import Canvas from "./Canvas"
+import ScatterPlot from "./ScatterPlot"
 import DataContext from "./DataContext";
 
-const Selection = ({ data, format, locations, map }) => {
-    // const yBrackets = getVariableBrackets(data, 'population')
-    // const dataBrackets = getDataBracketsMultiYear(data, 'cases')
-    // const categories = getDataCategories(data, 'continent')
+const Selection = ({ format, map }) => {
     const {dataType} = useContext(DataContext)
 
     const [error, setError] = useState(true)
@@ -75,7 +71,7 @@ const Selection = ({ data, format, locations, map }) => {
                     handleOpaqueCheck={handleOpaqueCheck}
                     handleYearIndicationSelect={handleYearIndicationSelect}
                 />
-                <Canvas />
+                <ScatterPlot />
             </div>
         </SelectionContext.Provider>
     )

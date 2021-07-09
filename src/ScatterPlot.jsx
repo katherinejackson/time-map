@@ -19,7 +19,7 @@ const graphHeight = canvasHeight - yBorder * 2
 
 const clickTolerance = 5
 
-const Canvas = ({ }) => {
+const ScatterPlot = ({ }) => {
     const { selections } = useContext(SelectionContext)
     const { data, dataBrackets, yBrackets, categories, dataType, totalDataPts } = useContext(DataContext)
     const [p5, setP5] = useState(null)
@@ -92,7 +92,6 @@ const Canvas = ({ }) => {
 
     const draw = (p5) => {
         p5.clear()
-        p5.background(230)
         p5.stroke(50)
         p5.line(xBorder, yBorder, xBorder, canvasHeight - yBorder)
         p5.line(xBorder, canvasHeight - yBorder, canvasWidth - xBorder, canvasHeight - yBorder)
@@ -109,7 +108,7 @@ const Canvas = ({ }) => {
             }
 
             p5.noStroke()
-            p5.fill(0)
+            p5.fill(255)
             p5.text(cat, xCounters[cat] + (spacePerPt * categories[cat]) / 2, canvasHeight - 40)
         })
 
@@ -152,6 +151,7 @@ const Canvas = ({ }) => {
         let logHigh = Math.ceil(Math.log2(yBrackets.high))
         let numSteps = logHigh - logLow
         let spacePer = graphHeight / numSteps
+        p5.fill(255)
 
         let yWalker = canvasHeight - yBorder
         for (let i = 0; i < numSteps; i = i + 1) {
@@ -180,8 +180,7 @@ const Canvas = ({ }) => {
         setDetailed(ptFound)
     }
 
-
     return <Sketch setup={setup} draw={draw} mouseClicked={mouseClicked} />
 }
 
-export default Canvas
+export default ScatterPlot
