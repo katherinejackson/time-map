@@ -41,7 +41,7 @@ const App = () => {
     }
 
     return (
-        <DataContext.Provider value={{data, dataType: 'COVID', yBrackets, dataBrackets, categories, totalDataPts}}>
+        <DataContext.Provider value={{ data, dataType: 'COVID', yBrackets, dataBrackets, categories, totalDataPts }}>
             <div className="container-fluid my-5">
                 <div className="row justify-content-center gap-3">
                     <div className="row justify-content-center">
@@ -53,6 +53,10 @@ const App = () => {
                     <select className="form-select w-auto" defaultValue={dataSet} onChange={handleDataSetChange} name="DataSet">
                         {Object.keys(dataSets).map(type => <option key={`dataset-${dataSets[type].id}`} value={dataSets[type].val}>{dataSets[type].name}</option>)}
                     </select> */}
+                        <label className="col-form-label w-auto ms-3">View</label>
+                        <select className="form-select w-auto" defaultValue={view} onChange={handleViewChange} name="DataSet">
+                            {Object.keys(views).map(view => <option key={`dataset-${view[type].id}`} value={views[view].val}>{dataSets[type].name}</option>)}
+                        </select>
                         <Selection data={data} format={format} />
                     </div>
                 </div>

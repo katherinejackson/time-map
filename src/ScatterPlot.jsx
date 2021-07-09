@@ -108,7 +108,7 @@ const ScatterPlot = ({ }) => {
             }
 
             p5.noStroke()
-            p5.fill(255)
+            p5.fill(0)
             p5.text(cat, xCounters[cat] + (spacePerPt * categories[cat]) / 2, canvasHeight - 40)
         })
 
@@ -137,7 +137,6 @@ const ScatterPlot = ({ }) => {
 
     const calcY = (id) => {
         const bottom = canvasHeight - yBorder - radius
-        const yRange = yBrackets.high - yBrackets.low
         const graphRange = graphHeight - radius * 2
         let logLow = Math.floor(Math.log2(yBrackets.low))
         let logHigh = Math.ceil(Math.log2(yBrackets.high))
@@ -151,7 +150,7 @@ const ScatterPlot = ({ }) => {
         let logHigh = Math.ceil(Math.log2(yBrackets.high))
         let numSteps = logHigh - logLow
         let spacePer = graphHeight / numSteps
-        p5.fill(255)
+        p5.fill(0)
 
         let yWalker = canvasHeight - yBorder
         for (let i = 0; i < numSteps; i = i + 1) {
