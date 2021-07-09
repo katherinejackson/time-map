@@ -1,4 +1,4 @@
-import { colours, manualIntervals, radianPerDay, radianPerMonth, rectValues, spiralValues, months, yearIndicators, monthColours, abbreviatedMonths, formats } from "./constants";
+import { colours, manualIntervals, radianPerDay, radianPerMonth, rectValues, spiralValues, months, yearIndicators, monthColours, abbreviatedMonths, shapes } from "./constants";
 import { fillColourGradient, getColour, getManualIntervalColour, fillLogColourGradient } from "./helpers/colours";
 
 export const rectangle = (
@@ -231,6 +231,7 @@ export const spiral = (
         year.forEach(pt => {
             let x = startX + p5.cos(angle) * coreSize
             let y = startY + p5.sin(angle) * coreSize
+    
             if (pt) {
                 if (dataType === 'WIND' || dataType === 'PRECIP') {
                     const colour = getManualIntervalColour(pt, colours[dataType][selections[spiralValues.NUM_COLOURS]], manualIntervals[dataType][selections[rectValues.NUM_COLOURS]])
@@ -242,7 +243,7 @@ export const spiral = (
                     ) {
                         fillColourGradient(p5, pt, interval, selections[spiralValues.NUM_COLOURS])
                     } else {
-                        const colour = getColour(pt, interval.highest, interval.interval, colours[dataType][selections[spiralValues.NUM_COLOURS]])
+                        const colour = getColour(pt, interval.high, interval.interval, colours[dataType][selections[spiralValues.NUM_COLOURS]])
                         p5.fill(colour)
                     }
                 }
@@ -373,7 +374,7 @@ export const getPinAdjustment = (selections, shape, locationData) => {
     let numYears = locationData ? locationData.length : selections[rectValues.NUM_YEARS]
     let startY = 0
 
-    if (shape === formats.SPIRAL.id) {
+    if (shape === shapes.SPIRAL.id) {
         const radius = getRadius(selections, locationData.length)
         startY = radius + 15
     } else {

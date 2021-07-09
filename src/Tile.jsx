@@ -1,26 +1,17 @@
 import Sketch from "react-p5";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
-import { formats, rectValues, spiralValues } from './constants'
+import { shapes, rectValues, spiralValues } from './constants'
 import { getInterval, getManualInterval } from "./helpers/intervals";
 import { rectangle, spiral, getPinAdjustment } from "./shapes";
 import { drawLegend } from "./legend";
+import SelectionContext from "./SelectionContext";
+import DataContext from "./DataContext";
 
 
-const Tile = (
-    {
-        data,
-        dataBrackets,
-        dataType,
-        fillMissing,
-        locations,
-        mapPin,
-        opaque,
-        numX,
-        selections,
-        shape,
-        yearIndication,
-    }) => {
+const Tile = ({ numX }) => {
+    const { locations, data, dataBrackets, dataType } = useContext(DataContext)
+    const { selections, fillMissing, mapPin, opaque, shape, yearIndication } = useContext(SelectionContext)
     const interval = dataType === 'TEMP'
         ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])
         : getManualInterval(dataBrackets, selections[rectValues.NUM_COLOURS], dataType)
@@ -49,7 +40,7 @@ const Tile = (
     }
 
     const drawPin = (x, y, ids, hover = false) => {
-        if (shape === formats.SPIRAL.id) {
+        if (shape === shapes.SPIRAL.id) {
             drawSpiral(x, y, ids, hover)
         } else {
             drawRect(x, y, ids, hover)

@@ -4,24 +4,21 @@ import { useMap } from "react-leaflet";
 
 import { drawLegend } from "./legend";
 import { averageData, getLocationData } from "./helpers/data";
-import { getDefaultSelections} from "./helpers/selections";
-import { formats, rectValues, spiralValues } from "./constants";
+import { getDefaultSelections } from "./helpers/selections";
+import { shapes, rectValues, spiralValues } from "./constants";
 import { getInterval, getManualInterval } from "./helpers/intervals";
 import { updateClusters, calculateClusters } from "./helpers/cluster";
 import { rectangle, spiral, getSpiralSize, getRadius, getRowSize, getPinAdjustment } from "./shapes";
 import SelectionContext from "./SelectionContext";
+import DataContext from "./DataContext";
 
 const mapWidth = window.innerWidth * 0.95
 const mapHeight = window.innerHeight * 0.75
 
-const Overlay = ({
-    data,
-    dataBrackets,
-    dataType,
-    locations,
-}) => {
+const Overlay = ({ }) => {
     const map = useMap()
-    const {selections, fillMissing, mapPin, opaque, shape, yearIndication} = useContext(SelectionContext)
+    const { locations, data, dataBrackets, dataType } = useContext(DataContext)
+    const { selections, fillMissing, mapPin, opaque, shape, yearIndication } = useContext(SelectionContext)
     const [p5, setP5] = useState(null)
     const interval = dataType === 'TEMP'
         ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])
@@ -70,8 +67,8 @@ const Overlay = ({
     useEffect(() => {
         if (map && p5) {
             map.on('drag', () => {
-                panClusters()
-                // setRedraw(true)
+                // panClusters()
+                setRedraw(true)
             })
             map.on('zoomstart', () => {
                 clearMap()
@@ -87,7 +84,7 @@ const Overlay = ({
     }
 
     const drawPin = (x, y, ids, hover = false) => {
-        if (shape === formats.SPIRAL.id) {
+        if (shape === shapes.SPIRAL.id) {
             drawSpiral(x, y, ids, hover)
         } else {
             drawRect(x, y, ids, hover)
@@ -216,7 +213,7 @@ const Overlay = ({
         if (animated.index !== null) {
             p5.loop()
             let cluster = locationClusters[animated.index]
-            let newSelections = getDefaultSelections(formats.RECT.id, dataType)
+            let newSelections = getDefaultSelections(shapes.RECT.id, dataType)
             newSelections = {
                 ...newSelections,
                 [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],
@@ -323,7 +320,6 @@ const Overlay = ({
 
     const resetClusters = (redraw = false) => {
         const newClusters = calculateClusters(locations, selections, shape, mapPin, map)
-
         setClusters(newClusters)
 
         if (redraw && p5) {
@@ -379,8 +375,8 @@ const Overlay = ({
 
     const drawDetailed = () => {
         let newSelections = selections
-        if (shape === formats.SPIRAL.id) {
-            newSelections = getDefaultSelections(formats.RECT.id, dataType)
+        if (shape === shapes.SPIRAL.id) {
+            newSelections = getDefaultSelections(shapes.RECT.id, dataType)
             newSelections = {
                 ...newSelections,
                 [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],

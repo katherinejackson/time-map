@@ -19,7 +19,7 @@ const graphHeight = canvasHeight - yBorder * 2
 
 const clickTolerance = 5
 
-const ScatterPlot = ({ }) => {
+const ScatterPlot = ({}) => {
     const { selections } = useContext(SelectionContext)
     const { data, dataBrackets, yBrackets, categories, dataType, totalDataPts } = useContext(DataContext)
     const [p5, setP5] = useState(null)

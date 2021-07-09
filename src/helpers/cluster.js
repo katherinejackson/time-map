@@ -1,4 +1,4 @@
-import { formats, rectValues, spiralValues } from "../constants";
+import { shapes, rectValues, spiralValues } from "../constants";
 import {getSpiralSize, getRadius, getRowSize} from "../shapes";
 
 const averageCoords = (ids, map, locations) => {
@@ -21,7 +21,7 @@ const getMinDistance = (selections, shape, mapPin = false) => {
     let minDistanceX;
     let minDistanceY;
 
-    if (shape === formats.SPIRAL.id) {
+    if (shape === shapes.SPIRAL.id) {
         let radius = getRadius(selections)
 
         if (mapPin) {
@@ -81,7 +81,7 @@ export const calculateClusters = (locations, selections, shape, mapPin, map) => 
         if (!!shouldCluster) {
             let newSelections;
             let numLocations = (shouldCluster[0].locations.concat(shouldCluster[1].locations)).length
-            if (shape === formats.SPIRAL.id) {
+            if (shape === shapes.SPIRAL.id) {
                 let { spiralWidth, spiralTightness } = getSpiralSize(selections, numLocations)
 
                 newSelections = {

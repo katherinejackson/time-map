@@ -138,7 +138,7 @@ export const spiralValues = {
     NUM_YEARS: 5,
 }
 
-export const formats = {
+export const shapes = {
     SPIRAL: { id: 1, name: "Spiral" },
     RECT: { id: 2, name: "Row" },
 }
@@ -149,14 +149,16 @@ export const viewOptions = {
 }
 
 export const dataSets = {
-    TEMP: {id: 1, name: 'Average Temperature', val: 'TEMP',},
-    WIND: {id: 2, name: 'Wind', val: 'WIND',},
-    PRECIP: {id: 3, name: 'Precipitation', val: 'PRECIP',}
+    TEMP: {id: 1, name: 'Average Temperature', val: 'TEMP'},
+    WIND: {id: 2, name: 'Wind', val: 'WIND'},
+    PRECIP: {id: 3, name: 'Precipitation', val: 'PRECIP'},
+    COVID: {id: 4, name: 'Covid', val: 'COVID'}
 }
 
 export const views = {
     COMPARISON: {id: 1, name: 'Comparison', val: 'COMPARISON'},
-    MAP: {id: 2, name: 'Map', val: 'MAP'}
+    MAP: {id: 2, name: 'Map', val: 'MAP'},
+    SCATTER: {id: 3, name: 'Scatter Plot', val: 'SCATTER'}
 }
 
 export const yearIndicators = {

@@ -1,8 +1,8 @@
-import {formats, spiralValues, spiralVariables, rectValues, rectVariables} from '../constants'
+import {shapes, spiralValues, spiralVariables, rectValues, rectVariables} from '../constants'
 
-export const getDefaultSelections = (format, dataType) => {
+export const getDefaultSelections = (shape, dataType) => {
     let selections = {}
-    if (format === formats.SPIRAL.id) {
+    if (shape === shapes.SPIRAL.id) {
         Object.keys(spiralValues).forEach(val => {
             selections[spiralValues[val]] = spiralVariables[dataType][spiralValues[val]].default
         })

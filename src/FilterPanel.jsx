@@ -1,6 +1,6 @@
 import React, {useContext} from "react";
 
-import { yearIndicators } from "./constants"
+import { views, yearIndicators } from "./constants"
 import SelectionContext from "./SelectionContext";
 
 const FilterPanel = ({
@@ -11,12 +11,13 @@ const FilterPanel = ({
     handlePinCheck,
     handleOpaqueCheck,
     handleYearIndicationSelect,
+    view,
 }) => {
     const { selections, fillMissing, mapPin, opaque, shape, variables, yearIndication } = useContext(SelectionContext)
 
     return (
         <div className="container row row-col-3 mt-3">
-            {/* {axis ? (
+            {view === views.COMPARISON.val ? (
                 <div className="col">
                     <div className="row mb-2">
                         <div className="col d-flex justify-content-end">
@@ -41,7 +42,7 @@ const FilterPanel = ({
                         </div>
                     </div>
                 </div>
-            ) : null} */}
+            ) : null}
 
             <div className="flex col justify-content-center gap-3">
                 {Object.keys(variables).map(id => (
@@ -67,7 +68,7 @@ const FilterPanel = ({
 
             </div>
 
-            {/* <div className="col">
+            <div className="col">
                 <div className="row">
                     <div className="col d-flex justify-content-end">
                         <label lass="col col-form-label w-auto">View as map pin</label>
@@ -106,7 +107,7 @@ const FilterPanel = ({
                         </select>
                     </div>
                 </div>
-            </div> */}
+            </div>
         </div >
     )
 }

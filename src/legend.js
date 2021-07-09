@@ -10,11 +10,6 @@ export const drawLegend = (p5, x, y, selections, interval, dataType, brackets) =
         } else if (selections[spiralValues.NUM_COLOURS] === 1) {
             drawLogarithmicSingleColourLegend(p5, x, y, brackets)
         }
-
-        // p5.fill(200)
-        // p5.rect(50, y, 40, 10)
-        // p5.fill(0)
-        // p5.text('No Data', 70, y + 15)
     }
     else if (dataType === 'WIND' || dataType === 'PRECIP') {
         drawManualLegend(p5, x, y, selections, interval, dataType)
@@ -27,9 +22,9 @@ export const drawLegend = (p5, x, y, selections, interval, dataType, brackets) =
         let counter = 0
 
         p5.textSize(10)
-        for (let i = interval.highest; i > interval.lowest; i = Math.round((i - interval.interval) * 100) / 100) {
+        for (let i = interval.high; i > interval.low; i = Math.round((i - interval.interval) * 100) / 100) {
             p5.textAlign(p5.CENTER, p5.CENTER)
-            p5.fill(getColour(i, interval.highest, interval.interval, colours[dataType][selections[rectValues.NUM_COLOURS]]))
+            p5.fill(getColour(i, interval.high, interval.interval, colours[dataType][selections[rectValues.NUM_COLOURS]]))
             p5.rect(xStart + counter * length, y, length, 5)
             p5.fill(0)
             p5.line(xStart + counter * length, y, xStart + counter * length, y + 8)

@@ -76,7 +76,5 @@ export const fillLogColourGradient = (p5, pt, max, numColours) => {
         p5.fill(colours['COVID'][256][scaledPt])
     }
 
-
-
 }
 

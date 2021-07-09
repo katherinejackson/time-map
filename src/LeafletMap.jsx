@@ -1,6 +1,7 @@
 import React from "react";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer } from "react-leaflet";
+
 import Overlay from "./Overlay";
 
 const initialCenter = [52, -103];
@@ -13,17 +14,7 @@ const style = {
     height: mapHeight
 }
 
-const LeafletMap = ({
-    data,
-    dataBrackets,
-    dataType,
-    fillMissing,
-    locations,
-    mapPin,
-    opaque,
-    shape,
-    yearIndication,
-}) => {
+const LeafletMap = ({}) => {
     return (
         <div className="position-relative">
             <MapContainer
@@ -37,17 +28,7 @@ const LeafletMap = ({
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <Overlay
-                    data={data}
-                    dataBrackets={dataBrackets}
-                    dataType={dataType}
-                    fillMissing={fillMissing}
-                    locations={locations}
-                    mapPin={mapPin}
-                    opaque={opaque}
-                    shape={shape}
-                    yearIndication={yearIndication}
-                />
+                <Overlay />
             </MapContainer>
         </div>
     );

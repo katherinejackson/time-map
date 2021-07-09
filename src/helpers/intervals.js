@@ -1,7 +1,7 @@
-import {manualIntervals} from '../constants'
+import { manualIntervals } from '../constants'
 
 export const getManualInterval = (dataBrackets, numColours, dataType) => {
-    return {intervals: manualIntervals[dataType][numColours], highest: dataBrackets.highest, lowest: dataBrackets.lowest, range: dataBrackets.highest - dataBrackets.lowest }
+    return { intervals: manualIntervals[dataType][numColours], highest: dataBrackets.highest, lowest: dataBrackets.lowest, range: dataBrackets.highest - dataBrackets.lowest }
 }
 
 export const getInterval = (dataBrackets, numColours) => {
@@ -9,10 +9,10 @@ export const getInterval = (dataBrackets, numColours) => {
         numColours = 1
     }
 
-    const range = dataBrackets.highest - dataBrackets.lowest
-    const interval = Math.ceil(range/numColours)
+    const range = dataBrackets.high - dataBrackets.low
+    const interval = Math.ceil(range / numColours)
 
-    return {interval, highest: dataBrackets.highest, lowest: dataBrackets.lowest, range}
+    return { interval, high: dataBrackets.high, low: dataBrackets.low, range }
 }
 
 export const getRoundedInterval = (dataBrackets, numColours) => {
@@ -21,11 +21,11 @@ export const getRoundedInterval = (dataBrackets, numColours) => {
     }
 
     const range = dataBrackets.highest - dataBrackets.lowest
-    const interval = Math.ceil((range/numColours)/5) * 5
+    const interval = Math.ceil((range / numColours) / 5) * 5
     const coverage = numColours * interval
     const difference = coverage - (dataBrackets.highest - dataBrackets.lowest)
-    const newHigh = Math.ceil((dataBrackets.highest + difference/2)/5) * 5
-    const newLow = Math.ceil((dataBrackets.lowest - difference/2)/5) * 5
+    const newHigh = Math.ceil((dataBrackets.highest + difference / 2) / 5) * 5
+    const newLow = Math.ceil((dataBrackets.lowest - difference / 2) / 5) * 5
 
-    return {interval, highest: newHigh, lowest: newLow, range}
+    return { interval, highest: newHigh, lowest: newLow, range }
 }
