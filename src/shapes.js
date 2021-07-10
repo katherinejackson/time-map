@@ -57,7 +57,7 @@ export const rectangle = (
                     ) {
                         fillColourGradient(p5, pt, interval, selections[rectValues.NUM_COLOURS])
                     } else {
-                        const colour = getColour(pt, interval.highest, interval.interval, colours[dataType][selections[spiralValues.NUM_COLOURS]])
+                        const colour = getColour(pt, interval.high, interval.interval, colours[dataType][selections[spiralValues.NUM_COLOURS]])
                         p5.fill(colour)
                     }
                 }
@@ -355,6 +355,9 @@ export const getSpiralSize = (selections, numLocations) => {
 }
 
 export const getRadius = (selections, numYears) => {
+    if (!numYears) {
+        numYears = selections[spiralValues.NUM_YEARS]
+    }
     return Math.abs(Math.sin(-1.5 + radianPerDay * 365 * numYears)
         * (selections[spiralValues.CORE_SIZE] + selections[spiralValues.SPACE_BETWEEN_SPIRAL] * 365 * numYears))
         + selections[spiralValues.SPIRAL_WIDTH] / 2

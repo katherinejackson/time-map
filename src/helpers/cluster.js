@@ -70,7 +70,6 @@ export const calculateClusters = (locations, selections, shape, mapPin, map) => 
             minDistanceX,
             minDistanceY
         })
-
     })
 
     let shouldCluster = true

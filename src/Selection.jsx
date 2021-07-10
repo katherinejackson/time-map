@@ -26,7 +26,7 @@ const Selection = ({ shape, view }) => {
 
     useEffect(() => {
         setSelections(getDefaultSelections(shape, dataType))
-    }, [shape, dataType])
+    }, [shape, dataType, view])
 
     const handleSelect = (event, id) => {
         setSelections({ ...selections, [id]: parseFloat(event.currentTarget.value) })

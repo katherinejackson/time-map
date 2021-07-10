@@ -33,10 +33,16 @@ const Overlay = ({ }) => {
 
     useEffect(() => {
         if (p5) {
+
             drawLocationClusters()
         }
 
     }, [selections, p5, map, mapPin, hover, opaque, yearIndication, fillMissing])
+
+    useEffect(() => {
+        console.log(shape)
+        resetClusters(true)
+    }, [shape])
 
     useEffect(() => {
         if (animated.index !== null) {
@@ -78,6 +84,10 @@ const Overlay = ({ }) => {
             })
         }
     }, [map, p5])
+
+    useEffect(() => {
+        resetClusters(true)
+    }, [locations])
 
     const getHoverTransform = (numLocations) => {
         return numLocations + 5

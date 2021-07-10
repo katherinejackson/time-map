@@ -54,7 +54,7 @@ const FilterPanel = ({
                             <select
                                 className="form-select w-50"
                                 defaultValue={selections[id]}
-                                disabled={axis ? axis["x-axis"] === parseInt(id) || axis["y-axis"] === parseInt(id) : false}
+                                disabled={view === views.COMPARISON.val ? axis["x-axis"] === parseInt(id) || axis["y-axis"] === parseInt(id) : false}
                                 id={`${shape}-${id}`}
                                 key={`${shape}-${id}-${Math.random().toString().slice(0, 6)}`}
                                 onChange={(e) => handleSelect(e, id)}

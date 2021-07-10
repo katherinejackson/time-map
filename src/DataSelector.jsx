@@ -40,7 +40,7 @@ const DataSelector = ({ view }) => {
     }
 
     const handleShapeChange = (event) => {
-        setShape(event.target.value)
+        setShape(parseInt(event.target.value))
     }
 
     return (
