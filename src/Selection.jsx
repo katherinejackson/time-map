@@ -4,10 +4,11 @@ import Tile from "./Tile";
 import LeafletMap from "./LeafletMap"
 import FilterPanel from "./FilterPanel"
 import { getDefaultSelections } from "./helpers/selections";
-import { shapes, rectVariables, spiralVariables, views } from './constants'
+import { shapes, rectVariables, spiralVariables, views, themes } from './constants'
 import SelectionContext from "./SelectionContext";
 import ScatterPlot from "./ScatterPlot"
 import DataContext from "./DataContext";
+import Graph from "./Graph"
 
 const Selection = ({ shape, view }) => {
     const { dataType } = useContext(DataContext)
@@ -22,7 +23,7 @@ const Selection = ({ shape, view }) => {
     const [opaque, setOpaque] = useState(false)
     const [yearIndication, setYearIndication] = useState(null)
     const [fillMissing, setFillMissing] = useState(false)
-    const [darkMode, setDarkMode] = useState(false)
+    const [theme, setTheme] = useState(themes.DEFAULT.val)
     const variables = shape === shapes.SPIRAL.id ? spiralVariables[dataType] : rectVariables[dataType]
 
     useEffect(() => {
@@ -54,8 +55,8 @@ const Selection = ({ shape, view }) => {
         setFillMissing(!fillMissing)
     }
 
-    const handleDarkModeCheck = () => {
-        setDarkMode(!darkMode)
+    const handleThemeSelect = (event) => {
+        setTheme(event.currentTarget.value)
     }
 
     const isError = (values) => {
@@ -65,13 +66,13 @@ const Selection = ({ shape, view }) => {
     }
 
     return (
-        <SelectionContext.Provider value={{ selections, darkMode, mapPin, fillMissing, shape, opaque, variables, yearIndication }}>
+        <SelectionContext.Provider value={{ selections, theme, mapPin, fillMissing, shape, opaque, variables, yearIndication }}>
             <div>
                 <FilterPanel
                     axis={axis}
                     handleSelect={handleSelect}
                     handleAxisSelect={handleAxisSelect}
-                    handleDarkModeCheck={handleDarkModeCheck}
+                    handleThemeSelect={handleThemeSelect}
                     handleFillMissingCheck={handleFillMissingCheck}
                     handlePinCheck={handlePinCheck}
                     handleOpaqueCheck={handleOpaqueCheck}
@@ -104,6 +105,7 @@ const Selection = ({ shape, view }) => {
                         ))}
                     </span>
                 ) : null}
+                {view === views.GRAPH.val ? <Graph /> : null}
             </div>
         </SelectionContext.Provider>
     )

@@ -91,7 +91,6 @@ const drawGradientLegend = (p5, x, y, selections, interval, textColour) => {
     }
     p5.textSize(10)
     p5.fill(textColour)
-    console.log(textColour)
     p5.text(interval.high, xStart, y + 15)
     p5.text(interval.low, xStart + interval.range * width, y + 15)
 }

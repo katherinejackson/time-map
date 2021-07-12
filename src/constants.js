@@ -174,7 +174,8 @@ export const dataSets = {
 export const views = {
     COMPARISON: {id: 1, name: 'Comparison', val: 'COMPARISON'},
     MAP: {id: 2, name: 'Map', val: 'MAP'},
-    SCATTER: {id: 3, name: 'Scatter Plot', val: 'SCATTER'}
+    SCATTER: {id: 3, name: 'Scatter Plot', val: 'SCATTER'},
+    GRAPH: {id: 4, name: 'Graph', val: 'GRAPH'},
 }
 
 export const yearIndicators = {
@@ -182,4 +183,10 @@ export const yearIndicators = {
     MONTHS: {id: 2, name: 'Month Names', val: 'MONTHS'},
     TICKS: {id: 3, name: 'Tick Marks', val: 'TICKS'},
     MONTHS_TICKS: {id: 4, name: 'Months and Ticks', val: 'MONTHS_TICKS'}
+}
+
+export const themes = {
+    DEFAULT: {id: 1, name: 'Default', val: 'DEFAULT'},
+    DARK: {id: 2, name: 'Dark Mode', val: 'DARK'},
+    COLOUR_DARK: {id: 3, name: 'Coloured Dark Mode', val: 'COLOUR_DARK'},
 }

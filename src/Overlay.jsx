@@ -5,7 +5,7 @@ import { useMap } from "react-leaflet";
 import { drawLegend } from "./legend";
 import { averageData, getLocationData } from "./helpers/data";
 import { getDefaultSelections } from "./helpers/selections";
-import { shapes, rectValues, spiralValues, themeColours } from "./constants";
+import { shapes, rectValues, spiralValues, themeColours, themes } from "./constants";
 import { getInterval, getManualInterval } from "./helpers/intervals";
 import { updateClusters, calculateClusters } from "./helpers/cluster";
 import { rectangle, spiral, getSpiralSize, getRadius, getRowSize, getPinAdjustment } from "./shapes";
@@ -18,8 +18,8 @@ const mapHeight = window.innerHeight * 0.75
 const Overlay = ({ }) => {
     const map = useMap()
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
-    const { selections, darkMode, fillMissing, mapPin, opaque, shape, yearIndication } = useContext(SelectionContext)
-    const theme = darkMode ? themeColours['dark'] : themeColours['default']
+    const { selections, theme, fillMissing, mapPin, opaque, shape, yearIndication } = useContext(SelectionContext)
+    const colourTheme = theme === themes.DARK.val ? themeColours['dark'] : themeColours['default']
     const [p5, setP5] = useState(null)
     const interval = dataType === 'TEMP'
         ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])
@@ -37,7 +37,7 @@ const Overlay = ({ }) => {
             drawLocationClusters()
         }
 
-    }, [selections, p5, map, mapPin, hover, opaque, yearIndication, fillMissing, darkMode])
+    }, [selections, p5, map, mapPin, hover, opaque, yearIndication, fillMissing, theme])
 
     useEffect(() => {
         resetClusters(true)
@@ -123,7 +123,7 @@ const Overlay = ({ }) => {
         }
 
         spiral(dataType, interval, locationData, x, y, mapPin, p5, newSelections, x, startY, opaque, hover, yearIndication, fillMissing, theme)
-        p5.fill(theme.textColour)
+        p5.fill(colourTheme.textColour)
         p5.textSize(10)
         if (hover) {
             p5.textSize(15)
@@ -156,7 +156,7 @@ const Overlay = ({ }) => {
         }
 
         rectangle(dataType, interval, locationData, x, y, mapPin, p5, newSelections, startX, startY, opaque, hover, yearIndication, fillMissing, theme)
-        p5.fill(theme.textColour)
+        p5.fill(colourTheme.textColour)
         p5.textSize(10)
         p5.textAlign(p5.CENTER, p5.CENTER)
         if (hover) {
@@ -164,14 +164,14 @@ const Overlay = ({ }) => {
         }
 
         if (mapPin) {
-            p5.fill(theme.pinBackground)
+            p5.fill(colourTheme.pinBackground)
             p5.ellipse(x, y + 8, 16, 16)
-            p5.fill(theme.textColour)
+            p5.fill(colourTheme.textColour)
             p5.text(ids.length, x, y + 8)
         } else {
-            p5.fill(theme.pinBackground)
+            p5.fill(colourTheme.pinBackground)
             p5.ellipse(x, y + pinHeight / 2 + 8, 16, 16)
-            p5.fill(theme.textColour)
+            p5.fill(colourTheme.textColour)
             p5.text(ids.length, x, y + pinHeight / 2 + 8)
         }
 
@@ -359,7 +359,7 @@ const Overlay = ({ }) => {
                 }
             }
 
-            drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType, null, theme.textColour)
+            drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType, null, colourTheme.textColour)
             drawZoom(p5)
         }
     }
@@ -396,12 +396,12 @@ const Overlay = ({ }) => {
         const { pinHeight } = getRowSize(newSelections, detailed.length, selections[rectValues.NUM_YEARS])
         const locationHeight = pinHeight + 30
 
-        p5.fill(theme.background)
+        p5.fill(colourTheme.background)
         p5.rect(mapWidth - 150, 0, 150, locationHeight * detailed.length)
         p5.textAlign(p5.LEFT, p5.TOP)
 
         detailed.forEach((id, index) => {
-            p5.fill(theme.textColour)
+            p5.fill(colourTheme.textColour)
             p5.textSize(10)
             p5.text(locations[id].name, mapWidth - 150, index * locationHeight)
             drawHoverRect(mapWidth - 75, index * locationHeight + pinHeight / 2 + 15, id, newSelections)

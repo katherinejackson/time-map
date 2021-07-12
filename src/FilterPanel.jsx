@@ -1,12 +1,12 @@
 import React, { useContext } from "react";
 
-import { views, yearIndicators } from "./constants"
+import { themes, views, yearIndicators } from "./constants"
 import SelectionContext from "./SelectionContext";
 
 const FilterPanel = ({
     axis,
     handleSelect,
-    handleDarkModeCheck,
+    handleThemeSelect,
     handleAxisSelect,
     handleFillMissingCheck,
     handlePinCheck,
@@ -14,7 +14,7 @@ const FilterPanel = ({
     handleYearIndicationSelect,
     view,
 }) => {
-    const { selections, darkMode, fillMissing, mapPin, opaque, shape, variables, yearIndication } = useContext(SelectionContext)
+    const { selections, theme, fillMissing, mapPin, opaque, shape, variables, yearIndication } = useContext(SelectionContext)
 
     return (
         <div className="container row row-col-3 mt-3">
@@ -69,12 +69,14 @@ const FilterPanel = ({
             </div>
 
             <div className="col">
-                <div className="row">
+                <div className="row mb-2">
                     <div className="col d-flex justify-content-end">
-                        <label className="col col-form-label w-auto">Dark Mode</label>
+                        <label htmlFor="y-axis" className="col-form-label w-auto">Theme</label>
                     </div>
                     <div className="col">
-                        <input className="form-check" type="checkbox" defaultChecked={darkMode} onChange={handleDarkModeCheck} />
+                        <select className="form-select" defaultValue={theme} id='y-axis' onChange={(e) => handleThemeSelect(e)} name='theme'>
+                            {Object.keys(themes).map(val => <option disabled={val === themes.COLOUR_DARK.val && view !== views.MAP.val} key={`theme-${val}`} value={val}>{themes[val].name}</option>)}
+                        </select>
                     </div>
                 </div>
                 <div className="row">

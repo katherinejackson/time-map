@@ -5,7 +5,7 @@ import { drawLegend } from "./legend";
 import SelectionContext from "./SelectionContext";
 import { getRadius, scatterSpiral, scatterRow } from "./shapes";
 import DataContext from "./DataContext";
-import { shapes, spiralValues, themeColours } from "./constants";
+import { shapes, spiralValues, themeColours, themes } from "./constants";
 import { formatPopulation } from "./helpers/numbers"
 
 const canvasWidth = window.innerWidth * 0.95
@@ -20,14 +20,14 @@ const graphHeight = canvasHeight - yBorder * 2
 const clickTolerance = 5
 
 const ScatterPlot = ({ }) => {
-    const { selections, shape, darkMode } = useContext(SelectionContext)
+    const { selections, shape, theme } = useContext(SelectionContext)
     const { data, dataBrackets, yBrackets, categories, dataType, totalDataPts } = useContext(DataContext)
     const [p5, setP5] = useState(null)
     const [spacePerPt, setSpacePerPoint] = useState((graphWidth - getRadius(selections, selections[spiralValues.NUM_YEARS]) * 2) / totalDataPts)
     const [pts, setPts] = useState({})
     const [detailed, setDetailed] = useState(null)
     const [radius, setRadius] = useState(getRadius(selections))
-    const { background, lineColour, textColour } = darkMode ? themeColours['dark'] : themeColours['default']
+    const colourTheme = theme === themes.DARK.val ? themeColours['dark'] : themeColours['default']
 
     useEffect(() => {
         if (shape === shapes.SPIRAL.id) {
@@ -37,7 +37,7 @@ const ScatterPlot = ({ }) => {
         if (p5) {
             draw(p5)
         }
-    }, [selections, shape, darkMode])
+    }, [selections, shape, theme])
 
     useEffect(() => {
         if (detailed && p5) {
@@ -96,14 +96,14 @@ const ScatterPlot = ({ }) => {
         p5.fill(255)
         p5.ellipse(detailed.x, detailed.y, newRadius, newRadius)
         scatterSpiral(p5, detailed.x, detailed.y, detailedData, newSelections, dataType)
-        p5.fill(textColour)
+        p5.fill(colourTheme.textColour)
         p5.text(pts[detailed.id]['name'], detailed.x, detailed.y + newRadius + 5)
     }
 
     const draw = (p5) => {
         p5.clear()
-        p5.background(background)
-        p5.stroke(lineColour)
+        p5.background(colourTheme.background)
+        p5.stroke(colourTheme.lineColour)
         p5.line(xBorder, yBorder, xBorder, canvasHeight - yBorder)
         p5.line(xBorder, canvasHeight - yBorder, canvasWidth - xBorder, canvasHeight - yBorder)
 
@@ -119,7 +119,7 @@ const ScatterPlot = ({ }) => {
             }
 
             p5.noStroke()
-            p5.fill(textColour)
+            p5.fill(colourTheme.textColour)
             p5.text(cat, xCounters[cat] + (spacePerPt * categories[cat]) / 2, canvasHeight - 40)
         })
 
@@ -141,7 +141,7 @@ const ScatterPlot = ({ }) => {
 
         setPts(newPts)
 
-        drawLegend(p5, canvasWidth / 2, canvasHeight - 25, selections, null, dataType, dataBrackets, textColour)
+        drawLegend(p5, canvasWidth / 2, canvasHeight - 25, selections, null, dataType, dataBrackets, colourTheme.textColour)
 
         p5.noLoop()
     }
@@ -161,7 +161,7 @@ const ScatterPlot = ({ }) => {
         let logHigh = Math.ceil(Math.log2(yBrackets.high))
         let numSteps = logHigh - logLow
         let spacePer = graphHeight / numSteps
-        p5.fill(textColour)
+        p5.fill(colourTheme.textColour)
 
         let yWalker = canvasHeight - yBorder
         for (let i = 0; i < numSteps; i = i + 1) {

@@ -5,17 +5,29 @@ import raw from "./popdataSmall.txt";
 import textDecoder from "./textDecoder";
 import { dataSets, shapes, views } from "./constants";
 import Selection from "./Selection";
-import { bigData as covidData } from "./covidData";
+import { bigData as covidData, smallData as smallCovid } from "./covidData";
 import DataContext from './DataContext';
 import { data as mapData } from "./data"
 import { getDataBrackets, getDataBracketsMultiYear, getDataCategories, getVariableBrackets } from "./helpers/data"
+
+const getData = (view) => {
+    if (view === views.SCATTER.val) {
+        return covidData
+    } else if (view === views.GRAPH.val) {
+        return smallCovid
+    } else if (view === views.COMPARISON.val || view === views.MAP.val) {
+        return mapData[dataSets.TEMP.id].data
+    }
+
+    return {}
+}
 
 const DataSelector = ({ view }) => {
     const [totalDataPts, setTotalDataPts] = useState(null)
     const [locations, setLocations] = useState([])
     const [shape, setShape] = useState(shapes.SPIRAL.id)
 
-    const data = view === views.SCATTER.val ? covidData : mapData[dataSets.TEMP.id].data
+    const data = getData(view)
     const dataType = view === views.SCATTER.val ? dataSets.COVID.val : dataSets.TEMP.val
     const yBrackets = getVariableBrackets(covidData, 'population')
     const dataBrackets = view === views.SCATTER.val ? getDataBracketsMultiYear(covidData, 'cases') : getDataBrackets(data)
