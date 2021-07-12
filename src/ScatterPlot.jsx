@@ -26,10 +26,10 @@ const ScatterPlot = ({}) => {
     const [spacePerPt, setSpacePerPoint] = useState((graphWidth - getRadius(selections, selections[spiralValues.NUM_YEARS]) * 2) / totalDataPts)
     const [pts, setPts] = useState({})
     const [detailed, setDetailed] = useState(null)
-    const [radius, setRadius] = useState(getRadius(selections, selections[spiralValues.NUM_YEARS]))
+    const [radius, setRadius] = useState(getRadius(selections))
 
     useEffect(() => {
-        setRadius(getRadius(selections, selections[spiralValues.NUM_YEARS]))
+        setRadius(getRadius(selections))
         if (p5) {
             draw(p5)
         }
@@ -42,12 +42,14 @@ const ScatterPlot = ({}) => {
     }, [detailed])
 
     useEffect(() => {
-        setSpacePerPoint((graphWidth - getRadius(selections, selections[spiralValues.NUM_YEARS]) * 2) / totalDataPts)
+        setSpacePerPoint((graphWidth - radius * 2) / totalDataPts)
     }, [totalDataPts])
+
 
     const calcCategories = () => {
         let xCounters = {}
-        let walker = xBorder + getRadius(selections, selections[spiralValues.NUM_YEARS])
+        let walker = xBorder + radius
+        console.log(radius)
 
         Object.keys(categories).forEach(cat => {
             let numInCategory = categories[cat]

@@ -378,7 +378,7 @@ export const getPinAdjustment = (selections, shape, locationData) => {
     let startY = 0
 
     if (shape === shapes.SPIRAL.id) {
-        const radius = getRadius(selections, locationData.length)
+        const radius = getRadius(selections, numYears)
         startY = radius + 15
     } else {
         startY = 7 + ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * numYears)

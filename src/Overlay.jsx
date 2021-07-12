@@ -40,7 +40,6 @@ const Overlay = ({ }) => {
     }, [selections, p5, map, mapPin, hover, opaque, yearIndication, fillMissing])
 
     useEffect(() => {
-        console.log(shape)
         resetClusters(true)
     }, [shape])
 

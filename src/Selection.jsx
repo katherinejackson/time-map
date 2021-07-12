@@ -18,7 +18,7 @@ const Selection = ({ shape, view }) => {
         'y-axis': null,
     })
     const [selections, setSelections] = useState(getDefaultSelections(shape, dataType))
-    const [pinView, setPinView] = useState(false)
+    const [mapPin, setMapPin] = useState(false)
     const [opaque, setOpaque] = useState(false)
     const [yearIndication, setYearIndication] = useState(null)
     const [fillMissing, setFillMissing] = useState(false)
@@ -42,7 +42,7 @@ const Selection = ({ shape, view }) => {
     }
 
     const handlePinCheck = () => {
-        setPinView(!pinView)
+        setMapPin(!mapPin)
     }
 
     const handleOpaqueCheck = () => {
@@ -60,7 +60,7 @@ const Selection = ({ shape, view }) => {
     }
 
     return (
-        <SelectionContext.Provider value={{ selections, pinView, fillMissing, shape, opaque, variables, yearIndication }}>
+        <SelectionContext.Provider value={{ selections, mapPin, fillMissing, shape, opaque, variables, yearIndication }}>
             <div>
                 <FilterPanel
                     axis={axis}
