@@ -1,7 +1,7 @@
 import Sketch from "react-p5";
 import React, { useEffect, useState, useContext } from "react";
 
-import { shapes, rectValues, spiralValues } from './constants'
+import { shapes, rectValues, spiralValues, themeColours } from './constants'
 import { getInterval, getManualInterval } from "./helpers/intervals";
 import { rectangle, spiral, getPinAdjustment } from "./shapes";
 import { drawLegend } from "./legend";
@@ -11,7 +11,8 @@ import DataContext from "./DataContext";
 
 const Tile = ({ numX }) => {
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
-    const { selections, fillMissing, mapPin, opaque, shape, yearIndication } = useContext(SelectionContext)
+    const { selections, fillMissing, mapPin, opaque, shape, yearIndication, darkMode } = useContext(SelectionContext)
+    const theme = darkMode ? themeColours['dark'] : themeColours['default']
     const interval = dataType === 'TEMP'
         ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])
         : getManualInterval(dataBrackets, selections[rectValues.NUM_COLOURS], dataType)
@@ -23,7 +24,7 @@ const Tile = ({ numX }) => {
             draw(p5)
         }
 
-    }, [selections, p5, opaque, yearIndication, mapPin, shape, fillMissing])
+    }, [selections, p5, opaque, yearIndication, mapPin, shape, fillMissing, darkMode])
 
     const getLocationData = (id) => {
         let newData = []
@@ -55,8 +56,8 @@ const Tile = ({ numX }) => {
             startY = startY - getPinAdjustment(selections, shape, locationData)
         }
 
-        spiral(dataType, interval, locationData, x, y, mapPin, p5, selections, x, startY, opaque, true, yearIndication, fillMissing)
-        p5.fill('black')
+        spiral(dataType, interval, locationData, x, y, mapPin, p5, selections, x, startY, opaque, true, yearIndication, fillMissing, theme)
+        p5.fill(theme.textColour)
         p5.textSize(10)
         p5.text("1", x - 2, startY)
     }
@@ -74,13 +75,20 @@ const Tile = ({ numX }) => {
             startY = y - getPinAdjustment(selections, shape, locationData)
         }
 
-        rectangle(dataType, interval, locationData, x, y, mapPin, p5, selections, startX, startY, opaque, true, yearIndication, fillMissing)
-        p5.fill('black')
+        rectangle(dataType, interval, locationData, x, y, mapPin, p5, selections, startX, startY, opaque, true, yearIndication, fillMissing, theme)
+
         p5.textSize(10)
-        if (hover) {
-            p5.textSize(16)
+        if (mapPin) {
+            p5.fill(theme.pinBackground)
+            p5.ellipse(x, y + 8, 16, 16)
+            p5.fill(theme.textColour)
+            p5.text("1", x, y + 8)
+        } else {
+            p5.fill(theme.pinBackground)
+            p5.ellipse(x, y + pinHeight / 2 + 8, 16, 16)
+            p5.fill(theme.textColour)
+            p5.text("1", x, y + pinHeight/2 + 8)
         }
-        p5.text("1", x, y + pinHeight / 2 + 5)
     }
 
     const setup = (p5, parent) => {
@@ -91,11 +99,12 @@ const Tile = ({ numX }) => {
     const draw = (p5) => {
         p5.clear()
         p5.stroke(0)
-        p5.fill(255)
+        p5.fill(theme.background)
+        p5.stroke(theme.lineColour)
         p5.rect(0, 0, canvasSize, canvasSize)
         p5.noStroke()
         drawPin(canvasSize / 2, canvasSize / 2, [locations[0].id])
-        drawLegend(p5, canvasSize / 2, 1, selections, interval, dataType)
+        drawLegend(p5, canvasSize / 2, 1, selections, interval, dataType, theme.textColour)
         p5.noLoop()
     }
 

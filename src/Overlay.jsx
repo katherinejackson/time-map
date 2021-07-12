@@ -5,7 +5,7 @@ import { useMap } from "react-leaflet";
 import { drawLegend } from "./legend";
 import { averageData, getLocationData } from "./helpers/data";
 import { getDefaultSelections } from "./helpers/selections";
-import { shapes, rectValues, spiralValues } from "./constants";
+import { shapes, rectValues, spiralValues, themeColours } from "./constants";
 import { getInterval, getManualInterval } from "./helpers/intervals";
 import { updateClusters, calculateClusters } from "./helpers/cluster";
 import { rectangle, spiral, getSpiralSize, getRadius, getRowSize, getPinAdjustment } from "./shapes";
@@ -18,7 +18,8 @@ const mapHeight = window.innerHeight * 0.75
 const Overlay = ({ }) => {
     const map = useMap()
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
-    const { selections, fillMissing, mapPin, opaque, shape, yearIndication } = useContext(SelectionContext)
+    const { selections, darkMode, fillMissing, mapPin, opaque, shape, yearIndication } = useContext(SelectionContext)
+    const theme = darkMode ? themeColours['dark'] : themeColours['default']
     const [p5, setP5] = useState(null)
     const interval = dataType === 'TEMP'
         ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])
@@ -33,11 +34,10 @@ const Overlay = ({ }) => {
 
     useEffect(() => {
         if (p5) {
-
             drawLocationClusters()
         }
 
-    }, [selections, p5, map, mapPin, hover, opaque, yearIndication, fillMissing])
+    }, [selections, p5, map, mapPin, hover, opaque, yearIndication, fillMissing, darkMode])
 
     useEffect(() => {
         resetClusters(true)
@@ -122,8 +122,8 @@ const Overlay = ({ }) => {
             startY = startY - getPinAdjustment(newSelections, shape, locationData)
         }
 
-        spiral(dataType, interval, locationData, x, y, mapPin, p5, newSelections, x, startY, opaque, hover, yearIndication, fillMissing)
-        p5.fill('black')
+        spiral(dataType, interval, locationData, x, y, mapPin, p5, newSelections, x, startY, opaque, hover, yearIndication, fillMissing, theme)
+        p5.fill(theme.textColour)
         p5.textSize(10)
         if (hover) {
             p5.textSize(15)
@@ -155,8 +155,8 @@ const Overlay = ({ }) => {
             startY = y - getPinAdjustment(newSelections, shape, locationData)
         }
 
-        rectangle(dataType, interval, locationData, x, y, mapPin, p5, newSelections, startX, startY, opaque, hover, yearIndication, fillMissing)
-        p5.fill('black')
+        rectangle(dataType, interval, locationData, x, y, mapPin, p5, newSelections, startX, startY, opaque, hover, yearIndication, fillMissing, theme)
+        p5.fill(theme.textColour)
         p5.textSize(10)
         p5.textAlign(p5.CENTER, p5.CENTER)
         if (hover) {
@@ -164,14 +164,14 @@ const Overlay = ({ }) => {
         }
 
         if (mapPin) {
-            p5.fill(255, 255, 255, 250)
+            p5.fill(theme.pinBackground)
             p5.ellipse(x, y + 8, 16, 16)
-            p5.fill(0)
+            p5.fill(theme.textColour)
             p5.text(ids.length, x, y + 8)
         } else {
-            p5.fill(255, 255, 255, 250)
+            p5.fill(theme.pinBackground)
             p5.ellipse(x, y + pinHeight / 2 + 8, 16, 16)
-            p5.fill(0)
+            p5.fill(theme.textColour)
             p5.text(ids.length, x, y + pinHeight / 2 + 8)
         }
 
@@ -207,7 +207,7 @@ const Overlay = ({ }) => {
         let startX = x;
         let startY = y - ((animSelections[rectValues.NUM_ROWS] * (animSelections[rectValues.SPACE_BETWEEN_ROWS] + animSelections[rectValues.ROW_HEIGHT])) * newData.length) / 2
 
-        rectangle(dataType, interval, newData, x, y, false, p5, animSelections, startX, startY, opaque, hover, yearIndication, fillMissing)
+        rectangle(dataType, interval, newData, x, y, false, p5, animSelections, startX, startY, opaque, hover, yearIndication, fillMissing, theme)
     }
 
     const setup = (p5, parent) => {
@@ -359,7 +359,7 @@ const Overlay = ({ }) => {
                 }
             }
 
-            drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType)
+            drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType, null, theme.textColour)
             drawZoom(p5)
         }
     }
@@ -396,12 +396,12 @@ const Overlay = ({ }) => {
         const { pinHeight } = getRowSize(newSelections, detailed.length, selections[rectValues.NUM_YEARS])
         const locationHeight = pinHeight + 30
 
-        p5.fill('white')
+        p5.fill(theme.background)
         p5.rect(mapWidth - 150, 0, 150, locationHeight * detailed.length)
         p5.textAlign(p5.LEFT, p5.TOP)
 
         detailed.forEach((id, index) => {
-            p5.fill('black')
+            p5.fill(theme.textColour)
             p5.textSize(10)
             p5.text(locations[id].name, mapWidth - 150, index * locationHeight)
             drawHoverRect(mapWidth - 75, index * locationHeight + pinHeight / 2 + 15, id, newSelections)

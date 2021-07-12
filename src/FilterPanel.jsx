@@ -6,6 +6,7 @@ import SelectionContext from "./SelectionContext";
 const FilterPanel = ({
     axis,
     handleSelect,
+    handleDarkModeCheck,
     handleAxisSelect,
     handleFillMissingCheck,
     handlePinCheck,
@@ -13,7 +14,7 @@ const FilterPanel = ({
     handleYearIndicationSelect,
     view,
 }) => {
-    const { selections, fillMissing, mapPin, opaque, shape, variables, yearIndication } = useContext(SelectionContext)
+    const { selections, darkMode, fillMissing, mapPin, opaque, shape, variables, yearIndication } = useContext(SelectionContext)
 
     return (
         <div className="container row row-col-3 mt-3">
@@ -67,48 +68,54 @@ const FilterPanel = ({
                 ))}
             </div>
 
-            {view === views.COMPARISON.val || view === views.MAP.val ? (
-                <div className="col">
-                    <div className="row">
-                        <div className="col d-flex justify-content-end">
-                            <label lass="col col-form-label w-auto">View as map pin</label>
-                        </div>
-                        <div className="col">
-                            <input className="form-check" type="checkbox" defaultChecked={mapPin} onChange={handlePinCheck} />
-                        </div>
+            <div className="col">
+                <div className="row">
+                    <div className="col d-flex justify-content-end">
+                        <label className="col col-form-label w-auto">Dark Mode</label>
                     </div>
-
-                    <div className="row">
-                        <div className="col d-flex justify-content-end">
-                            <label lass="col col-form-label w-auto">Opaque Background</label>
-                        </div>
-                        <div className="col">
-                            <input className="form-check" type="checkbox" defaultChecked={opaque} onChange={handleOpaqueCheck} />
-                        </div>
-                    </div>
-
-                    <div className="row">
-                        <div className="col d-flex justify-content-end">
-                            <label lass="col col-form-label w-auto">Fill Missing Data</label>
-                        </div>
-                        <div className="col">
-                            <input className="form-check" type="checkbox" defaultChecked={fillMissing} onChange={handleFillMissingCheck} />
-                        </div>
-                    </div>
-
-                    <div className="row">
-                        <div className="col d-flex justify-content-end">
-                            <label htmlFor="yearIndication" className="col-form-label w-auto">Year Indication</label>
-                        </div>
-                        <div className="col">
-                            <select className="form-select" defaultValue="none" id='yearIndication' onChange={(e) => handleYearIndicationSelect(e)} name='yearIndication'>
-                                <option value="none" id="no-year">None</option>
-                                {Object.keys(yearIndicators).map(id => <option key={`year-${id}`} value={id}>{yearIndicators[id].name}</option>)}
-                            </select>
-                        </div>
+                    <div className="col">
+                        <input className="form-check" type="checkbox" defaultChecked={darkMode} onChange={handleDarkModeCheck} />
                     </div>
                 </div>
-            ) : null}
+                <div className="row">
+                    <div className="col d-flex justify-content-end">
+                        <label className="col col-form-label w-auto" >View as map pin</label>
+                    </div>
+                    <div className="col">
+                        <input disabled={view === views.SCATTER.val} className="form-check" type="checkbox" defaultChecked={mapPin} onChange={handlePinCheck} />
+                    </div>
+                </div>
+
+                <div className="row">
+                    <div className="col d-flex justify-content-end">
+                        <label className="col col-form-label w-auto">Opaque Background</label>
+                    </div>
+                    <div className="col">
+                        <input disabled={view === views.SCATTER.val} className="form-check" type="checkbox" defaultChecked={opaque} onChange={handleOpaqueCheck} />
+                    </div>
+                </div>
+
+                <div className="row">
+                    <div className="col d-flex justify-content-end">
+                        <label className="col col-form-label w-auto">Fill Missing Data</label>
+                    </div>
+                    <div className="col">
+                        <input disabled={view === views.SCATTER.val} className="form-check" type="checkbox" defaultChecked={fillMissing} onChange={handleFillMissingCheck} />
+                    </div>
+                </div>
+
+                <div className="row">
+                    <div className="col d-flex justify-content-end">
+                        <label htmlFor="yearIndication" className="col-form-label w-auto">Year Indication</label>
+                    </div>
+                    <div className="col">
+                        <select className="form-select" defaultValue="none" disabled={view === views.SCATTER.val} id='yearIndication' onChange={(e) => handleYearIndicationSelect(e)} name='yearIndication'>
+                            <option value="none" id="no-year">None</option>
+                            {Object.keys(yearIndicators).map(id => <option key={`year-${id}`} value={id}>{yearIndicators[id].name}</option>)}
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div >
     )
 }

@@ -10,7 +10,23 @@ export const abbreviatedMonths = ["JA", "FE", "MR", "AL", "MA", "JN", "JL", "AU"
 
 export const monthColours = ["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928"]
 
-//TODO: these colours are bad
+export const themeColours = {
+    default: {
+        background: 255,
+        lineColour: 50,
+        textColour: 0,
+        pinColour: 50,
+        pinBackground: 255,
+    },
+    dark: {
+        background: 0,
+        lineColour: 50,
+        textColour: 255,
+        pinColour: 200,
+        pinBackground: 50,
+    },
+}
+
 export const colours = {
     TEMP: {
         3: ['#FF0000', '#00FF00', '#0000FF'],

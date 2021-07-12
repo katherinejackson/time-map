@@ -22,6 +22,7 @@ const Selection = ({ shape, view }) => {
     const [opaque, setOpaque] = useState(false)
     const [yearIndication, setYearIndication] = useState(null)
     const [fillMissing, setFillMissing] = useState(false)
+    const [darkMode, setDarkMode] = useState(false)
     const variables = shape === shapes.SPIRAL.id ? spiralVariables[dataType] : rectVariables[dataType]
 
     useEffect(() => {
@@ -53,6 +54,10 @@ const Selection = ({ shape, view }) => {
         setFillMissing(!fillMissing)
     }
 
+    const handleDarkModeCheck = () => {
+        setDarkMode(!darkMode)
+    }
+
     const isError = (values) => {
         return values["x-axis"] === null
             || values["y-axis"] === null
@@ -60,12 +65,13 @@ const Selection = ({ shape, view }) => {
     }
 
     return (
-        <SelectionContext.Provider value={{ selections, mapPin, fillMissing, shape, opaque, variables, yearIndication }}>
+        <SelectionContext.Provider value={{ selections, darkMode, mapPin, fillMissing, shape, opaque, variables, yearIndication }}>
             <div>
                 <FilterPanel
                     axis={axis}
                     handleSelect={handleSelect}
                     handleAxisSelect={handleAxisSelect}
+                    handleDarkModeCheck={handleDarkModeCheck}
                     handleFillMissingCheck={handleFillMissingCheck}
                     handlePinCheck={handlePinCheck}
                     handleOpaqueCheck={handleOpaqueCheck}

@@ -41,11 +41,11 @@ export const getColour = (pt, highest, interval, colourSet) => {
 
 export const fillColourGradient = (p5, pt, interval, numColours) => {
     if (numColours === 1) {
-        const scaledPt = Math.abs(-1 * interval.lowest + pt)
+        const scaledPt = Math.abs(-1 * interval.low + pt)
         p5.colorMode(p5.HSB, 255, interval.range, 1)
         p5.fill(0, scaledPt, 1)
     } else if (numColours === 2) {
-        const middle = interval.lowest + interval.range / 2
+        const middle = interval.low + interval.range / 2
         p5.colorMode(p5.HSB, 360, interval.range / 2, 1)
         if (pt > middle) {
             p5.fill(0, Math.abs(middle - pt), 1)
@@ -53,8 +53,7 @@ export const fillColourGradient = (p5, pt, interval, numColours) => {
             p5.fill(220, Math.abs(middle - pt), 1)
         }
     } else if (numColours === 360) {
-        const range = interval.highest - interval.lowest
-        const newPt = Math.floor((range - (-1 * interval.lowest + pt)) * 270 / range)
+        const newPt = Math.floor((interval.range - (-1 * interval.low + pt)) * 270 / interval.range)
         p5.colorMode(p5.HSB, 360, 100, 100)
         p5.fill(newPt, 100, 95)
     }

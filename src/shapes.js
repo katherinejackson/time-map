@@ -16,6 +16,7 @@ export const rectangle = (
     hover,
     yearIndication,
     fillMissing,
+    theme,
 ) => {
     const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
     const rowWidth = daysPerRow * selections[rectValues.DAY_WIDTH]
@@ -27,17 +28,17 @@ export const rectangle = (
 
     if (mapPin) {
         p5.stroke(50)
-        p5.fill(50)
+        p5.fill(theme.pinColour)
         p5.triangle(locationX, locationY, locationX - 5, locationY - 5, locationX + 5, locationY - 5)
         if (opaque) {
-            p5.fill(255)
+            p5.fill(theme.pinBackground)
         } else {
             p5.noFill()
         }
         p5.rect(x - 2, y - 2, rowWidth + 4, pinHeight + 4, 5)
         p5.noStroke()
     } else if (opaque) {
-        p5.fill(255)
+        p5.fill(theme.pinBackground)
         p5.rect(x - 2, y - 2, rowWidth + 4, pinHeight + 4, 5)
     }
 
@@ -113,7 +114,7 @@ export const rectangle = (
         const tickSpace = rowWidth / ticksRequired
         for (let i = 0; i < ticksRequired; i++) {
             p5.textSize(6)
-            p5.fill(0)
+            p5.fill(theme.textColour)
             p5.text(abbreviatedMonths[i % 12], startX + i * tickSpace + tickSpace / 2, startY - 6)
             p5.stroke(0, 0, 0, 150)
             p5.line(startX + i * tickSpace, startY - 10, startX + i * tickSpace, startY + pinHeight)
@@ -128,7 +129,6 @@ export const scatterRow = (p5, x, y, data, selections, dataType) => {
     let startX = x
     let startY = y
     let rowCounter = 1
-    // console.log(numColours)
 
     data.forEach(day => {
         if (day === '') {
@@ -224,6 +224,7 @@ export const spiral = (
     hover,
     yearIndicator,
     fillMissing,
+    theme,
 ) => {
     let spiralWidth = selections[spiralValues.SPIRAL_WIDTH]
     let spiralTightness = selections[spiralValues.SPACE_BETWEEN_SPIRAL]
@@ -243,11 +244,11 @@ export const spiral = (
             if (yearIndicator !== yearIndicators.COLOURS.val) {
                 p5.stroke(50)
             }
-            p5.fill(50)
+            p5.fill(theme.pinColour)
             p5.triangle(locationX, locationY, locationX - 5, locationY - 15, locationX + 5, locationY - 15)
 
             if (opaque) {
-                p5.fill(255)
+                p5.fill(theme.pinBackground)
             } else {
                 p5.noFill()
             }
@@ -255,7 +256,7 @@ export const spiral = (
             p5.ellipse(startX, startY, radius * 2, radius * 2 + 2)
             p5.noStroke()
         } else if (opaque) {
-            p5.fill(255, 255, 255, 200)
+            p5.fill(theme.pinBackground)
             p5.ellipse(startX, startY, radius * 2, radius * 2 + 2)
         }
     }
@@ -295,7 +296,7 @@ export const spiral = (
     })
 
     if (hover && yearIndicator === yearIndicators.MONTHS.val) {
-        p5.fill("black")
+        p5.fill(theme.textColour)
         let hoverCore = coreSize
         hoverCore += spiralTightness * 365
         angle = -Math.PI / 2
@@ -313,7 +314,7 @@ export const spiral = (
     }
 
     if (hover && yearIndicator === yearIndicators.MONTHS_TICKS.val) {
-        p5.fill("black")
+        p5.fill(theme.textColour)
         let innerCore = selections[spiralValues.CORE_SIZE]
         let outerCore = coreSize
         outerCore += spiralTightness / 2 * 365
@@ -359,7 +360,7 @@ export const spiral = (
 
         p5.noStroke()
     } else if (yearIndicator === yearIndicators.TICKS.val) {
-        p5.fill("black")
+        p5.fill(theme.textColour)
         coreSize += spiralTightness * 365
         angle = -Math.PI / 2
         for (let i = 0; i < 12; i++) {
