@@ -23,7 +23,7 @@ const Tile = ({ numX }) => {
             draw(p5)
         }
 
-    }, [selections, p5, opaque, yearIndication])
+    }, [selections, p5, opaque, yearIndication, mapPin, shape, fillMissing])
 
     const getLocationData = (id) => {
         let newData = []
