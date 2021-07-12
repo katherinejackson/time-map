@@ -122,6 +122,39 @@ export const rectangle = (
     }
 }
 
+export const scatterRow = (p5, x, y, data, selections, dataType) => {
+    let numColours = selections[rectValues.NUM_COLOURS]
+    const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
+    let startX = x
+    let startY = y
+    let rowCounter = 1
+    // console.log(numColours)
+
+    data.forEach(day => {
+        if (day === '') {
+            p5.fill(200)
+        } else {
+            if (numColours === 256 || numColours === 1) {
+                fillLogColourGradient(p5, day, 6, numColours)
+            } else if (numColours === 8) {
+                let colour = getManualIntervalColour(day, colours[dataType][numColours], manualIntervals[dataType][numColours])
+                p5.fill(colour)
+            }
+        }
+
+        p5.rect(x, y, 1, selections[rectValues.ROW_HEIGHT])
+
+        if (rowCounter >= daysPerRow) {
+            x = startX
+            y = y + selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT]
+            rowCounter = 1
+        } else {
+            x = x + selections[rectValues.DAY_WIDTH]
+            rowCounter++
+        }
+    })
+}
+
 export const monthSpiral = (p5, startX, startY, data, highest, lowest) => {
     let spiralWidth = 30
     let spiralTightness = 0.25
@@ -165,7 +198,7 @@ export const scatterSpiral = (p5, startX, startY, data, selections, dataType) =>
             } else if (numColours === 8) {
                 let colour = getManualIntervalColour(day, colours[dataType][numColours], manualIntervals[dataType][numColours])
                 p5.fill(colour)
-            } 
+            }
         }
 
         p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerDay * 5, p5.PIE)
@@ -231,7 +264,7 @@ export const spiral = (
         year.forEach(pt => {
             let x = startX + p5.cos(angle) * coreSize
             let y = startY + p5.sin(angle) * coreSize
-    
+
             if (pt) {
                 if (dataType === 'WIND' || dataType === 'PRECIP') {
                     const colour = getManualIntervalColour(pt, colours[dataType][selections[spiralValues.NUM_COLOURS]], manualIntervals[dataType][selections[rectValues.NUM_COLOURS]])

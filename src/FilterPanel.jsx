@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 
 import { views, yearIndicators } from "./constants"
 import SelectionContext from "./SelectionContext";
@@ -65,49 +65,50 @@ const FilterPanel = ({
                         </div>
                     </div>
                 ))}
-
             </div>
 
-            <div className="col">
-                <div className="row">
-                    <div className="col d-flex justify-content-end">
-                        <label lass="col col-form-label w-auto">View as map pin</label>
+            {view === views.COMPARISON.val || view === views.MAP.val ? (
+                <div className="col">
+                    <div className="row">
+                        <div className="col d-flex justify-content-end">
+                            <label lass="col col-form-label w-auto">View as map pin</label>
+                        </div>
+                        <div className="col">
+                            <input className="form-check" type="checkbox" defaultChecked={mapPin} onChange={handlePinCheck} />
+                        </div>
                     </div>
-                    <div className="col">
-                        <input className="form-check" type="checkbox" defaultChecked={mapPin} onChange={handlePinCheck} />
-                    </div>
-                </div>
 
-                <div className="row">
-                    <div className="col d-flex justify-content-end">
-                        <label lass="col col-form-label w-auto">Opaque Background</label>
+                    <div className="row">
+                        <div className="col d-flex justify-content-end">
+                            <label lass="col col-form-label w-auto">Opaque Background</label>
+                        </div>
+                        <div className="col">
+                            <input className="form-check" type="checkbox" defaultChecked={opaque} onChange={handleOpaqueCheck} />
+                        </div>
                     </div>
-                    <div className="col">
-                        <input className="form-check" type="checkbox" defaultChecked={opaque} onChange={handleOpaqueCheck} />
-                    </div>
-                </div>
 
-                <div className="row">
-                    <div className="col d-flex justify-content-end">
-                        <label lass="col col-form-label w-auto">Fill Missing Data</label>
+                    <div className="row">
+                        <div className="col d-flex justify-content-end">
+                            <label lass="col col-form-label w-auto">Fill Missing Data</label>
+                        </div>
+                        <div className="col">
+                            <input className="form-check" type="checkbox" defaultChecked={fillMissing} onChange={handleFillMissingCheck} />
+                        </div>
                     </div>
-                    <div className="col">
-                        <input className="form-check" type="checkbox" defaultChecked={fillMissing} onChange={handleFillMissingCheck} />
-                    </div>
-                </div>
 
-                <div className="row">
-                    <div className="col d-flex justify-content-end">
-                        <label htmlFor="yearIndication" className="col-form-label w-auto">Year Indication</label>
-                    </div>
-                    <div className="col">
-                        <select className="form-select" defaultValue="none" id='yearIndication' onChange={(e) => handleYearIndicationSelect(e)} name='yearIndication'>
-                            <option value="none" id="no-year">None</option>
-                            {Object.keys(yearIndicators).map(id => <option key={`year-${id}`} value={id}>{yearIndicators[id].name}</option>)}
-                        </select>
+                    <div className="row">
+                        <div className="col d-flex justify-content-end">
+                            <label htmlFor="yearIndication" className="col-form-label w-auto">Year Indication</label>
+                        </div>
+                        <div className="col">
+                            <select className="form-select" defaultValue="none" id='yearIndication' onChange={(e) => handleYearIndicationSelect(e)} name='yearIndication'>
+                                <option value="none" id="no-year">None</option>
+                                {Object.keys(yearIndicators).map(id => <option key={`year-${id}`} value={id}>{yearIndicators[id].name}</option>)}
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
+            ) : null}
         </div >
     )
 }

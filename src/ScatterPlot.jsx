@@ -3,9 +3,9 @@ import react, { useContext, useEffect, useState } from 'react'
 
 import { drawLegend } from "./legend";
 import SelectionContext from "./SelectionContext";
-import { getRadius, scatterSpiral } from "./shapes";
+import { getRadius, scatterSpiral, scatterRow } from "./shapes";
 import DataContext from "./DataContext";
-import { spiralValues } from "./constants";
+import { shapes, spiralValues } from "./constants";
 import { formatPopulation } from "./helpers/numbers"
 
 const canvasWidth = window.innerWidth * 0.95
@@ -20,7 +20,7 @@ const graphHeight = canvasHeight - yBorder * 2
 const clickTolerance = 5
 
 const ScatterPlot = ({}) => {
-    const { selections } = useContext(SelectionContext)
+    const { selections, shape } = useContext(SelectionContext)
     const { data, dataBrackets, yBrackets, categories, dataType, totalDataPts } = useContext(DataContext)
     const [p5, setP5] = useState(null)
     const [spacePerPt, setSpacePerPoint] = useState((graphWidth - getRadius(selections, selections[spiralValues.NUM_YEARS]) * 2) / totalDataPts)
@@ -29,11 +29,14 @@ const ScatterPlot = ({}) => {
     const [radius, setRadius] = useState(getRadius(selections))
 
     useEffect(() => {
-        setRadius(getRadius(selections))
+        if (shape === shapes.SPIRAL.id) {
+            setRadius(getRadius(selections))
+        }
+
         if (p5) {
             draw(p5)
         }
-    }, [selections])
+    }, [selections, shape])
 
     useEffect(() => {
         if (detailed && p5) {
@@ -49,7 +52,6 @@ const ScatterPlot = ({}) => {
     const calcCategories = () => {
         let xCounters = {}
         let walker = xBorder + radius
-        console.log(radius)
 
         Object.keys(categories).forEach(cat => {
             let numInCategory = categories[cat]
@@ -66,14 +68,21 @@ const ScatterPlot = ({}) => {
         p5.textAlign(p5.CENTER, p5.CENTER)
     }
 
-    const drawSpiral = (p5, entry, x, y) => {
+    const drawPt = (p5, entry, x, y) => {
         let data = entry['cases']['2020']
         if (selections[spiralValues.NUM_YEARS] === 2) {
             data = data.concat(entry['cases']['2021'])
         }
 
-        scatterSpiral(p5, x, y, data, selections, dataType)
+        // console.log(data.length)
+
+        if (shape === shapes.SPIRAL.id) {
+            scatterSpiral(p5, x, y, data, selections, dataType)
+        } else {
+            scatterRow(p5, x, y, data, selections, dataType)
+        }
     }
+
 
     const drawDetailed = (p5) => {
         let currentWidth = selections[spiralValues.SPIRAL_WIDTH]
@@ -121,7 +130,7 @@ const ScatterPlot = ({}) => {
             let x = xCounters[data[id]['continent']]
             let y = calcY(id)
 
-            drawSpiral(p5, data[id], x, y)
+            drawPt(p5, data[id], x, y)
             xCounters[data[id]['continent']] = xCounters[data[id]['continent']] + spacePerPt
             newPts[id] = {
                 'name': data[id]['location'],
