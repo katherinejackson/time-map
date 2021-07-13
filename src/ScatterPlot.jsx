@@ -1,5 +1,5 @@
 import Sketch from "react-p5";
-import react, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import { drawLegend } from "./legend";
 import SelectionContext from "./SelectionContext";

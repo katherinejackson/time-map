@@ -155,6 +155,55 @@ export const scatterRow = (p5, x, y, data, selections, dataType) => {
     })
 }
 
+export const graphRow = (p5, startX, startY, endX, endY, data, selections, lineColour) => {
+    let numColours = selections[rectValues.NUM_COLOURS]
+    let width = Math.abs(startX - endX)
+    let slope = (startY - endY)/(startX - endX)
+    let b = startY - slope * startX
+
+    p5.fill('red')
+    if (startX < endX) {
+        for (let i = startX; i < endX; i++) {
+            let y = slope * i + b
+            p5.rect(i, y, 1, 10)
+        }
+    } else {
+        for (let i = startX; i > endX; i--) {
+            let y = slope * i + b
+            p5.rect(i, y, 1, 10)
+        }
+    }
+
+
+    // p5.strokeWeight(50)
+
+    // data.forEach(day => {
+    //     if (day === '') {
+    //         p5.stroke(200)
+    //     } else {
+    //         if (numColours === 256 || numColours === 1) {
+    //             fillLogColourGradient(p5, day, 6, numColours)
+    //         } else if (numColours === 8) {
+    //             let colour = getManualIntervalColour(day, colours[dataType][numColours], manualIntervals[dataType][numColours])
+    //             p5.fill(colour)
+    //         }
+    //     }
+
+    //     p5.rect(x, y, 1, selections[rectValues.ROW_HEIGHT])
+
+    //     if (rowCounter >= daysPerRow) {
+    //         x = startX
+    //         y = y + selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT]
+    //         rowCounter = 1
+    //     } else {
+    //         x = x + selections[rectValues.DAY_WIDTH]
+    //         rowCounter++
+    //     }
+    // })
+
+    p5.strokeWeight(0)
+}
+
 export const monthSpiral = (p5, startX, startY, data, highest, lowest) => {
     let spiralWidth = 30
     let spiralTightness = 0.25
@@ -207,6 +256,37 @@ export const scatterSpiral = (p5, startX, startY, data, selections, dataType) =>
         coreSize += spiralTightness
     })
 }
+
+export const graphSpiral = (p5, startX, startY, data, selections, dataType) => {
+    let spiralWidth = selections[spiralValues.SPIRAL_WIDTH]
+    let spiralTightness = 0
+    let angle = -Math.PI / 2
+    let coreSize = selections[spiralValues.CORE_SIZE]
+    let numColours = selections[spiralValues.NUM_COLOURS]
+
+    p5.noStroke()
+    data.forEach(day => {
+        let x = startX + p5.cos(angle) * coreSize
+        let y = startY + p5.sin(angle) * coreSize
+
+        if (day === '') {
+            p5.fill(200)
+        } else {
+            if (numColours === 256 || numColours === 1) {
+                fillLogColourGradient(p5, day, 6, numColours)
+            } else if (numColours === 8) {
+                let colour = getManualIntervalColour(day, colours[dataType][numColours], manualIntervals[dataType][numColours])
+                p5.fill(colour)
+            }
+        }
+
+        p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerDay * 5, p5.PIE)
+
+        angle += radianPerDay
+        coreSize += spiralTightness
+    })
+}
+
 
 
 export const spiral = (

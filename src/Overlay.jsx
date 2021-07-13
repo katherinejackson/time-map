@@ -5,7 +5,7 @@ import { useMap } from "react-leaflet";
 import { drawLegend } from "./legend";
 import { averageData, getLocationData } from "./helpers/data";
 import { getDefaultSelections } from "./helpers/selections";
-import { shapes, rectValues, spiralValues, themeColours, themes } from "./constants";
+import { shapes, rectValues, spiralValues, themeColours } from "./constants";
 import { getInterval, getManualInterval } from "./helpers/intervals";
 import { updateClusters, calculateClusters } from "./helpers/cluster";
 import { rectangle, spiral, getSpiralSize, getRadius, getRowSize, getPinAdjustment } from "./shapes";
@@ -15,7 +15,7 @@ import DataContext from "./DataContext";
 const mapWidth = window.innerWidth * 0.95
 const mapHeight = window.innerHeight * 0.75
 
-const Overlay = ({ }) => {
+const Overlay = () => {
     const map = useMap()
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
     const { selections, theme, fillMissing, mapPin, opaque, shape, yearIndication } = useContext(SelectionContext)

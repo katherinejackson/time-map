@@ -47,7 +47,7 @@ export const getVariableBrackets = (data, variable) => {
             high = data[id][variable]
         }
 
-        if (!low || data[id][variable] < low && data[id][variable] > 0) {
+        if ((!low || data[id][variable] < low) && data[id][variable] > 0) {
             low = data[id][variable]
         }
     })

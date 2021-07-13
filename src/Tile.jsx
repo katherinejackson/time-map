@@ -12,7 +12,7 @@ import DataContext from "./DataContext";
 const Tile = ({ numX }) => {
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
     const { selections, fillMissing, mapPin, opaque, shape, yearIndication, theme } = useContext(SelectionContext)
-    const colourTheme = theme === themes.DARK.val ? themeColours['dark'] : themeColours['default']
+    const colourTheme = themeColours[theme]
     const interval = dataType === 'TEMP'
         ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])
         : getManualInterval(dataBrackets, selections[rectValues.NUM_COLOURS], dataType)

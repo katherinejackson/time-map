@@ -20,14 +20,14 @@ export const themeColours = {
     },
     DARK: {
         background: 0,
-        lineColour: 50,
+        lineColour: 200,
         textColour: 255,
         pinColour: 200,
         pinBackground: 50,
     },
     COLOUR_DARK: {
         background: 0,
-        lineColour: 50,
+        lineColour: 200,
         textColour: 255,
         pinColour: 200,
         pinBackground: 50,

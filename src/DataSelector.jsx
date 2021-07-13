@@ -28,9 +28,9 @@ const DataSelector = ({ view }) => {
     const [shape, setShape] = useState(shapes.SPIRAL.id)
 
     const data = getData(view)
-    const dataType = view === views.SCATTER.val ? dataSets.COVID.val : dataSets.TEMP.val
+    const dataType = view === views.SCATTER.val || view === views.GRAPH.val ? dataSets.COVID.val : dataSets.TEMP.val
     const yBrackets = getVariableBrackets(covidData, 'population')
-    const dataBrackets = view === views.SCATTER.val ? getDataBracketsMultiYear(covidData, 'cases') : getDataBrackets(data)
+    const dataBrackets = view === views.SCATTER.val || view === views.GRAPH.val ? getDataBracketsMultiYear(covidData, 'cases') : getDataBrackets(data)
     const categories = getDataCategories(covidData, 'continent')
 
     useEffect(() => {
