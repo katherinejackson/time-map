@@ -27,7 +27,7 @@ const ScatterPlot = ({ }) => {
     const [pts, setPts] = useState({})
     const [detailed, setDetailed] = useState(null)
     const [radius, setRadius] = useState(getRadius(selections))
-    const colourTheme = theme === themes.DARK.val ? themeColours['dark'] : themeColours['default']
+    const colourTheme = themeColours[theme]
 
     useEffect(() => {
         if (shape === shapes.SPIRAL.id) {

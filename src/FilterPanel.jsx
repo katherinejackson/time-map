@@ -75,7 +75,7 @@ const FilterPanel = ({
                     </div>
                     <div className="col">
                         <select className="form-select" defaultValue={theme} id='y-axis' onChange={(e) => handleThemeSelect(e)} name='theme'>
-                            {Object.keys(themes).map(val => <option disabled={val === themes.COLOUR_DARK.val && view !== views.MAP.val} key={`theme-${val}`} value={val}>{themes[val].name}</option>)}
+                            {Object.keys(themes).map(val => <option key={`theme-${val}`} value={val}>{themes[val].name}</option>)}
                         </select>
                     </div>
                 </div>

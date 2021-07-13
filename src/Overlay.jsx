@@ -19,7 +19,7 @@ const Overlay = ({ }) => {
     const map = useMap()
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
     const { selections, theme, fillMissing, mapPin, opaque, shape, yearIndication } = useContext(SelectionContext)
-    const colourTheme = theme === themes.DARK.val ? themeColours['dark'] : themeColours['default']
+    const colourTheme = themeColours[theme]
     const [p5, setP5] = useState(null)
     const interval = dataType === 'TEMP'
         ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])
