@@ -11,10 +11,10 @@ const canvasWidth = window.innerWidth * 0.95
 const canvasHeight = window.innerHeight
 
 const xBorder = 50
-const graphWidth = canvasWidth - xBorder * 2
+const graphWidth = canvasWidth/3
 
 const yBorder = 50
-const graphHeight = canvasHeight/3
+const graphHeight = canvasHeight
 
 const Graph = ({ }) => {
     const { selections, shape, theme } = useContext(SelectionContext)
@@ -84,19 +84,19 @@ const Graph = ({ }) => {
         nodeGraph(p5, pts)
 
         p5.stroke(lineColour)
-        p5.line(0, graphHeight, canvasWidth, graphHeight)
+        p5.line(graphWidth, 0, graphWidth, canvasHeight)
         p5.noStroke()
 
         let newPts = []
-        pts.forEach(pt => newPts.push({...pt, ['y']: pt.y + graphHeight}))
+        pts.forEach(pt => newPts.push({...pt, ['x']: pt.x + graphWidth}))
         edgeGraph(p5, newPts)
 
         p5.stroke(lineColour)
-        p5.line(0, graphHeight * 2, canvasWidth, graphHeight * 2)
+        p5.line(graphWidth * 2, 0, graphWidth * 2, canvasHeight)
         p5.noStroke()
 
         newPts = []
-        pts.forEach(pt => newPts.push({...pt, ['y']: pt.y + graphHeight * 2}))
+        pts.forEach(pt => newPts.push({...pt, ['x']: pt.x + graphWidth * 2}))
         doubleGraph(p5, newPts)
 
         drawLegend(p5, canvasWidth / 2, canvasHeight - 25, selections, null, dataType, dataBrackets, textColour)
@@ -136,8 +136,8 @@ const Graph = ({ }) => {
             let ptFound = false
 
             while (!ptFound) {
-                x = randomInt(50, canvasWidth - 50)
-                y = randomInt(50, graphHeight - 50)
+                x = randomInt(25, graphWidth - 25)
+                y = randomInt(25, canvasHeight - 50)
                 let tooClose = false
 
                 pts.forEach(pt => {
