@@ -157,51 +157,40 @@ export const scatterRow = (p5, x, y, data, selections, dataType) => {
 
 export const graphRow = (p5, startX, startY, endX, endY, data, selections, lineColour) => {
     let numColours = selections[rectValues.NUM_COLOURS]
-    let width = Math.abs(startX - endX)
-    let slope = (startY - endY)/(startX - endX)
+    let width = Math.abs(startX - endX) / data.length
+    let height = 10
+    let slope = (startY - endY) / (startX - endX)
     let b = startY - slope * startX
 
-    p5.fill('red')
-    if (startX < endX) {
-        for (let i = startX; i < endX; i++) {
-            let y = slope * i + b
-            p5.rect(i, y, 1, 10)
+    let angle = Math.atan((endY - startY) / (endX - startX))
+    let y_1 = Math.tan(angle) * width
+    let x_2 = Math.sin(angle) * height
+    let y_2 = Math.cos(angle) * height
+
+    let x = startX
+    let y = startY
+
+    data.forEach(day => {
+        if (day === '') {
+            p5.fill(200)
+        } else {
+            if (numColours === 256 || numColours === 1) {
+                fillLogColourGradient(p5, day, 6, numColours)
+            } else if (numColours === 8) {
+                let colour = getManualIntervalColour(day, colours['COVID'][numColours], manualIntervals['COVID'][numColours])
+                p5.fill(colour)
+            }
         }
-    } else {
-        for (let i = startX; i > endX; i--) {
-            let y = slope * i + b
-            p5.rect(i, y, 1, 10)
+
+        p5.quad(x, y, x + width, y + y_1, x + width - x_2, y + y_1 + y_2, x - x_2, y + + y_2)
+        if (startX < endX) {
+            x += width
+        } else {
+            x -= width
         }
-    }
 
-
-    // p5.strokeWeight(50)
-
-    // data.forEach(day => {
-    //     if (day === '') {
-    //         p5.stroke(200)
-    //     } else {
-    //         if (numColours === 256 || numColours === 1) {
-    //             fillLogColourGradient(p5, day, 6, numColours)
-    //         } else if (numColours === 8) {
-    //             let colour = getManualIntervalColour(day, colours[dataType][numColours], manualIntervals[dataType][numColours])
-    //             p5.fill(colour)
-    //         }
-    //     }
-
-    //     p5.rect(x, y, 1, selections[rectValues.ROW_HEIGHT])
-
-    //     if (rowCounter >= daysPerRow) {
-    //         x = startX
-    //         y = y + selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT]
-    //         rowCounter = 1
-    //     } else {
-    //         x = x + selections[rectValues.DAY_WIDTH]
-    //         rowCounter++
-    //     }
-    // })
-
-    p5.strokeWeight(0)
+        y = slope * x + b
+    })
 }
 
 export const monthSpiral = (p5, startX, startY, data, highest, lowest) => {

@@ -16,6 +16,8 @@ const graphWidth = canvasWidth - xBorder * 2
 const yBorder = 50
 const graphHeight = canvasHeight - yBorder * 2
 
+const numLocations = 20
+
 const Graph = ({ }) => {
     const { selections, shape, theme } = useContext(SelectionContext)
     const { data, dataBrackets, yBrackets, categories, dataType, totalDataPts } = useContext(DataContext)
@@ -24,12 +26,18 @@ const Graph = ({ }) => {
     const { background, lineColour, textColour } = themeColours[theme]
     const [spiralSelections, setSpiralSelections] = useState({ ...selections })
     const [rowSelections, setRowSelections] = useState({ ...selections })
+    const [pts, setPts] = useState([])
+    const [ids, setIds] = useState([])
+
+    useEffect(() => {
+        setUpRandomPts()
+    }, [])
 
     useEffect(() => {
         if (p5) {
             draw(p5)
         }
-    }, [shape, theme])
+    }, [shape, theme, spiralSelections])
 
     useEffect(() => {
         setSpiralSelections({
@@ -49,9 +57,8 @@ const Graph = ({ }) => {
     }, [selections])
 
     const randomInt = (min, max) => {
-        return( Math.floor(Math.random() * (max - min + 1) ) + min );
-      }
-
+        return (Math.floor(Math.random() * (max - min + 1)) + min);
+    }
 
     const setup = (p5, parent) => {
         setP5(p5)
@@ -74,39 +81,106 @@ const Graph = ({ }) => {
         p5.clear()
         p5.background(background)
 
-        simpleGraph(p5)
-        // edgeGraph(p5)
+        // simpleGraph(p5)
+        edgeGraph(p5)
+        // doubleGraph(p5)
 
         drawLegend(p5, canvasWidth / 2, canvasHeight - 25, selections, null, dataType, dataBrackets, textColour)
 
         p5.noLoop()
     }
 
-    const edgeGraph = (p5) => {
-        let x;
-        let y;
+    const setUpPts = () => {
+        let x = 50
+        let y = 50
+        let ids = Object.keys(data).slice(0, numLocations)
         let pts = []
-        let ids = Object.keys(data).slice(0, 5)
 
         for (let i = 0; i < ids.length; i++) {
-            x = randomInt(50, canvasWidth - 50)
-            y = randomInt(50, canvasHeight - 50)
+            pts.push({ x, y })
 
-            pts.push({x, y})
+            y = y + 50
+            x = x + 300
+
+            if (x > canvasWidth - 50) {
+                x = 50
+                y = y + 300
+            }
         }
 
-        p5.stroke(lineColour)
+        setIds(ids)
+        setPts(pts)
+    }
+
+    const setUpRandomPts = () => {
+        let x;
+        let y;
+        let ids = Object.keys(data).slice(0, numLocations)
+        let pts = []
+
+        for (let i = 0; i < ids.length; i++) {
+            let ptFound = false
+
+            while (!ptFound) {
+                x = randomInt(50, canvasWidth - 50)
+                y = randomInt(50, canvasHeight - 50)
+                let tooClose = false
+                
+                pts.forEach(pt => {
+                    let distance = Math.sqrt(Math.pow(Math.abs(pt.x - x), 2) + Math.pow(Math.abs(pt.y - y), 2))
+                    if (distance < 100) {
+                        tooClose = true
+                    }
+                })
+
+                if (!tooClose) {
+                    ptFound = true
+                }
+            }
+
+            pts.push({ x, y })
+        }
+
+        setIds(ids)
+        setPts(pts)
+    }
+
+    const edgeGraph = (p5) => {
+        p5.noStroke()
         for (let i = 0; i < pts.length - 1; i++) {
-            graphRow(p5, pts[i]['x'], pts[i]['y'], pts[i + 1]['x'], pts[i+1]['y'], data[ids[i]], rowSelections, lineColour)
+            graphRow(p5, pts[i]['x'], pts[i]['y'], pts[i + 1]['x'], pts[i + 1]['y'], data[ids[i]]['cases']['2020'], rowSelections, lineColour)
             // p5.line(pts[i]['x'], pts[i]['y'], pts[i + 1]['x'], pts[i+1]['y'])
             // p5.line(pts[i]['x'], pts[i]['y'], pts[i + 2]['x'], pts[i+2]['y'])
         }
-        p5.noStroke()
+
 
 
         ids.forEach((id, index) => {
-            x = pts[index]['x']
-            y = pts[index]['y']
+            let x = pts[index]['x']
+            let y = pts[index]['y']
+
+            p5.stroke(50)
+            p5.fill(255)
+            p5.ellipse(x, y, 50, 50)
+            p5.noStroke()
+
+            p5.fill(textColour)
+            p5.text(data[id]['location'], x, y)
+        })
+
+
+
+    }
+
+    const doubleGraph = (p5) => {
+        p5.noStroke()
+        for (let i = 0; i < pts.length - 1; i++) {
+            graphRow(p5, pts[i]['x'], pts[i]['y'], pts[i + 1]['x'], pts[i + 1]['y'], data[ids[i]]['cases']['2020'], rowSelections, lineColour)
+        }
+
+        ids.forEach((id, index) => {
+            let x = pts[index]['x']
+            let y = pts[index]['y']
             drawPt(p5, data[id], x, y)
         })
     }
@@ -121,13 +195,13 @@ const Graph = ({ }) => {
             x = randomInt(50, canvasWidth - 50)
             y = randomInt(50, canvasHeight - 50)
 
-            pts.push({x, y})
+            pts.push({ x, y })
         }
 
         p5.stroke(lineColour)
         for (let i = 0; i < pts.length - 2; i++) {
-            p5.line(pts[i]['x'], pts[i]['y'], pts[i + 1]['x'], pts[i+1]['y'])
-            p5.line(pts[i]['x'], pts[i]['y'], pts[i + 2]['x'], pts[i+2]['y'])
+            p5.line(pts[i]['x'], pts[i]['y'], pts[i + 1]['x'], pts[i + 1]['y'])
+            p5.line(pts[i]['x'], pts[i]['y'], pts[i + 2]['x'], pts[i + 2]['y'])
         }
         p5.noStroke()
 
