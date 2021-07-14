@@ -21,7 +21,7 @@ const Graph = ({ }) => {
     const { data, dataBrackets, dataType } = useContext(DataContext)
     const [p5, setP5] = useState(null)
     const [radius, setRadius] = useState(getRadius(selections))
-    const { background, lineColour, textColour } = themeColours[theme]
+    const { background, lineColour, textColour, pinBackground } = themeColours[theme]
     const [spiralSelections, setSpiralSelections] = useState({ ...selections })
     const [rowSelections, setRowSelections] = useState({ ...selections })
     const [pts, setPts] = useState([])
@@ -169,8 +169,8 @@ const Graph = ({ }) => {
             let x = pts[index]['x']
             let y = pts[index]['y']
 
-            p5.stroke(50)
-            p5.fill(255)
+            p5.stroke(textColour)
+            p5.fill(pinBackground)
             p5.ellipse(x, y, 50, 50)
             p5.noStroke()
 
