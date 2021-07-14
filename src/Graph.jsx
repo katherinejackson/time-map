@@ -5,7 +5,7 @@ import { drawLegend } from "./legend";
 import SelectionContext from "./SelectionContext";
 import { getRadius, graphSpiral, graphRow } from "./shapes";
 import DataContext from "./DataContext";
-import { rectValues, shapes, spiralValues, themeColours } from "./constants";
+import { rectValues, spiralValues, themeColours } from "./constants";
 
 const canvasWidth = window.innerWidth * 0.95
 const canvasHeight = window.innerHeight
@@ -14,13 +14,11 @@ const xBorder = 50
 const graphWidth = canvasWidth - xBorder * 2
 
 const yBorder = 50
-const graphHeight = canvasHeight - yBorder * 2
-
-const numLocations = 20
+const graphHeight = canvasHeight/3
 
 const Graph = ({ }) => {
     const { selections, shape, theme } = useContext(SelectionContext)
-    const { data, dataBrackets, yBrackets, categories, dataType, totalDataPts } = useContext(DataContext)
+    const { data, dataBrackets, dataType } = useContext(DataContext)
     const [p5, setP5] = useState(null)
     const [radius, setRadius] = useState(getRadius(selections))
     const { background, lineColour, textColour } = themeColours[theme]
@@ -28,16 +26,18 @@ const Graph = ({ }) => {
     const [rowSelections, setRowSelections] = useState({ ...selections })
     const [pts, setPts] = useState([])
     const [ids, setIds] = useState([])
+    const [numNodes, setNumNodes] = useState(5)
+    const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 
     useEffect(() => {
         setUpRandomPts()
-    }, [])
+    }, [numNodes])
 
     useEffect(() => {
         if (p5) {
             draw(p5)
         }
-    }, [shape, theme, spiralSelections])
+    }, [shape, theme, spiralSelections, pts])
 
     useEffect(() => {
         setSpiralSelections({
@@ -81,9 +81,23 @@ const Graph = ({ }) => {
         p5.clear()
         p5.background(background)
 
-        // simpleGraph(p5)
-        edgeGraph(p5)
-        // doubleGraph(p5)
+        nodeGraph(p5, pts)
+
+        p5.stroke(lineColour)
+        p5.line(0, graphHeight, canvasWidth, graphHeight)
+        p5.noStroke()
+
+        let newPts = []
+        pts.forEach(pt => newPts.push({...pt, ['y']: pt.y + graphHeight}))
+        edgeGraph(p5, newPts)
+
+        p5.stroke(lineColour)
+        p5.line(0, graphHeight * 2, canvasWidth, graphHeight * 2)
+        p5.noStroke()
+
+        newPts = []
+        pts.forEach(pt => newPts.push({...pt, ['y']: pt.y + graphHeight * 2}))
+        doubleGraph(p5, newPts)
 
         drawLegend(p5, canvasWidth / 2, canvasHeight - 25, selections, null, dataType, dataBrackets, textColour)
 
@@ -93,7 +107,7 @@ const Graph = ({ }) => {
     const setUpPts = () => {
         let x = 50
         let y = 50
-        let ids = Object.keys(data).slice(0, numLocations)
+        let ids = Object.keys(data).slice(0, numNodes)
         let pts = []
 
         for (let i = 0; i < ids.length; i++) {
@@ -115,7 +129,7 @@ const Graph = ({ }) => {
     const setUpRandomPts = () => {
         let x;
         let y;
-        let ids = Object.keys(data).slice(0, numLocations)
+        let ids = Object.keys(data).slice(0, numNodes)
         let pts = []
 
         for (let i = 0; i < ids.length; i++) {
@@ -123,9 +137,9 @@ const Graph = ({ }) => {
 
             while (!ptFound) {
                 x = randomInt(50, canvasWidth - 50)
-                y = randomInt(50, canvasHeight - 50)
+                y = randomInt(50, graphHeight - 50)
                 let tooClose = false
-                
+
                 pts.forEach(pt => {
                     let distance = Math.sqrt(Math.pow(Math.abs(pt.x - x), 2) + Math.pow(Math.abs(pt.y - y), 2))
                     if (distance < 100) {
@@ -145,15 +159,11 @@ const Graph = ({ }) => {
         setPts(pts)
     }
 
-    const edgeGraph = (p5) => {
+    const edgeGraph = (p5, pts) => {
         p5.noStroke()
         for (let i = 0; i < pts.length - 1; i++) {
             graphRow(p5, pts[i]['x'], pts[i]['y'], pts[i + 1]['x'], pts[i + 1]['y'], data[ids[i]]['cases']['2020'], rowSelections, lineColour)
-            // p5.line(pts[i]['x'], pts[i]['y'], pts[i + 1]['x'], pts[i+1]['y'])
-            // p5.line(pts[i]['x'], pts[i]['y'], pts[i + 2]['x'], pts[i+2]['y'])
         }
-
-
 
         ids.forEach((id, index) => {
             let x = pts[index]['x']
@@ -168,11 +178,9 @@ const Graph = ({ }) => {
             p5.text(data[id]['location'], x, y)
         })
 
-
-
     }
 
-    const doubleGraph = (p5) => {
+    const doubleGraph = (p5, pts) => {
         p5.noStroke()
         for (let i = 0; i < pts.length - 1; i++) {
             graphRow(p5, pts[i]['x'], pts[i]['y'], pts[i + 1]['x'], pts[i + 1]['y'], data[ids[i]]['cases']['2020'], rowSelections, lineColour)
@@ -185,23 +193,13 @@ const Graph = ({ }) => {
         })
     }
 
-    const simpleGraph = (p5) => {
+    const nodeGraph = (p5, pts) => {
         let x;
         let y;
-        let pts = []
-        let ids = Object.keys(data).slice(0, 5)
-
-        for (let i = 0; i < ids.length; i++) {
-            x = randomInt(50, canvasWidth - 50)
-            y = randomInt(50, canvasHeight - 50)
-
-            pts.push({ x, y })
-        }
 
         p5.stroke(lineColour)
-        for (let i = 0; i < pts.length - 2; i++) {
+        for (let i = 0; i < pts.length - 1; i++) {
             p5.line(pts[i]['x'], pts[i]['y'], pts[i + 1]['x'], pts[i + 1]['y'])
-            p5.line(pts[i]['x'], pts[i]['y'], pts[i + 2]['x'], pts[i + 2]['y'])
         }
         p5.noStroke()
 
@@ -212,7 +210,25 @@ const Graph = ({ }) => {
         })
     }
 
-    return <Sketch setup={setup} draw={draw} />
+    const handleNumNodeSelect = (e) => {
+        setNumNodes(e.target.value)
+    }
+
+    return (
+        <div>
+            <div className="row mb-2">
+                <div className="col d-flex justify-content-end">
+                    <label htmlFor="y-axis" className="col-form-label w-auto">Number of Nodes</label>
+                </div>
+                <div className="col">
+                    <select className="form-select" defaultValue={numNodes} id='y-axis' onChange={handleNumNodeSelect} name='numNodes'>
+                        {nums.map(num => (<option key={`num-nodes-${num}`} value={num}>{num}</option>))}
+                    </select>
+                </div>
+            </div>
+            <Sketch setup={setup} draw={draw} />
+        </div>
+    )
 }
 
 export default Graph
