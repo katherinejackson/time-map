@@ -122,7 +122,7 @@ const Overlay = () => {
             startY = startY - getPinAdjustment(newSelections, shape, locationData)
         }
 
-        spiral(dataType, interval, locationData, x, y, mapPin, p5, newSelections, x, startY, opaque, hover, yearIndication, fillMissing, theme)
+        spiral(dataType, interval, locationData, x, y, mapPin, p5, newSelections, x, startY, opaque, hover, yearIndication, fillMissing, colourTheme)
         p5.fill(colourTheme.textColour)
         p5.textSize(10)
         if (hover) {
@@ -155,7 +155,7 @@ const Overlay = () => {
             startY = y - getPinAdjustment(newSelections, shape, locationData)
         }
 
-        rectangle(dataType, interval, locationData, x, y, mapPin, p5, newSelections, startX, startY, opaque, hover, yearIndication, fillMissing, theme)
+        rectangle(dataType, interval, locationData, x, y, mapPin, p5, newSelections, startX, startY, opaque, hover, yearIndication, fillMissing, colourTheme)
         p5.fill(colourTheme.textColour)
         p5.textSize(10)
         p5.textAlign(p5.CENTER, p5.CENTER)
