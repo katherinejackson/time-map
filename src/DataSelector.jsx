@@ -5,18 +5,34 @@ import raw from "./popdataSmall.txt";
 import textDecoder from "./textDecoder";
 import { dataSets, shapes, views } from "./constants";
 import Selection from "./Selection";
-import { bigData as covidData, smallData as smallCovid } from "./covidData";
+import { bigData as covidData } from "./covidData";
+import { data as tradeData } from "./tradeData"
 import DataContext from './DataContext';
 import { data as mapData } from "./data"
-import { getDataBrackets, getDataBracketsMultiYear, getDataCategories, getVariableBrackets } from "./helpers/data"
+import { getDataBrackets, getDataBracketsMultiYear, getDataCategories, getVariableBrackets, getTradeDataBrackets } from "./helpers/data"
 
 const getData = (view) => {
     if (view === views.SCATTER.val) {
-        return covidData
+        const dataBrackets = getDataBracketsMultiYear(covidData, 'cases')
+        const dataType = dataSets.COVID.val
+        const yBrackets = getVariableBrackets(covidData, 'population')
+        const categories = getDataCategories(covidData, 'continent')
+
+        return { data: covidData, dataType, dataBrackets, yBrackets, categories }
+
     } else if (view === views.GRAPH.val) {
-        return smallCovid
+        let variable = 'export'
+        const dataBrackets = getTradeDataBrackets(tradeData, variable )
+        const dataType = dataSets.TRADE.val
+
+        return { data: tradeData, dataType, dataBrackets, variable }
+
     } else if (view === views.COMPARISON.val || view === views.MAP.val) {
-        return mapData[dataSets.TEMP.id].data
+        let data = mapData[dataSets.TEMP.id].data
+        const dataType = dataSets.TEMP.val
+        const dataBrackets = getDataBrackets(data)
+
+        return { data, dataType, dataBrackets }
     }
 
     return {}
@@ -26,12 +42,7 @@ const DataSelector = ({ view }) => {
     const [totalDataPts, setTotalDataPts] = useState(null)
     const [locations, setLocations] = useState([])
     const [shape, setShape] = useState(shapes.SPIRAL.id)
-
-    const data = getData(view)
-    const dataType = view === views.SCATTER.val || view === views.GRAPH.val ? dataSets.COVID.val : dataSets.TEMP.val
-    const yBrackets = getVariableBrackets(covidData, 'population')
-    const dataBrackets = view === views.SCATTER.val || view === views.GRAPH.val ? getDataBracketsMultiYear(covidData, 'cases') : getDataBrackets(data)
-    const categories = getDataCategories(covidData, 'continent')
+    const { data, dataType, dataBrackets, yBrackets, categories, variable } = getData(view)
 
     useEffect(() => {
         if (!totalDataPts && categories) {
@@ -56,7 +67,7 @@ const DataSelector = ({ view }) => {
     }
 
     return (
-        <DataContext.Provider value={{ data, dataType, yBrackets, dataBrackets, categories, totalDataPts, locations }}>
+        <DataContext.Provider value={{ data, dataType, yBrackets, dataBrackets, categories, totalDataPts, locations, variable }}>
             <div className="row justify-content-center">
                 <label className="col-form-label w-auto">Display Type</label>
                 <select className="form-select w-auto" defaultValue={shape} onChange={handleShapeChange} name="Display type">

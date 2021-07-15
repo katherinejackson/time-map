@@ -16,9 +16,9 @@ const graphWidth = canvasWidth/3
 const yBorder = 50
 const graphHeight = canvasHeight
 
-const Graph = ({ }) => {
+const EdgeGraph = ({ }) => {
     const { selections, shape, theme } = useContext(SelectionContext)
-    const { data, dataBrackets, dataType } = useContext(DataContext)
+    const { data, dataBrackets, dataType, variable } = useContext(DataContext)
     const [p5, setP5] = useState(null)
     const [radius, setRadius] = useState(getRadius(selections))
     const { background, lineColour, textColour, pinBackground } = themeColours[theme]
@@ -28,6 +28,9 @@ const Graph = ({ }) => {
     const [ids, setIds] = useState([])
     const [numNodes, setNumNodes] = useState(5)
     const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+    const worldData = data['World']
+    const countryData = {...data}
+    delete countryData['World']
     
 
     useEffect(() => {
@@ -95,10 +98,10 @@ const Graph = ({ }) => {
         let startY  = canvasHeight/2
 
         let angle = -Math.PI /3
-        let radianPerPt = Math.PI * 2 / Object.keys(data).length
+        let radianPerPt = Math.PI * 2 / Object.keys(countryData).length
         let coreSize = 275
 
-        Object.keys(data).forEach(pt => {
+        Object.keys(countryData).forEach(pt => {
             let x = startX + Math.cos(angle) * coreSize
             let y = startY + Math.sin(angle) * coreSize
             pts.push({name: pt, x, y})
@@ -112,7 +115,7 @@ const Graph = ({ }) => {
     const setUpRandomPts = () => {
         let x;
         let y;
-        let ids = Object.keys(data).slice(0, numNodes)
+        let ids = Object.keys(countryData).slice(0, numNodes)
         let pts = []
 
         for (let i = 0; i < ids.length; i++) {
@@ -146,16 +149,25 @@ const Graph = ({ }) => {
         let slope = (y1 - y2)/(x1-x2)
         let angle = Math.atan(slope)
 
+        
 
     }
 
     const edgeGraph = (p5, pts) => {
-        let nodeRadius = 50
+        let nodeRadius = 75
         p5.noStroke()
 
+        let startX = canvasWidth/2
+        let startY = canvasHeight/2
+        let angle = -Math.PI /3
+        let coreSize = radius
+        let radianPer = Math.PI * 2 / pts.length
+
         pts.forEach(pt => {
-            let {x1, y1, x2, y2} = adjustForRadius(canvasWidth/2, canvasHeight/2, pt['x'], pt['y'], nodeRadius)
-            graphRow(p5, canvasWidth/2, canvasHeight/2, pt['x'], pt['y'], data[pt['name']]['data'], rowSelections, 'import', dataBrackets)
+            let x = startX + Math.cos(angle) * coreSize
+            let y = startY + Math.sin(angle) * coreSize
+            graphRow(p5, x, y, pt['x'], pt['y'], countryData[pt['name']]['data'], rowSelections, variable, dataBrackets, pt['name'])
+            angle += radianPer
         })
 
         p5.stroke(textColour)
@@ -182,55 +194,7 @@ const Graph = ({ }) => {
 
     }
 
-    const doubleGraph = (p5, pts) => {
-        p5.noStroke()
-        for (let i = 0; i < pts.length - 1; i++) {
-            graphRow(p5, pts[i]['x'], pts[i]['y'], pts[i + 1]['x'], pts[i + 1]['y'], data[ids[i]]['cases']['2020'], rowSelections, lineColour)
-        }
-
-        ids.forEach((id, index) => {
-            let x = pts[index]['x']
-            let y = pts[index]['y']
-            drawPt(p5, data[id], x, y)
-        })
-    }
-
-    const nodeGraph = (p5, pts) => {
-        let x;
-        let y;
-
-        p5.stroke(lineColour)
-        for (let i = 0; i < pts.length - 1; i++) {
-            p5.line(pts[i]['x'], pts[i]['y'], pts[i + 1]['x'], pts[i + 1]['y'])
-        }
-        p5.noStroke()
-
-        ids.forEach((id, index) => {
-            x = pts[index]['x']
-            y = pts[index]['y']
-            drawPt(p5, data[id], x, y)
-        })
-    }
-
-    const handleNumNodeSelect = (e) => {
-        setNumNodes(e.target.value)
-    }
-
-    return (
-        <div>
-            <div className="row mb-2">
-                <div className="col d-flex justify-content-end">
-                    <label htmlFor="y-axis" className="col-form-label w-auto">Number of Nodes</label>
-                </div>
-                <div className="col">
-                    <select className="form-select" defaultValue={numNodes} id='y-axis' onChange={handleNumNodeSelect} name='numNodes'>
-                        {nums.map(num => (<option key={`num-nodes-${num}`} value={num}>{num}</option>))}
-                    </select>
-                </div>
-            </div>
-            <Sketch setup={setup} draw={draw} />
-        </div>
-    )
+    return <Sketch setup={setup} draw={draw} />
 }
 
-export default Graph
+export default EdgeGraph

@@ -1,5 +1,6 @@
 import { colours, manualIntervals, rectValues, spiralValues } from './constants'
 import { fillColourGradient, fillLogColourGradient, getColour } from "./helpers/colours";
+import { formatNumbers } from './helpers/numbers';
 
 export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, textColour) => {
     if (dataType === 'COVID') {
@@ -10,8 +11,9 @@ export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, t
         } else if (selections[spiralValues.NUM_COLOURS] === 1) {
             drawLogarithmicSingleColourLegend(p5, x, y, brackets, textColour)
         }
-    }
-    else if (dataType === 'WIND' || dataType === 'PRECIP') {
+    } else if (dataType === 'TRADE') {
+        drawManualLegend(p5, x, y, selections, dataType, textColour)
+    } else if (dataType === 'WIND' || dataType === 'PRECIP') {
         drawManualLegend(p5, x, y, selections, interval, dataType, textColour)
     } else if (selections[rectValues.NUM_COLOURS] <= 2 || selections[rectValues.NUM_COLOURS] > 10) {
         drawGradientLegend(p5, x, y, selections, interval, textColour)
@@ -53,7 +55,7 @@ export const drawManualLegend = (p5, x, y, selections, dataType, textColour) => 
 
     p5.textSize(10)
 
-    for (let i = 0; i < colours[dataType][numColours].length; i++) {
+    for (let i = 1; i <= numColours; i++) {
         p5.textAlign(p5.CENTER, p5.CENTER)
         p5.fill(colours[dataType][numColours][i])
         p5.rect(xStart + counter * length, y, length, 5)
@@ -62,7 +64,7 @@ export const drawManualLegend = (p5, x, y, selections, dataType, textColour) => 
 
         p5.noStroke()
         p5.fill(textColour)
-        p5.text(intervals[i - 1], xStart + counter * length, y + 15)
+        p5.text(formatNumbers(intervals[i - 1]), xStart + counter * length, y + 15)
         p5.stroke(1)
         counter = counter + 1
     }
@@ -70,13 +72,13 @@ export const drawManualLegend = (p5, x, y, selections, dataType, textColour) => 
     p5.line(xStart + counter * length, y, xStart + counter * length, y + 8)
     p5.noStroke()
     p5.fill(textColour)
-    p5.text(0, xStart, y + 15)
-    p5.text(intervals[intervals.length - 1], xStart + counter * length, y + 15)
+    // p5.text(0, xStart, y + 15)
+    p5.text(formatNumbers(intervals[intervals.length - 1]), xStart + counter * length, y + 15)
 
-    p5.fill(200)
-    p5.rect(x + numColours * length / 2 + 50, y, 40, 10)
-    p5.fill(textColour)
-    p5.text('No Data', x + numColours * length / 2 + 50 + 20, y + 15)
+    // p5.fill(200)
+    // p5.rect(x + numColours * length / 2 + 50, y, 40, 10)
+    // p5.fill(textColour)
+    // p5.text('No Data', x + numColours * length / 2 + 50 + 20, y + 15)
 }
 
 const drawGradientLegend = (p5, x, y, selections, interval, textColour) => {

@@ -9,6 +9,8 @@ import SelectionContext from "./SelectionContext";
 import ScatterPlot from "./ScatterPlot"
 import DataContext from "./DataContext";
 import Graph from "./Graph"
+import NodeGraph from "./NodeGraph"
+import EdgeGraph from "./EdgeGraph"
 
 const Selection = ({ shape, view }) => {
     const { dataType } = useContext(DataContext)
@@ -18,16 +20,16 @@ const Selection = ({ shape, view }) => {
         'x-axis': null,
         'y-axis': null,
     })
-    const [selections, setSelections] = useState(getDefaultSelections(shape, dataType))
+    const [selections, setSelections] = useState(getDefaultSelections(shape, view))
     const [mapPin, setMapPin] = useState(false)
     const [opaque, setOpaque] = useState(false)
     const [yearIndication, setYearIndication] = useState(null)
     const [fillMissing, setFillMissing] = useState(false)
     const [theme, setTheme] = useState(themes.DEFAULT.val)
-    const variables = shape === shapes.SPIRAL.id ? spiralVariables[dataType] : rectVariables[dataType]
+    const variables = shape === shapes.SPIRAL.id ? spiralVariables[view] : rectVariables[view]
 
     useEffect(() => {
-        setSelections(getDefaultSelections(shape, dataType))
+        setSelections(getDefaultSelections(shape, view))
     }, [shape, dataType, view])
 
     const handleSelect = (event, id) => {
@@ -105,7 +107,8 @@ const Selection = ({ shape, view }) => {
                         ))}
                     </span>
                 ) : null}
-                {view === views.GRAPH.val ? <Graph /> : null}
+                {/* {view === views.GRAPH.val ? <EdgeGraph /> : null} */}
+                {view === views.GRAPH.val ? <NodeGraph /> : null}
             </div>
         </SelectionContext.Provider>
     )

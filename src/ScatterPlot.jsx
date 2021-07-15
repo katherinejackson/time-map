@@ -6,7 +6,7 @@ import SelectionContext from "./SelectionContext";
 import { getRadius, scatterSpiral, scatterRow } from "./shapes";
 import DataContext from "./DataContext";
 import { shapes, spiralValues, themeColours, themes } from "./constants";
-import { formatPopulation } from "./helpers/numbers"
+import { formatNumbers } from "./helpers/numbers"
 
 const canvasWidth = window.innerWidth * 0.95
 const canvasHeight = window.innerHeight
@@ -166,7 +166,7 @@ const ScatterPlot = ({ }) => {
         let yWalker = canvasHeight - yBorder
         for (let i = 0; i < numSteps; i = i + 1) {
             p5.textAlign(p5.RIGHT, p5.CENTER)
-            p5.text(formatPopulation(Math.pow(2, i + logLow)), xBorder - 2, yWalker)
+            p5.text(formatNumbers(Math.pow(2, i + logLow)), xBorder - 2, yWalker)
             yWalker = yWalker - spacePer
         }
     }

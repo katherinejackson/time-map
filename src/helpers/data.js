@@ -32,8 +32,8 @@ export const getDataBrackets = (data) => {
         })
     })
 
-    lowest = Math.round(lowest * 100) /100
-    highest = Math.round(highest * 100) /100
+    lowest = Math.round(lowest * 100) / 100
+    highest = Math.round(highest * 100) / 100
 
     return { low: lowest, high: highest }
 }
@@ -66,6 +66,26 @@ export const getDataBracketsMultiYear = (data, variable) => {
                     high = day
                 }
             })
+        })
+    })
+
+    return { high, low }
+}
+
+export const getTradeDataBrackets = (data, variable) => {
+    let high;
+    let low;
+
+    Object.keys(data).forEach(id => {
+        Object.keys(data[id]['data']).forEach(year => {
+            let value = parseFloat(data[id]['data'][year][variable])
+            if (!high || value > high) {
+                high = value
+            }
+
+            if (!low || value < low) {
+                low = value
+            }
         })
     })
 

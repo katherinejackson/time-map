@@ -17,6 +17,7 @@ const mapHeight = window.innerHeight * 0.75
 
 const Overlay = () => {
     const map = useMap()
+    const view = 'MAP'
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
     const { selections, theme, fillMissing, mapPin, opaque, shape, yearIndication } = useContext(SelectionContext)
     const colourTheme = themeColours[theme]
@@ -222,7 +223,7 @@ const Overlay = () => {
         if (animated.index !== null) {
             p5.loop()
             let cluster = locationClusters[animated.index]
-            let newSelections = getDefaultSelections(shapes.RECT.id, dataType)
+            let newSelections = getDefaultSelections(shapes.RECT.id, view)
             newSelections = {
                 ...newSelections,
                 [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],
@@ -385,7 +386,7 @@ const Overlay = () => {
     const drawDetailed = () => {
         let newSelections = selections
         if (shape === shapes.SPIRAL.id) {
-            newSelections = getDefaultSelections(shapes.RECT.id, dataType)
+            newSelections = getDefaultSelections(shapes.RECT.id, view)
             newSelections = {
                 ...newSelections,
                 [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],

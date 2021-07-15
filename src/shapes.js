@@ -155,9 +155,10 @@ export const scatterRow = (p5, x, y, data, selections, dataType) => {
     })
 }
 
-export const graphRow = (p5, startX, startY, endX, endY, data, selections, lineColour) => {
+export const graphRow = (p5, startX, startY, endX, endY, data, selections, variable, dataBrackets, name) => {
     let numColours = selections[rectValues.NUM_COLOURS]
-    let width = Math.abs(startX - endX) / data.length
+    let interval = (dataBrackets.high - dataBrackets.low)/numColours
+    let width = Math.abs(startX - endX) / Object.keys(data).length
     let height = 10
     let slope = (startY - endY) / (startX - endX)
     let b = startY - slope * startX
@@ -170,21 +171,32 @@ export const graphRow = (p5, startX, startY, endX, endY, data, selections, lineC
     let x = startX
     let y = startY
 
-    data.forEach(day => {
-        if (day === '') {
+    Object.keys(data).forEach(year => {
+        if (data[year][variable] === '') {
             p5.fill(200)
         } else {
             if (numColours === 256 || numColours === 1) {
-                fillLogColourGradient(p5, day, 6, numColours)
-            } else if (numColours === 8) {
-                let colour = getManualIntervalColour(day, colours['COVID'][numColours], manualIntervals['COVID'][numColours])
+                fillLogColourGradient(p5, data[year][variable], 6, numColours)
+            } else if (numColours === 7) {
+                let colour = getManualIntervalColour(data[year][variable], colours['TRADE'][numColours], manualIntervals['TRADE'][numColours])
+                // let colour = getColour(data[year][variable], dataBrackets.high, interval, colours['TRADE'][numColours])
                 p5.fill(colour)
+                if (name === 'Japan') {
+                    console.log(colour)
+                }
             }
         }
 
+        if (name === 'Japan') {
+                    console.log(x, y, x + width, y + y_1, x + width - x_2, y + y_1 + y_2, x - x_2, y + + y_2)
+                }
+
+        p5.stroke(150)
         p5.quad(x, y, x + width, y + y_1, x + width - x_2, y + y_1 + y_2, x - x_2, y + + y_2)
+        
         if (startX < endX) {
             x += width
+            
         } else {
             x -= width
         }
@@ -192,6 +204,44 @@ export const graphRow = (p5, startX, startY, endX, endY, data, selections, lineC
         y = slope * x + b
     })
 }
+
+// export const graphRow = (p5, startX, startY, endX, endY, data, selections, lineColour) => {
+//     let numColours = selections[rectValues.NUM_COLOURS]
+//     let width = Math.abs(startX - endX) / data.length
+//     let height = 10
+//     let slope = (startY - endY) / (startX - endX)
+//     let b = startY - slope * startX
+
+//     let angle = Math.atan((endY - startY) / (endX - startX))
+//     let y_1 = Math.tan(angle) * width
+//     let x_2 = Math.sin(angle) * height
+//     let y_2 = Math.cos(angle) * height
+
+//     let x = startX
+//     let y = startY
+
+//     data.forEach(day => {
+//         if (day === '') {
+//             p5.fill(200)
+//         } else {
+//             if (numColours === 256 || numColours === 1) {
+//                 fillLogColourGradient(p5, day, 6, numColours)
+//             } else if (numColours === 8) {
+//                 let colour = getManualIntervalColour(day, colours['COVID'][numColours], manualIntervals['COVID'][numColours])
+//                 p5.fill(colour)
+//             }
+//         }
+
+//         p5.quad(x, y, x + width, y + y_1, x + width - x_2, y + y_1 + y_2, x - x_2, y + + y_2)
+//         if (startX < endX) {
+//             x += width
+//         } else {
+//             x -= width
+//         }
+
+//         y = slope * x + b
+//     })
+// }
 
 export const monthSpiral = (p5, startX, startY, data, highest, lowest) => {
     let spiralWidth = 30
@@ -246,32 +296,33 @@ export const scatterSpiral = (p5, startX, startY, data, selections, dataType) =>
     })
 }
 
-export const graphSpiral = (p5, startX, startY, data, selections, dataType) => {
+export const graphSpiral = (p5, startX, startY, data, selections, dataType, variable) => {
     let spiralWidth = selections[spiralValues.SPIRAL_WIDTH]
     let spiralTightness = 0
     let angle = -Math.PI / 2
     let coreSize = selections[spiralValues.CORE_SIZE]
     let numColours = selections[spiralValues.NUM_COLOURS]
+    let radianPer = Math.PI * 2 / Object.keys(data).length
 
     p5.noStroke()
-    data.forEach(day => {
+    Object.keys(data).forEach(year => {
         let x = startX + p5.cos(angle) * coreSize
         let y = startY + p5.sin(angle) * coreSize
 
-        if (day === '') {
+        if (data[year][variable] === '') {
             p5.fill(200)
         } else {
             if (numColours === 256 || numColours === 1) {
-                fillLogColourGradient(p5, day, 6, numColours)
-            } else if (numColours === 8) {
-                let colour = getManualIntervalColour(day, colours[dataType][numColours], manualIntervals[dataType][numColours])
+                fillLogColourGradient(p5, data[year][variable], 6, numColours)
+            } else if (numColours === 7) {
+                let colour = getManualIntervalColour(data[year][variable], colours['TRADE'][numColours], manualIntervals['TRADE'][numColours])
                 p5.fill(colour)
             }
         }
 
-        p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerDay * 5, p5.PIE)
+        p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPer, p5.PIE)
 
-        angle += radianPerDay
+        angle += radianPer
         coreSize += spiralTightness
     })
 }

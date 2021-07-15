@@ -16,7 +16,7 @@ const graphWidth = canvasWidth/3
 const yBorder = 50
 const graphHeight = canvasHeight
 
-const Graph = ({ }) => {
+const DemoGraph = ({ }) => {
     const { selections, shape, theme } = useContext(SelectionContext)
     const { data, dataBrackets, dataType } = useContext(DataContext)
     const [p5, setP5] = useState(null)
@@ -31,7 +31,7 @@ const Graph = ({ }) => {
     
 
     useEffect(() => {
-        setUpCircularPts()
+        setUpRandomPts()
     }, [numNodes])
 
     useEffect(() => {
@@ -82,30 +82,48 @@ const Graph = ({ }) => {
         p5.clear()
         p5.background(background)
 
-        edgeGraph(p5, pts)
-        
+        nodeGraph(p5, pts)
+
+        p5.stroke(lineColour)
+        p5.line(graphWidth, 0, graphWidth, canvasHeight)
+        p5.noStroke()
+
+        let newPts = []
+        pts.forEach(pt => newPts.push({...pt, ['x']: pt.x + graphWidth}))
+        edgeGraph(p5, newPts)
+
+        p5.stroke(lineColour)
+        p5.line(graphWidth * 2, 0, graphWidth * 2, canvasHeight)
+        p5.noStroke()
+
+        newPts = []
+        pts.forEach(pt => newPts.push({...pt, ['x']: pt.x + graphWidth * 2}))
+        doubleGraph(p5, newPts)
+
         drawLegend(p5, canvasWidth / 2, canvasHeight - 25, selections, null, dataType, dataBrackets, textColour)
 
         p5.noLoop()
     }
 
-    const setUpCircularPts = () => {
+    const setUpPts = () => {
+        let x = 50
+        let y = 50
+        let ids = Object.keys(data).slice(0, numNodes)
         let pts = []
-        let startX = canvasWidth/2
-        let startY  = canvasHeight/2
 
-        let angle = -Math.PI /3
-        let radianPerPt = Math.PI * 2 / Object.keys(data).length
-        let coreSize = 275
+        for (let i = 0; i < ids.length; i++) {
+            pts.push({ x, y })
 
-        Object.keys(data).forEach(pt => {
-            let x = startX + Math.cos(angle) * coreSize
-            let y = startY + Math.sin(angle) * coreSize
-            pts.push({name: pt, x, y})
+            y = y + 50
+            x = x + 300
 
-            angle += radianPerPt
-        })
+            if (x > canvasWidth - 50) {
+                x = 50
+                y = y + 300
+            }
+        }
 
+        setIds(ids)
         setPts(pts)
     }
 
@@ -142,42 +160,23 @@ const Graph = ({ }) => {
         setPts(pts)
     }
 
-    const adjustForRadius = (x1, y1, x2, y2, radius) => {
-        let slope = (y1 - y2)/(x1-x2)
-        let angle = Math.atan(slope)
-
-
-    }
-
     const edgeGraph = (p5, pts) => {
-        let nodeRadius = 50
         p5.noStroke()
+        for (let i = 0; i < pts.length - 1; i++) {
+            graphRow(p5, pts[i]['x'], pts[i]['y'], pts[i + 1]['x'], pts[i + 1]['y'], data[ids[i]]['cases']['2020'], rowSelections, lineColour)
+        }
 
-        pts.forEach(pt => {
-            let {x1, y1, x2, y2} = adjustForRadius(canvasWidth/2, canvasHeight/2, pt['x'], pt['y'], nodeRadius)
-            graphRow(p5, canvasWidth/2, canvasHeight/2, pt['x'], pt['y'], data[pt['name']]['data'], rowSelections, 'import', dataBrackets)
-        })
-
-        p5.stroke(textColour)
-        p5.fill(pinBackground)
-        p5.ellipse(canvasWidth/2, canvasHeight/2, nodeRadius, nodeRadius)
-        p5.noStroke()
-
-        p5.fill(textColour)
-        p5.text('Canada', canvasWidth/2, canvasHeight/2)
-
-        pts.forEach((pt, index) => {
-            let x = pt['x']
-            let y = pt['y']
-            let name = pt['name']
+        ids.forEach((id, index) => {
+            let x = pts[index]['x']
+            let y = pts[index]['y']
 
             p5.stroke(textColour)
             p5.fill(pinBackground)
-            p5.ellipse(x, y, nodeRadius, nodeRadius)
+            p5.ellipse(x, y, 50, 50)
             p5.noStroke()
 
             p5.fill(textColour)
-            p5.text(name, x, y)
+            p5.text(data[id]['location'], x, y)
         })
 
     }
@@ -233,4 +232,4 @@ const Graph = ({ }) => {
     )
 }
 
-export default Graph
+export default DemoGraph
