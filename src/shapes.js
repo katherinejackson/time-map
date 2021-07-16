@@ -296,15 +296,17 @@ export const scatterSpiral = (p5, startX, startY, data, selections, dataType) =>
     })
 }
 
-export const graphSpiral = (p5, startX, startY, data, selections, dataType, variable) => {
+export const graphSpiral = (p5, startX, startY, data, selections, dataType, variable, backgroundColour) => {
     let spiralWidth = selections[spiralValues.SPIRAL_WIDTH]
-    let spiralTightness = 0
+    let spiralTightness = selections[spiralValues.SPACE_BETWEEN_SPIRAL]
     let angle = -Math.PI / 2
     let coreSize = selections[spiralValues.CORE_SIZE]
     let numColours = selections[spiralValues.NUM_COLOURS]
     let radianPer = Math.PI * 2 / Object.keys(data).length
 
     p5.noStroke()
+    p5.fill(backgroundColour)
+    p5.ellipse(startX, startY, coreSize + spiralWidth, coreSize + spiralWidth)
     Object.keys(data).forEach(year => {
         let x = startX + p5.cos(angle) * coreSize
         let y = startY + p5.sin(angle) * coreSize
@@ -312,15 +314,26 @@ export const graphSpiral = (p5, startX, startY, data, selections, dataType, vari
         if (data[year][variable] === '') {
             p5.fill(200)
         } else {
-            if (numColours === 256 || numColours === 1) {
+            if (variable === 'tradeBalance') {
+                if (data[year][variable] >= 0) {
+                    p5.fill("#59a14f")
+                } else {
+                    p5.fill("#e15759")
+                }
+
+            } else if (numColours === 256 || numColours === 1) {
                 fillLogColourGradient(p5, data[year][variable], 6, numColours)
             } else if (numColours === 7) {
-                let colour = getManualIntervalColour(data[year][variable], colours['TRADE'][numColours], manualIntervals['TRADE'][numColours])
+                let colour = getManualIntervalColour(data[year][variable], colours[dataType][numColours], manualIntervals[dataType][numColours])
                 p5.fill(colour)
             }
         }
 
-        p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPer, p5.PIE)
+        p5.stroke(backgroundColour)
+        // p5.noStroke()
+        p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPer , p5.PIE)
+        p5.fill(backgroundColour)
+        p5.arc(x, y, spiralWidth/2, spiralWidth/2, angle, angle + radianPer , p5.PIE)
 
         angle += radianPer
         coreSize += spiralTightness
@@ -514,6 +527,15 @@ export const getRadius = (selections, numYears) => {
     }
     return Math.abs(Math.sin(-1.5 + radianPerDay * 365 * numYears)
         * (selections[spiralValues.CORE_SIZE] + selections[spiralValues.SPACE_BETWEEN_SPIRAL] * 365 * numYears))
+        + selections[spiralValues.SPIRAL_WIDTH] / 2
+}
+
+export const getGraphRadius = (selections, numSections) => {
+    let numYears = selections[spiralValues.NUM_YEARS]
+    let radianPer = Math.PI * 2 / numSections
+
+    return Math.abs(Math.sin(-1.5 + radianPer* numSections * numYears)
+        * (selections[spiralValues.CORE_SIZE] + selections[spiralValues.SPACE_BETWEEN_SPIRAL] * numSections * numYears))
         + selections[spiralValues.SPIRAL_WIDTH] / 2
 }
 

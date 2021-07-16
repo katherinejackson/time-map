@@ -9,10 +9,8 @@ export const getManualIntervalColour = (pt, colourSet, intervalSet) => {
         console.log('error', pt, colourSet, intervalSet)
     }
 
-
-    while (pt > bracket && counter < colourSet.length - 1) {
+    while (pt > intervalSet[counter + 1]) {
         counter++
-        bracket = intervalSet[counter]
     }
 
     if (colourSet[counter] === undefined) {

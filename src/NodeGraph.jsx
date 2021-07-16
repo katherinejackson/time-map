@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 
 import { drawLegend } from "./legend";
 import SelectionContext from "./SelectionContext";
-import { getRadius, graphSpiral, graphRow } from "./shapes";
+import { getGraphRadius, graphSpiral, graphRow } from "./shapes";
 import DataContext from "./DataContext";
 import { rectValues, spiralValues, themeColours } from "./constants";
 
@@ -18,17 +18,18 @@ const graphHeight = canvasHeight
 
 const Graph = ({ }) => {
     const { selections, shape, theme } = useContext(SelectionContext)
-    const { data, dataBrackets, dataType, variable } = useContext(DataContext)
+    const { data, dataBrackets, dataType, variable, average } = useContext(DataContext)
+    const worldData = data['World']
+    const countryData = {...data}
+    delete countryData['World']
     const [p5, setP5] = useState(null)
-    const [radius, setRadius] = useState(getRadius(selections))
+    const [radius, setRadius] = useState(getGraphRadius(selections, Object.keys(countryData).length))
     const { background, lineColour, textColour, pinBackground } = themeColours[theme]
     const [spiralSelections, setSpiralSelections] = useState({ ...selections })
     const [rowSelections, setRowSelections] = useState({ ...selections })
     const [pts, setPts] = useState([])
     const [ids, setIds] = useState([])
-    const worldData = data['World']
-    const countryData = {...data}
-    delete countryData['World']
+
 
     useEffect(() => {
         setUpCircularPts()
@@ -43,9 +44,9 @@ const Graph = ({ }) => {
     useEffect(() => {
         setSpiralSelections({
             ...selections,
-            [spiralValues.SPIRAL_WIDTH]: 30,
-            [spiralValues.SPACE_BETWEEN_SPIRAL]: 0,
-            [spiralValues.CORE_SIZE]: 4
+            [spiralValues.SPIRAL_WIDTH]: 75,
+            [spiralValues.SPACE_BETWEEN_SPIRAL]: 0.75,
+            [spiralValues.CORE_SIZE]: 0,
         })
 
         setRowSelections({
@@ -54,7 +55,7 @@ const Graph = ({ }) => {
             [rectValues.ROW_HEIGHT]: 10
         })
 
-        setRadius(getRadius(spiralSelections))
+        setRadius(getGraphRadius(spiralSelections, Object.keys(countryData).length))
     }, [selections])
 
     const randomInt = (min, max) => {
@@ -70,6 +71,12 @@ const Graph = ({ }) => {
     const draw = (p5) => {
         p5.clear()
         p5.background(background)
+
+        p5.fill(textColour)
+        p5.textSize(30)
+        p5.text(`Canadian Imports 2010-2019`, canvasWidth/2, 30)
+
+        p5.textSize(12)
 
         nodeGraph(p5, pts)
 
@@ -98,39 +105,6 @@ const Graph = ({ }) => {
         setPts(pts)
     }
 
-    // const setUpRandomPts = () => {
-    //     let x;
-    //     let y;
-    //     let ids = Object.keys(data).slice(0, numNodes)
-    //     let pts = []
-
-    //     for (let i = 0; i < ids.length; i++) {
-    //         let ptFound = false
-
-    //         while (!ptFound) {
-    //             x = randomInt(25, graphWidth - 25)
-    //             y = randomInt(25, canvasHeight - 50)
-    //             let tooClose = false
-
-    //             pts.forEach(pt => {
-    //                 let distance = Math.sqrt(Math.pow(Math.abs(pt.x - x), 2) + Math.pow(Math.abs(pt.y - y), 2))
-    //                 if (distance < 100) {
-    //                     tooClose = true
-    //                 }
-    //             })
-
-    //             if (!tooClose) {
-    //                 ptFound = true
-    //             }
-    //         }
-
-    //         pts.push({ x, y })
-    //     }
-
-    //     setIds(ids)
-    //     setPts(pts)
-    // }
-
     const nodeGraph = (p5, pts) => {
         let x;
         let y;
@@ -139,17 +113,22 @@ const Graph = ({ }) => {
             x = pt['x']
             y = pt['y']
 
+            // if (countryData[pt['name']]['averages']['tradeBalance'] > 0) {
+            //     p5.stroke('green')
+            // } else {
+            //     p5.stroke('red')
+            // }
             p5.stroke(lineColour)
             p5.line(canvasWidth/2, canvasHeight/2, x, y)
 
-            graphSpiral(p5, x, y, countryData[pt['name']]['data'], spiralSelections, dataType, variable)
+            graphSpiral(p5, x, y, countryData[pt['name']]['data'], spiralSelections, dataType, variable, background)
 
             p5.fill(textColour)
             p5.text(pt['name'], x, y + radius + 5)
 
         })
 
-        graphSpiral(p5, canvasWidth/2, canvasHeight/2, data['World']['data'], spiralSelections, dataType, variable)
+        graphSpiral(p5, canvasWidth/2, canvasHeight/2, data['World']['data'], spiralSelections, dataType, 'tradeBalance', background)
         p5.fill(textColour)
         p5.text('Canada World Trade', canvasWidth/2, canvasHeight/2 + radius + 5)
     }

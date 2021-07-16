@@ -9,7 +9,7 @@ import { bigData as covidData } from "./covidData";
 import { data as tradeData } from "./tradeData"
 import DataContext from './DataContext';
 import { data as mapData } from "./data"
-import { getDataBrackets, getDataBracketsMultiYear, getDataCategories, getVariableBrackets, getTradeDataBrackets } from "./helpers/data"
+import { getDataBrackets, getDataBracketsMultiYear, getDataCategories, getVariableBrackets, getTradeDataBrackets, getAverage } from "./helpers/data"
 
 const getData = (view) => {
     if (view === views.SCATTER.val) {
@@ -21,11 +21,13 @@ const getData = (view) => {
         return { data: covidData, dataType, dataBrackets, yBrackets, categories }
 
     } else if (view === views.GRAPH.val) {
-        let variable = 'export'
-        const dataBrackets = getTradeDataBrackets(tradeData, variable )
+        let var1 = 'import'
+        let var2 = 'tradeBalance'
+        const dataBrackets = getTradeDataBrackets(tradeData, var1 )
         const dataType = dataSets.TRADE.val
+        getAverage(tradeData, var2)
 
-        return { data: tradeData, dataType, dataBrackets, variable }
+        return { data: tradeData, dataType, dataBrackets, variable: var1 }
 
     } else if (view === views.COMPARISON.val || view === views.MAP.val) {
         let data = mapData[dataSets.TEMP.id].data

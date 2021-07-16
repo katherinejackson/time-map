@@ -92,6 +92,21 @@ export const getTradeDataBrackets = (data, variable) => {
     return { high, low }
 }
 
+export const getAverage = (data, variable) => {
+    let total = 0
+    let num = 0
+
+    Object.keys(data).forEach(id => {
+        Object.keys(data[id]['data']).forEach(year => {
+            let value = parseFloat(data[id]['data'][year][variable])
+            total = total + value
+            num++
+        })
+
+        data[id]['averages'] = {...data[id]['averages'], [variable]: total/num}
+    })
+}
+
 export const getDataCategories = (data, variable) => {
     let categories = {}
 
