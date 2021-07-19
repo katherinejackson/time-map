@@ -11,6 +11,7 @@ import DataContext from "./DataContext";
 import Graph from "./Graph"
 import NodeGraph from "./NodeGraph"
 import EdgeGraph from "./EdgeGraph"
+import DoubleGraph from "./DoubleGraph"
 
 const Selection = ({ shape, view }) => {
     const { dataType } = useContext(DataContext)
@@ -107,8 +108,9 @@ const Selection = ({ shape, view }) => {
                         ))}
                     </span>
                 ) : null}
+                {view === views.GRAPH.val ? <DoubleGraph /> : null}
                 {/* {view === views.GRAPH.val ? <EdgeGraph /> : null} */}
-                {view === views.GRAPH.val ? <NodeGraph /> : null}
+                {/* {view === views.GRAPH.val ? <NodeGraph /> : null} */}
             </div>
         </SelectionContext.Provider>
     )

@@ -155,54 +155,90 @@ export const scatterRow = (p5, x, y, data, selections, dataType) => {
     })
 }
 
-export const graphRow = (p5, startX, startY, endX, endY, data, selections, variable, dataBrackets, name) => {
-    let numColours = selections[rectValues.NUM_COLOURS]
+export const graphRow = (p5, startX, startY, endX, endY, data, selections, variable, dataBrackets) => {
+    let var1 = 'import'
+    let var2 = 'export'
+    let numColours = 7
     let interval = (dataBrackets.high - dataBrackets.low)/numColours
     let width = Math.abs(startX - endX) / Object.keys(data).length
     let height = 10
+    let arrowHeight = 25
     let slope = (startY - endY) / (startX - endX)
     let b = startY - slope * startX
 
     let angle = Math.atan((endY - startY) / (endX - startX))
-    let y_1 = Math.tan(angle) * width
-    let x_2 = Math.sin(angle) * height
-    let y_2 = Math.cos(angle) * height
+    let y1 = Math.tan(angle) * width
+    let x2 = Math.sin(angle) * height
+    let y2 = Math.cos(angle) * height
+
+    let xArrow = Math.sin(angle) * arrowHeight
+    let yArrow = Math.cos(angle) * arrowHeight
 
     let x = startX
     let y = startY
 
-    Object.keys(data).forEach(year => {
-        if (data[year][variable] === '') {
-            p5.fill(200)
-        } else {
-            if (numColours === 256 || numColours === 1) {
-                fillLogColourGradient(p5, data[year][variable], 6, numColours)
-            } else if (numColours === 7) {
-                let colour = getManualIntervalColour(data[year][variable], colours['TRADE'][numColours], manualIntervals['TRADE'][numColours])
-                // let colour = getColour(data[year][variable], dataBrackets.high, interval, colours['TRADE'][numColours])
-                p5.fill(colour)
-                if (name === 'Japan') {
-                    console.log(colour)
-                }
-            }
-        }
-
-        if (name === 'Japan') {
-                    console.log(x, y, x + width, y + y_1, x + width - x_2, y + y_1 + y_2, x - x_2, y + + y_2)
-                }
-
-        p5.stroke(150)
-        p5.quad(x, y, x + width, y + y_1, x + width - x_2, y + y_1 + y_2, x - x_2, y + + y_2)
+    p5.stroke(150)
+    Object.keys(data).forEach((year, index) => {
+            p5.fill(getManualIntervalColour(data[year][var1], colours['TRADE'][numColours], manualIntervals['TRADE'][numColours]))
+        
         
         if (startX < endX) {
-            x += width
+            p5.fill(getManualIntervalColour(data[year][var1], colours['TRADE'][numColours], manualIntervals['TRADE'][numColours]))
+            p5.quad(x, y, x + width, y + y1, x + width + x2, y + y1 - y2, x + x2, y - y2)
+
+            p5.fill(getManualIntervalColour(data[year][var2], colours['TRADE'][numColours], manualIntervals['TRADE'][numColours]))
+            p5.quad(x, y, x + width, y + y1, x + width - x2, y + y1 + y2, x - x2, y + y2)
+
+            if (index === Math.floor(Object.keys(data).length/2)) {
+                drawArrow(p5, x + width + xArrow, y + y1 - yArrow, x + xArrow, y - yArrow)
+                drawArrow(p5, x - xArrow, y + yArrow, x + width - xArrow, y + y1 + yArrow)
+            }
             
+            x += width
         } else {
+            p5.fill(getManualIntervalColour(data[year][var1], colours['TRADE'][numColours], manualIntervals['TRADE'][numColours]))
+            p5.quad(x, y, x - x2, y + y2, x - width - x2, y + y2 - y1, x - width, y - y1)
+
+            p5.fill(getManualIntervalColour(data[year][var2], colours['TRADE'][numColours], manualIntervals['TRADE'][numColours]))
+            p5.quad(x, y, x + x2, y - y2, x - width + x2, y - y2 - y1, x - width, y - y1)
+            
+
+            if (index === Math.floor(Object.keys(data).length/2)) {
+                drawArrow(p5, x - width - xArrow, y + yArrow - y1, x - xArrow, y + yArrow)
+                drawArrow(p5, x + xArrow, y - yArrow, x - width + xArrow, y - yArrow - y1)
+            }
             x -= width
         }
 
         y = slope * x + b
     })
+
+}
+
+const drawArrow = (p5, startX, startY, endX, endY) => {
+    p5.fill(150)
+    let theta = Math.abs(endY - startY) === 0 ? 0 : Math.tan(Math.abs(endX - startX)/Math.abs(endY - startY))
+    let phi = Math.PI/4 - theta
+
+    let d1 = Math.cos(phi) * 10
+    let d2 = Math.sin(phi) * 10
+    p5.line(startX, startY, endX, endY)
+
+    if (startX  < endX && startY < endY) {
+        p5.triangle(endX, endY, endX + d2, endY - d1, endX - d1, endY - d2)
+    } else if (startX  < endX && startY > endY) {
+        p5.triangle(endX, endY, endX - d1, endY + d2, endX + d2, endY + d1)
+    } else if (startX  > endX && startY < endY) {
+        p5.triangle(endX, endY, endX - d2, endY - d1, endX + d1, endY - d2)
+    } else if (startX > endX && startY > endY) {
+        p5.triangle(endX, endY, endX + d1, endY + d2, endX - d2, endY + d1)
+        // p5.line(endX, endY, endX - d2, endY + d1)
+    } else if (startX < endX && startY === endY) {
+        p5.triangle(endX, endY, endX - d2, endY + d1, endX - d2, endY - d1)
+    } else if (startX > endX && startY === endY) {
+        p5.triangle(endX, endY, endX + d2, endY + d1, endX + d2, endY - d1)
+    }
+
 }
 
 // export const graphRow = (p5, startX, startY, endX, endY, data, selections, lineColour) => {
@@ -213,9 +249,9 @@ export const graphRow = (p5, startX, startY, endX, endY, data, selections, varia
 //     let b = startY - slope * startX
 
 //     let angle = Math.atan((endY - startY) / (endX - startX))
-//     let y_1 = Math.tan(angle) * width
-//     let x_2 = Math.sin(angle) * height
-//     let y_2 = Math.cos(angle) * height
+//     let y1 = Math.tan(angle) * width
+//     let x2 = Math.sin(angle) * height
+//     let y2 = Math.cos(angle) * height
 
 //     let x = startX
 //     let y = startY
@@ -232,7 +268,7 @@ export const graphRow = (p5, startX, startY, endX, endY, data, selections, varia
 //             }
 //         }
 
-//         p5.quad(x, y, x + width, y + y_1, x + width - x_2, y + y_1 + y_2, x - x_2, y + + y_2)
+//         p5.quad(x, y, x + width, y + y1, x + width - x2, y + y1 + y2, x - x2, y + + y2)
 //         if (startX < endX) {
 //             x += width
 //         } else {
