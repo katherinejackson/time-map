@@ -16,6 +16,8 @@ const graphWidth = canvasWidth/3
 const yBorder = 50
 const graphHeight = canvasHeight
 
+const edgeLength = 275
+
 const EdgeGraph = ({ }) => {
     const { selections, shape, theme } = useContext(SelectionContext)
     const { data, dataBrackets, dataType, variable } = useContext(DataContext)
@@ -85,6 +87,11 @@ const EdgeGraph = ({ }) => {
         p5.clear()
         p5.background(background)
 
+        p5.fill(textColour)
+        p5.textSize(30)
+        p5.text(`Canadian Imports/Exports 2010-2019`, canvasWidth/2, 25)
+        p5.textSize(12)
+
         edgeGraph(p5, pts)
         
         drawLegend(p5, canvasWidth / 2, canvasHeight - 25, selections, null, dataType, dataBrackets, textColour)
@@ -99,7 +106,7 @@ const EdgeGraph = ({ }) => {
 
         let angle = -Math.PI /3
         let radianPerPt = Math.PI * 2 / Object.keys(countryData).length
-        let coreSize = 275
+        let coreSize = edgeLength
 
         Object.keys(countryData).forEach(pt => {
             let x = startX + Math.cos(angle) * coreSize
@@ -145,16 +152,8 @@ const EdgeGraph = ({ }) => {
         setPts(pts)
     }
 
-    const adjustForRadius = (x1, y1, x2, y2, radius) => {
-        let slope = (y1 - y2)/(x1-x2)
-        let angle = Math.atan(slope)
-
-        
-
-    }
-
     const edgeGraph = (p5, pts) => {
-        let nodeRadius = 75
+        let nodeDiameter = 90
         p5.noStroke()
 
         let startX = canvasWidth/2
@@ -164,32 +163,34 @@ const EdgeGraph = ({ }) => {
         let radianPer = Math.PI * 2 / pts.length
 
         pts.forEach(pt => {
-            let x = startX + Math.cos(angle) * coreSize
-            let y = startY + Math.sin(angle) * coreSize
+            let x = startX + Math.cos(angle) * nodeDiameter/2
+            let y = startY + Math.sin(angle) * nodeDiameter/2
             graphRow(p5, x, y, pt['x'], pt['y'], countryData[pt['name']]['data'], rowSelections, variable, dataBrackets, pt['name'])
             angle += radianPer
         })
 
         p5.stroke(textColour)
         p5.fill(pinBackground)
-        p5.ellipse(canvasWidth/2, canvasHeight/2, nodeRadius, nodeRadius)
+        p5.ellipse(canvasWidth/2, canvasHeight/2, nodeDiameter, nodeDiameter)
         p5.noStroke()
 
         p5.fill(textColour)
         p5.text('Canada', canvasWidth/2, canvasHeight/2)
 
         pts.forEach((pt, index) => {
-            let x = pt['x']
-            let y = pt['y']
+            let x = startX + Math.cos(angle) * (nodeDiameter/2 + edgeLength)
+            let y = startY + Math.sin(angle) * (nodeDiameter/2 + edgeLength)
             let name = pt['name']
 
             p5.stroke(textColour)
             p5.fill(pinBackground)
-            p5.ellipse(x, y, nodeRadius, nodeRadius)
+            p5.ellipse(x, y, nodeDiameter, nodeDiameter)
             p5.noStroke()
 
             p5.fill(textColour)
             p5.text(name, x, y)
+
+            angle += radianPer
         })
 
     }
