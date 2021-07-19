@@ -2,12 +2,6 @@ import { colours } from "../constants";
 
 export const getManualIntervalColour = (pt, colourSet, intervalSet) => {
     let counter = 0
-    let bracket;
-    try {
-        bracket = intervalSet[counter]
-    } catch (e) {
-        console.log('error', pt, colourSet, intervalSet)
-    }
 
     while (pt > intervalSet[counter + 1]) {
         counter++
