@@ -6,9 +6,9 @@
 }
 
 .dark-unsaturated-map {
-  filter: brightness(0.7) invert(1) contrast(3) saturate(0) hue-rotate(300deg)
+  filter: brightness(0.65) invert(1) contrast(3) saturate(0) hue-rotate(300deg)
 }
 
 .dark-saturated-map {
-  filter: brightness(0.7) invert(1) contrast(3) saturate(0.5) hue-rotate(200deg)
+  filter: brightness(0.65) invert(1) contrast(3) saturate(0.5) hue-rotate(200deg)
 }
