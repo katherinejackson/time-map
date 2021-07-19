@@ -41,7 +41,7 @@ export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, t
         p5.line(xStart + counter * length, y, xStart + counter * length, y + 8)
         p5.noStroke()
 
-        p5.text(interval.lowest, xStart + counter * length, y + 15)
+        p5.text(interval.low, xStart + counter * length, y + 15)
     }
 }
 
