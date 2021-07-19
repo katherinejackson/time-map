@@ -185,7 +185,7 @@ const Overlay = () => {
         let startX = x - daysPerRow * hoverSelections[rectValues.DAY_WIDTH] / 2;
         let startY = y - ((hoverSelections[rectValues.NUM_ROWS] * (hoverSelections[rectValues.SPACE_BETWEEN_ROWS] + hoverSelections[rectValues.ROW_HEIGHT])) * locationData.length) / 2
 
-        rectangle(dataType, interval, locationData, x, y, false, p5, hoverSelections, startX, startY, opaque, false, yearIndication, fillMissing, theme)
+        rectangle(dataType, interval, locationData, x, y, false, p5, hoverSelections, startX, startY, opaque, false, yearIndication, fillMissing, colourTheme)
     }
 
     const drawAnimatedRect = (x, y, ids, animSelections, numDays) => {
@@ -208,7 +208,7 @@ const Overlay = () => {
         let startX = x;
         let startY = y - ((animSelections[rectValues.NUM_ROWS] * (animSelections[rectValues.SPACE_BETWEEN_ROWS] + animSelections[rectValues.ROW_HEIGHT])) * newData.length) / 2
 
-        rectangle(dataType, interval, newData, x, y, false, p5, animSelections, startX, startY, opaque, hover, yearIndication, fillMissing, theme)
+        rectangle(dataType, interval, newData, x, y, false, p5, animSelections, startX, startY, opaque, hover, yearIndication, fillMissing, colourTheme)
     }
 
     const setup = (p5, parent) => {
