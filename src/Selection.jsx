@@ -12,6 +12,7 @@ import Graph from "./Graph"
 import NodeGraph from "./NodeGraph"
 import EdgeGraph from "./EdgeGraph"
 import DoubleGraph from "./DoubleGraph"
+import BridgeGraph from "./BridgeGraph"
 
 const Selection = ({ shape, view }) => {
     const { dataType } = useContext(DataContext)
@@ -108,7 +109,8 @@ const Selection = ({ shape, view }) => {
                         ))}
                     </span>
                 ) : null}
-                {view === views.GRAPH.val ? <DoubleGraph /> : null}
+                {view === views.GRAPH.val ? <BridgeGraph /> : null}
+                {/* {view === views.GRAPH.val ? <DoubleGraph /> : null} */}
                 {/* {view === views.GRAPH.val ? <EdgeGraph /> : null} */}
                 {/* {view === views.GRAPH.val ? <NodeGraph /> : null} */}
             </div>

@@ -11,10 +11,10 @@ export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, t
         } else if (selections[spiralValues.NUM_COLOURS] === 1) {
             drawLogarithmicSingleColourLegend(p5, x, y, brackets, textColour)
         }
-    } else if (dataType === 'TRADE') {
+    } else if (dataType === 'TRADE' || dataType === 'WIND' || dataType === 'PRECIP' || dataType === 'BRIDGE') {
         drawManualLegend(p5, x, y, selections, dataType, textColour)
     } else if (dataType === 'WIND' || dataType === 'PRECIP') {
-        drawManualLegend(p5, x, y, selections, interval, dataType, textColour)
+        drawManualLegend(p5, x, y, selections, dataType, textColour)
     } else if (selections[rectValues.NUM_COLOURS] <= 2 || selections[rectValues.NUM_COLOURS] > 10) {
         drawGradientLegend(p5, x, y, selections, interval, textColour)
     } else {
@@ -64,7 +64,12 @@ export const drawManualLegend = (p5, x, y, selections, dataType, textColour) => 
 
         p5.noStroke()
         p5.fill(textColour)
-        p5.text(formatTradeNumbers(intervals[i - 1]), xStart + counter * length, y + 15)
+        if (dataType === 'TRADE') {
+            p5.text(formatTradeNumbers(intervals[i - 1]), xStart + counter * length, y + 15)
+        } else {
+            p5.text(intervals[i - 1], xStart + counter * length, y + 15)
+        }
+
         p5.stroke(1)
         counter = counter + 1
     }
@@ -72,8 +77,12 @@ export const drawManualLegend = (p5, x, y, selections, dataType, textColour) => 
     p5.line(xStart + counter * length, y, xStart + counter * length, y + 8)
     p5.noStroke()
     p5.fill(textColour)
-    // p5.text(0, xStart, y + 15)
-    p5.text(formatTradeNumbers(intervals[intervals.length - 1]), xStart + counter * length, y + 15)
+
+    if (dataType === 'TRADE') {
+        p5.text(formatTradeNumbers(intervals[intervals.length - 1]), xStart + counter * length, y + 15)
+    } else {
+        p5.text(intervals[intervals.length - 1], xStart + counter * length, y + 15)
+    }
 
     // p5.fill(200)
     // p5.rect(x + numColours * length / 2 + 50, y, 40, 10)
