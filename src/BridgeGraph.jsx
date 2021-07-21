@@ -22,18 +22,20 @@ const randomInt = (min, max) => {
     return (Math.floor(Math.random() * (max - min + 1)) + min);
 }
 
+const nodeDistance = 250
+
 const pts = [
-    { x: canvasWidth / 2, y: canvasHeight / 2 },
-    { x: canvasWidth / 2 + 300, y: canvasHeight / 2 },
-    { x: canvasWidth / 2, y: canvasHeight / 2 - 250 },
-    { x: canvasWidth / 2, y: canvasHeight / 2 + 250 },
+    { id: 'A', x: canvasWidth / 2 - nodeDistance/2, y: canvasHeight / 2 },
+    { id: 'D', x: canvasWidth / 2 + nodeDistance/2, y: canvasHeight / 2 },
+    { id: 'B', x: canvasWidth / 2 - nodeDistance/2, y: canvasHeight / 2 - nodeDistance },
+    { id: 'C', x: canvasWidth / 2 - nodeDistance/2, y: canvasHeight / 2 + nodeDistance },
 ]
 
 const bridges = [
-    {id: 1, start: { x: canvasWidth / 2 - 20, y: canvasHeight / 2 }, end: { x: canvasWidth / 2 - 20, y: canvasHeight / 2 - 250 } },
-    {id: 2, start: { x: canvasWidth / 2 + 20, y: canvasHeight / 2 }, end: { x: canvasWidth / 2 + 20, y: canvasHeight / 2 - 250 } },
-    {id: 3, start: { x: canvasWidth / 2 - 20, y: canvasHeight / 2 }, end: { x: canvasWidth / 2 - 20, y: canvasHeight / 2 + 250 } },
-    {id: 4, start: { x: canvasWidth / 2 + 20, y: canvasHeight / 2 }, end: { x: canvasWidth / 2 + 20, y: canvasHeight / 2 + 250 } },
+    {id: 1, start: { x: canvasWidth / 2 - nodeDistance/2 - 20, y: canvasHeight / 2 }, end: { x: canvasWidth / 2 - nodeDistance/2 - 20, y: canvasHeight / 2 - 250 } },
+    {id: 2, start: { x: canvasWidth / 2 - nodeDistance/2 + 20, y: canvasHeight / 2 }, end: { x: canvasWidth / 2 - nodeDistance/2 + 20, y: canvasHeight / 2 - 250 } },
+    {id: 3, start: { x: canvasWidth / 2 - nodeDistance/2 - 20, y: canvasHeight / 2 }, end: { x: canvasWidth / 2 - nodeDistance/2 - 20, y: canvasHeight / 2 + 250 } },
+    {id: 4, start: { x: canvasWidth / 2 - nodeDistance/2 + 20, y: canvasHeight / 2 }, end: { x: canvasWidth / 2 - nodeDistance/2 + 20, y: canvasHeight / 2 + 250 } },
     {id: 5, start: pts[0], end: pts[1] },
     {id: 6, start: pts[3], end: pts[1] },
     {id: 7, start: pts[2], end: pts[1] },
@@ -57,7 +59,7 @@ const generateData = () => {
         }
     
         for (let i = 10; i < 15; i++) {
-            lData.push(randomInt(200, 300))
+            lData.push(randomInt(200, 400))
         }
     
         for (let i = 15; i < 19; i++) {
@@ -82,7 +84,7 @@ const BridgeGraph = ({ }) => {
     const { selections, shape, theme } = useContext(SelectionContext)
     const [p5, setP5] = useState(null)
     const [radius, setRadius] = useState(getRadius(selections))
-    const { background, lineColour, textColour, pinBackground } = themeColours[theme]
+    const { background, textColour, pinBackground } = themeColours[theme]
     const [spiralSelections, setSpiralSelections] = useState({ ...selections })
     const [rowSelections, setRowSelections] = useState({ ...selections })
     const data = generateData()
@@ -128,7 +130,7 @@ const BridgeGraph = ({ }) => {
 
         edgeGraph(p5, pts)
 
-        drawLegend(p5, canvasWidth / 2, canvasHeight - 25, rowSelections, null, 'BRIDGE', null, textColour)
+        drawLegend(p5, canvasWidth/2, canvasHeight - 25, rowSelections, null, 'BRIDGE', null, textColour)
 
         p5.noLoop()
     }
@@ -149,16 +151,16 @@ const BridgeGraph = ({ }) => {
             let y1 = startY + Math.sin(angle) * nodeDiameter/2
 
             p5.stroke(50)
-            // p5.line(startX, startX, endY)
+            // p5.line(startX, startY, endX, endY)
 
             bridgeRow(p5, startX, startY, endX, endY, data[index])
         })
 
-        pts.forEach((pt, index) => {
-            // p5.noFill()
+        pts.forEach((pt) => {
             p5.fill(pinBackground)
             p5.ellipse(pt.x, pt.y, nodeDiameter, nodeDiameter)
-            // p5.noStroke()
+            p5.fill(textColour)
+            p5.text(pt.id, pt.x, pt.y)
         })
 
     }
