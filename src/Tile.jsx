@@ -9,9 +9,9 @@ import SelectionContext from "./SelectionContext";
 import DataContext from "./DataContext";
 
 
-const Tile = ({ numX }) => {
+const Tile = ({ numX, selections }) => {
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
-    const { selections, fillMissing, mapPin, opaque, shape, yearIndication, theme } = useContext(SelectionContext)
+    const { fillMissing, mapPin, opaque, shape, yearIndication, theme } = useContext(SelectionContext)
     const colourTheme = themeColours[theme]
     const interval = dataType === 'TEMP'
         ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])
@@ -57,9 +57,9 @@ const Tile = ({ numX }) => {
         }
 
         spiral(dataType, interval, locationData, x, y, mapPin, p5, selections, x, startY, opaque, true, yearIndication, fillMissing, colourTheme)
-        p5.fill(colourTheme.textColour)
-        p5.textSize(10)
-        p5.text("1", x - 2, startY)
+        // p5.fill(colourTheme.textColour)
+        // p5.textSize(10)
+        // p5.text("1", x - 2, startY)
     }
 
     const drawRect = (x, y, id, hover = false) => {
@@ -77,18 +77,18 @@ const Tile = ({ numX }) => {
 
         rectangle(dataType, interval, locationData, x, y, mapPin, p5, selections, startX, startY, opaque, true, yearIndication, fillMissing, colourTheme)
 
-        p5.textSize(10)
-        if (mapPin) {
-            p5.fill(colourTheme.pinBackground)
-            p5.ellipse(x, y + 8, 16, 16)
-            p5.fill(colourTheme.textColour)
-            p5.text("1", x, y + 8)
-        } else {
-            p5.fill(colourTheme.pinBackground)
-            p5.ellipse(x, y + pinHeight / 2 + 8, 16, 16)
-            p5.fill(colourTheme.textColour)
-            p5.text("1", x, y + pinHeight/2 + 8)
-        }
+        // p5.textSize(10)
+        // if (mapPin) {
+        //     p5.fill(colourTheme.pinBackground)
+        //     p5.ellipse(x, y + 8, 16, 16)
+        //     p5.fill(colourTheme.textColour)
+        //     p5.text("1", x, y + 8)
+        // } else {
+        //     p5.fill(colourTheme.pinBackground)
+        //     p5.ellipse(x, y + pinHeight / 2 + 8, 16, 16)
+        //     p5.fill(colourTheme.textColour)
+        //     p5.text("1", x, y + pinHeight/2 + 8)
+        // }
     }
 
     const setup = (p5, parent) => {
@@ -104,7 +104,7 @@ const Tile = ({ numX }) => {
         p5.rect(0, 0, canvasSize, canvasSize)
         p5.noStroke()
         drawPin(canvasSize / 2, canvasSize / 2, [locations[0].id])
-        drawLegend(p5, canvasSize / 2, 1, selections, interval, dataType, colourTheme.textColour)
+        drawLegend(p5, canvasSize / 2, 1, selections, interval, dataType, null, colourTheme.textColour)
         p5.noLoop()
     }
 
