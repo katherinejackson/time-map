@@ -112,23 +112,20 @@ const Graph = ({ }) => {
             x = pt['x']
             y = pt['y']
 
-            // if (countryData[pt['name']]['averages']['tradeBalance'] > 0) {
-            //     p5.stroke('green')
-            // } else {
-            //     p5.stroke('red')
-            // }
             p5.stroke(lineColour)
             p5.line(canvasWidth/2, canvasHeight/2, x, y)
 
             graphSpiral(p5, x, y, countryData[pt['name']]['data'], spiralSelections, dataType, variable, background)
 
             p5.fill(textColour)
+            p5.textSize(10)
             p5.text(pt['name'], x, y + radius + 5)
 
         })
 
         graphSpiral(p5, canvasWidth/2, canvasHeight/2, data['World']['data'], spiralSelections, dataType, 'tradeBalance', background)
         p5.fill(textColour)
+        p5.textSize(10)
         p5.text('Canada World Trade', canvasWidth/2, canvasHeight/2 + radius + 5)
     }
 

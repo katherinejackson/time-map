@@ -6,10 +6,13 @@ import DoubleGraph from "./DoubleGraph"
 import BridgeGraph from "./BridgeGraph"
 
 const GraphView = ({ }) => (
-        <div>
+        <div className="py-8">
              <BridgeGraph />
+             <br />
              <EdgeGraph /> 
+             <br />
              <NodeGraph />
+             <br />
              <DoubleGraph />
         </div>
     )
