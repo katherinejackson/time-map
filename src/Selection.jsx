@@ -8,11 +8,8 @@ import { shapes, rectVariables, spiralVariables, views, themes } from './constan
 import SelectionContext from "./SelectionContext";
 import ScatterPlot from "./ScatterPlot"
 import DataContext from "./DataContext";
-import Graph from "./Graph"
-import NodeGraph from "./NodeGraph"
-import EdgeGraph from "./EdgeGraph"
-import DoubleGraph from "./DoubleGraph"
-import BridgeGraph from "./BridgeGraph"
+import GraphView from "./GraphView"
+
 
 const Selection = ({ shape, view }) => {
     const { dataType } = useContext(DataContext)
@@ -72,17 +69,19 @@ const Selection = ({ shape, view }) => {
     return (
         <SelectionContext.Provider value={{ selections, theme, mapPin, fillMissing, shape, opaque, variables, yearIndication }}>
             <div>
-                <FilterPanel
-                    axis={axis}
-                    handleSelect={handleSelect}
-                    handleAxisSelect={handleAxisSelect}
-                    handleThemeSelect={handleThemeSelect}
-                    handleFillMissingCheck={handleFillMissingCheck}
-                    handlePinCheck={handlePinCheck}
-                    handleOpaqueCheck={handleOpaqueCheck}
-                    handleYearIndicationSelect={handleYearIndicationSelect}
-                    view={view}
-                />
+                {view !== views.GRAPH.val ? (
+                    <FilterPanel
+                        axis={axis}
+                        handleSelect={handleSelect}
+                        handleAxisSelect={handleAxisSelect}
+                        handleThemeSelect={handleThemeSelect}
+                        handleFillMissingCheck={handleFillMissingCheck}
+                        handlePinCheck={handlePinCheck}
+                        handleOpaqueCheck={handleOpaqueCheck}
+                        handleYearIndicationSelect={handleYearIndicationSelect}
+                        view={view}
+                    />
+                ) : null}
                 {view === views.MAP.val ? <LeafletMap /> : null}
                 {view === views.SCATTER.val ? <ScatterPlot /> : null}
                 {view === views.COMPARISON.val ? error ? (
@@ -109,10 +108,7 @@ const Selection = ({ shape, view }) => {
                         ))}
                     </span>
                 ) : null}
-                {view === views.GRAPH.val ? <BridgeGraph /> : null}
-                {/* {view === views.GRAPH.val ? <DoubleGraph /> : null} */}
-                {/* {view === views.GRAPH.val ? <EdgeGraph /> : null} */}
-                {/* {view === views.GRAPH.val ? <NodeGraph /> : null} */}
+                {view === views.GRAPH.val ? <GraphView /> : null}
             </div>
         </SelectionContext.Provider>
     )

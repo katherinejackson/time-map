@@ -87,6 +87,10 @@ const DoubleGraph = ({ }) => {
         p5.clear()
         p5.background(background)
 
+        p5.fill(textColour)
+        p5.textSize(30)
+        p5.text(`Canadian Imports/Exports 2010-2019`, canvasWidth/2, 25)
+
         edgeGraph(p5, pts)
         
         drawLegend(p5, canvasWidth / 2, canvasHeight - 25, selections, null, dataType, dataBrackets, textColour)

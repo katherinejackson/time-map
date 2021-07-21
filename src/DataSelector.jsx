@@ -23,7 +23,7 @@ const getData = (view) => {
     } else if (view === views.GRAPH.val) {
         let var1 = 'import'
         let var2 = 'tradeBalance'
-        const dataBrackets = getTradeDataBrackets(tradeData, var1 )
+        const dataBrackets = getTradeDataBrackets(tradeData, var1)
         const dataType = dataSets.TRADE.val
         getAverage(tradeData, var2)
 
@@ -71,14 +71,18 @@ const DataSelector = ({ view }) => {
     return (
         <DataContext.Provider value={{ data, dataType, yBrackets, dataBrackets, categories, totalDataPts, locations, variable }}>
             <div className="row justify-content-center">
-                <label className="col-form-label w-auto">Display Type</label>
-                <select className="form-select w-auto" defaultValue={shape} onChange={handleShapeChange} name="Display type">
-                    {Object.keys(shapes).map(shape => <option key={`shape-${shapes[shape].id}`} value={shapes[shape].id}>{shapes[shape].name}</option>)}
-                </select>
-                {/* <label className="col-form-label w-auto ms-3">Data Set</label>
-                            <select className="form-select w-auto" defaultValue={dataSet} onChange={handleDataSetChange} name="DataSet">
-                                {Object.keys(dataSets).map(type => <option key={`dataset-${dataSets[type].id}`} value={dataSets[type].val}>{dataSets[type].name}</option>)}
-                            </select> */}
+                {view !== views.GRAPH.val ? (
+                    <div className="row justify-content-center">
+                        <label className="col-form-label w-auto">Display Type</label>
+                        <select className="form-select w-auto" defaultValue={shape} onChange={handleShapeChange} name="Display type">
+                            {Object.keys(shapes).map(shape => <option key={`shape-${shapes[shape].id}`} value={shapes[shape].id}>{shapes[shape].name}</option>)}
+                        </select>
+                        {/* <label className="col-form-label w-auto ms-3">Data Set</label>
+                        <select className="form-select w-auto" defaultValue={dataSet} onChange={handleDataSetChange} name="DataSet">
+                            {Object.keys(dataSets).map(type => <option key={`dataset-${dataSets[type].id}`} value={dataSets[type].val}>{dataSets[type].name}</option>)}
+                        </select> */}
+                    </div>
+                ) : null}
                 <Selection shape={shape} view={view} />
             </div>
         </DataContext.Provider>

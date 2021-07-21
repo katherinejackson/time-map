@@ -75,7 +75,6 @@ const Graph = ({ }) => {
         p5.fill(textColour)
         p5.textSize(30)
         p5.text(`Canadian Imports 2010-2019`, canvasWidth/2, 30)
-
         p5.textSize(12)
 
         nodeGraph(p5, pts)
