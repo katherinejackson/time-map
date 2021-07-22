@@ -145,7 +145,6 @@ const BridgeGraph = ({ }) => {
             let endX = bridge.end.x
             let endY = bridge.end.y
             let angle = Math.atan(Math.abs(startX - endX)/Math.abs(startY - endY))
-            console.log(angle)
 
             let x1 = startX + Math.cos(angle) * nodeDiameter/2
             let y1 = startY + Math.sin(angle) * nodeDiameter/2
