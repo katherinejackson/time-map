@@ -3,20 +3,11 @@ import React, { useContext, useEffect, useState } from 'react'
 
 import { drawLegend } from "./legend";
 import SelectionContext from "./SelectionContext";
-import { getRadius, graphSpiral, bridgeRow } from "./shapes";
-import DataContext from "./DataContext";
+import { bridgeRow } from "./shapes";
 import { rectValues, spiralValues, themeColours } from "./constants";
 
 const canvasWidth = window.innerWidth * 0.95
 const canvasHeight = window.innerHeight
-
-const xBorder = 50
-const graphWidth = canvasWidth / 3
-
-const yBorder = 50
-const graphHeight = canvasHeight
-
-const edgeLength = 275
 
 const randomInt = (min, max) => {
     return (Math.floor(Math.random() * (max - min + 1)) + min);
@@ -83,7 +74,6 @@ const generateData = () => {
 const BridgeGraph = ({ }) => {
     const { selections, shape, theme } = useContext(SelectionContext)
     const [p5, setP5] = useState(null)
-    const [radius, setRadius] = useState(getRadius(selections))
     const { background, textColour, pinBackground } = themeColours[theme]
     const [spiralSelections, setSpiralSelections] = useState({ ...selections })
     const [rowSelections, setRowSelections] = useState({ ...selections })
@@ -110,7 +100,6 @@ const BridgeGraph = ({ }) => {
             [rectValues.NUM_COLOURS]: 6,
         })
 
-        setRadius(getRadius(spiralSelections))
     }, [selections])
 
     const setup = (p5, parent) => {
@@ -144,12 +133,12 @@ const BridgeGraph = ({ }) => {
             let startY = bridge.start.y
             let endX = bridge.end.x
             let endY = bridge.end.y
-            let angle = Math.atan(Math.abs(startX - endX)/Math.abs(startY - endY))
 
-            let x1 = startX + Math.cos(angle) * nodeDiameter/2
-            let y1 = startY + Math.sin(angle) * nodeDiameter/2
+            // let angle = Math.atan(Math.abs(startX - endX)/Math.abs(startY - endY))
+            // let x1 = startX + Math.cos(angle) * nodeDiameter/2
+            // let y1 = startY + Math.sin(angle) * nodeDiameter/2
 
-            p5.stroke(50)
+            // p5.stroke(50)
             // p5.line(startX, startY, endX, endY)
 
             bridgeRow(p5, startX, startY, endX, endY, data[index])
