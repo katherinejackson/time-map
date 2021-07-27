@@ -22,6 +22,7 @@ const Overlay = () => {
     const { selections, theme, fillMissing, mapPin, opaque, shape, yearIndication } = useContext(SelectionContext)
     const colourTheme = themeColours[theme]
     const [p5, setP5] = useState(null)
+    const [pg, setPg] = useState(null)
     const interval = dataType === 'TEMP'
         ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])
         : getManualInterval(dataBrackets, selections[rectValues.NUM_COLOURS], dataType)
@@ -33,16 +34,23 @@ const Overlay = () => {
     const [redraw, setRedraw] = useState(false)
     const [recluster, setRecluster] = useState(false)
 
+
     useEffect(() => {
         if (p5) {
             drawLocationClusters()
         }
-
-    }, [selections, p5, map, mapPin, hover, opaque, yearIndication, fillMissing, theme])
+    }, [selections, map, mapPin, hover, opaque, yearIndication, fillMissing, theme])
 
     useEffect(() => {
         resetClusters(true)
     }, [shape])
+
+    useEffect(() => {
+        if(p5) {
+            draw(p5)
+        }
+
+    }, [pg, p5])
 
     useEffect(() => {
         if (animated.index !== null) {
@@ -72,9 +80,10 @@ const Overlay = () => {
 
     useEffect(() => {
         if (map && p5) {
-            map.on('drag', () => {
+            map.on('drag', (e) => {
                 // panClusters()
                 setRedraw(true)
+                console.log(e.sourceTarget['_newPos'])
             })
             map.on('zoomstart', () => {
                 clearMap()
@@ -123,14 +132,14 @@ const Overlay = () => {
             startY = startY - getPinAdjustment(newSelections, shape, locationData)
         }
 
-        spiral(dataType, interval, locationData, x, y, mapPin, p5, newSelections, x, startY, opaque, hover, yearIndication, fillMissing, colourTheme)
-        p5.fill(colourTheme.textColour)
-        p5.textSize(10)
+        spiral(dataType, interval, locationData, x, y, mapPin, pg, newSelections, x, startY, opaque, hover, yearIndication, fillMissing, colourTheme)
+        pg.fill(colourTheme.textColour)
+        pg.textSize(10)
         if (hover) {
-            p5.textSize(15)
+            pg.textSize(15)
         }
-        p5.textAlign(p5.CENTER, p5.CENTER)
-        p5.text(ids.length, x - 2, startY + 1)
+        pg.textAlign(p5.CENTER, p5.CENTER)
+        pg.text(ids.length, x - 2, startY + 1)
     }
 
     const drawRect = (x, y, ids, hover = false) => {
@@ -156,24 +165,24 @@ const Overlay = () => {
             startY = y - getPinAdjustment(newSelections, shape, locationData)
         }
 
-        rectangle(dataType, interval, locationData, x, y, mapPin, p5, newSelections, startX, startY, opaque, hover, yearIndication, fillMissing, colourTheme)
-        p5.fill(colourTheme.textColour)
-        p5.textSize(10)
-        p5.textAlign(p5.CENTER, p5.CENTER)
+        rectangle(dataType, interval, locationData, x, y, mapPin, pg, newSelections, startX, startY, opaque, hover, yearIndication, fillMissing, colourTheme)
+        pg.fill(colourTheme.textColour)
+        pg.textSize(10)
+        pg.textAlign(p5.CENTER, p5.CENTER)
         if (hover) {
-            p5.textSize(16)
+            pg.textSize(16)
         }
 
         if (mapPin) {
-            p5.fill(colourTheme.pinBackground)
-            p5.ellipse(x, y + 8, 16, 16)
-            p5.fill(colourTheme.textColour)
-            p5.text(ids.length, x, y + 8)
+            pg.fill(colourTheme.pinBackground)
+            pg.ellipse(x, y + 8, 16, 16)
+            pg.fill(colourTheme.textColour)
+            pg.text(ids.length, x, y + 8)
         } else {
-            p5.fill(colourTheme.pinBackground)
-            p5.ellipse(x, y + pinHeight / 2 + 8, 16, 16)
-            p5.fill(colourTheme.textColour)
-            p5.text(ids.length, x, y + pinHeight / 2 + 8)
+            pg.fill(colourTheme.pinBackground)
+            pg.ellipse(x, y + pinHeight / 2 + 8, 16, 16)
+            pg.fill(colourTheme.textColour)
+            pg.text(ids.length, x, y + pinHeight / 2 + 8)
         }
 
     }
@@ -185,7 +194,7 @@ const Overlay = () => {
         let startX = x - daysPerRow * hoverSelections[rectValues.DAY_WIDTH] / 2;
         let startY = y - ((hoverSelections[rectValues.NUM_ROWS] * (hoverSelections[rectValues.SPACE_BETWEEN_ROWS] + hoverSelections[rectValues.ROW_HEIGHT])) * locationData.length) / 2
 
-        rectangle(dataType, interval, locationData, x, y, false, p5, hoverSelections, startX, startY, opaque, false, yearIndication, fillMissing, colourTheme)
+        rectangle(dataType, interval, locationData, x, y, false, pg, hoverSelections, startX, startY, opaque, false, yearIndication, fillMissing, colourTheme)
     }
 
     const drawAnimatedRect = (x, y, ids, animSelections, numDays) => {
@@ -208,53 +217,56 @@ const Overlay = () => {
         let startX = x;
         let startY = y - ((animSelections[rectValues.NUM_ROWS] * (animSelections[rectValues.SPACE_BETWEEN_ROWS] + animSelections[rectValues.ROW_HEIGHT])) * newData.length) / 2
 
-        rectangle(dataType, interval, newData, x, y, false, p5, animSelections, startX, startY, opaque, hover, yearIndication, fillMissing, colourTheme)
+        rectangle(dataType, interval, newData, x, y, false, pg, animSelections, startX, startY, opaque, hover, yearIndication, fillMissing, colourTheme)
     }
 
     const setup = (p5, parent) => {
         p5.createCanvas(mapWidth, mapHeight).parent(parent)
+        setPg(p5.createGraphics(mapWidth, mapHeight))
         setP5(p5)
-        resetClusters()
     }
 
     const draw = (p5) => {
         drawLocationClusters()
+        p5.image(pg, 0, 0)
 
         if (animated.index !== null) {
-            p5.loop()
-            let cluster = locationClusters[animated.index]
-            let newSelections = getDefaultSelections(shapes.RECT.id, view)
-            newSelections = {
-                ...newSelections,
-                [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],
-                [rectValues.DAY_WIDTH]: 0.25,
-                [rectValues.ROW_HEIGHT]: animated.width,
-            }
+            // p5.loop()
+            // let cluster = locationClusters[animated.index]
+            // let newSelections = getDefaultSelections(shapes.RECT.id, view)
+            // newSelections = {
+            //     ...newSelections,
+            //     [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],
+            //     [rectValues.DAY_WIDTH]: 0.25,
+            //     [rectValues.ROW_HEIGHT]: animated.width,
+            // }
 
-            drawAnimatedRect(animated.x, animated.y, cluster.locations, newSelections, animated.numDays)
-            if (animated.numDays < 365) {
-                setAnimated({ ...animated, numDays: animated.numDays + 80 })
-            } else if (animated.x < mapWidth - 125) {
-                setAnimated({ ...animated, x: animated.x + 50 })
-            } else {
-                setAnimated({ ...animated, y: animated.y - 50 })
-            }
+            // drawAnimatedRect(animated.x, animated.y, cluster.locations, newSelections, animated.numDays)
+            // if (animated.numDays < 365) {
+            //     setAnimated({ ...animated, numDays: animated.numDays + 80 })
+            // } else if (animated.x < mapWidth - 125) {
+            //     setAnimated({ ...animated, x: animated.x + 50 })
+            // } else {
+            //     setAnimated({ ...animated, y: animated.y - 50 })
+            // }
 
-            if (animated.y < detailedHeight * (detailed.length + 1)) {
-                let newDetailed = [...detailed]
-                locationClusters[animated.index].locations.forEach(id => {
-                    if (!detailed.includes(id)) {
-                        newDetailed.push(id)
-                    }
-                })
+            // if (animated.y < detailedHeight * (detailed.length + 1)) {
+            //     let newDetailed = [...detailed]
+            //     locationClusters[animated.index].locations.forEach(id => {
+            //         if (!detailed.includes(id)) {
+            //             newDetailed.push(id)
+            //         }
+            //     })
 
-                setAnimated({ index: null, x: 0, y: 0, numDays: 0 })
-                setDetailed(newDetailed)
-            }
+            //     setAnimated({ index: null, x: 0, y: 0, numDays: 0 })
+            //     setDetailed(newDetailed)
+            // }
         } else {
             p5.noLoop()
         }
     }
+
+
 
     const mouseMoved = (p5) => {
         let hoverFound = false
@@ -322,65 +334,64 @@ const Overlay = () => {
     }
 
     const panClusters = () => {
+        p5.clear()
         const newClusters = updateClusters(map, locationClusters)
 
         setClusters(newClusters)
         drawLocationClusters(newClusters)
+        p5.image(pg, 0, 0)
     }
 
-    const resetClusters = (redraw = false) => {
-        const newClusters = calculateClusters(locations, selections, shape, mapPin, map)
-        setClusters(newClusters)
+    // const resetClusters = (redraw = false) => {
+    //     const newClusters = calculateClusters(locations, selections, shape, mapPin, map)
+    //     setClusters(newClusters)
 
-        if (redraw && p5) {
-            drawLocationClusters(newClusters)
-        }
-    }
+    //     if (redraw && p5) {
+    //         drawLocationClusters(newClusters)
+    //     }
+    // }
 
     const drawLocationClusters = (clusters = locationClusters) => {
-        if (p5) {
-            p5.clear()
-            p5.noStroke()
+        pg.clear()
+        pg.noStroke()
 
-            if (clusters.length) {
-                clusters?.forEach((cluster, index) => {
-                    let withinBounds = cluster.x > 0 && cluster.x < mapWidth && cluster.y > 0 && cluster.y < mapHeight
-                    if (index !== hover && withinBounds) {
-                        drawPin(cluster.x, cluster.y, cluster.locations)
-                    }
-
-                })
-
-                if (hover !== null && clusters[hover]) {
-                    drawPin(clusters[hover].x, clusters[hover].y, clusters[hover].locations, true)
+        if (clusters.length) {
+            clusters?.forEach((cluster, index) => {
+                if (index !== hover) {
+                    drawPin(cluster.x, cluster.y, cluster.locations)
                 }
 
-                if (detailed.length) {
-                    drawDetailed()
-                }
+            })
+
+            if (hover !== null && clusters[hover]) {
+                drawPin(clusters[hover].x, clusters[hover].y, clusters[hover].locations, true)
             }
 
-            drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType, null, colourTheme.textColour)
-            drawZoom(p5)
+            if (detailed.length) {
+                drawDetailed()
+            }
         }
+
+        drawLegend(pg, mapWidth / 2, mapHeight - 40, selections, interval, dataType, null, colourTheme.textColour)
+        drawZoom(pg)
     }
 
     const clearMap = () => {
-        if (p5) {
-            p5.clear()
+        if (pg) {
+            pg.clear()
         }
     }
 
-    const drawZoom = (p5) => {
-        p5.fill(255)
-        p5.stroke(50)
-        p5.rect(25, 25, 25, 25)
-        p5.rect(25, 50, 25, 25)
+    const drawZoom = (pg) => {
+        pg.fill(255)
+        pg.stroke(50)
+        pg.rect(25, 25, 25, 25)
+        pg.rect(25, 50, 25, 25)
 
-        p5.fill(0)
-        p5.text("+", 37, 37)
-        p5.text("-", 37, 62)
-        p5.noStroke()
+        pg.fill(0)
+        pg.text("+", 37, 37)
+        pg.text("-", 37, 62)
+        pg.noStroke()
     }
 
     const drawDetailed = () => {
@@ -397,14 +408,14 @@ const Overlay = () => {
         const { pinHeight } = getRowSize(newSelections, detailed.length, selections[rectValues.NUM_YEARS])
         const locationHeight = pinHeight + 30
 
-        p5.fill(colourTheme.background)
-        p5.rect(mapWidth - 150, 0, 150, locationHeight * detailed.length)
-        p5.textAlign(p5.LEFT, p5.TOP)
+        pg.fill(colourTheme.background)
+        pg.rect(mapWidth - 150, 0, 150, locationHeight * detailed.length)
+        pg.textAlign(p5.LEFT, p5.TOP)
 
         detailed.forEach((id, index) => {
-            p5.fill(colourTheme.textColour)
-            p5.textSize(10)
-            p5.text(locations[id].name, mapWidth - 150, index * locationHeight)
+            pg.fill(colourTheme.textColour)
+            pg.textSize(10)
+            pg.text(locations[id].name, mapWidth - 150, index * locationHeight)
             drawHoverRect(mapWidth - 75, index * locationHeight + pinHeight / 2 + 15, id, newSelections)
         })
 

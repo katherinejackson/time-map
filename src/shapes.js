@@ -292,7 +292,6 @@ const drawArrow = (p5, startX, startY, endX, endY) => {
     let d1 = Math.cos(phi) * 10
     let d2 = Math.sin(phi) * 10
     p5.line(startX, startY, endX, endY)
-    // console.log(startX, startY, endX, endY)
 
     if (startX < endX && startY < endY) {
         p5.triangle(endX, endY, endX + d2, endY - d1, endX - d1, endY - d2)

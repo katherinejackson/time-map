@@ -68,7 +68,8 @@ export const calculateClusters = (locations, selections, shape, mapPin, map) => 
             long: item.y,
             locations: [item.id],
             minDistanceX,
-            minDistanceY
+            minDistanceY,
+            name: item.name,
         })
     })
 
