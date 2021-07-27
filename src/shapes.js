@@ -688,9 +688,9 @@ export const getGraphRadius = (selections, numSections) => {
 
 export const getRowSize = (selections, numLocations, numYears) => {
     const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
-    const dayWidth = Math.min(selections[rectValues.DAY_WIDTH] + numLocations / 25, 1)
+    const dayWidth = Math.min(selections[rectValues.DAY_WIDTH] + numLocations / 25, 0.75)
     const rowWidth = daysPerRow * dayWidth
-    const rowHeight = Math.min(selections[rectValues.ROW_HEIGHT] + numLocations * 1.5, 30)
+    const rowHeight = Math.min(selections[rectValues.ROW_HEIGHT] + numLocations * 1.5, 20)
     const pinHeight = (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT]) * selections[rectValues.NUM_ROWS] * numYears
 
     return { dayWidth, rowWidth, rowHeight, pinHeight }

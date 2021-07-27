@@ -2,8 +2,7 @@ import React, { useContext } from "react";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer } from "react-leaflet";
 
-import Overlay from "./OverlayTest";
-// import Overlay from "./Overlay";
+import Overlay from "./Overlay";
 import SelectionContext from "./SelectionContext";
 import { themes } from "./constants";
 

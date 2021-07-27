@@ -10,8 +10,7 @@ const averageCoords = (ids, map, locations) => {
         y = y + locations[id].y
     })
 
-    let newLocation = map.latLngToContainerPoint([x / ids.length, y / ids.length])
-
+    let newLocation = map.project([x / ids.length, y / ids.length])
 
     return { x: newLocation.x, y: newLocation.y, lat: x / ids.length, long: y / ids.length }
 }
@@ -60,7 +59,9 @@ export const calculateClusters = (locations, selections, shape, mapPin, map) => 
 
     locations.forEach((item) => {
         let { minDistanceX, minDistanceY } = getMinDistance(selections, shape, mapPin)
-        const location = map.latLngToContainerPoint([item.x, item.y])
+        const location = map.project([item.x, item.y])
+        // const location = map.latLngToContainerPoint([item.x, item.y])
+        // console.log(map.project([item.x, item.y]))
         newClusters.push({
             x: location.x,
             y: location.y,
