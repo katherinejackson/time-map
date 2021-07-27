@@ -1,5 +1,5 @@
 import { averageData, getLocationData } from "./data";
-import { rectangle, spiral, getSpiralSize, getRowSize, getPinAdjustment } from "../shapes";
+import { rectangle, spiral, getSpiralSize, getRowSize, getPinAdjustment, getRadius } from "../shapes";
 import { shapes, rectValues, spiralValues } from "../constants";
 
 const getBounds = (clusters) => {
@@ -16,37 +16,42 @@ const getBounds = (clusters) => {
         }
     })
 
-    return { width: width + 100, height: height + 100}
+    return { width: width + 100, height: height + 100 }
 }
 
-export const overlayImage = (p5, clusters, data, interval, selections, theme, fillMissing, mapPin, opaque, shape, yearIndication, hover) => {
-    let { width, height } = getBounds(clusters)
+export const getGlyph = (p5, cluster, data, interval, selections, theme, fillMissing, mapPin, opaque, shape, yearIndication, hover) => {
+    let width = 500
+    let height = 500
+
+    // if (shape === shapes.SPIRAL.id) {
+    //     let { spiralWidth, spiralTightness } = getSpiralSize(selections, getHoverTransform(cluster.locations.length))
+
+    //     const newSelections = {
+    //         ...selections,
+    //         [spiralValues.SPIRAL_WIDTH]: spiralWidth,
+    //         [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
+    //     }
+    //     let radius = getRadius(newSelections)
+    //     width = radius * 2
+    //     height = radius * 2
+    // } else {
+    //     let { dayWidth, rowWidth, rowHeight, pinHeight } = getRowSize(selections, cluster.locations.length)
+    //     width = rowWidth
+    //     height = pinHeight
+    // }
+
     let pg = p5.createGraphics(width, height)
 
     pg.clear()
     pg.noStroke()
 
-    if (clusters.length) {
-        clusters.forEach((cluster, index) => {
-            if (index !== hover) {
-                if (shape === shapes.SPIRAL.id) {
-                    drawSpiral(p5, pg, cluster.x, cluster.y, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication)
-                } else {
-                    drawRect(p5, pg, cluster.x, cluster.y, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication)
-                }
-            }
-        })
-
-        if (hover !== null && clusters[hover]) {
-            if (shape === shapes.SPIRAL.id) {
-                drawSpiral(p5, pg, clusters[hover].x, clusters[hover].y, clusters[hover].locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, true)
-            } else {
-                drawRect(p5, pg, clusters[hover].x, clusters[hover].y, clusters[hover].locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, true)
-            }
-        }
+    if (shape === shapes.SPIRAL.id) {
+        drawSpiral(p5, pg, width / 2, height / 2, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
+    } else {
+        drawRect(p5, pg, width / 2, height / 2, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
     }
 
-    return pg
+    return {pg, width, height}
 }
 
 export const getHoverTransform = (numLocations) => {

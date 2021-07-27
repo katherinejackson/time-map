@@ -11,7 +11,7 @@ import { calculateClusters } from "./helpers/cluster";
 import { rectangle, spiral, getSpiralSize, getRadius, getRowSize, getPinAdjustment } from "./shapes";
 import SelectionContext from "./SelectionContext";
 import DataContext from "./DataContext";
-import { overlayImage } from "./helpers/mapCanvas";
+import { getGlyph } from "./helpers/mapCanvas";
 
 const mapWidth = window.innerWidth * 0.95
 const mapHeight = window.innerHeight * 0.75
@@ -32,240 +32,243 @@ const Overlay = () => {
     const [detailedHeight, setDetailedHeight] = useState(0)
     const [hover, setHover] = useState(null)
     const [animated, setAnimated] = useState({ index: null, x: 0, y: 0, numDays: 0, width: selections[spiralValues.SPIRAL_WIDTH] })
-    const [topCorner, setTopCorner] = useState({
-        x: map.getPixelBounds().min.x, 
-        y: map.getPixelBounds().min.y,
-    })
+
+    useEffect(() => {
+        if (locations && p5) {
+            resetClusters()
+        }
+
+    }, [locations, p5])
 
     useEffect(() => {
         if (p5 && locationClusters.length) {
-            let pg = overlayImage(p5, locationClusters, data, interval, selections, colourTheme, fillMissing, mapPin, opaque, shape, yearIndication, hover)
-            setPg(pg)
+            setClusters(updateGlyphs(locationClusters))
         }
-    }, [selections, map, mapPin, hover, opaque, yearIndication, fillMissing, theme, p5, locationClusters])
-
-    useEffect(() => {
-        setClusters(calculateClusters(locations, selections, shape, mapPin, map))
-    }, [locations])
+    }, [selections, map, mapPin, opaque, yearIndication, fillMissing, theme, p5])
 
     useEffect(() => {
         if (p5 && locationClusters.length) {
-            const pg = overlayImage(p5, locationClusters, data, interval, selections, colourTheme, fillMissing, mapPin, opaque, shape, yearIndication, hover)
-            setPg(pg)
-        }
-
-    }, [locationClusters])
-
-    useEffect(() => {
-        if (pg) {
             redrawOverlay()
         }
 
-    }, [pg, detailed])
+    }, [locationClusters, detailed, hover])
 
-    // useEffect(() => {
-    //     if (animated.index !== null) {
-    //         draw(p5)
-    //     }
-    // }, [animated.index])
+    useEffect(() => {
+        if (p5) {
+            map.off('drag')
+            map.on('drag', () => {
+                redrawOverlay()
+            })
+            map.off('zoom')
+            map.on('zoom', () => {
+                resetClusters()
+            })
+        }
+    }, [p5, locationClusters])
 
-useEffect(() => {
-    if (p5 && pg) {
-        map.off('drag')
-        map.on('drag', () => {
-            setTopCorner({...topCorner, x: map.getPixelBounds().min.x, y: map.getPixelBounds().min.y})
-            redrawOverlay(map.getPixelBounds().min.x, map.getPixelBounds().min.y)
-        })
-        map.off('zoom')
-        map.on('zoom', () => {
-            resetClusters()
-        })
-    }
-}, [p5, pg, locationClusters])
+    const drawDetailedRect = (x, y, id, hoverSelections) => {
+        let locationData = getLocationData(id, selections, data)
+        const daysPerRow = Math.ceil(365 / hoverSelections[rectValues.NUM_ROWS])
 
-const drawDetailedRect = (x, y, id, hoverSelections) => {
-    let locationData = getLocationData(id, selections, data)
-    const daysPerRow = Math.ceil(365 / hoverSelections[rectValues.NUM_ROWS])
+        let startX = x - daysPerRow * hoverSelections[rectValues.DAY_WIDTH] / 2;
+        let startY = y - ((hoverSelections[rectValues.NUM_ROWS] * (hoverSelections[rectValues.SPACE_BETWEEN_ROWS] + hoverSelections[rectValues.ROW_HEIGHT])) * locationData.length) / 2
 
-    let startX = x - daysPerRow * hoverSelections[rectValues.DAY_WIDTH] / 2;
-    let startY = y - ((hoverSelections[rectValues.NUM_ROWS] * (hoverSelections[rectValues.SPACE_BETWEEN_ROWS] + hoverSelections[rectValues.ROW_HEIGHT])) * locationData.length) / 2
-
-    rectangle(dataType, interval, locationData, x, y, false, p5, hoverSelections, startX, startY, opaque, false, yearIndication, fillMissing, colourTheme)
-}
-
-const drawAnimatedRect = (x, y, ids, animSelections, numDays) => {
-    let locationData = []
-    if (ids.length === 1) {
-        locationData = getLocationData(ids[0], selections, data)
-    } else {
-        locationData = averageData(ids, selections, data)
+        rectangle(dataType, interval, locationData, x, y, false, p5, hoverSelections, startX, startY, opaque, false, yearIndication, fillMissing, colourTheme)
     }
 
-    let newData = []
-    locationData.forEach(year => {
-        if (numDays < year.length) {
-            newData.push(year.slice(year.length - numDays))
+    const drawAnimatedRect = (x, y, ids, animSelections, numDays) => {
+        let locationData = []
+        if (ids.length === 1) {
+            locationData = getLocationData(ids[0], selections, data)
         } else {
-            newData.push(year)
+            locationData = averageData(ids, selections, data)
         }
-    })
 
-    let startX = x;
-    let startY = y - ((animSelections[rectValues.NUM_ROWS] * (animSelections[rectValues.SPACE_BETWEEN_ROWS] + animSelections[rectValues.ROW_HEIGHT])) * newData.length) / 2
+        let newData = []
+        locationData.forEach(year => {
+            if (numDays < year.length) {
+                newData.push(year.slice(year.length - numDays))
+            } else {
+                newData.push(year)
+            }
+        })
 
-    rectangle(dataType, interval, newData, x, y, false, pg, animSelections, startX, startY, opaque, hover, yearIndication, fillMissing, colourTheme)
-}
+        let startX = x;
+        let startY = y - ((animSelections[rectValues.NUM_ROWS] * (animSelections[rectValues.SPACE_BETWEEN_ROWS] + animSelections[rectValues.ROW_HEIGHT])) * newData.length) / 2
 
-const setup = (p5, parent) => {
-    p5.createCanvas(mapWidth, mapHeight).parent(parent)
-    setP5(p5)
-}
-
-const draw = (p5) => {
-    p5.noLoop()
-}
-
-const mouseMoved = (p5) => {
-    let hoverFound = false
-    let pinAdjustment = 0
-
-    if (mapPin) {
-        pinAdjustment = getPinAdjustment(selections, shape)
+        rectangle(dataType, interval, newData, x, y, false, pg, animSelections, startX, startY, opaque, hover, yearIndication, fillMissing, colourTheme)
     }
 
-    locationClusters.forEach((cluster, index) => {
-        if (Math.abs(p5.mouseX - (cluster.x - topCorner.x)) < cluster.minDistanceX && Math.abs(p5.mouseY - (cluster.y - topCorner.y) + pinAdjustment) < cluster.minDistanceY) {
-            setHover(index)
-            hoverFound = true
+    const setup = (p5, parent) => {
+        p5.createCanvas(mapWidth, mapHeight).parent(parent)
+        setP5(p5)
+    }
+
+    const draw = (p5) => {
+        p5.noLoop()
+    }
+
+    const mouseMoved = (p5) => {
+        let hoverFound = false
+        let pinAdjustment = 0
+
+        if (mapPin) {
+            pinAdjustment = getPinAdjustment(selections, shape)
         }
-    })
 
-    if (!hoverFound) {
-        setHover(null)
-    }
-}
-
-const mouseClicked = (p5) => {
-    let pinAdjustment = 0
-
-    if (mapPin) {
-        pinAdjustment = getPinAdjustment(selections, shape)
-    }
-
-    if (p5.mouseX > 25 && p5.mouseX < 50 && p5.mouseY > 25 && p5.mouseY < 50) {
-        map.zoomIn(0.5)
-
-    } else if (p5.mouseX > 25 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 75) {
-        map.zoomOut(0.5)
-    } else {
         locationClusters.forEach((cluster, index) => {
-            if (Math.abs(p5.mouseX - (cluster.x - topCorner.x)) < cluster.minDistanceX && Math.abs(p5.mouseY - (cluster.y - topCorner.y) + pinAdjustment) < cluster.minDistanceY) {
-                let allDisplayed = true
-                cluster.locations.forEach(id => {
-                    if (!detailed.includes(id)) {
-                        allDisplayed = false
-                    }
-                })
+            let location = map.latLngToContainerPoint([cluster.lat, cluster.long])
+            if (Math.abs(p5.mouseX - location.x) < cluster.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < cluster.minDistanceY) {
+                setHover(index)
+                hoverFound = true
+            }
+        })
 
-                if (allDisplayed) {
-                    let newDetailed = [...detailed]
-                    cluster.locations.forEach(id => {
-                        let index = newDetailed.indexOf(id)
-                        newDetailed.splice(index, 1)
-                    })
-                    setDetailed(newDetailed)
-                } else {
-                    let newDetailed = [...detailed]
+        if (!hoverFound) {
+            setHover(null)
+        }
+    }
+
+    const mouseClicked = (p5) => {
+        let pinAdjustment = 0
+
+        if (mapPin) {
+            pinAdjustment = getPinAdjustment(selections, shape)
+        }
+
+        if (p5.mouseX > 25 && p5.mouseX < 50 && p5.mouseY > 25 && p5.mouseY < 50) {
+            map.zoomIn(0.5)
+
+        } else if (p5.mouseX > 25 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 75) {
+            map.zoomOut(0.5)
+        } else {
+            locationClusters.forEach((cluster, index) => {
+                let location = map.latLngToContainerPoint([cluster.lat, cluster.long])
+                if (Math.abs(p5.mouseX - location.x) < cluster.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < cluster.minDistanceY) {
+                    let allDisplayed = true
                     cluster.locations.forEach(id => {
                         if (!detailed.includes(id)) {
-                            newDetailed.push(id)
+                            allDisplayed = false
                         }
                     })
 
-                    setDetailed(newDetailed)
-                    // let { spiralWidth, spiralTightness } = getSpiralSize(selections, getHoverTransform(locationClusters[index].locations.length))
+                    if (allDisplayed) {
+                        let newDetailed = [...detailed]
+                        cluster.locations.forEach(id => {
+                            let index = newDetailed.indexOf(id)
+                            newDetailed.splice(index, 1)
+                        })
+                        setDetailed(newDetailed)
+                    } else {
+                        let newDetailed = [...detailed]
+                        cluster.locations.forEach(id => {
+                            if (!detailed.includes(id)) {
+                                newDetailed.push(id)
+                            }
+                        })
 
-                    // const newSelections = {
-                    //     ...selections,
-                    //     [spiralValues.SPIRAL_WIDTH]: spiralWidth,
-                    //     [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
-                    // }
+                        setDetailed(newDetailed)
+                        // let { spiralWidth, spiralTightness } = getSpiralSize(selections, getHoverTransform(locationClusters[index].locations.length))
 
-                    // setAnimated({ ...animated, index, x: locationClusters[index].x, y: locationClusters[index].y - getRadius(newSelections), width: spiralWidth / 2 })
+                        // const newSelections = {
+                        //     ...selections,
+                        //     [spiralValues.SPIRAL_WIDTH]: spiralWidth,
+                        //     [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
+                        // }
+
+                        // setAnimated({ ...animated, index, x: locationClusters[index].x, y: locationClusters[index].y - getRadius(newSelections), width: spiralWidth / 2 })
+                    }
+
                 }
-
-            }
-        })
-    }
-}
-
-const redrawOverlay = (x = topCorner.x, y = topCorner.y) => {
-    p5.clear()
-    p5.image(pg, 0 - x , 0 - y)
-
-    drawZoom()
-    drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType, null, colourTheme.textColour)
-    if (detailed.length) {
-        drawDetailed()
-    }
-}
-
-const resetClusters = () => {
-    const newClusters = calculateClusters(locations, selections, shape, mapPin, map)
-    setClusters(newClusters)
-    setTopCorner({
-        x: map.getPixelBounds().min.x, 
-        y: map.getPixelBounds().min.y,
-    })
-
-    return newClusters
-}
-
-const drawZoom = () => {
-    p5.fill(255)
-    p5.stroke(50)
-    p5.rect(25, 25, 25, 25)
-    p5.rect(25, 50, 25, 25)
-
-    p5.fill(0)
-    p5.text("+", 37, 37)
-    p5.text("-", 37, 62)
-    p5.noStroke()
-}
-
-const drawDetailed = () => {
-    let newSelections = selections
-    if (shape === shapes.SPIRAL.id) {
-        newSelections = getDefaultSelections(shapes.RECT.id, view)
-        newSelections = {
-            ...newSelections,
-            [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],
-            [rectValues.DAY_WIDTH]: 0.25,
+            })
         }
     }
 
-    const { pinHeight } = getRowSize(newSelections, detailed.length, selections[rectValues.NUM_YEARS])
-    const locationHeight = pinHeight + 30
+    const redrawOverlay = () => {
+        p5.clear()
+        drawGlyphs()
 
-    p5.fill(colourTheme.background)
-    p5.rect(mapWidth - 150, 0, 150, locationHeight * detailed.length)
-    p5.textAlign(p5.LEFT, p5.TOP)
+        drawZoom()
+        drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType, null, colourTheme.textColour)
+        if (detailed.length) {
+            drawDetailed()
+        }
+    }
 
-    detailed.forEach((id, index) => {
-        p5.fill(colourTheme.textColour)
-        p5.textSize(10)
-        p5.text(locations[id].name, mapWidth - 150, index * locationHeight)
-        drawDetailedRect(mapWidth - 75, index * locationHeight + pinHeight / 2 + 15, id, newSelections)
-    })
+    const drawGlyphs = () => {
+        locationClusters.forEach((cluster, index) => {
+            let location = map.latLngToContainerPoint([cluster.lat, cluster.long])
+            if (index === hover) {
+                let hoverpg = p5.createGraphics(cluster.width, cluster.height)
+                hoverpg.image(cluster.pg, 0, 0, cluster.width * 1.5, cluster.height * 1.5)
+                p5.image(hoverpg, location.x - cluster.width * 0.75, location.y - cluster.height * 0.75)
+            } else {
+                p5.image(cluster.pg, location.x - cluster.width / 2, location.y - cluster.height / 2)
+            }
 
-    setDetailedHeight(locationHeight)
-}
+        })
+    }
 
-return (
-    <div className="position-absolute fixed-top">
-        <Sketch draw={draw} mouseClicked={mouseClicked} mouseMoved={mouseMoved} setup={setup} />
-    </div >
-)
+    const resetClusters = () => {
+        const clusters = calculateClusters(locations, selections, shape, mapPin, map)
+        setClusters(updateGlyphs(clusters))
+    }
+
+    const updateGlyphs = (clusters) => {
+        let glyphClusters = []
+        clusters.forEach(cluster => {
+            let { pg, width, height } = getGlyph(p5, cluster, data, interval, selections, colourTheme, fillMissing, mapPin, opaque, shape, yearIndication)
+            glyphClusters.push({ ...cluster, pg, width, height })
+        })
+
+        return glyphClusters
+    }
+
+    const drawZoom = () => {
+        p5.fill(255)
+        p5.stroke(50)
+        p5.rect(25, 25, 25, 25)
+        p5.rect(25, 50, 25, 25)
+
+        p5.fill(0)
+        p5.text("+", 37, 37)
+        p5.text("-", 37, 62)
+        p5.noStroke()
+    }
+
+    const drawDetailed = () => {
+        let newSelections = selections
+        if (shape === shapes.SPIRAL.id) {
+            newSelections = getDefaultSelections(shapes.RECT.id, view)
+            newSelections = {
+                ...newSelections,
+                [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],
+                [rectValues.DAY_WIDTH]: 0.25,
+            }
+        }
+
+        const { pinHeight } = getRowSize(newSelections, detailed.length, selections[rectValues.NUM_YEARS])
+        const locationHeight = pinHeight + 30
+
+        p5.fill(colourTheme.background)
+        p5.rect(mapWidth - 150, 0, 150, locationHeight * detailed.length)
+        p5.textAlign(p5.LEFT, p5.TOP)
+
+        detailed.forEach((id, index) => {
+            p5.fill(colourTheme.textColour)
+            p5.textSize(10)
+            p5.text(locations[id].name, mapWidth - 150, index * locationHeight)
+            drawDetailedRect(mapWidth - 75, index * locationHeight + pinHeight / 2 + 15, id, newSelections)
+        })
+
+        setDetailedHeight(locationHeight)
+    }
+
+    return (
+        <div className="position-absolute fixed-top">
+            <Sketch draw={draw} mouseClicked={mouseClicked} mouseMoved={mouseMoved} setup={setup} />
+        </div >
+    )
 }
 
 export default Overlay

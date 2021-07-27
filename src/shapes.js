@@ -668,10 +668,7 @@ export const getSpiralSize = (selections, numLocations) => {
     return { spiralWidth, spiralTightness }
 }
 
-export const getRadius = (selections, numYears) => {
-    if (!numYears) {
-        numYears = selections[spiralValues.NUM_YEARS]
-    }
+export const getRadius = (selections, numYears = selections[spiralValues.NUM_YEARS]) => {
     return Math.abs(Math.sin(-1.5 + radianPerDay * 365 * numYears)
         * (selections[spiralValues.CORE_SIZE] + selections[spiralValues.SPACE_BETWEEN_SPIRAL] * 365 * numYears))
         + selections[spiralValues.SPIRAL_WIDTH] / 2
@@ -686,7 +683,7 @@ export const getGraphRadius = (selections, numSections) => {
         + selections[spiralValues.SPIRAL_WIDTH] / 2
 }
 
-export const getRowSize = (selections, numLocations, numYears) => {
+export const getRowSize = (selections, numLocations, numYears=selections[rectValues.NUM_YEARS]) => {
     const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
     const dayWidth = Math.min(selections[rectValues.DAY_WIDTH] + numLocations / 25, 0.75)
     const rowWidth = daysPerRow * dayWidth
