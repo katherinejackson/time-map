@@ -12,6 +12,7 @@ import { rectangle, spiral, getSpiralSize, getRadius, getRowSize, getPinAdjustme
 import SelectionContext from "./SelectionContext";
 import DataContext from "./DataContext";
 import { overlayImage } from "./helpers/mapCanvas";
+import { LatLng } from "leaflet";
 
 const mapWidth = window.innerWidth * 0.95
 const mapHeight = window.innerHeight * 0.75
@@ -38,10 +39,13 @@ const Overlay = () => {
         offsetX: 0,
         offsetY: 0,
     })
+    const [outsideBounds, setOutsideBounds] = useState([])
 
     useEffect(() => {
         if (p5) {
-            setPg(overlayImage(p5, mapWidth, mapHeight, locationClusters, data, interval, selections, colourTheme, fillMissing, mapPin, opaque, shape, yearIndication, hover))
+            let {pg, outsideBounds} = overlayImage(p5, mapWidth, mapHeight, locationClusters, data, interval, selections, colourTheme, fillMissing, mapPin, opaque, shape, yearIndication, hover)
+            setPg(pg)
+            setOutsideBounds(outsideBounds)
         }
     }, [selections, map, mapPin, hover, opaque, yearIndication, fillMissing, theme, p5, locationClusters])
 
@@ -51,8 +55,9 @@ const Overlay = () => {
 
     useEffect(() => {
         if (p5 && locationClusters) {
-            const newPg = overlayImage(p5, mapWidth, mapHeight, locationClusters, data, interval, selections, colourTheme, fillMissing, mapPin, opaque, shape, yearIndication, hover)
-            setPg(newPg)
+            const {pg, outsideBounds} = overlayImage(p5, mapWidth, mapHeight, locationClusters, data, interval, selections, colourTheme, fillMissing, mapPin, opaque, shape, yearIndication, hover)
+            setPg(pg)
+            setOutsideBounds(outsideBounds)
         }
 
     }, [locationClusters])
@@ -80,6 +85,7 @@ useEffect(() => {
             const newY = map.getPixelBounds().min.y
             redrawOverlay(topCorner.mapBoundsX - newX, topCorner.mapBoundsY - newY)
             setTopCorner({...topCorner, offsetX: topCorner.mapBoundsX - newX, offsetY: topCorner.mapBoundsY - newY})
+            checkOutsideBounds()
         })
         map.off('zoom')
         map.on('zoom', () => {
@@ -87,6 +93,16 @@ useEffect(() => {
         })
     }
 }, [p5, pg, locationClusters])
+
+const checkOutsideBounds = () => {
+    const latlng = map.getBounds()
+    outsideBounds.forEach(cluster => {
+        let clustObj = {lat: cluster.lat, lng: cluster.long}
+        if (latlng.contains(clustObj)) {
+            resetClusters()
+        }
+    })
+}
 
 
 const drawDetailedRect = (x, y, id, hoverSelections) => {

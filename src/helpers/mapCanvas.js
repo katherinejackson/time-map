@@ -4,6 +4,7 @@ import { shapes, rectValues, spiralValues, themeColours } from "../constants";
 
 export const overlayImage = (p5, width, height, clusters, data, interval, selections, theme, fillMissing, mapPin, opaque, shape, yearIndication, hover) => {
     let pg  = p5.createGraphics(width, height)
+    let outsideBounds = []
 
     pg.clear()
     pg.noStroke()
@@ -11,10 +12,14 @@ export const overlayImage = (p5, width, height, clusters, data, interval, select
     if (clusters.length) {
         clusters.forEach((cluster, index) => {
             if (index !== hover) {
-                if (shape === shapes.SPIRAL.id) {
-                    drawSpiral(p5, pg, cluster.x, cluster.y, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication)
+                if (cluster.x > 0 && cluster.x < width && cluster.y > 0 && cluster.y < height) {
+                    if (shape === shapes.SPIRAL.id) {
+                        drawSpiral(p5, pg, cluster.x, cluster.y, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication)
+                    } else {
+                        drawRect(p5, pg, cluster.x, cluster.y, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication)
+                    }
                 } else {
-                    drawRect(p5, pg, cluster.x, cluster.y, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication)
+                    outsideBounds.push(cluster)
                 }
             }
         })
@@ -28,7 +33,7 @@ export const overlayImage = (p5, width, height, clusters, data, interval, select
         }
     }
 
-    return pg
+    return {pg, outsideBounds}
 }
 
 export const getHoverTransform = (numLocations) => {
