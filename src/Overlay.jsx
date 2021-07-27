@@ -64,7 +64,7 @@ const Overlay = () => {
                 resetClusters()
             })
         }
-    }, [p5, locationClusters])
+    }, [p5, locationClusters, detailed])
 
     const drawDetailedRect = (x, y, id, hoverSelections) => {
         let locationData = getLocationData(id, selections, data)
@@ -227,12 +227,14 @@ const Overlay = () => {
     const drawZoom = () => {
         p5.fill(255)
         p5.stroke(50)
-        p5.rect(25, 25, 25, 25)
-        p5.rect(25, 50, 25, 25)
+        p5.rect(20, 20, 30, 30)
+        p5.rect(20, 50, 30, 30)
 
         p5.fill(0)
-        p5.text("+", 37, 37)
-        p5.text("-", 37, 62)
+        p5.textSize(10)
+        p5.textAlign(p5.CENTER, p5.CENTER)
+        p5.text("+", 35, 35)
+        p5.text("-", 35, 65)
         p5.noStroke()
     }
 
