@@ -136,10 +136,10 @@ const Overlay = () => {
             pinAdjustment = getPinAdjustment(selections, shape)
         }
 
-        if (p5.mouseX > 25 && p5.mouseX < 50 && p5.mouseY > 25 && p5.mouseY < 50) {
+        if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 20 && p5.mouseY < 50) {
             map.zoomIn(0.5)
 
-        } else if (p5.mouseX > 25 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 75) {
+        } else if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 80) {
             map.zoomOut(0.5)
         } else {
             locationClusters.forEach((cluster, index) => {
