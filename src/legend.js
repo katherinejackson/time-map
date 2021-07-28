@@ -3,6 +3,10 @@ import { fillColourGradient, fillLogColourGradient, getColour } from "./helpers/
 import { formatTradeNumbers, formatNumbers } from './helpers/numbers';
 
 export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, textColour) => {
+    if (selections[spiralValues.NUM_COLOURS] === 0) {
+        return 
+    }
+
     if (dataType === 'COVID') {
         if (selections[spiralValues.NUM_COLOURS] === 8) {
             drawManualLegend(p5, x, y, selections, dataType, textColour)

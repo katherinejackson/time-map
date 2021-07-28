@@ -1,9 +1,9 @@
 import Sketch from "react-p5";
 import React, { useEffect, useState, useContext } from "react";
 
-import { shapes, rectValues, spiralValues, themeColours, themes } from './constants'
+import { shapes, rectValues, spiralValues, themeColours, themes, sparkValues } from './constants'
 import { getInterval, getManualInterval } from "./helpers/intervals";
-import { rectangle, spiral, getPinAdjustment } from "./shapes";
+import { rectangle, spiral, spark, getPinAdjustment } from "./shapes";
 import { drawLegend } from "./legend";
 import SelectionContext from "./SelectionContext";
 import DataContext from "./DataContext";
@@ -40,17 +40,19 @@ const Tile = ({ numX, selections }) => {
         return newData
     }
 
-    const drawPin = (x, y, ids, hover = false) => {
+    const drawPin = (x, y, id) => {
+        let locationData = getLocationData(id)
+
         if (shape === shapes.SPIRAL.id) {
-            drawSpiral(x, y, ids, hover)
-        } else {
-            drawRect(x, y, ids, hover)
+            drawSpiral(x, y, locationData)
+        } else if (shape === shapes.RECT.id) {
+            drawRect(x, y, locationData)
+        } else if (shape === shapes.SPARK.id) {
+            drawSpark(x, y, locationData)
         }
     }
 
-    const drawSpiral = (x, y, id) => {
-        let locationData = getLocationData(id)
-
+    const drawSpiral = (x, y, locationData) => {
         let startY = y
         if (mapPin) {
             startY = startY - getPinAdjustment(selections, shape, locationData)
@@ -62,8 +64,7 @@ const Tile = ({ numX, selections }) => {
         // p5.text("1", x - 2, startY)
     }
 
-    const drawRect = (x, y, id, hover = false) => {
-        let locationData = getLocationData(id)
+    const drawRect = (x, y, locationData) => {
         const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
         const dayWidth = selections[rectValues.DAY_WIDTH]
         const rowWidth = daysPerRow * dayWidth
@@ -89,6 +90,13 @@ const Tile = ({ numX, selections }) => {
         //     p5.fill(colourTheme.textColour)
         //     p5.text("1", x, y + pinHeight/2 + 8)
         // }
+    }
+
+    const drawSpark = (x, y, locationData) => {
+        const lineWidth = 365 * selections[sparkValues.DAY_WIDTH]
+        const startX = x - lineWidth/2
+
+        spark(dataType, interval, locationData, x, y, mapPin, p5, selections, startX, y, opaque, true, yearIndication, fillMissing, colourTheme)
     }
 
     const setup = (p5, parent) => {

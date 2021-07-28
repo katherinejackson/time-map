@@ -1,6 +1,6 @@
 import { averageData, getLocationData } from "./data";
-import { rectangle, spiral, getSpiralSize, getRowSize, getPinAdjustment, getRadius } from "../shapes";
-import { shapes, rectValues, spiralValues } from "../constants";
+import { rectangle, spiral, spark, getSpiralSize, getRowSize, getPinAdjustment, getRadius } from "../shapes";
+import { shapes, rectValues, spiralValues, sparkValues } from "../constants";
 
 const getBounds = (clusters) => {
     let width = 0
@@ -47,8 +47,10 @@ export const getGlyph = (p5, cluster, data, interval, selections, theme, fillMis
 
     if (shape === shapes.SPIRAL.id) {
         drawSpiral(p5, pg, width / 2, height / 2, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
-    } else {
+    } else if (shape === shapes.RECT.id) {
         drawRect(p5, pg, width / 2, height / 2, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
+    } else if (shape === shapes.SPARK.id) {
+        drawSpark(p5, pg, width / 2, height / 2, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
     }
 
     return {pg, width, height}
@@ -134,5 +136,21 @@ const drawRect = (p5, pg, x, y, ids, data, interval, selections, theme, fillMiss
         pg.fill(theme.textColour)
         pg.text(ids.length, x, y + pinHeight / 2 + 8)
     }
+
+}
+
+const drawSpark = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover = false) => {
+    let dataType = 'TEMP'
+    let locationData = []
+    if (ids.length === 1) {
+        locationData = getLocationData(ids[0], selections, data)
+    } else {
+        locationData = averageData(ids, selections, data)
+    }
+
+    const lineWidth = 365 * selections[sparkValues.DAY_WIDTH]
+    const startX = x - lineWidth/2
+
+    spark(dataType, interval, locationData, x, y, mapPin, pg, selections, startX, y, opaque, true, yearIndication, fillMissing, theme)
 
 }

@@ -1,5 +1,5 @@
-import { colours, manualIntervals, radianPerDay, radianPerMonth, rectValues, spiralValues, months, yearIndicators, monthColours, abbreviatedMonths, shapes } from "./constants";
-import { fillColourGradient, getColour, getManualIntervalColour, fillLogColourGradient } from "./helpers/colours";
+import { colours, manualIntervals, radianPerDay, radianPerMonth, rectValues, spiralValues, months, yearIndicators, monthColours, abbreviatedMonths, shapes, sparkValues } from "./constants";
+import { fillColourGradient, strokeColourGradient, getColour, getManualIntervalColour, fillLogColourGradient } from "./helpers/colours";
 
 export const rectangle = (
     dataType,
@@ -308,44 +308,6 @@ const drawArrow = (p5, startX, startY, endX, endY) => {
     }
 
 }
-
-// export const graphRow = (p5, startX, startY, endX, endY, data, selections, lineColour) => {
-//     let numColours = selections[rectValues.NUM_COLOURS]
-//     let width = Math.abs(startX - endX) / data.length
-//     let height = 10
-//     let slope = (startY - endY) / (startX - endX)
-//     let b = startY - slope * startX
-
-//     let angle = Math.atan((endY - startY) / (endX - startX))
-//     let y1 = Math.tan(angle) * width
-//     let x2 = Math.sin(angle) * height
-//     let y2 = Math.cos(angle) * height
-
-//     let x = startX
-//     let y = startY
-
-//     data.forEach(day => {
-//         if (day === '') {
-//             p5.fill(200)
-//         } else {
-//             if (numColours === 256 || numColours === 1) {
-//                 fillLogColourGradient(p5, day, 6, numColours)
-//             } else if (numColours === 8) {
-//                 let colour = getManualIntervalColour(day, colours['COVID'][numColours], manualIntervals['COVID'][numColours])
-//                 p5.fill(colour)
-//             }
-//         }
-
-//         p5.quad(x, y, x + width, y + y1, x + width - x2, y + y1 + y2, x - x2, y + + y2)
-//         if (startX < endX) {
-//             x += width
-//         } else {
-//             x -= width
-//         }
-
-//         y = slope * x + b
-//     })
-// }
 
 export const monthSpiral = (p5, startX, startY, data, highest, lowest) => {
     let spiralWidth = 30
@@ -700,10 +662,54 @@ export const getPinAdjustment = (selections, shape, locationData) => {
     if (shape === shapes.SPIRAL.id) {
         const radius = getRadius(selections, numYears)
         startY = radius + 15
-    } else {
+    } else if (shape === shapes.RECT.id) {
         startY = 7 + ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * numYears)
     }
 
     return startY
+}
+
+export const spark = (
+    dataType,
+    interval,
+    locationData,
+    locationX,
+    locationY,
+    mapPin,
+    p5,
+    selections,
+    startX,
+    startY,
+    opaque,
+    hover,
+    yearIndicator,
+    fillMissing,
+    theme,
+) => {
+    let baseline = locationY + selections[sparkValues.SPARK_HEIGHT]/2
+    let increment = selections[sparkValues.SPARK_HEIGHT]/interval.range
+    
+    locationData.forEach(year => {
+        for (let day = 0; day < year.length - 1; day++) {
+            if (selections[sparkValues.NUM_COLOURS] === 1
+                || selections[sparkValues.NUM_COLOURS] === 2
+                || selections[sparkValues.NUM_COLOURS] === 360
+            ) {
+                strokeColourGradient(p5, year[day], interval, selections[sparkValues.NUM_COLOURS])
+            } else {
+                const colour = getColour(year[day], interval.high, interval.interval, colours[dataType][selections[spiralValues.NUM_COLOURS]])
+                p5.stroke(colour)
+            }
+
+            let val1 = baseline - ((year[day] - interval.low) * increment)
+            let val2 = baseline - ((year[day + 1] - interval.low) * increment)
+
+            p5.line(startX + day * selections[sparkValues.DAY_WIDTH], val1, startX + (day + 1) * selections[sparkValues.DAY_WIDTH], val2)
+        }
+
+        baseline = baseline + selections[sparkValues.SPARK_HEIGHT]
+    })
+
+    p5.noStroke()
 }
 

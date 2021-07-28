@@ -1,4 +1,4 @@
-import { shapes, rectValues, spiralValues } from "../constants";
+import { shapes, rectValues, spiralValues, sparkValues } from "../constants";
 import {getSpiralSize, getRadius, getRowSize} from "../shapes";
 
 const averageCoords = (ids, map, locations) => {
@@ -29,7 +29,7 @@ const getMinDistance = (selections, shape, mapPin = false) => {
 
         minDistanceX = radius * 2
         minDistanceY = radius * 2
-    } else {
+    } else if (shape === shapes.RECT.id) {
         const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
         minDistanceX = daysPerRow * selections[rectValues.DAY_WIDTH]
         minDistanceY = ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * selections[rectValues.NUM_YEARS])
@@ -39,6 +39,9 @@ const getMinDistance = (selections, shape, mapPin = false) => {
         } else {
             minDistanceY = minDistanceY + 4
         }
+    } else if (shape === shapes.SPARK.id) {
+        minDistanceX = selections[sparkValues.DAY_WIDTH] * 365
+        minDistanceY = selections[sparkValues.SPARK_HEIGHT]
     }
 
     return { minDistanceX, minDistanceY }
@@ -88,13 +91,17 @@ export const calculateClusters = (locations, selections, shape, mapPin, map) => 
                     [spiralValues.SPIRAL_WIDTH]: spiralWidth,
                     [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
                 }
-            } else {
+            } else if (shape === shapes.RECT.id) {
                 let { dayWidth, rowHeight } = getRowSize(selections, numLocations, selections[rectValues.NUM_YEARS])
 
                 newSelections = {
                     ...selections,
                     [rectValues.DAY_WIDTH]: dayWidth,
                     [rectValues.ROW_HEIGHT]: rowHeight,
+                }
+            } else if (shape === shapes.SPARK.id) {
+                newSelections = {
+                    ...selections
                 }
             }
 

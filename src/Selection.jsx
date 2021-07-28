@@ -4,11 +4,22 @@ import Tile from "./Tile";
 import LeafletMap from "./LeafletMap"
 import FilterPanel from "./FilterPanel"
 import { getDefaultSelections } from "./helpers/selections";
-import { shapes, rectVariables, spiralVariables, views, themes } from './constants'
+import { shapes, rectVariables, spiralVariables, views, themes, sparkVariables } from './constants'
 import SelectionContext from "./SelectionContext";
 import ScatterPlot from "./ScatterPlot"
 import DataContext from "./DataContext";
 import GraphView from "./GraphView"
+
+
+const getVariables = (shape, view) => {
+    if (shape === shapes.SPIRAL.id) {
+        return spiralVariables[view]
+    } else if (shape === shapes.RECT.id) {
+        return rectVariables[view]
+    } else if (shape === shapes.SPARK.id) {
+        return sparkVariables[view]
+    }
+}
 
 
 const Selection = ({ shape, view }) => {
@@ -25,7 +36,7 @@ const Selection = ({ shape, view }) => {
     const [yearIndication, setYearIndication] = useState(null)
     const [fillMissing, setFillMissing] = useState(false)
     const [theme, setTheme] = useState(themes.DEFAULT.val)
-    const variables = shape === shapes.SPIRAL.id ? spiralVariables[view] : rectVariables[view]
+    const variables = getVariables(shape, view)
 
     useEffect(() => {
         setSelections(getDefaultSelections(shape, view))
