@@ -1,5 +1,5 @@
 import { averageData, getLocationData } from "./data";
-import { rectangle, spiral, spark, getSpiralSize, getRowSize, getPinAdjustment, getRadius } from "../shapes";
+import { rectangle, spiral, spark, radialSpark, getSpiralSize, getRowSize, getPinAdjustment, getRadius } from "../shapes";
 import { shapes, rectValues, spiralValues, sparkValues } from "../constants";
 
 const getBounds = (clusters) => {
@@ -51,6 +51,8 @@ export const getGlyph = (p5, cluster, data, interval, selections, theme, fillMis
         drawRect(p5, pg, width / 2, height / 2, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
     } else if (shape === shapes.SPARK.id) {
         drawSpark(p5, pg, width / 2, height / 2, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
+    } else if (shape === shapes.RADIAL_SPARK.id) {
+        drawRadialSpark(p5, pg, width / 2, height / 2, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
     }
 
     return {pg, width, height}
@@ -152,5 +154,18 @@ const drawSpark = (p5, pg, x, y, ids, data, interval, selections, theme, fillMis
     const startX = x - lineWidth/2
 
     spark(dataType, interval, locationData, x, y, mapPin, pg, selections, startX, y, opaque, true, yearIndication, fillMissing, theme)
+
+}
+
+const drawRadialSpark = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover = false) => {
+    let dataType = 'TEMP'
+    let locationData = []
+    if (ids.length === 1) {
+        locationData = getLocationData(ids[0], selections, data)
+    } else {
+        locationData = averageData(ids, selections, data)
+    }
+
+    radialSpark(dataType, interval, locationData, x, y, mapPin, pg, selections, x, y, opaque, true, yearIndication, fillMissing, theme)
 
 }

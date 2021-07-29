@@ -4,7 +4,7 @@ import Tile from "./Tile";
 import LeafletMap from "./LeafletMap"
 import FilterPanel from "./FilterPanel"
 import { getDefaultSelections } from "./helpers/selections";
-import { shapes, rectVariables, spiralVariables, views, themes, sparkVariables } from './constants'
+import { shapes, rectVariables, spiralVariables, views, themes, sparkVariables, radialSparkVariables } from './constants'
 import SelectionContext from "./SelectionContext";
 import ScatterPlot from "./ScatterPlot"
 import DataContext from "./DataContext";
@@ -18,6 +18,8 @@ const getVariables = (shape, view) => {
         return rectVariables[view]
     } else if (shape === shapes.SPARK.id) {
         return sparkVariables[view]
+    } else if (shape === shapes.RADIAL_SPARK.id) {
+        return radialSparkVariables[view]
     }
 }
 

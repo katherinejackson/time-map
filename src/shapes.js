@@ -1,4 +1,4 @@
-import { colours, manualIntervals, radianPerDay, radianPerMonth, rectValues, spiralValues, months, yearIndicators, monthColours, abbreviatedMonths, shapes, sparkValues } from "./constants";
+import { colours, manualIntervals, radianPerDay, radianPerMonth, rectValues, spiralValues, months, yearIndicators, monthColours, abbreviatedMonths, shapes, sparkValues, radialSparkValues } from "./constants";
 import { fillColourGradient, strokeColourGradient, getColour, getManualIntervalColour, fillLogColourGradient } from "./helpers/colours";
 
 export const rectangle = (
@@ -164,7 +164,7 @@ export const bridgeRow = (p5, startX, startY, endX, endY, data) => {
         let height = 10
         let arrowHeight = 25
 
-        let x = startX - height/2
+        let x = startX - height / 2
         let y = startY
 
         data.forEach(hour => {
@@ -442,14 +442,12 @@ export const graphPerimeterSpiral = (p5, startX, startY, data, selections, dataT
         p5.stroke(backgroundColour)
         p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPer, p5.PIE)
         p5.fill(backgroundColour)
-        p5.arc(x, y, spiralWidth * 3/ 4, spiralWidth * 3/ 4, angle, angle + radianPer, p5.PIE)
+        p5.arc(x, y, spiralWidth * 3 / 4, spiralWidth * 3 / 4, angle, angle + radianPer, p5.PIE)
 
         angle += radianPer
         coreSize += spiralTightness
     })
 }
-
-
 
 export const spiral = (
     dataType,
@@ -645,7 +643,7 @@ export const getGraphRadius = (selections, numSections) => {
         + selections[spiralValues.SPIRAL_WIDTH] / 2
 }
 
-export const getRowSize = (selections, numLocations, numYears=selections[rectValues.NUM_YEARS]) => {
+export const getRowSize = (selections, numLocations, numYears = selections[rectValues.NUM_YEARS]) => {
     const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
     const dayWidth = Math.min(selections[rectValues.DAY_WIDTH] + numLocations / 25, 0.75)
     const rowWidth = daysPerRow * dayWidth
@@ -686,9 +684,20 @@ export const spark = (
     fillMissing,
     theme,
 ) => {
-    let baseline = locationY + selections[sparkValues.SPARK_HEIGHT]/2
-    let increment = selections[sparkValues.SPARK_HEIGHT]/interval.range
-    
+    const numYears = Math.min(selections[sparkValues.NUM_YEARS], locationData.length)
+    const dayWidth = selections[sparkValues.DAY_WIDTH]
+    const sparkHeight = selections[sparkValues.SPARK_HEIGHT]
+    const totalHeight = sparkHeight * ((1 + numYears) / 2)
+    let baseline = locationY - totalHeight / 2 + sparkHeight
+    let increment = sparkHeight / interval.range
+
+    if (opaque) {
+        let sparkLength = dayWidth * 365
+        let border = 10
+        p5.fill(theme.pinBackground)
+        p5.rect(startX - border, locationY - totalHeight / 2 - border, sparkLength + border * 2, totalHeight + border * 2, 20)
+    }
+
     locationData.forEach(year => {
         for (let day = 0; day < year.length - 1; day++) {
             if (selections[sparkValues.NUM_COLOURS] === 1
@@ -704,12 +713,69 @@ export const spark = (
             let val1 = baseline - ((year[day] - interval.low) * increment)
             let val2 = baseline - ((year[day + 1] - interval.low) * increment)
 
-            p5.line(startX + day * selections[sparkValues.DAY_WIDTH], val1, startX + (day + 1) * selections[sparkValues.DAY_WIDTH], val2)
+            p5.line(startX + day * dayWidth, val1, startX + (day + 1) * dayWidth, val2)
         }
 
-        baseline = baseline + selections[sparkValues.SPARK_HEIGHT]
+        baseline = baseline + sparkHeight / 2
     })
 
     p5.noStroke()
 }
+
+export const radialSpark = (
+    dataType,
+    interval,
+    locationData,
+    locationX,
+    locationY,
+    mapPin,
+    p5,
+    selections,
+    startX,
+    startY,
+    opaque,
+    hover,
+    yearIndicator,
+    fillMissing,
+    theme,
+) => {
+    let spiralWidth = selections[radialSparkValues.SPIRAL_WIDTH]
+    let spiralTightness = selections[radialSparkValues.SPACE_BETWEEN_SPIRAL]
+    let angle = -Math.PI / 2
+    let innerRing = selections[radialSparkValues.CORE_SIZE]
+    let outerRing = innerRing + spiralWidth
+    let numColours = selections[radialSparkValues.NUM_COLOURS]
+    let increment = spiralWidth/interval.range
+
+    locationData.forEach(year => {
+        for (let pt = 0; pt < year.length - 1; pt++) {
+            let x1 = startX + p5.cos(angle) * (innerRing + year[pt] * increment)
+            let y1 = startY + p5.sin(angle) * (innerRing + year[pt] * increment)
+
+            angle += radianPerDay
+            innerRing += spiralTightness
+
+            let x2 = startX + p5.cos(angle) * (innerRing + year[pt + 1] * increment)
+            let y2 = startY + p5.sin(angle) * (innerRing + year[pt + 1] * increment)
+
+            if (pt) {
+                if (numColours === 1
+                    || numColours === 2
+                    || numColours === 360
+                ) {
+                    strokeColourGradient(p5, year[pt], interval, numColours)
+                } else {
+                    const colour = getColour(year[pt], interval.high, interval.interval, colours[dataType][numColours])
+                    p5.stroke(colour)
+                }
+
+
+                p5.line(x1, y1, x2, y2)
+            } 
+        }
+    })
+
+    p5.noStroke()
+}
+
 

@@ -41,7 +41,13 @@ const getMinDistance = (selections, shape, mapPin = false) => {
         }
     } else if (shape === shapes.SPARK.id) {
         minDistanceX = selections[sparkValues.DAY_WIDTH] * 365
-        minDistanceY = selections[sparkValues.SPARK_HEIGHT]
+        minDistanceY = selections[sparkValues.SPARK_HEIGHT] * ((1 + selections[sparkValues.NUM_YEARS])/2)
+    } else if (shape === shapes.RADIAL_SPARK.id) {
+        console.log(selections)
+        let radius = getRadius(selections)
+
+        minDistanceX = radius * 2
+        minDistanceY = radius * 2
     }
 
     return { minDistanceX, minDistanceY }
@@ -100,6 +106,10 @@ export const calculateClusters = (locations, selections, shape, mapPin, map) => 
                     [rectValues.ROW_HEIGHT]: rowHeight,
                 }
             } else if (shape === shapes.SPARK.id) {
+                newSelections = {
+                    ...selections
+                }
+            } else if (shape === shapes.RADIAL_SPARK.id) {
                 newSelections = {
                     ...selections
                 }

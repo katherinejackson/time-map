@@ -1,9 +1,9 @@
 import Sketch from "react-p5";
 import React, { useEffect, useState, useContext } from "react";
 
-import { shapes, rectValues, spiralValues, themeColours, themes, sparkValues } from './constants'
+import { shapes, rectValues, spiralValues, themeColours, sparkValues } from './constants'
 import { getInterval, getManualInterval } from "./helpers/intervals";
-import { rectangle, spiral, spark, getPinAdjustment } from "./shapes";
+import { rectangle, spiral, spark, getPinAdjustment, radialSpark } from "./shapes";
 import { drawLegend } from "./legend";
 import SelectionContext from "./SelectionContext";
 import DataContext from "./DataContext";
@@ -49,6 +49,8 @@ const Tile = ({ numX, selections }) => {
             drawRect(x, y, locationData)
         } else if (shape === shapes.SPARK.id) {
             drawSpark(x, y, locationData)
+        } else if (shape === shapes.RADIAL_SPARK.id) {
+            drawRadialSpark(x, y, locationData)
         }
     }
 
@@ -97,6 +99,10 @@ const Tile = ({ numX, selections }) => {
         const startX = x - lineWidth/2
 
         spark(dataType, interval, locationData, x, y, mapPin, p5, selections, startX, y, opaque, true, yearIndication, fillMissing, colourTheme)
+    }
+
+    const drawRadialSpark = (x, y, locationData) => {
+        radialSpark(dataType, interval, locationData, x, y, mapPin, p5, selections, x, y, opaque, true, yearIndication, fillMissing, colourTheme)
     }
 
     const setup = (p5, parent) => {

@@ -1,4 +1,4 @@
-import {shapes, spiralValues, spiralVariables, rectValues, rectVariables, sparkValues, sparkVariables} from '../constants'
+import {shapes, spiralValues, spiralVariables, rectValues, rectVariables, sparkValues, sparkVariables, radialSparkValues, radialSparkVariables} from '../constants'
 
 export const getDefaultSelections = (shape, view) => {
     let selections = {}
@@ -13,6 +13,10 @@ export const getDefaultSelections = (shape, view) => {
     } else if (shape === shapes.SPARK.id) {
         Object.keys(sparkValues).forEach(val => {
             selections[sparkValues[val]] = sparkVariables[view][sparkValues[val]].default
+        })
+    } else if (shape === shapes.RADIAL_SPARK.id) {
+        Object.keys(radialSparkValues).forEach(val => {
+            selections[radialSparkValues[val]] = radialSparkVariables[view][radialSparkValues[val]].default
         })
     }
 
