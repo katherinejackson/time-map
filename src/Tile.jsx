@@ -102,7 +102,8 @@ const Tile = ({ numX, selections }) => {
     }
 
     const drawRadialSpark = (x, y, locationData) => {
-        radialSpark(dataType, interval, locationData, x, y, mapPin, p5, selections, x, y, opaque, true, yearIndication, fillMissing, colourTheme)
+        const locationY = y + getPinAdjustment(selections, shapes.RADIAL_SPARK.id, locationData)
+        radialSpark(dataType, interval, locationData, x, locationY, mapPin, p5, selections, x, y, opaque, true, yearIndication, fillMissing, colourTheme)
     }
 
     const setup = (p5, parent) => {

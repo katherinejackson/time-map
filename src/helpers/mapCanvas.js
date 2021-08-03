@@ -23,23 +23,6 @@ export const getGlyph = (p5, cluster, data, interval, selections, theme, fillMis
     let width = 500
     let height = 500
 
-    // if (shape === shapes.SPIRAL.id) {
-    //     let { spiralWidth, spiralTightness } = getSpiralSize(selections, getHoverTransform(cluster.locations.length))
-
-    //     const newSelections = {
-    //         ...selections,
-    //         [spiralValues.SPIRAL_WIDTH]: spiralWidth,
-    //         [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
-    //     }
-    //     let radius = getRadius(newSelections)
-    //     width = radius * 2
-    //     height = radius * 2
-    // } else {
-    //     let { dayWidth, rowWidth, rowHeight, pinHeight } = getRowSize(selections, cluster.locations.length)
-    //     width = rowWidth
-    //     height = pinHeight
-    // }
-
     let pg = p5.createGraphics(width, height)
 
     pg.clear()
@@ -150,10 +133,17 @@ const drawSpark = (p5, pg, x, y, ids, data, interval, selections, theme, fillMis
         locationData = averageData(ids, selections, data)
     }
 
+    let startY = y
+    if (mapPin) {
+        startY = y - getPinAdjustment(selections, shapes.SPARK.id, locationData)
+    } else {
+        startY = y
+    }
+
     const lineWidth = 365 * selections[sparkValues.DAY_WIDTH]
     const startX = x - lineWidth/2
 
-    spark(dataType, interval, locationData, x, y, mapPin, pg, selections, startX, y, opaque, true, yearIndication, fillMissing, theme)
+    spark(dataType, interval, locationData, x, y, mapPin, pg, selections, startX, startY, opaque, true, yearIndication, fillMissing, theme)
 
 }
 
@@ -166,6 +156,11 @@ const drawRadialSpark = (p5, pg, x, y, ids, data, interval, selections, theme, f
         locationData = averageData(ids, selections, data)
     }
 
-    radialSpark(dataType, interval, locationData, x, y, mapPin, pg, selections, x, y, opaque, true, yearIndication, fillMissing, theme)
+    let startY = y
+    if (mapPin) {
+        startY = y - getPinAdjustment(selections, shapes.RADIAL_SPARK.id, locationData)
+    }
+
+    radialSpark(dataType, interval, locationData, x, y, mapPin, pg, selections, x, startY, opaque, true, yearIndication, fillMissing, theme)
 
 }

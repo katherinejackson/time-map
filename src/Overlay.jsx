@@ -205,7 +205,6 @@ const Overlay = () => {
             } else {
                 p5.image(cluster.pg, location.x - cluster.width / 2, location.y - cluster.height / 2)
             }
-
         })
     }
 

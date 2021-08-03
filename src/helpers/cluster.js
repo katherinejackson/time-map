@@ -43,7 +43,6 @@ const getMinDistance = (selections, shape, mapPin = false) => {
         minDistanceX = selections[sparkValues.DAY_WIDTH] * 365
         minDistanceY = selections[sparkValues.SPARK_HEIGHT] * ((1 + selections[sparkValues.NUM_YEARS])/2)
     } else if (shape === shapes.RADIAL_SPARK.id) {
-        console.log(selections)
         let radius = getRadius(selections)
 
         minDistanceX = radius * 2
