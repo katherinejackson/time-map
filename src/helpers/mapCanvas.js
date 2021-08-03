@@ -1,5 +1,5 @@
 import { averageData, getLocationData } from "./data";
-import { rectangle, spiral, spark, radialSpark, getSpiralSize, getRowSize, getPinAdjustment, getRadius } from "../shapes";
+import { rectangle, spiral, spark, radialSpark, radialBarSpark, getSpiralSize, getRowSize, getPinAdjustment, getRadius } from "../shapes";
 import { shapes, rectValues, spiralValues, sparkValues } from "../constants";
 
 const getBounds = (clusters) => {
@@ -36,7 +36,10 @@ export const getGlyph = (p5, cluster, data, interval, selections, theme, fillMis
         drawSpark(p5, pg, width / 2, height / 2, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
     } else if (shape === shapes.RADIAL_SPARK.id) {
         drawRadialSpark(p5, pg, width / 2, height / 2, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
+    } else if (shape === shapes.RADIAL_BAR_SPARK.id) {
+        drawRadialBarSpark(p5, pg, width / 2, height / 2, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
     }
+
 
     return {pg, width, height}
 }
@@ -162,5 +165,23 @@ const drawRadialSpark = (p5, pg, x, y, ids, data, interval, selections, theme, f
     }
 
     radialSpark(dataType, interval, locationData, x, y, mapPin, pg, selections, x, startY, opaque, true, yearIndication, fillMissing, theme)
+
+}
+
+const drawRadialBarSpark = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover = false) => {
+    let dataType = 'TEMP'
+    let locationData = []
+    if (ids.length === 1) {
+        locationData = getLocationData(ids[0], selections, data)
+    } else {
+        locationData = averageData(ids, selections, data)
+    }
+
+    let startY = y
+    if (mapPin) {
+        startY = y - getPinAdjustment(selections, shapes.RADIAL_SPARK.id, locationData)
+    }
+
+    radialBarSpark(dataType, interval, locationData, x, y, mapPin, pg, selections, x, startY, opaque, true, yearIndication, fillMissing, theme)
 
 }

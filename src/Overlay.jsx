@@ -239,7 +239,7 @@ const Overlay = () => {
 
     const drawDetailed = () => {
         let newSelections = selections
-        if (shape === shapes.SPIRAL.id) {
+        if (shape !== shapes.RECT.id) {
             newSelections = getDefaultSelections(shapes.RECT.id, view)
             newSelections = {
                 ...newSelections,

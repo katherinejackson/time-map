@@ -4,7 +4,7 @@ import Tile from "./Tile";
 import LeafletMap from "./LeafletMap"
 import FilterPanel from "./FilterPanel"
 import { getDefaultSelections } from "./helpers/selections";
-import { shapes, rectVariables, spiralVariables, views, themes, sparkVariables, radialSparkVariables } from './constants'
+import { shapes, rectVariables, spiralVariables, views, themes, sparkVariables, radialSparkVariables, radialBarSparkVariables } from './constants'
 import SelectionContext from "./SelectionContext";
 import ScatterPlot from "./ScatterPlot"
 import DataContext from "./DataContext";
@@ -20,6 +20,8 @@ const getVariables = (shape, view) => {
         return sparkVariables[view]
     } else if (shape === shapes.RADIAL_SPARK.id) {
         return radialSparkVariables[view]
+    } else if (shape === shapes.RADIAL_BAR_SPARK.id) {
+        return radialBarSparkVariables[view]
     }
 }
 
@@ -39,6 +41,7 @@ const Selection = ({ shape, view }) => {
     const [fillMissing, setFillMissing] = useState(false)
     const [theme, setTheme] = useState(themes.DEFAULT.val)
     const variables = getVariables(shape, view)
+    console.log(variables)
 
     useEffect(() => {
         setSelections(getDefaultSelections(shape, view))

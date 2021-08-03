@@ -3,7 +3,7 @@ import React, { useEffect, useState, useContext } from "react";
 
 import { shapes, rectValues, spiralValues, themeColours, sparkValues } from './constants'
 import { getInterval, getManualInterval } from "./helpers/intervals";
-import { rectangle, spiral, spark, getPinAdjustment, radialSpark } from "./shapes";
+import { rectangle, spiral, spark, getPinAdjustment, radialBarSpark, radialSpark } from "./shapes";
 import { drawLegend } from "./legend";
 import SelectionContext from "./SelectionContext";
 import DataContext from "./DataContext";
@@ -51,6 +51,8 @@ const Tile = ({ numX, selections }) => {
             drawSpark(x, y, locationData)
         } else if (shape === shapes.RADIAL_SPARK.id) {
             drawRadialSpark(x, y, locationData)
+        } else if (shape === shapes.RADIAL_BAR_SPARK.id) {
+            drawRadialBarSpark(x, y, locationData)
         }
     }
 
@@ -104,6 +106,11 @@ const Tile = ({ numX, selections }) => {
     const drawRadialSpark = (x, y, locationData) => {
         const locationY = y + getPinAdjustment(selections, shapes.RADIAL_SPARK.id, locationData)
         radialSpark(dataType, interval, locationData, x, locationY, mapPin, p5, selections, x, y, opaque, true, yearIndication, fillMissing, colourTheme)
+    }
+
+    const drawRadialBarSpark = (x, y, locationData) => {
+        const locationY = y + getPinAdjustment(selections, shapes.RADIAL_SPARK.id, locationData)
+        radialBarSpark(dataType, interval, locationData, x, locationY, mapPin, p5, selections, x, y, opaque, true, yearIndication, fillMissing, colourTheme)
     }
 
     const setup = (p5, parent) => {

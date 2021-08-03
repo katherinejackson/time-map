@@ -674,6 +674,9 @@ export const getPinAdjustment = (selections, shape, locationData) => {
     } else if (shape === shapes.RADIAL_SPARK.id) {
         const radius = getRadialSparkRadius(selections, numYears)
         startY = radius + 7
+    } else if (shape === shapes.RADIAL_BAR_SPARK.id) {
+        const radius = getRadialSparkRadius(selections, numYears)
+        startY = radius + 7
     }
 
     return startY
@@ -857,50 +860,71 @@ export const radialBarSpark = (
     let spiralTightness = selections[radialSparkValues.SPACE_BETWEEN_SPIRAL]
     let angle = -Math.PI / 2
     let innerRing = selections[radialSparkValues.CORE_SIZE]
-    let outerRing = innerRing + spiralWidth
+    let outerRing = innerRing + spiralWidth * 2
     let numColours = selections[radialSparkValues.NUM_COLOURS]
     let increment = (spiralWidth * 2) / interval.range
+    let zeroRing = innerRing + spiralWidth
 
-    if (opaque) {
+    if (mapPin) {
         let radius = getRadialSparkRadius(selections, numYears)
-        p5.fill(theme.pinBackground)
+        p5.fill(theme.pinColour)
+        p5.triangle(locationX, locationY, locationX - 7, locationY - 7, locationX + 7, locationY - 7)
+
+        p5.stroke(theme.lineColour)
+        p5.noFill()
         p5.ellipse(startX, startY, radius * 2, radius * 2)
     }
 
-    // p5.stroke('black')
-    // p5.noFill()
-    // p5.ellipse(startX, startY, outerRing * 2, outerRing * 2)
-    // p5.ellipse(startX, startY, innerRing * 2, innerRing * 2)
+    if (opaque) {
+        locationData.forEach(year => {
+            for (let pt = 0; pt < year.length - 1; pt++) {
+                p5.fill(theme.pinBackground)
+                p5.noStroke()
+                p5.arc(startX + p5.cos(angle) * innerRing, startY + p5.sin(angle) * innerRing, spiralWidth * 4, spiralWidth * 4, angle, angle + radianPerDay * 10, p5.PIE)
+                angle += radianPerDay
+                innerRing += spiralTightness
+            }
+        })
+
+        angle = -Math.PI / 2
+        innerRing = selections[radialSparkValues.CORE_SIZE]
+    }
 
     locationData.forEach(year => {
         for (let pt = 0; pt < year.length - 1; pt++) {
             let val1 = year[pt] - interval.low
             let val2 = year[pt + 1] - interval.low
 
-            let x1 = startX + p5.cos(angle) * (innerRing + val1 * increment)
-            let y1 = startY + p5.sin(angle) * (innerRing + val1 * increment)
+            let x1 = startX + p5.cos(angle) * (zeroRing + year[pt] * increment)
+            let y1 = startY + p5.sin(angle) * (zeroRing + year[pt] * increment)
 
             angle += radianPerDay
+            zeroRing += spiralTightness
             innerRing += spiralTightness
             outerRing += spiralTightness
 
-            let x2 = startX + p5.cos(angle) * (innerRing + val2 * increment)
-            let y2 = startY + p5.sin(angle) * (innerRing + val2 * increment)
+            let x2 = startX + p5.cos(angle) * (zeroRing + year[pt + 1] * increment)
+            let y2 = startY + p5.sin(angle) * (zeroRing + year[pt + 1] * increment)
 
             if (pt) {
                 if (numColours === 1
                     || numColours === 2
                     || numColours === 360
                 ) {
-                    strokeColourGradient(p5, year[pt], interval, numColours)
+                    fillColourGradient(p5, year[pt], interval, numColours)
                 } else {
                     const colour = getColour(year[pt], interval.high, interval.interval, colours[dataType][numColours])
-                    p5.stroke(colour)
+                    p5.fill(colour)
                 }
 
-                p5.ellipse(startX + p5.cos(angle) * innerRing, startY + p5.sin(angle) * innerRing, 1, 1)
-                p5.ellipse(startX + p5.cos(angle) * outerRing, startY + p5.sin(angle) * outerRing, 1, 1)
-                p5.line(x1, y1, x2, y2)
+                p5.noStroke()
+                p5.quad(
+                    startX + p5.cos(angle) * zeroRing, startY + p5.sin(angle) * zeroRing,
+                    x1, y1, 
+                    x2, y2,
+                    startX + p5.cos(angle + radianPerDay * 2) * zeroRing, startY + p5.sin(angle + radianPerDay * 2) * zeroRing,
+                    )
+
             }
         }
     })

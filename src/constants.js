@@ -273,6 +273,45 @@ export const radialSparkVariables = {
     }
 }
 
+export const radialBarSparkValues = {
+    CORE_SIZE: 1,
+    SPIRAL_WIDTH: 2,
+    SPACE_BETWEEN_SPIRAL: 3,
+    NUM_COLOURS: 4,
+    NUM_YEARS: 5,
+}
+
+export const radialBarSparkVariables = {
+    COMPARISON: {
+        1: { default: 20, id: 1, name: "Core size", values: [5, 10, 15, 20, 25, 30] },
+        2: { default: 50, id: 2, name: "Width of spiral", values: [5, 10, 15, 20, 25] },
+        3: { default: 0.04, id: 3, name: "Tightness of Spiral", values: [0.03, 0.035, 0.04, 0.045, 0.05] },
+        4: { default: 0, id: 4, name: "Number of Colours", values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 360] },
+        5: { default: 1, id: 5, name: "Number of Years", values: [1, 2, 3, 4, 5] },
+    },
+    MAP: {
+        1: { default: 20, id: 1, name: "Core size", values: [5, 10, 15, 20, 25, 30] },
+        2: { default: 50, id: 2, name: "Width of spiral", values: [5, 10, 15, 20, 25] },
+        3: { default: 0.04, id: 3, name: "Tightness of Spiral", values: [0.03, 0.035, 0.04, 0.045, 0.05] },
+        4: { default: 0, id: 4, name: "Number of Colours", values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 360] },
+        5: { default: 1, id: 5, name: "Number of Years", values: [1, 2, 3, 4, 5] },
+    },
+    SCATTER: {
+        1: { default: 20, id: 1, name: "Core size", values: [5, 10, 15, 20, 25, 30] },
+        2: { default: 50, id: 2, name: "Width of spiral", values: [5, 10, 15, 20, 25] },
+        3: { default: 0.04, id: 3, name: "Tightness of Spiral", values: [0.03, 0.035, 0.04, 0.045, 0.05] },
+        4: { default: 0, id: 4, name: "Number of Colours", values: [0, 1, 8, 256] },
+        5: { default: 1, id: 5, name: "Number of Years", values: [1, 2, 3, 4, 5] },
+    },
+    GRAPH: {
+        1: { default: 20, id: 1, name: "Core size", values: [5, 10, 15, 20, 25, 30] },
+        2: { default: 50, id: 2, name: "Width of spiral", values: [5, 10, 15, 20, 25] },
+        3: { default: 0.04, id: 3, name: "Tightness of Spiral", values: [0.03, 0.035, 0.04, 0.045, 0.05] },
+        4: { default: 0, id: 4, name: "Number of Colours", values: [0, 1, 7, 256] },
+        5: { default: 1, id: 5, name: "Number of Years", values: [1, 2, 3, 4, 5] },
+    }
+}
+
 export const radialSparkValues = {
     CORE_SIZE: 1,
     SPIRAL_WIDTH: 2,
@@ -281,12 +320,12 @@ export const radialSparkValues = {
     NUM_YEARS: 5,
 }
 
-
 export const shapes = {
     SPIRAL: { id: 1, name: "Spiral" },
     RECT: { id: 2, name: "Row" },
     SPARK: {id: 3, name: "Spark"},
-    RADIAL_SPARK: {id: 4, name: "Radial Spark"}
+    RADIAL_SPARK: {id: 4, name: "Radial Spark"},
+    RADIAL_BAR_SPARK: {id: 5, name: "Radial Bar Spark"}
 }
 
 export const dataSets = {

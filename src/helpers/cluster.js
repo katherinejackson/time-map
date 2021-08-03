@@ -1,5 +1,5 @@
 import { shapes, rectValues, spiralValues, sparkValues } from "../constants";
-import {getSpiralSize, getRadius, getRowSize} from "../shapes";
+import {getSpiralSize, getRadius, getRowSize, getRadialSparkRadius} from "../shapes";
 
 const averageCoords = (ids, map, locations) => {
     let x = 0
@@ -43,11 +43,17 @@ const getMinDistance = (selections, shape, mapPin = false) => {
         minDistanceX = selections[sparkValues.DAY_WIDTH] * 365
         minDistanceY = selections[sparkValues.SPARK_HEIGHT] * ((1 + selections[sparkValues.NUM_YEARS])/2)
     } else if (shape === shapes.RADIAL_SPARK.id) {
-        let radius = getRadius(selections)
+        let radius = getRadialSparkRadius(selections)
+
+        minDistanceX = radius * 2
+        minDistanceY = radius * 2
+    } else if (shape === shapes.RADIAL_BAR_SPARK.id) {
+        let radius = getRadialSparkRadius(selections)
 
         minDistanceX = radius * 2
         minDistanceY = radius * 2
     }
+
 
     return { minDistanceX, minDistanceY }
 }
@@ -109,6 +115,10 @@ export const calculateClusters = (locations, selections, shape, mapPin, map) => 
                     ...selections
                 }
             } else if (shape === shapes.RADIAL_SPARK.id) {
+                newSelections = {
+                    ...selections
+                }
+            } else if (shape === shapes.RADIAL_BAR_SPARK.id) {
                 newSelections = {
                     ...selections
                 }
