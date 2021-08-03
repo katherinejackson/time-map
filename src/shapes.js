@@ -709,19 +709,17 @@ export const spark = (
 
     if (mapPin) {
         p5.fill(theme.pinColour)
-        p5.triangle(locationX, locationY, locationX - 5, locationY - 5, locationX + 5, locationY - 5)
-        p5.noFill()
+        p5.triangle(locationX, locationY, locationX - 7, locationY - 7, locationX + 7, locationY - 7)
     }
 
     if (opaque) {
         p5.fill(theme.pinBackground)
+    } else {
+        p5.noFill()
     }
 
-    if (mapPin || opaque) {
         p5.stroke(theme.lineColour)
         p5.rect(startX, startY, sparkLength, totalHeight)
-    }
-
 
     locationData.forEach(year => {
         for (let day = 0; day < year.length - 1; day++) {
