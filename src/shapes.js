@@ -66,7 +66,7 @@ export const rectangle = (
                 p5.rect(x, y, 1, selections[rectValues.ROW_HEIGHT])
             } else {
                 if (fillMissing) {
-                    p5.fill(175, 175, 175, 100)
+                    p5.fill(theme.missingData, 100)
                     p5.rect(x, y, 1, selections[rectValues.ROW_HEIGHT])
                 }
             }
@@ -525,7 +525,7 @@ export const spiral = (
                 p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerDay * 10, p5.PIE)
             } else {
                 if (fillMissing) {
-                    p5.fill(150, 150, 150, 100)
+                    p5.fill(theme.missingData, 100)
                     p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerDay * 10, p5.PIE)
                 }
             }
@@ -704,8 +704,9 @@ export const spark = (
     const sparkHeight = selections[sparkValues.SPARK_HEIGHT]
     const totalHeight = sparkHeight * ((1 + numYears) / 2)
     let baseline = startY + sparkHeight
-    let increment = sparkHeight / interval.range
-    let sparkLength = dayWidth * 365
+    const increment = sparkHeight / interval.range
+    const middle = baseline - (interval.range/2 * increment)
+    const sparkLength = dayWidth * 365
 
     if (mapPin) {
         p5.fill(theme.pinColour)
@@ -718,25 +719,31 @@ export const spark = (
         p5.noFill()
     }
 
-        p5.stroke(theme.lineColour)
-        p5.rect(startX, startY, sparkLength, totalHeight)
+    p5.stroke(theme.lineColour)
+    p5.rect(startX, startY, sparkLength, totalHeight)
 
     locationData.forEach(year => {
         for (let day = 0; day < year.length - 1; day++) {
-            if (selections[sparkValues.NUM_COLOURS] === 1
-                || selections[sparkValues.NUM_COLOURS] === 2
-                || selections[sparkValues.NUM_COLOURS] === 360
-            ) {
-                strokeColourGradient(p5, year[day], interval, selections[sparkValues.NUM_COLOURS])
-            } else {
-                const colour = getColour(year[day], interval.high, interval.interval, colours[dataType][selections[spiralValues.NUM_COLOURS]])
-                p5.stroke(colour)
+            if (year[day] !== '') {
+                if (selections[sparkValues.NUM_COLOURS] === 1
+                    || selections[sparkValues.NUM_COLOURS] === 2
+                    || selections[sparkValues.NUM_COLOURS] === 360
+                ) {
+                    strokeColourGradient(p5, year[day], interval, selections[sparkValues.NUM_COLOURS])
+                } else {
+                    const colour = getColour(year[day], interval.high, interval.interval, colours[dataType][selections[spiralValues.NUM_COLOURS]])
+                    p5.stroke(colour)
+                }
+    
+                let val1 = baseline - ((year[day] - interval.low) * increment)
+                let val2 = baseline - ((year[day + 1] - interval.low) * increment)
+
+                p5.line(startX + day * dayWidth, val1, startX + (day + 1) * dayWidth, val2)
+            } else if (fillMissing) {
+                p5.stroke(theme.missingData, 100)
+                p5.line(startX + day * dayWidth, middle, startX + (day + 1) * dayWidth, middle)
             }
-
-            let val1 = baseline - ((year[day] - interval.low) * increment)
-            let val2 = baseline - ((year[day + 1] - interval.low) * increment)
-
-            p5.line(startX + day * dayWidth, val1, startX + (day + 1) * dayWidth, val2)
+            
         }
 
         baseline = baseline + sparkHeight / 2
@@ -798,8 +805,17 @@ export const radialSpark = (
 
     locationData.forEach(year => {
         for (let pt = 0; pt < year.length - 1; pt++) {
-            let val1 = year[pt] - interval.low
-            let val2 = year[pt + 1] - interval.low
+            let val1;
+            let val2;
+
+            if (year[pt] !== '') {
+                val1 = year[pt] - interval.low
+                val2 = year[pt + 1] - interval.low
+            } else {
+                val1 = interval.range/2
+                val2 = interval.range/2
+            }
+
 
             let x1 = startX + p5.cos(angle) * (innerRing + val1 * increment)
             let y1 = startY + p5.sin(angle) * (innerRing + val1 * increment)
@@ -811,13 +827,13 @@ export const radialSpark = (
             let x2 = startX + p5.cos(angle) * (innerRing + val2 * increment)
             let y2 = startY + p5.sin(angle) * (innerRing + val2 * increment)
 
-            if (pt) {
-                if (!opaque && !mapPin) {
-                    p5.stroke(theme.lineColour)
-                    p5.ellipse(startX + p5.cos(angle) * innerRing, startY + p5.sin(angle) * innerRing, 1, 1)
-                    p5.ellipse(startX + p5.cos(angle) * outerRing, startY + p5.sin(angle) * outerRing, 1, 1)
-                }
+            if (!opaque && !mapPin) {
+                p5.stroke(theme.lineColour)
+                p5.ellipse(startX + p5.cos(angle) * innerRing, startY + p5.sin(angle) * innerRing, 1, 1)
+                p5.ellipse(startX + p5.cos(angle) * outerRing, startY + p5.sin(angle) * outerRing, 1, 1)
+            }
 
+            if (year[pt] !== '') {
                 if (numColours === 1
                     || numColours === 2
                     || numColours === 360
@@ -827,9 +843,13 @@ export const radialSpark = (
                     const colour = getColour(year[pt], interval.high, interval.interval, colours[dataType][numColours])
                     p5.stroke(colour)
                 }
-
-                p5.line(x1, y1, x2, y2)
+            } else if (fillMissing) {
+                p5.stroke(theme.missingData, 100)
+            } else {
+                p5.noStroke()
             }
+
+            p5.line(x1, y1, x2, y2)
         }
     })
 
@@ -852,6 +872,7 @@ export const radialBarSpark = (
     yearIndicator,
     fillMissing,
     theme,
+    allPositive = false,
 ) => {
     const numYears = Math.min(selections[radialSparkValues.NUM_YEARS], locationData.length)
     let spiralWidth = selections[radialSparkValues.SPIRAL_WIDTH]
@@ -890,21 +911,31 @@ export const radialBarSpark = (
 
     locationData.forEach(year => {
         for (let pt = 0; pt < year.length - 1; pt++) {
-            let val1 = year[pt] - interval.low
-            let val2 = year[pt + 1] - interval.low
+            let val1 = 0;
+            let val2 = 0;
 
-            let x1 = startX + p5.cos(angle) * (zeroRing + year[pt] * increment)
-            let y1 = startY + p5.sin(angle) * (zeroRing + year[pt] * increment)
+            if (year[pt] !== '') {
+                if (allPositive) {
+                    val1 = year[pt] - interval.low
+                    val2 = year[pt + 1] - interval.low
+                } else {
+                    val1 = year[pt]
+                    val2 = year[pt + 1]
+                }
+            }
+            
+            let x1 = startX + p5.cos(angle) * (zeroRing + val1 * increment)
+            let y1 = startY + p5.sin(angle) * (zeroRing + val1 * increment)
 
             angle += radianPerDay
             zeroRing += spiralTightness
             innerRing += spiralTightness
             outerRing += spiralTightness
 
-            let x2 = startX + p5.cos(angle) * (zeroRing + year[pt + 1] * increment)
-            let y2 = startY + p5.sin(angle) * (zeroRing + year[pt + 1] * increment)
+            let x2 = startX + p5.cos(angle) * (zeroRing + val2 * increment)
+            let y2 = startY + p5.sin(angle) * (zeroRing + val2 * increment)
 
-            if (pt) {
+            if (year[pt] !== '') {
                 if (numColours === 1
                     || numColours === 2
                     || numColours === 360
@@ -918,11 +949,13 @@ export const radialBarSpark = (
                 p5.noStroke()
                 p5.quad(
                     startX + p5.cos(angle) * zeroRing, startY + p5.sin(angle) * zeroRing,
-                    x1, y1, 
+                    x1, y1,
                     x2, y2,
                     startX + p5.cos(angle + radianPerDay * 2) * zeroRing, startY + p5.sin(angle + radianPerDay * 2) * zeroRing,
-                    )
-
+                )
+            } else if (fillMissing) {
+                p5.fill(theme.missingData, 100)
+                p5.ellipse(startX + p5.cos(angle) * zeroRing, startY + p5.sin(angle) * zeroRing, 3, 3)
             }
         }
     })

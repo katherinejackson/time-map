@@ -41,7 +41,6 @@ const Selection = ({ shape, view }) => {
     const [fillMissing, setFillMissing] = useState(false)
     const [theme, setTheme] = useState(themes.DEFAULT.val)
     const variables = getVariables(shape, view)
-    console.log(variables)
 
     useEffect(() => {
         setSelections(getDefaultSelections(shape, view))
