@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
 
 import './App.css';
-import raw from "./popdataSmall.txt";
+import raw from "./data/alaskaLocations.txt";
+// import raw from "../data/saskLocations.txt";
 import textDecoder from "./textDecoder";
 import { dataSets, shapes, views } from "./constants";
 import Selection from "./Selection";
-import { bigData as covidData } from "./covidData";
-import { data as tradeData } from "./tradeData"
+import { bigData as covidData } from "./data/covidData";
+import { data as tradeData } from "./data/tradeData"
 import DataContext from './DataContext';
-import { data as mapData } from "./data"
+import { data as mapData } from "./data/weatherData"
 import { getDataBrackets, getDataBracketsMultiYear, getDataCategories, getVariableBrackets, getTradeDataBrackets, getAverage } from "./helpers/data"
 
 const getData = (view) => {

@@ -6,7 +6,8 @@ import Overlay from "./Overlay";
 import SelectionContext from "./SelectionContext";
 import { themes } from "./constants";
 
-const initialCenter = [52, -103];
+const initialCenter = [63, -149];
+// const initialCenter = [52, -103];
 
 const mapWidth = window.innerWidth * 0.95
 const mapHeight = window.innerHeight * 0.75
@@ -24,7 +25,7 @@ const LeafletMap = ({ }) => {
             <MapContainer
                 center={initialCenter}
                 style={style}
-                zoom={6}
+                zoom={4}
                 zoomControl={false}
                 zoomSnap={0.5}
             >

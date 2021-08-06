@@ -20,7 +20,6 @@ const getBounds = (clusters) => {
 }
 
 export const getGlyph = (p5, pin, data, interval, selections, theme, fillMissing, mapPin, opaque, shape, yearIndication, cluster, hover) => {
-    console.log(cluster)
     let width = 500
     let height = 500
 
