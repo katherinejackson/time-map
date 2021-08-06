@@ -109,22 +109,26 @@ const Overlay = () => {
     }
 
     const mouseMoved = (p5) => {
-        let hoverFound = false
+        let hoverFound = { found: false, distance: null, index: null }
         let pinAdjustment = 0
 
         if (mapPin) {
             pinAdjustment = getPinAdjustment(selections, shape)
         }
 
-        locationPins.forEach((cluster, index) => {
-            let location = map.latLngToContainerPoint([cluster.lat, cluster.long])
-            if (Math.abs(p5.mouseX - location.x) < cluster.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < cluster.minDistanceY) {
-                setHover(index)
-                hoverFound = true
+        locationPins.forEach((pin, index) => {
+            let location = map.latLngToContainerPoint([pin.lat, pin.long])
+            if (Math.abs(p5.mouseX - location.x) < pin.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < pin.minDistanceY) {
+                let distance = Math.pow(Math.abs(p5.mouseX - location.x), 2) + Math.pow(Math.abs(p5.mouseY - location.y + pinAdjustment), 2)
+                if (!hoverFound.found || distance < hoverFound.distance) {
+                    hoverFound = { found: true, distance, index }
+                }
             }
         })
 
-        if (!hoverFound) {
+        if (hoverFound.found) {
+            setHover(hoverFound.index)
+        } else {
             setHover(null)
         }
     }
@@ -142,11 +146,21 @@ const Overlay = () => {
         } else if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 80) {
             map.zoomOut(0.5)
         } else {
-            locationPins.forEach((cluster, index) => {
-                let location = map.latLngToContainerPoint([cluster.lat, cluster.long])
-                if (Math.abs(p5.mouseX - location.x) < cluster.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < cluster.minDistanceY) {
-                    let allDisplayed = true
-                    cluster.locations.forEach(id => {
+            let locationFound = { found: false, distance: null, index: null }
+            locationPins.forEach((pin, index) => {
+                let location = map.latLngToContainerPoint([pin.lat, pin.long])
+                if (Math.abs(p5.mouseX - location.x) < pin.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < pin.minDistanceY) {
+                    let distance = Math.pow(Math.abs(p5.mouseX - location.x), 2) + Math.pow(Math.abs(p5.mouseY - location.y + pinAdjustment), 2)
+                    if (!locationFound.found || distance < locationFound.distance) {
+                        locationFound = { found: true, distance, index }
+                    }
+                }
+            })
+
+            if (locationFound.found) {
+                let pin = locationPins[locationFound.index]
+                let allDisplayed = true
+                    pin.locations.forEach(id => {
                         if (!detailed.includes(id)) {
                             allDisplayed = false
                         }
@@ -154,14 +168,14 @@ const Overlay = () => {
 
                     if (allDisplayed) {
                         let newDetailed = [...detailed]
-                        cluster.locations.forEach(id => {
+                        pin.locations.forEach(id => {
                             let index = newDetailed.indexOf(id)
                             newDetailed.splice(index, 1)
                         })
                         setDetailed(newDetailed)
                     } else {
                         let newDetailed = [...detailed]
-                        cluster.locations.forEach(id => {
+                        pin.locations.forEach(id => {
                             if (!detailed.includes(id)) {
                                 newDetailed.push(id)
                             }
@@ -178,9 +192,7 @@ const Overlay = () => {
 
                         // setAnimated({ ...animated, index, x: locationPins[index].x, y: locationPins[index].y - getRadius(newSelections), width: spiralWidth / 2 })
                     }
-
-                }
-            })
+            }
         }
     }
 
@@ -196,14 +208,14 @@ const Overlay = () => {
     }
 
     const drawGlyphs = () => {
-        locationPins.forEach((cluster, index) => {
-            let location = map.latLngToContainerPoint([cluster.lat, cluster.long])
+        locationPins.forEach((pin, index) => {
+            let location = map.latLngToContainerPoint([pin.lat, pin.long])
             if (index === hover) {
-                let hoverpg = p5.createGraphics(cluster.width, cluster.height)
-                hoverpg.image(cluster.pg, 0, 0, cluster.width * 1.5, cluster.height * 1.5)
-                p5.image(hoverpg, location.x - cluster.width * 0.75, location.y - cluster.height * 0.75)
+                let hoverpg = p5.createGraphics(pin.width, pin.height)
+                hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
+                p5.image(hoverpg, location.x - pin.width * 0.75, location.y - pin.height * 0.75)
             } else {
-                p5.image(cluster.pg, location.x - cluster.width / 2, location.y - cluster.height / 2)
+                p5.image(pin.pg, location.x - pin.width / 2, location.y - pin.height / 2)
             }
         })
     }
@@ -228,7 +240,7 @@ const Overlay = () => {
 
     const updateGlyphs = (pins) => {
         let glyphs = []
-        
+
         pins.forEach(pin => {
             let { pg, width, height } = getGlyph(p5, pin, data, interval, selections, colourTheme, fillMissing, mapPin, opaque, shape, yearIndication, cluster)
             glyphs.push({ ...pin, pg, width, height })
