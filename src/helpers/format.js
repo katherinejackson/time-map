@@ -17,3 +17,15 @@ export const formatTradeNumbers = (num) => {
         return `${num} K`
     }
 }
+
+export const formatNames = (names) => {
+    if (names.length === 1) {
+        return names[0]
+    } else if (names.length === 2) {
+        return `${names[0]} and ${names[1]}`
+    } else if (names.length === 3) {
+        return `${names[0]}, ${names[1]} and ${names[2]}`
+    } else {
+        return `${names[0]}, ${names[1]} and ${names.length - 2} more`
+    }
+}

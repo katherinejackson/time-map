@@ -6,7 +6,7 @@ import SelectionContext from "./SelectionContext";
 import { getRadius, scatterSpiral, scatterRow } from "./shapes";
 import DataContext from "./DataContext";
 import { shapes, spiralValues, themeColours, themes } from "./constants";
-import { formatNumbers } from "./helpers/numbers"
+import { formatNumbers } from "./helpers/format"
 
 const canvasWidth = window.innerWidth * 0.95
 const canvasHeight = window.innerHeight

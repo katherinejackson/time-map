@@ -12,6 +12,7 @@ import { rectangle, spiral, getSpiralSize, getRadius, getRowSize, getPinAdjustme
 import SelectionContext from "./SelectionContext";
 import DataContext from "./DataContext";
 import { getGlyph } from "./helpers/mapCanvas";
+import { formatNames } from "./helpers/format";
 
 const mapWidth = window.innerWidth * 0.95
 const mapHeight = window.innerHeight * 0.75
@@ -160,38 +161,38 @@ const Overlay = () => {
             if (locationFound.found) {
                 let pin = locationPins[locationFound.index]
                 let allDisplayed = true
+                pin.locations.forEach(id => {
+                    if (!detailed.includes(id)) {
+                        allDisplayed = false
+                    }
+                })
+
+                if (allDisplayed) {
+                    let newDetailed = [...detailed]
+                    pin.locations.forEach(id => {
+                        let index = newDetailed.indexOf(id)
+                        newDetailed.splice(index, 1)
+                    })
+                    setDetailed(newDetailed)
+                } else {
+                    let newDetailed = [...detailed]
                     pin.locations.forEach(id => {
                         if (!detailed.includes(id)) {
-                            allDisplayed = false
+                            newDetailed.push(id)
                         }
                     })
 
-                    if (allDisplayed) {
-                        let newDetailed = [...detailed]
-                        pin.locations.forEach(id => {
-                            let index = newDetailed.indexOf(id)
-                            newDetailed.splice(index, 1)
-                        })
-                        setDetailed(newDetailed)
-                    } else {
-                        let newDetailed = [...detailed]
-                        pin.locations.forEach(id => {
-                            if (!detailed.includes(id)) {
-                                newDetailed.push(id)
-                            }
-                        })
+                    setDetailed(newDetailed)
+                    // let { spiralWidth, spiralTightness } = getSpiralSize(selections, getHoverTransform(locationPins[index].locations.length))
 
-                        setDetailed(newDetailed)
-                        // let { spiralWidth, spiralTightness } = getSpiralSize(selections, getHoverTransform(locationPins[index].locations.length))
+                    // const newSelections = {
+                    //     ...selections,
+                    //     [spiralValues.SPIRAL_WIDTH]: spiralWidth,
+                    //     [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
+                    // }
 
-                        // const newSelections = {
-                        //     ...selections,
-                        //     [spiralValues.SPIRAL_WIDTH]: spiralWidth,
-                        //     [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
-                        // }
-
-                        // setAnimated({ ...animated, index, x: locationPins[index].x, y: locationPins[index].y - getRadius(newSelections), width: spiralWidth / 2 })
-                    }
+                    // setAnimated({ ...animated, index, x: locationPins[index].x, y: locationPins[index].y - getRadius(newSelections), width: spiralWidth / 2 })
+                }
             }
         }
     }
@@ -210,14 +211,26 @@ const Overlay = () => {
     const drawGlyphs = () => {
         locationPins.forEach((pin, index) => {
             let location = map.latLngToContainerPoint([pin.lat, pin.long])
-            if (index === hover) {
-                let hoverpg = p5.createGraphics(pin.width, pin.height)
-                hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
-                p5.image(hoverpg, location.x - pin.width * 0.75, location.y - pin.height * 0.75)
-            } else {
+            if (index !== hover) {
                 p5.image(pin.pg, location.x - pin.width / 2, location.y - pin.height / 2)
             }
         })
+
+        if (hover !== null) {
+            let pin = locationPins[hover]
+            let location = map.latLngToContainerPoint([pin.lat, pin.long])
+            let hoverpg = p5.createGraphics(pin.width, pin.height)
+            hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
+            p5.image(hoverpg, location.x - pin.width * 0.75, location.y - pin.height * 0.75)
+
+            let names = []
+            pin.locations.forEach(id => {
+                names.push(locations[id].name)
+            })
+
+            p5.fill(colourTheme.textColour)
+            p5.text(formatNames(names), location.x, location.y + pin.minDistanceY)
+        }
     }
 
     const resetPins = () => {
