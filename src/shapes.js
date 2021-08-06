@@ -644,7 +644,7 @@ export const getGraphRadius = (selections, numSections) => {
 }
 
 export const getRadialSparkRadius = (selections, numYears = selections[spiralValues.NUM_YEARS]) => {
-    let startOuterRing = selections[radialSparkValues.CORE_SIZE] + selections[radialSparkValues.SPIRAL_WIDTH] * 2
+    let startOuterRing = selections[radialSparkValues.CORE_SIZE] + selections[radialSparkValues.SPIRAL_WIDTH] * 4
     let endOuterRing = startOuterRing + selections[spiralValues.SPACE_BETWEEN_SPIRAL] * 365 * numYears
 
     return endOuterRing
@@ -670,7 +670,7 @@ export const getPinAdjustment = (selections, shape, locationData) => {
     } else if (shape === shapes.RECT.id) {
         startY = 7 + ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * numYears)
     } else if (shape === shapes.SPARK.id) {
-        startY = 7 + selections[sparkValues.SPARK_HEIGHT] * ((1 + numYears) / 2)
+        startY = 7 + selections[sparkValues.SPARK_HEIGHT]/2 * ((1 + numYears) / 2)
     } else if (shape === shapes.RADIAL_SPARK.id) {
         const radius = getRadialSparkRadius(selections, numYears)
         startY = radius + 7
@@ -828,9 +828,8 @@ export const radialSpark = (
             let y2 = startY + p5.sin(angle) * (innerRing + val2 * increment)
 
             if (!opaque && !mapPin) {
-                p5.stroke(theme.lineColour)
+                p5.stroke(theme.pinBackground)
                 p5.ellipse(startX + p5.cos(angle) * innerRing, startY + p5.sin(angle) * innerRing, 1, 1)
-                p5.ellipse(startX + p5.cos(angle) * outerRing, startY + p5.sin(angle) * outerRing, 1, 1)
             }
 
             if (year[pt] !== '') {

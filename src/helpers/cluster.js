@@ -45,15 +45,14 @@ const getMinDistance = (selections, shape, mapPin = false) => {
     } else if (shape === shapes.RADIAL_SPARK.id) {
         let radius = getRadialSparkRadius(selections)
 
-        minDistanceX = radius * 2
-        minDistanceY = radius * 2
+        minDistanceX = radius
+        minDistanceY = radius
     } else if (shape === shapes.RADIAL_BAR_SPARK.id) {
         let radius = getRadialSparkRadius(selections)
 
-        minDistanceX = radius * 2
-        minDistanceY = radius * 2
+        minDistanceX = radius
+        minDistanceY = radius
     }
-
 
     return { minDistanceX, minDistanceY }
 }
@@ -69,12 +68,12 @@ export const updateClusters = (map, locationClusters) => {
 }
 
 export const addLocations = (locations, selections, shape, mapPin, map) => {
-    const newClusters = []
+    const locationPins = []
 
     locations.forEach((item) => {
         let { minDistanceX, minDistanceY } = getMinDistance(selections, shape, mapPin)
         const location = map.latLngToContainerPoint([item.x, item.y])
-        newClusters.push({
+        locationPins.push({
             x: location.x,
             y: location.y,
             lat: item.x,
@@ -86,7 +85,7 @@ export const addLocations = (locations, selections, shape, mapPin, map) => {
         })
     })
 
-    return newClusters
+    return locationPins
 }
 
 export const calculateClusters = (locations, selections, shape, mapPin, map) => {

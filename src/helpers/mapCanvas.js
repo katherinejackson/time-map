@@ -141,11 +141,11 @@ const drawSpark = (p5, pg, x, y, ids, data, interval, selections, theme, fillMis
         locationData = averageData(ids, selections, data)
     }
 
-    let startY = y
+    let startY;
     if (mapPin) {
-        startY = y - getPinAdjustment(selections, shapes.SPARK.id, locationData)
+        startY = y - selections[sparkValues.SPARK_HEIGHT]/2 - getPinAdjustment(selections, shapes.SPARK.id, locationData)
     } else {
-        startY = y
+        startY = y - selections[sparkValues.SPARK_HEIGHT]/2
     }
 
     const lineWidth = 365 * selections[sparkValues.DAY_WIDTH]

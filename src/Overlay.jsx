@@ -39,7 +39,7 @@ const Overlay = () => {
             resetPins()
         }
 
-    }, [locations, p5, cluster])
+    }, [locations, p5, cluster, shape])
 
     useEffect(() => {
         if (p5 && locationPins.length) {
@@ -65,7 +65,7 @@ const Overlay = () => {
                 resetPins()
             })
         }
-    }, [p5, locationPins, detailed, cluster])
+    }, [p5, locationPins, detailed, cluster, shape])
 
     const drawDetailedRect = (x, y, id, hoverSelections) => {
         let locationData = getLocationData(id, selections, data)
@@ -228,8 +228,10 @@ const Overlay = () => {
                 names.push(locations[id].name)
             })
 
+            p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(colourTheme.textColour)
             p5.text(formatNames(names), location.x, location.y + pin.minDistanceY)
+            console.log(pin.minDistanceY)
         }
     }
 
