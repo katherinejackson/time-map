@@ -19,7 +19,8 @@ const getBounds = (clusters) => {
     return { width: width + 100, height: height + 100 }
 }
 
-export const getGlyph = (p5, cluster, data, interval, selections, theme, fillMissing, mapPin, opaque, shape, yearIndication, hover) => {
+export const getGlyph = (p5, pin, data, interval, selections, theme, fillMissing, mapPin, opaque, shape, yearIndication, cluster, hover) => {
+    console.log(cluster)
     let width = 500
     let height = 500
 
@@ -29,26 +30,26 @@ export const getGlyph = (p5, cluster, data, interval, selections, theme, fillMis
     pg.noStroke()
 
     if (shape === shapes.SPIRAL.id) {
-        drawSpiral(p5, pg, width / 2, height / 2, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
+        drawSpiral(p5, pg, width / 2, height / 2, pin.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, cluster, hover)
     } else if (shape === shapes.RECT.id) {
-        drawRect(p5, pg, width / 2, height / 2, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
+        drawRect(p5, pg, width / 2, height / 2, pin.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, cluster, hover)
     } else if (shape === shapes.SPARK.id) {
-        drawSpark(p5, pg, width / 2, height / 2, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
+        drawSpark(p5, pg, width / 2, height / 2, pin.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
     } else if (shape === shapes.RADIAL_SPARK.id) {
-        drawRadialSpark(p5, pg, width / 2, height / 2, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
+        drawRadialSpark(p5, pg, width / 2, height / 2, pin.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
     } else if (shape === shapes.RADIAL_BAR_SPARK.id) {
-        drawRadialBarSpark(p5, pg, width / 2, height / 2, cluster.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
+        drawRadialBarSpark(p5, pg, width / 2, height / 2, pin.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
     }
 
 
-    return {pg, width, height}
+    return { pg, width, height }
 }
 
 export const getHoverTransform = (numLocations) => {
     return numLocations + 5
 }
 
-const drawSpiral = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover = false) => {
+const drawSpiral = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, pin, hover = false) => {
     let dataType = 'TEMP'
     let locationData = []
     if (ids.length === 1) {
@@ -72,16 +73,19 @@ const drawSpiral = (p5, pg, x, y, ids, data, interval, selections, theme, fillMi
     }
 
     spiral(dataType, interval, locationData, x, y, mapPin, pg, newSelections, x, startY, opaque, hover, yearIndication, fillMissing, theme)
-    pg.fill(theme.textColour)
-    pg.textSize(10)
-    if (hover) {
-        pg.textSize(15)
+
+    if (pin) {
+        pg.fill(theme.textColour)
+        pg.textSize(10)
+        if (hover) {
+            pg.textSize(15)
+        }
+        pg.textAlign(p5.CENTER, p5.CENTER)
+        pg.text(ids.length, x - 2, startY + 1)
     }
-    pg.textAlign(p5.CENTER, p5.CENTER)
-    pg.text(ids.length, x - 2, startY + 1)
 }
 
-const drawRect = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover = false) => {
+const drawRect = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, cluster, hover = false) => {
     let dataType = 'TEMP'
     let locationData = []
     if (ids.length === 1) {
@@ -106,25 +110,27 @@ const drawRect = (p5, pg, x, y, ids, data, interval, selections, theme, fillMiss
     }
 
     rectangle(dataType, interval, locationData, x, y, mapPin, pg, newSelections, startX, startY, opaque, hover, yearIndication, fillMissing, theme)
-    pg.fill(theme.textColour)
-    pg.textSize(10)
-    pg.textAlign(p5.CENTER, p5.CENTER)
-    if (hover) {
-        pg.textSize(16)
-    }
-
-    if (mapPin) {
-        pg.fill(theme.pinBackground)
-        pg.ellipse(x, y + 8, 16, 16)
+    
+    if (cluster) {
         pg.fill(theme.textColour)
-        pg.text(ids.length, x, y + 8)
-    } else {
-        pg.fill(theme.pinBackground)
-        pg.ellipse(x, y + pinHeight / 2 + 8, 16, 16)
-        pg.fill(theme.textColour)
-        pg.text(ids.length, x, y + pinHeight / 2 + 8)
+        pg.textSize(10)
+        pg.textAlign(p5.CENTER, p5.CENTER)
+        if (hover) {
+            pg.textSize(16)
+        }
+    
+        if (mapPin) {
+            pg.fill(theme.pinBackground)
+            pg.ellipse(x, y + 8, 16, 16)
+            pg.fill(theme.textColour)
+            pg.text(ids.length, x, y + 8)
+        } else {
+            pg.fill(theme.pinBackground)
+            pg.ellipse(x, y + pinHeight / 2 + 8, 16, 16)
+            pg.fill(theme.textColour)
+            pg.text(ids.length, x, y + pinHeight / 2 + 8)
+        }
     }
-
 }
 
 const drawSpark = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover = false) => {
@@ -144,7 +150,7 @@ const drawSpark = (p5, pg, x, y, ids, data, interval, selections, theme, fillMis
     }
 
     const lineWidth = 365 * selections[sparkValues.DAY_WIDTH]
-    const startX = x - lineWidth/2
+    const startX = x - lineWidth / 2
 
     spark(dataType, interval, locationData, x, y, mapPin, pg, selections, startX, startY, opaque, true, yearIndication, fillMissing, theme)
 

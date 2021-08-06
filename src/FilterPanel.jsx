@@ -12,9 +12,10 @@ const FilterPanel = ({
     handlePinCheck,
     handleOpaqueCheck,
     handleYearIndicationSelect,
+    handleClusterCheck,
     view,
 }) => {
-    const { selections, theme, fillMissing, mapPin, opaque, shape, variables, yearIndication } = useContext(SelectionContext)
+    const { selections, theme, fillMissing, mapPin, opaque, shape, variables, yearIndication, cluster } = useContext(SelectionContext)
 
     return (
         <div className="container row row-col-3 mt-3">
@@ -69,6 +70,14 @@ const FilterPanel = ({
             </div>
 
             <div className="col">
+                <div className="row">
+                    <div className="col d-flex justify-content-end">
+                        <label className="col col-form-label w-auto" >Cluster Pins</label>
+                    </div>
+                    <div className="col">
+                        <input disabled={view !== views.MAP.val} className="form-check" type="checkbox" defaultChecked={cluster} onChange={handleClusterCheck} />
+                    </div>
+                </div>
                 <div className="row mb-2">
                     <div className="col d-flex justify-content-end">
                         <label htmlFor="y-axis" className="col-form-label w-auto">Theme</label>

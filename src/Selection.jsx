@@ -40,6 +40,7 @@ const Selection = ({ shape, view }) => {
     const [yearIndication, setYearIndication] = useState(null)
     const [fillMissing, setFillMissing] = useState(false)
     const [theme, setTheme] = useState(themes.DEFAULT.val)
+    const [cluster, setCluster] = useState(false)
     const variables = getVariables(shape, view)
 
     useEffect(() => {
@@ -75,6 +76,10 @@ const Selection = ({ shape, view }) => {
         setTheme(event.currentTarget.value)
     }
 
+    const handleClusterCheck = () => {
+        setCluster(!cluster)
+    }
+
     const isError = (values) => {
         return values["x-axis"] === null
             || values["y-axis"] === null
@@ -82,7 +87,7 @@ const Selection = ({ shape, view }) => {
     }
 
     return (
-        <SelectionContext.Provider value={{ selections, theme, mapPin, fillMissing, shape, opaque, variables, yearIndication }}>
+        <SelectionContext.Provider value={{ cluster, selections, theme, mapPin, fillMissing, shape, opaque, variables, yearIndication }}>
             <div>
                 {view !== views.GRAPH.val ? (
                     <FilterPanel
@@ -94,6 +99,7 @@ const Selection = ({ shape, view }) => {
                         handlePinCheck={handlePinCheck}
                         handleOpaqueCheck={handleOpaqueCheck}
                         handleYearIndicationSelect={handleYearIndicationSelect}
+                        handleClusterCheck={handleClusterCheck}
                         view={view}
                     />
                 ) : null}

@@ -247,14 +247,14 @@ export const sparkValues = {
 
 export const radialSparkVariables = {
     COMPARISON: {
-        1: { default: 20, id: 1, name: "Core size", values: [5, 10, 15, 20, 25, 30] },
+        1: { default: 10, id: 1, name: "Core size", values: [0, 5, 10, 15, 20] },
         2: { default: 15, id: 2, name: "Width of spiral", values: [5, 10, 15, 20, 25] },
         3: { default: 0.04, id: 3, name: "Tightness of Spiral", values: [0.03, 0.035, 0.04, 0.045, 0.05] },
         4: { default: 0, id: 4, name: "Number of Colours", values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 360] },
         5: { default: 1, id: 5, name: "Number of Years", values: [1, 2, 3, 4, 5] },
     },
     MAP: {
-        1: { default: 20, id: 1, name: "Core size", values: [5, 10, 15, 20, 25, 30] },
+        1: { default: 10, id: 1, name: "Core size", values: [0, 5, 10, 15, 20] },
         2: { default: 15, id: 2, name: "Width of spiral", values: [5, 10, 15, 20, 25] },
         3: { default: 0.04, id: 3, name: "Tightness of Spiral", values: [0.03, 0.035, 0.04, 0.045, 0.05] },
         4: { default: 0, id: 4, name: "Number of Colours", values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 360] },
@@ -286,14 +286,14 @@ export const radialBarSparkValues = {
 
 export const radialBarSparkVariables = {
     COMPARISON: {
-        1: { default: 20, id: 1, name: "Core size", values: [5, 10, 15, 20, 25, 30] },
+        1: { default: 10, id: 1, name: "Core size", values: [0, 5, 10, 15, 20] },
         2: { default: 15, id: 2, name: "Width of spiral", values: [5, 10, 15, 20, 25] },
         3: { default: 0.04, id: 3, name: "Tightness of Spiral", values: [0.03, 0.035, 0.04, 0.045, 0.05] },
         4: { default: 0, id: 4, name: "Number of Colours", values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 360] },
         5: { default: 1, id: 5, name: "Number of Years", values: [1, 2, 3, 4, 5] },
     },
     MAP: {
-        1: { default: 20, id: 1, name: "Core size", values: [5, 10, 15, 20, 25, 30] },
+        1: { default: 10, id: 1, name: "Core size", values: [0, 5, 10, 15, 20] },
         2: { default: 15, id: 2, name: "Width of spiral", values: [5, 10, 15, 20, 25] },
         3: { default: 0.04, id: 3, name: "Tightness of Spiral", values: [0.03, 0.035, 0.04, 0.045, 0.05] },
         4: { default: 0, id: 4, name: "Number of Colours", values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 360] },

@@ -68,7 +68,7 @@ export const updateClusters = (map, locationClusters) => {
     return newClusters
 }
 
-export const calculateClusters = (locations, selections, shape, mapPin, map) => {
+export const addLocations = (locations, selections, shape, mapPin, map) => {
     const newClusters = []
 
     locations.forEach((item) => {
@@ -85,6 +85,12 @@ export const calculateClusters = (locations, selections, shape, mapPin, map) => 
             name: item.name,
         })
     })
+
+    return newClusters
+}
+
+export const calculateClusters = (locations, selections, shape, mapPin, map) => {
+    const newClusters = addLocations(locations, selections, shape, mapPin, map)
 
     let shouldCluster = true
 

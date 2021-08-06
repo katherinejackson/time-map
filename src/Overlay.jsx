@@ -7,7 +7,7 @@ import { averageData, getLocationData } from "./helpers/data";
 import { getDefaultSelections } from "./helpers/selections";
 import { shapes, rectValues, spiralValues, themeColours } from "./constants";
 import { getInterval, getManualInterval } from "./helpers/intervals";
-import { calculateClusters } from "./helpers/cluster";
+import { calculateClusters, addLocations } from "./helpers/cluster";
 import { rectangle, spiral, getSpiralSize, getRadius, getRowSize, getPinAdjustment } from "./shapes";
 import SelectionContext from "./SelectionContext";
 import DataContext from "./DataContext";
@@ -20,14 +20,14 @@ const Overlay = () => {
     const map = useMap()
     const view = 'MAP'
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
-    const { selections, theme, fillMissing, mapPin, opaque, shape, yearIndication } = useContext(SelectionContext)
+    const { cluster, selections, theme, fillMissing, mapPin, opaque, shape, yearIndication } = useContext(SelectionContext)
     const colourTheme = themeColours[theme]
     const [p5, setP5] = useState(null)
     const [pg, setPg] = useState(null)
     const interval = dataType === 'TEMP'
         ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])
         : getManualInterval(dataBrackets, selections[rectValues.NUM_COLOURS], dataType)
-    const [locationClusters, setClusters] = useState([])
+    const [locationPins, setLocationPins] = useState([])
     const [detailed, setDetailed] = useState([])
     const [detailedHeight, setDetailedHeight] = useState(0)
     const [hover, setHover] = useState(null)
@@ -35,23 +35,23 @@ const Overlay = () => {
 
     useEffect(() => {
         if (locations && p5) {
-            resetClusters()
+            resetPins()
         }
 
-    }, [locations, p5])
+    }, [locations, p5, cluster])
 
     useEffect(() => {
-        if (p5 && locationClusters.length) {
-            setClusters(updateGlyphs(locationClusters))
+        if (p5 && locationPins.length) {
+            setLocationPins(updateGlyphs(locationPins))
         }
     }, [selections, map, mapPin, opaque, yearIndication, fillMissing, theme, p5])
 
     useEffect(() => {
-        if (p5 && locationClusters.length) {
+        if (p5 && locationPins.length) {
             redrawOverlay()
         }
 
-    }, [locationClusters, detailed, hover])
+    }, [locationPins, detailed, hover])
 
     useEffect(() => {
         if (p5) {
@@ -61,10 +61,10 @@ const Overlay = () => {
             })
             map.off('zoom')
             map.on('zoom', () => {
-                resetClusters()
+                resetPins()
             })
         }
-    }, [p5, locationClusters, detailed])
+    }, [p5, locationPins, detailed, cluster])
 
     const drawDetailedRect = (x, y, id, hoverSelections) => {
         let locationData = getLocationData(id, selections, data)
@@ -116,7 +116,7 @@ const Overlay = () => {
             pinAdjustment = getPinAdjustment(selections, shape)
         }
 
-        locationClusters.forEach((cluster, index) => {
+        locationPins.forEach((cluster, index) => {
             let location = map.latLngToContainerPoint([cluster.lat, cluster.long])
             if (Math.abs(p5.mouseX - location.x) < cluster.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < cluster.minDistanceY) {
                 setHover(index)
@@ -142,7 +142,7 @@ const Overlay = () => {
         } else if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 80) {
             map.zoomOut(0.5)
         } else {
-            locationClusters.forEach((cluster, index) => {
+            locationPins.forEach((cluster, index) => {
                 let location = map.latLngToContainerPoint([cluster.lat, cluster.long])
                 if (Math.abs(p5.mouseX - location.x) < cluster.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < cluster.minDistanceY) {
                     let allDisplayed = true
@@ -168,7 +168,7 @@ const Overlay = () => {
                         })
 
                         setDetailed(newDetailed)
-                        // let { spiralWidth, spiralTightness } = getSpiralSize(selections, getHoverTransform(locationClusters[index].locations.length))
+                        // let { spiralWidth, spiralTightness } = getSpiralSize(selections, getHoverTransform(locationPins[index].locations.length))
 
                         // const newSelections = {
                         //     ...selections,
@@ -176,7 +176,7 @@ const Overlay = () => {
                         //     [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
                         // }
 
-                        // setAnimated({ ...animated, index, x: locationClusters[index].x, y: locationClusters[index].y - getRadius(newSelections), width: spiralWidth / 2 })
+                        // setAnimated({ ...animated, index, x: locationPins[index].x, y: locationPins[index].y - getRadius(newSelections), width: spiralWidth / 2 })
                     }
 
                 }
@@ -196,7 +196,7 @@ const Overlay = () => {
     }
 
     const drawGlyphs = () => {
-        locationClusters.forEach((cluster, index) => {
+        locationPins.forEach((cluster, index) => {
             let location = map.latLngToContainerPoint([cluster.lat, cluster.long])
             if (index === hover) {
                 let hoverpg = p5.createGraphics(cluster.width, cluster.height)
@@ -208,19 +208,33 @@ const Overlay = () => {
         })
     }
 
-    const resetClusters = () => {
-        const clusters = calculateClusters(locations, selections, shape, mapPin, map)
-        setClusters(updateGlyphs(clusters))
+    const resetPins = () => {
+        if (cluster) {
+            resetClusters()
+        } else {
+            setPins()
+        }
     }
 
-    const updateGlyphs = (clusters) => {
-        let glyphClusters = []
-        clusters.forEach(cluster => {
-            let { pg, width, height } = getGlyph(p5, cluster, data, interval, selections, colourTheme, fillMissing, mapPin, opaque, shape, yearIndication)
-            glyphClusters.push({ ...cluster, pg, width, height })
+    const resetClusters = () => {
+        const clusters = calculateClusters(locations, selections, shape, mapPin, map)
+        setLocationPins(updateGlyphs(clusters))
+    }
+
+    const setPins = () => {
+        const pins = addLocations(locations, selections, shape, mapPin, map)
+        setLocationPins(updateGlyphs(pins))
+    }
+
+    const updateGlyphs = (pins) => {
+        let glyphs = []
+        
+        pins.forEach(pin => {
+            let { pg, width, height } = getGlyph(p5, pin, data, interval, selections, colourTheme, fillMissing, mapPin, opaque, shape, yearIndication, cluster)
+            glyphs.push({ ...pin, pg, width, height })
         })
 
-        return glyphClusters
+        return glyphs
     }
 
     const drawZoom = () => {
