@@ -8,7 +8,7 @@ import DataContext from "./DataContext";
 import { shapes, spiralValues, themeColours, themes } from "./constants";
 import { formatNumbers } from "./helpers/format"
 
-const canvasWidth = window.innerWidth * 0.95
+const canvasWidth = 1000
 const canvasHeight = window.innerHeight
 
 const xBorder = 50

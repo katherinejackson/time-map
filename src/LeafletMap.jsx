@@ -9,7 +9,7 @@ import { themes } from "./constants";
 const initialCenter = [63, -149];
 // const initialCenter = [52, -103];
 
-const mapWidth = window.innerWidth * 0.95
+const mapWidth = 1000
 const mapHeight = window.innerHeight * 0.75
 
 const style = {
