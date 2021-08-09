@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
 
 import './App.css';
-import raw from "./data/alaskaLocations.txt";
-// import raw from "../data/saskLocations.txt";
-import textDecoder from "./textDecoder";
+import {alaska as locations} from "./data/locationCoords";
+import textDecoder from "./helpers/coordDecoder";
 import { dataSets, shapes, views } from "./constants";
 import Selection from "./Selection";
 import { bigData as covidData } from "./data/covidData";
@@ -43,7 +42,6 @@ const getData = (view) => {
 
 const DataSelector = ({ view }) => {
     const [totalDataPts, setTotalDataPts] = useState(null)
-    const [locations, setLocations] = useState([])
     const [shape, setShape] = useState(shapes.SPIRAL.id)
     const { data, dataType, dataBrackets, yBrackets, categories, variable } = getData(view)
 
@@ -57,13 +55,6 @@ const DataSelector = ({ view }) => {
             setTotalDataPts(total)
         }
     }, [categories])
-
-    if (!locations.length) {
-        fetch(raw)
-            .then(r => r.text())
-            .then(text => textDecoder(text))
-            .then(locations => setLocations(locations));
-    }
 
     const handleShapeChange = (event) => {
         setShape(parseInt(event.target.value))
