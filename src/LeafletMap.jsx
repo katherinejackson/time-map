@@ -22,7 +22,7 @@ const LeafletMap = ({ }) => {
     const { theme } = useContext(SelectionContext)
     
     return (
-        <div className="position-relative">
+        <div className="d-flex justify-content-center">
             <MapContainer
                 center={initialCenter}
                 style={style}

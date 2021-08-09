@@ -58,9 +58,7 @@ const DataSelector = ({ view }) => {
 
     return (
         <DataContext.Provider value={{ data, dataType, yBrackets, dataBrackets, categories, totalDataPts, locations, variable }}>
-            <div className="row justify-content-center">
                 <Selection shape={shape} view={view} />
-            </div>
         </DataContext.Provider>
     )
 }
