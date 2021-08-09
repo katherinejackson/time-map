@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import './App.css';
-import {alaska as locations} from "./data/locationCoords";
+import { alaska as locations } from "./data/locationCoords";
 import { dataSets, views } from "./constants";
 import Selection from "./Selection";
 import { bigData as covidData } from "./data/covidData";
@@ -9,8 +9,6 @@ import { data as tradeData } from "./data/tradeData"
 import DataContext from './DataContext';
 import { data as mapData } from "./data/weatherData"
 import { getDataBrackets, getDataBracketsMultiYear, getDataCategories, getVariableBrackets, getTradeDataBrackets, getAverage } from "./helpers/data"
-
-let shape = 1
 
 const getData = (view) => {
     if (view === views.SCATTER.val) {
@@ -41,7 +39,7 @@ const getData = (view) => {
     return {}
 }
 
-const DataSelector = ({ view }) => {
+const DataSelector = ({ view, shape }) => {
     const [totalDataPts, setTotalDataPts] = useState(null)
     const { data, dataType, dataBrackets, yBrackets, categories, variable } = getData(view)
 
@@ -58,7 +56,7 @@ const DataSelector = ({ view }) => {
 
     return (
         <DataContext.Provider value={{ data, dataType, yBrackets, dataBrackets, categories, totalDataPts, locations, variable }}>
-                <Selection shape={shape} view={view} />
+            <Selection shape={shape} view={view} />
         </DataContext.Provider>
     )
 }
