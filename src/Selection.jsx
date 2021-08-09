@@ -47,7 +47,7 @@ const Selection = ({ shape, view }) => {
             variables,
             yearIndication: defaultGeneralSelections.yearIndication,
         }}>
-            <div>
+            <div className="d-flex justify-content-center">
                 {view === views.MAP.val ? <LeafletMap /> : null}
                 {view === views.SCATTER.val ? <ScatterPlot /> : null}
             </div>

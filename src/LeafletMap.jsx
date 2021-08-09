@@ -20,22 +20,20 @@ const style = {
 
 const LeafletMap = ({ }) => {
     const { theme } = useContext(SelectionContext)
-    
+
     return (
-        <div className="d-flex justify-content-center">
-            <MapContainer
-                center={initialCenter}
-                style={style}
-                zoom={4}
-                zoomControl={false}
-                zoomSnap={0.5}
-            >
-                {theme === themes.DEFAULT.val ? <DefaultMap /> : null}
-                {theme === themes.DARK.val ? <DarkMap /> : null}
-                {theme === themes.COLOUR_DARK.val ? <ColourDarkMap /> : null}
-                <Overlay />
-            </MapContainer>
-        </div>
+        <MapContainer
+            center={initialCenter}
+            style={style}
+            zoom={4}
+            zoomControl={false}
+            zoomSnap={0.5}
+        >
+            {theme === themes.DEFAULT.val ? <DefaultMap /> : null}
+            {theme === themes.DARK.val ? <DarkMap /> : null}
+            {theme === themes.COLOUR_DARK.val ? <ColourDarkMap /> : null}
+            <Overlay />
+        </MapContainer>
     );
 }
 
