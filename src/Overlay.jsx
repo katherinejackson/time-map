@@ -157,15 +157,6 @@ const Overlay = () => {
                     })
 
                     setDetailed(newDetailed)
-                    // let { spiralWidth, spiralTightness } = getSpiralSize(selections, getHoverTransform(locationPins[index].locations.length))
-
-                    // const newSelections = {
-                    //     ...selections,
-                    //     [spiralValues.SPIRAL_WIDTH]: spiralWidth,
-                    //     [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
-                    // }
-
-                    // setAnimated({ ...animated, index, x: locationPins[index].x, y: locationPins[index].y - getRadius(newSelections), width: spiralWidth / 2 })
                 }
             }
         }
@@ -205,7 +196,6 @@ const Overlay = () => {
             p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(colourTheme.textColour)
             p5.text(formatNames(names), location.x, location.y + pin.minDistanceY)
-            console.log(pin.minDistanceY)
         }
     }
 

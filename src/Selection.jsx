@@ -35,8 +35,6 @@ const Selection = ({ shape, view }) => {
     const shapeSelections = getDefaultSelections(shape, view)
     const variables = getVariables(shape, view)
 
-    console.log(shapeSelections, shape, view)
-
     return (
         <SelectionContext.Provider value={{
             cluster: defaultGeneralSelections.cluster,
