@@ -3,18 +3,18 @@ import React, { useContext, useEffect, useState } from "react";
 import { useMap } from "react-leaflet";
 
 import { drawLegend } from "./legend";
-import { averageData, getLocationData } from "./helpers/data";
+import { getLocationData } from "./helpers/data";
 import { getDefaultSelections } from "./helpers/selections";
-import { shapes, rectValues, spiralValues, themeColours } from "./constants";
+import { shapes, rectValues, themeColours } from "./constants";
 import { getInterval, getManualInterval } from "./helpers/intervals";
 import { calculateClusters, addLocations } from "./helpers/cluster";
-import { rectangle, spiral, getSpiralSize, getRadius, getRowSize, getPinAdjustment } from "./shapes";
+import { rectangle, getRowSize, getPinAdjustment } from "./shapes";
 import SelectionContext from "./SelectionContext";
 import DataContext from "./DataContext";
 import { getGlyph } from "./helpers/mapCanvas";
 import { formatNames } from "./helpers/format";
 
-const mapWidth = window.innerWidth * 0.95
+const mapWidth = 1000
 const mapHeight = window.innerHeight * 0.75
 
 const Overlay = () => {
@@ -24,15 +24,12 @@ const Overlay = () => {
     const { cluster, selections, theme, fillMissing, mapPin, opaque, shape, yearIndication } = useContext(SelectionContext)
     const colourTheme = themeColours[theme]
     const [p5, setP5] = useState(null)
-    const [pg, setPg] = useState(null)
     const interval = dataType === 'TEMP'
         ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])
         : getManualInterval(dataBrackets, selections[rectValues.NUM_COLOURS], dataType)
     const [locationPins, setLocationPins] = useState([])
     const [detailed, setDetailed] = useState([])
-    const [detailedHeight, setDetailedHeight] = useState(0)
     const [hover, setHover] = useState(null)
-    const [animated, setAnimated] = useState({ index: null, x: 0, y: 0, numDays: 0, width: selections[spiralValues.SPIRAL_WIDTH] })
 
     useEffect(() => {
         if (locations && p5) {
@@ -75,29 +72,6 @@ const Overlay = () => {
         let startY = y - ((hoverSelections[rectValues.NUM_ROWS] * (hoverSelections[rectValues.SPACE_BETWEEN_ROWS] + hoverSelections[rectValues.ROW_HEIGHT])) * locationData.length) / 2
 
         rectangle(dataType, interval, locationData, x, y, false, p5, hoverSelections, startX, startY, opaque, false, yearIndication, fillMissing, colourTheme)
-    }
-
-    const drawAnimatedRect = (x, y, ids, animSelections, numDays) => {
-        let locationData = []
-        if (ids.length === 1) {
-            locationData = getLocationData(ids[0], selections, data)
-        } else {
-            locationData = averageData(ids, selections, data)
-        }
-
-        let newData = []
-        locationData.forEach(year => {
-            if (numDays < year.length) {
-                newData.push(year.slice(year.length - numDays))
-            } else {
-                newData.push(year)
-            }
-        })
-
-        let startX = x;
-        let startY = y - ((animSelections[rectValues.NUM_ROWS] * (animSelections[rectValues.SPACE_BETWEEN_ROWS] + animSelections[rectValues.ROW_HEIGHT])) * newData.length) / 2
-
-        rectangle(dataType, interval, newData, x, y, false, pg, animSelections, startX, startY, opaque, hover, yearIndication, fillMissing, colourTheme)
     }
 
     const setup = (p5, parent) => {
@@ -302,8 +276,6 @@ const Overlay = () => {
             p5.text(locations[id].name, mapWidth - 150, index * locationHeight)
             drawDetailedRect(mapWidth - 75, index * locationHeight + pinHeight / 2 + 15, id, newSelections)
         })
-
-        setDetailedHeight(locationHeight)
     }
 
     return (

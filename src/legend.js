@@ -1,6 +1,6 @@
 import { colours, manualIntervals, rectValues, spiralValues } from './constants'
-import { fillColourGradient, fillLogColourGradient, getColour } from "./helpers/colours";
-import { formatTradeNumbers, formatNumbers } from './helpers/format';
+import { fillColourGradient, getColour } from "./helpers/colours";
+import { formatTradeNumbers } from './helpers/format';
 
 export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, textColour) => {
     if (selections[spiralValues.NUM_COLOURS] === 0) {

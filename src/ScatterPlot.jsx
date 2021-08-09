@@ -5,7 +5,7 @@ import { drawLegend } from "./legend";
 import SelectionContext from "./SelectionContext";
 import { getRadius, scatterSpiral, scatterRow } from "./shapes";
 import DataContext from "./DataContext";
-import { shapes, spiralValues, themeColours, themes } from "./constants";
+import { shapes, spiralValues, themeColours } from "./constants";
 import { formatNumbers } from "./helpers/format"
 
 const canvasWidth = 1000

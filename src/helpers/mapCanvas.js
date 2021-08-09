@@ -1,23 +1,6 @@
 import { averageData, getLocationData } from "./data";
-import { rectangle, spiral, spark, radialSpark, radialBarSpark, getSpiralSize, getRowSize, getPinAdjustment, getRadius } from "../shapes";
+import { rectangle, spiral, spark, radialSpark, radialBarSpark, getSpiralSize, getRowSize, getPinAdjustment } from "../shapes";
 import { shapes, rectValues, spiralValues, sparkValues } from "../constants";
-
-const getBounds = (clusters) => {
-    let width = 0
-    let height = 0
-
-    clusters.forEach(item => {
-        if (item.x > width) {
-            width = item.x
-        }
-
-        if (item.y > height) {
-            height = item.y
-        }
-    })
-
-    return { width: width + 100, height: height + 100 }
-}
 
 export const getGlyph = (p5, pin, data, interval, selections, theme, fillMissing, mapPin, opaque, shape, yearIndication, cluster, hover) => {
     let width = 500

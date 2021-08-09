@@ -6,8 +6,9 @@ import Overlay from "./Overlay";
 import SelectionContext from "./SelectionContext";
 import { themes } from "./constants";
 
-const initialCenter = [63, -149];
-// const initialCenter = [52, -103];
+const initialCenter = [63, -149];   // alaska
+
+// const initialCenter = [52, -103];  // sask
 
 const mapWidth = 1000
 const mapHeight = window.innerHeight * 0.75

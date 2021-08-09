@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react'
 
 import './App.css';
 import {alaska as locations} from "./data/locationCoords";
-import textDecoder from "./helpers/coordDecoder";
-import { dataSets, shapes, views } from "./constants";
+import { dataSets, views } from "./constants";
 import Selection from "./Selection";
 import { bigData as covidData } from "./data/covidData";
 import { data as tradeData } from "./data/tradeData"
 import DataContext from './DataContext';
 import { data as mapData } from "./data/weatherData"
 import { getDataBrackets, getDataBracketsMultiYear, getDataCategories, getVariableBrackets, getTradeDataBrackets, getAverage } from "./helpers/data"
+
+let shape = 1
 
 const getData = (view) => {
     if (view === views.SCATTER.val) {
@@ -42,7 +43,6 @@ const getData = (view) => {
 
 const DataSelector = ({ view }) => {
     const [totalDataPts, setTotalDataPts] = useState(null)
-    const [shape, setShape] = useState(shapes.SPIRAL.id)
     const { data, dataType, dataBrackets, yBrackets, categories, variable } = getData(view)
 
     useEffect(() => {
@@ -56,25 +56,9 @@ const DataSelector = ({ view }) => {
         }
     }, [categories])
 
-    const handleShapeChange = (event) => {
-        setShape(parseInt(event.target.value))
-    }
-
     return (
         <DataContext.Provider value={{ data, dataType, yBrackets, dataBrackets, categories, totalDataPts, locations, variable }}>
             <div className="row justify-content-center">
-                {view !== views.GRAPH.val ? (
-                    <div className="row justify-content-center">
-                        <label className="col-form-label w-auto">Display Type</label>
-                        <select className="form-select w-auto" defaultValue={shape} onChange={handleShapeChange} name="Display type">
-                            {Object.keys(shapes).map(shape => <option key={`shape-${shapes[shape].id}`} value={shapes[shape].id}>{shapes[shape].name}</option>)}
-                        </select>
-                        {/* <label className="col-form-label w-auto ms-3">Data Set</label>
-                        <select className="form-select w-auto" defaultValue={dataSet} onChange={handleDataSetChange} name="DataSet">
-                            {Object.keys(dataSets).map(type => <option key={`dataset-${dataSets[type].id}`} value={dataSets[type].val}>{dataSets[type].name}</option>)}
-                        </select> */}
-                    </div>
-                ) : null}
                 <Selection shape={shape} view={view} />
             </div>
         </DataContext.Provider>

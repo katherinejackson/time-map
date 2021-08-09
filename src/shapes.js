@@ -127,7 +127,6 @@ export const scatterRow = (p5, x, y, data, selections, dataType) => {
     let numColours = selections[rectValues.NUM_COLOURS]
     const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
     let startX = x
-    let startY = y
     let rowCounter = 1
 
     data.forEach(day => {
@@ -157,12 +156,10 @@ export const scatterRow = (p5, x, y, data, selections, dataType) => {
 
 export const bridgeRow = (p5, startX, startY, endX, endY, data) => {
     const numColours = 6
-    // p5.stroke(150)
 
     if (startX === endX) {
         let width = Math.abs(endY - startY) / data.length
         let height = 10
-        let arrowHeight = 25
 
         let x = startX - height / 2
         let y = startY
@@ -182,7 +179,6 @@ export const bridgeRow = (p5, startX, startY, endX, endY, data) => {
     } else {
         let width = Math.abs(startX - endX) / data.length
         let height = 10
-        let arrowHeight = 25
         let slope = (startY - endY) / (startX - endX)
         let b = startY - slope * startX
 
@@ -191,13 +187,13 @@ export const bridgeRow = (p5, startX, startY, endX, endY, data) => {
         let x2 = Math.sin(angle) * height
         let y2 = Math.cos(angle) * height
 
-        let xArrow = Math.sin(angle) * arrowHeight
-        let yArrow = Math.cos(angle) * arrowHeight
+        // let xArrow = Math.sin(angle) * arrowHeight
+        // let yArrow = Math.cos(angle) * arrowHeight
 
         let x = startX
         let y = startY
 
-        data.forEach((hour, index) => {
+        data.forEach(hour => {
             p5.fill(getManualIntervalColour(hour, colours['BRIDGE'][numColours], manualIntervals['BRIDGE'][numColours]))
 
             if (startX < endX) {
@@ -230,7 +226,6 @@ export const graphRow = (p5, startX, startY, endX, endY, data, selections, varia
     let var1 = 'import'
     let var2 = 'export'
     let numColours = 7
-    let interval = (dataBrackets.high - dataBrackets.low) / numColours
     let width = Math.abs(startX - endX) / Object.keys(data).length
     let height = 10
     let arrowHeight = 25
