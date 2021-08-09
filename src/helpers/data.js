@@ -103,7 +103,7 @@ export const getAverage = (data, variable) => {
             num++
         })
 
-        data[id]['averages'] = {...data[id]['averages'], [variable]: total/num}
+        data[id]['averages'] = { ...data[id]['averages'], [variable]: total / num }
     })
 }
 
@@ -161,7 +161,13 @@ export const averageData = (locations, selections, allData) => {
 
 export const getLocationData = (id, selections, data) => {
     let newData = []
+
     let years = Object.keys(data[id].data)
+    let currentYearIndex = years.indexOf('2021')
+    if (currentYearIndex > -1) {
+        years.splice(currentYearIndex, 1)
+    }
+
     if (years.length - selections[spiralValues.NUM_YEARS] > 0) {
         years = years.slice(years.length - selections[spiralValues.NUM_YEARS], years.length)
     }
