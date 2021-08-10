@@ -1,7 +1,15 @@
-import {shapes, spiralValues, spiralVariables, rectValues, rectVariables, sparkValues, sparkVariables, radialSparkValues, radialSparkVariables, radialBarSparkValues, radialBarSparkVariables} from '../constants'
+import {shapes, spiralValues, spiralVariables, rectValues, rectVariables, sparkValues, sparkVariables, radialSparkValues, radialSparkVariables, radialBarSparkValues, radialBarSparkVariables, themes} from '../constants'
 
 export const getDefaultSelections = (shape, view) => {
-    let selections = {}
+    let selections = {
+        mapPin: false,
+        opaque: false,
+        yearIndication: null,
+        fillMissing: true,
+        theme: themes.DEFAULT.val,
+        cluster: false,
+    }
+
     if (shape === shapes.SPIRAL.id) {
         Object.keys(spiralValues).forEach(val => {
             selections[spiralValues[val]] = spiralVariables[view][spiralValues[val]].default
@@ -25,4 +33,18 @@ export const getDefaultSelections = (shape, view) => {
     }
 
     return selections
+}
+
+export const getVariables = (shape, view) => {
+    if (shape === shapes.SPIRAL.id) {
+        return spiralVariables[view]
+    } else if (shape === shapes.RECT.id) {
+        return rectVariables[view]
+    } else if (shape === shapes.SPARK.id) {
+        return sparkVariables[view]
+    } else if (shape === shapes.RADIAL_SPARK.id) {
+        return radialSparkVariables[view]
+    } else if (shape === shapes.RADIAL_BAR_SPARK.id) {
+        return radialBarSparkVariables[view]
+    }
 }

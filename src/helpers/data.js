@@ -1,4 +1,8 @@
 import { rectValues, spiralValues } from "../constants";
+import { bigData as covidData } from "../data/covidData";
+import { data as tradeData } from "../data/tradeData"
+import {data as mapData} from "../data/weatherData"
+import { views, dataSets } from "../constants";
 
 export const sortData = (pt) => {
     if (pt < -15) {
@@ -179,4 +183,36 @@ export const getLocationData = (id, selections, data) => {
     return newData
 }
 
+export const getData = (view) => {
+    if (view === views.SCATTER.val) {
+        const dataBrackets = getDataBracketsMultiYear(covidData, 'cases')
+        const dataType = dataSets.COVID.val
+        const yBrackets = getVariableBrackets(covidData, 'population')
+        const categories = getDataCategories(covidData, 'continent')
 
+        let total = 0
+        Object.keys(categories).forEach(cat => {
+            total += categories[cat]
+        })
+
+        return { data: covidData, dataType, dataBrackets, yBrackets, categories, totalDataPts: total }
+
+    } else if (view === views.GRAPH.val) {
+        let var1 = 'import'
+        let var2 = 'tradeBalance'
+        const dataBrackets = getTradeDataBrackets(tradeData, var1)
+        const dataType = dataSets.TRADE.val
+        getAverage(tradeData, var2)
+
+        return { data: tradeData, dataType, dataBrackets, variable: var1 }
+
+    } else if (view === views.COMPARISON.val || view === views.MAP.val) {
+        let data = mapData[dataSets.TEMP.id].data
+        const dataType = dataSets.TEMP.val
+        const dataBrackets = getDataBrackets(data)
+
+        return { data, dataType, dataBrackets }
+    }
+
+    return {}
+}
