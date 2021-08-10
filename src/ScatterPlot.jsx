@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 
 import { drawLegend } from "./legend";
 import SelectionContext from "./SelectionContext";
-import { getRadius, scatterSpiral, scatterRow } from "./shapes";
+import { scatterSpiral, scatterRow } from "./shapes";
 import DataContext from "./DataContext";
 import { shapes, spiralValues, themeColours } from "./constants";
 import { formatNumbers } from "./helpers/format"
@@ -24,9 +24,9 @@ const ScatterPlot = ({ }) => {
     const { selections, shape, theme } = useContext(SelectionContext)
     const { data, dataBrackets, yBrackets, categories, dataType, totalDataPts } = useContext(DataContext)
     const [p5, setP5] = useState(null)
-    const [spacePerPt, setSpacePerPoint] = useState((graphWidth - getRadius(selections, selections[spiralValues.NUM_YEARS]) * 2) / totalDataPts)
+    const { minDistanceX, minDistanceY } = getMinDistance(selections, shape)
+    const [spacePerPt, setSpacePerPoint] = useState((graphWidth - minDistanceX * 2) / totalDataPts)
     const [pts, setPts] = useState({})
-    const [radius, setRadius] = useState(getRadius(selections))
     const colourTheme = themeColours[theme]
     const [hover, setHover] = useState(null)
 
@@ -52,15 +52,11 @@ const ScatterPlot = ({ }) => {
             })
 
             setPts(newPts)
-            setSpacePerPoint((graphWidth - radius * 2) / totalDataPts)
+            setSpacePerPoint((graphWidth - minDistanceX * 2) / totalDataPts)
         }
     }, [p5])
 
     useEffect(() => {
-        if (shape === shapes.SPIRAL.id) {
-            setRadius(getRadius(selections))
-        }
-
         if (p5) {
             draw(p5)
         }
@@ -68,7 +64,7 @@ const ScatterPlot = ({ }) => {
 
     const calcCategories = () => {
         let xCounters = {}
-        let walker = xBorder + radius
+        let walker = xBorder + minDistanceX
 
         Object.keys(categories).forEach(cat => {
             let numInCategory = categories[cat]
@@ -95,7 +91,7 @@ const ScatterPlot = ({ }) => {
 
         let xCounters = calcCategories()
         Object.keys(categories).forEach(cat => {
-            if (xCounters[cat] > xBorder + getRadius(selections, selections[spiralValues.NUM_YEARS])) {
+            if (xCounters[cat] > xBorder + minDistanceX) {
                 p5.stroke(50)
                 p5.line(
                     xCounters[cat] - spacePerPt / 2,
@@ -131,8 +127,8 @@ const ScatterPlot = ({ }) => {
 
         if (shape === shapes.SPIRAL.id) {
             scatterSpiral(pg, width / 2, height / 2, ptData, selections, dataType)
-        } else {
-            scatterRow(pg, width / 2, height / 2, ptData, selections, dataType)
+        } else if (shape === shapes.RECT.id) {
+            scatterRow(pg, width / 2 - minDistanceX/2, height / 2 - minDistanceY/2, ptData, selections, dataType)
         }
 
         return { pg, width, height }
@@ -153,7 +149,11 @@ const ScatterPlot = ({ }) => {
             hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
 
             p5.fill(colourTheme.pinBackground, 150)
-            p5.ellipse(pin.x, pin.y, minDistanceX * 3, minDistanceY * 3)
+            if (shape === shapes.SPIRAL.id) {
+                p5.ellipse(pin.x, pin.y, minDistanceX * 3, minDistanceY * 3)
+            } else if (shape === shapes.RECT.id) {
+                p5.rect(pin.x - minDistanceX, pin.y - minDistanceY, minDistanceX * 2, minDistanceY * 3)
+            }
             p5.image(hoverpg, pin.x - pin.width * 0.75, pin.y - pin.height * 0.75)
 
             p5.textAlign(p5.CENTER, p5.TOP)
@@ -163,8 +163,8 @@ const ScatterPlot = ({ }) => {
     }
 
     const calcY = (id) => {
-        const bottom = canvasHeight - yBorder - radius
-        const graphRange = graphHeight - radius * 2
+        const bottom = canvasHeight - yBorder - minDistanceY
+        const graphRange = graphHeight - minDistanceY * 2
         let logLow = Math.floor(Math.log2(yBrackets.low))
         let logHigh = Math.ceil(Math.log2(yBrackets.high))
         let logRange = logHigh - logLow
@@ -192,7 +192,7 @@ const ScatterPlot = ({ }) => {
         let distance = null
 
         Object.keys(pts).forEach(id => {
-            if (Math.abs(pts[id]['x'] - p5.mouseX) < radius + hoverTolerance && Math.abs(pts[id]['y'] - p5.mouseY) < radius + hoverTolerance) {
+            if (Math.abs(pts[id]['x'] - p5.mouseX) < minDistanceX + hoverTolerance && Math.abs(pts[id]['y'] - p5.mouseY) < minDistanceY + hoverTolerance) {
                 let newDistance = Math.pow(pts[id]['x'] - p5.mouseX, 2) + Math.pow(pts[id]['y'] - p5.mouseY, 2)
 
                 if ((!distance || newDistance < distance) && hover !== id) {
