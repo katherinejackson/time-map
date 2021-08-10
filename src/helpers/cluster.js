@@ -16,7 +16,7 @@ const averageCoords = (ids, map, locations) => {
 }
 
 
-const getMinDistance = (selections, shape, mapPin = false) => {
+export const getMinDistance = (selections, shape, mapPin = false) => {
     let minDistanceX;
     let minDistanceY;
 

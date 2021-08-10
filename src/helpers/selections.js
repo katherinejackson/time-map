@@ -6,7 +6,7 @@ export const getDefaultSelections = (shape, view) => {
         opaque: false,
         yearIndication: null,
         fillMissing: true,
-        theme: themes.DEFAULT.val,
+        theme: themes.DARK.val,
         cluster: false,
     }
 
