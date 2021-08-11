@@ -167,13 +167,14 @@ export const getLocationData = (id, selections, data) => {
     let newData = []
 
     let years = Object.keys(data[id].data)
-    let currentYearIndex = years.indexOf('2021')
-    if (currentYearIndex > -1) {
-        years.splice(currentYearIndex, 1)
-    }
+    //TODO: determine what is up with this
+    // let currentYearIndex = years.indexOf('2021')
+    // if (currentYearIndex > -1) {
+    //     years.splice(currentYearIndex, 1)
+    // }
 
-    if (years.length - selections[spiralValues.NUM_YEARS] > 0) {
-        years = years.slice(years.length - selections[spiralValues.NUM_YEARS], years.length)
+    if (years.length - selections.numYears > 0) {
+        years = years.slice(years.length - selections.numYears, years.length)
     }
 
     years.forEach(year => {

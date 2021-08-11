@@ -1,4 +1,20 @@
-import { colours } from "../constants";
+import { colours, manualIntervals } from "../constants";
+
+export const setColour = (p5, pt, numColours, interval, dataType) => {
+    if (numColours === 1
+        || numColours === 2
+        || numColours === 256
+        || numColours === 360
+    ) {
+        fillColourGradient(p5, pt, interval, numColours)
+    } else if (dataType === 'COVID' && numColours === 8) {
+        const colour = getCovidIntervalColour(pt, colours[dataType][numColours], manualIntervals[dataType][numColours])
+        p5.fill(colour)
+    } else {
+        const colour = getColourFromSet(pt, interval.high, interval.interval, colours[dataType][numColours])
+        p5.fill(colour)
+    }
+}
 
 export const getManualIntervalColour = (pt, colourSet, intervalSet) => {
     let counter = 0
@@ -14,7 +30,7 @@ export const getManualIntervalColour = (pt, colourSet, intervalSet) => {
     return colourSet[counter]
 }
 
-export const getColour = (pt, highest, interval, colourSet) => {
+export const getColourFromSet = (pt, highest, interval, colourSet) => {
     let bracket = Math.floor((highest - pt) / interval)
     
     //TODO: shouldnt need this; there is some kind of bug

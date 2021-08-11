@@ -1,30 +1,25 @@
-import { colours, manualIntervals, radianPerDay, radianPerMonth, rectValues, spiralValues, months, yearIndicators, monthColours, abbreviatedMonths, shapes, sparkValues, radialSparkValues } from "./constants";
-import { fillColourGradient, strokeColourGradient, getColour, getManualIntervalColour, fillLogColourGradient, getCovidIntervalColour } from "./helpers/colours";
+import { colours, manualIntervals, radianPerDay, radianPerMonth, rectValues, spiralValues, months, yearIndicators, monthColours, abbreviatedMonths, shapes, sparkValues, radialSparkValues, themeColours } from "./constants";
+import { fillColourGradient, getManualIntervalColour, fillLogColourGradient, getCovidIntervalColour, setColour } from "./helpers/colours";
 
-export const rectangle = (
+export const row = (
+    p5,
     dataType,
     interval,
     locationData,
     locationX,
     locationY,
-    mapPin,
-    p5,
+    startX,
+    startY,
     selections,
-    x,
-    y,
-    opaque,
-    hover,
-    yearIndication,
-    fillMissing,
-    theme,
+    encoding,
 ) => {
-    const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
-    const rowWidth = daysPerRow * selections[rectValues.DAY_WIDTH]
-    const pinHeight = ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * locationData.length - selections[rectValues.SPACE_BETWEEN_ROWS])
-    if (hover && (yearIndication === yearIndicators.MONTHS.val || yearIndication === yearIndicators.MONTHS_TICKS.val)) {
-        p5.fill(255, 255, 255)
-        p5.rect(x - 2, y - 10, rowWidth + 4, pinHeight + 10, 5)
-    }
+    const {numColours, mapPin, opaque, dayWidth, theme, spaceBetween, rowHeight, fillMissing} = selections
+    const daysPerRow = 365
+    const rowWidth = daysPerRow * dayWidth
+    const glyphHeight = (spaceBetween + rowHeight) * locationData.length - spaceBetween
+    let baseline = startY + glyphHeight
+    const increment = glyphHeight / interval.range
+    const middle = baseline - (interval.range / 2 * increment)
 
     if (mapPin) {
         p5.stroke(50)
@@ -35,92 +30,48 @@ export const rectangle = (
         } else {
             p5.noFill()
         }
-        p5.rect(x - 2, y - 2, rowWidth + 4, pinHeight + 4, 5)
+        p5.rect(startX - 2, startY - 2, rowWidth + 4, glyphHeight + 4, 5)
         p5.noStroke()
     } else if (opaque) {
         p5.fill(theme.pinBackground)
-        p5.rect(x - 2, y - 2, rowWidth + 4, pinHeight + 4, 5)
+        p5.rect(startX - 2, startY - 2, rowWidth + 4, glyphHeight + 4, 5)
     }
 
-    let startX = x
-    let startY = y
-    let rowCounter = 1
+    if (encoding !== 2) {
+        p5.stroke(theme.lineColour)
+        p5.noFill()
+        p5.rect(startX, startY, rowWidth, glyphHeight)
+        p5.noStroke()
+    }
+
     locationData.forEach(year => {
-        year.forEach(pt => {
-            if (pt) {
-                if (dataType === 'WIND' || dataType === 'PRECIP') {
-                    const colour = getManualIntervalColour(pt, colours[dataType][selections[rectValues.NUM_COLOURS]], manualIntervals[dataType][selections[rectValues.NUM_COLOURS]])
-                    p5.fill(colour)
+        for (let day = 0; day < year.length - 1; day++) {
+            if (year[day] !== '') {
+                if (encoding === 1) {
+                    p5.fill(theme.textColour)
                 } else {
-                    if (selections[rectValues.NUM_COLOURS] === 1
-                        || selections[rectValues.NUM_COLOURS] === 2
-                        || selections[rectValues.NUM_COLOURS] === 360
-                    ) {
-                        fillColourGradient(p5, pt, interval, selections[rectValues.NUM_COLOURS])
-                    } else {
-                        const colour = getColour(pt, interval.high, interval.interval, colours[dataType][selections[spiralValues.NUM_COLOURS]])
-                        p5.fill(colour)
-                    }
+                    setColour(p5, year[day], numColours, interval, dataType)
                 }
 
-                p5.rect(x, y, 1, selections[rectValues.ROW_HEIGHT])
-            } else {
-                if (fillMissing) {
-                    p5.fill(theme.missingData, 100)
-                    p5.rect(x, y, 1, selections[rectValues.ROW_HEIGHT])
+                if (encoding === 2) {
+                    p5.rect(startX + day * dayWidth, baseline, 1, rowHeight)
+                } else {
+                    let val = baseline - ((year[day] - interval.low) * increment)
+                    p5.ellipse(startX + day * dayWidth, val, 1, 1)
+                }
+            } else if (fillMissing) {
+                p5.fill(theme.missingData, 100)
+
+                if (encoding === 2) {
+                    p5.rect(startX + day * dayWidth, baseline, 1, rowHeight)
+                } else {
+                    p5.ellipse(startX + day * dayWidth, middle, 1, 1)
                 }
             }
+        }
 
-            if (rowCounter >= daysPerRow) {
-                x = startX
-                y = y + selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT]
-                rowCounter = 1
-            } else {
-                x = x + selections[rectValues.DAY_WIDTH]
-                rowCounter++
-            }
-        })
+        baseline = baseline + glyphHeight / 2
     })
-
-    if (yearIndication === yearIndicators.TICKS.val) {
-        const ticksRequired = 12 * selections[rectValues.NUM_ROWS]
-        p5.stroke(50)
-
-        const tickSpace = rowWidth / ticksRequired
-        for (let i = startX; i <= startX + rowWidth; i = i + tickSpace) {
-            p5.line(i, startY - 3, i, startY - 1)
-        }
-
-        p5.noStroke()
-    } else if (yearIndication === yearIndicators.COLOURS.val) {
-        const ticksRequired = 12 * selections[rectValues.NUM_ROWS]
-        const tickSpace = rowWidth / ticksRequired
-        for (let i = 0; i < ticksRequired; i++) {
-            p5.fill(monthColours[i % 12])
-            p5.rect(startX + i * tickSpace, startY - 4, tickSpace, 2)
-        }
-
-        p5.noStroke()
-    } else if (yearIndication === yearIndicators.MONTHS.val && hover) {
-        const ticksRequired = 12 * selections[rectValues.NUM_ROWS]
-        const tickSpace = rowWidth / ticksRequired
-        for (let i = 0; i < ticksRequired; i++) {
-            p5.textSize(6)
-            p5.fill(0)
-            p5.text(abbreviatedMonths[i % 12], startX + i * tickSpace + tickSpace / 2, startY - 6)
-        }
-    } else if (yearIndication === yearIndicators.MONTHS_TICKS.val && hover) {
-        const ticksRequired = 12 * selections[rectValues.NUM_ROWS]
-        const tickSpace = rowWidth / ticksRequired
-        for (let i = 0; i < ticksRequired; i++) {
-            p5.textSize(6)
-            p5.fill(theme.textColour)
-            p5.text(abbreviatedMonths[i % 12], startX + i * tickSpace + tickSpace / 2, startY - 6)
-            p5.stroke(0, 0, 0, 150)
-            p5.line(startX + i * tickSpace, startY - 10, startX + i * tickSpace, startY + pinHeight)
-            p5.noStroke()
-        }
-    }
 }
 
 export const scatterRow = (p5, x, y, data, selections, dataType) => {
@@ -512,8 +463,8 @@ export const spiral = (
                     ) {
                         fillColourGradient(p5, pt, interval, selections[spiralValues.NUM_COLOURS])
                     } else {
-                        const colour = getColour(pt, interval.high, interval.interval, colours[dataType][selections[spiralValues.NUM_COLOURS]])
-                        p5.fill(colour)
+                        // const colour = getColour(pt, interval.high, interval.interval, colours[dataType][selections[spiralValues.NUM_COLOURS]])
+                        // p5.fill(colour)
                     }
                 }
 
@@ -645,12 +596,12 @@ export const getRadialSparkRadius = (selections, numYears = selections[spiralVal
     return endOuterRing
 }
 
-export const getRowSize = (selections, numLocations, numYears = selections[rectValues.NUM_YEARS]) => {
-    const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
-    const dayWidth = Math.min(selections[rectValues.DAY_WIDTH] + numLocations / 25, 0.75)
+export const getRowSize = (selections, numLocations) => {
+    const daysPerRow = 365
+    const dayWidth = Math.min(selections.dayWidth + numLocations / 25, 0.75)
     const rowWidth = daysPerRow * dayWidth
-    const rowHeight = Math.min(selections[rectValues.ROW_HEIGHT] + numLocations * 1.5, 20)
-    const pinHeight = (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT]) * selections[rectValues.NUM_ROWS] * numYears
+    const rowHeight = Math.min(selections.rowHeight + numLocations * 1.5, 20)
+    const pinHeight = (selections.spaceBetween + selections.rowHeight) * selections.numYears
 
     return { dayWidth, rowWidth, rowHeight, pinHeight }
 }
@@ -693,6 +644,7 @@ export const spark = (
     yearIndicator,
     fillMissing,
     theme,
+    encoding,
 ) => {
     const numYears = Math.min(selections[sparkValues.NUM_YEARS], locationData.length)
     const dayWidth = selections[sparkValues.DAY_WIDTH]
@@ -702,7 +654,7 @@ export const spark = (
     const increment = sparkHeight / interval.range
     const middle = baseline - (interval.range / 2 * increment)
     const sparkLength = dayWidth * 365
-    const numColours = selections[sparkValues.NUM_COLOURS]
+    const numColours = encoding === 1 ? 0 : 8
 
     if (dataType === 'COVID') {
         locationData = [[...locationData]]
@@ -726,20 +678,10 @@ export const spark = (
     locationData.forEach(year => {
         for (let day = 0; day < year.length - 1; day++) {
             if (year[day] !== '') {
-                if (numColours === 0) {
+                if (encoding === 1) {
                     p5.fill(theme.textColour)
-                } else if (numColours === 1
-                    || numColours === 2
-                    || numColours === 256
-                    || numColours === 360
-                ) {
-                    fillColourGradient(p5, year[day], interval, numColours)
-                } else if (dataType === 'COVID' && numColours === 8) {
-                    const colour = getCovidIntervalColour(year[day], colours[dataType][numColours], manualIntervals[dataType][numColours])
-                    p5.fill(colour)
                 } else {
-                    const colour = getColour(year[day], interval.high, interval.interval, colours[dataType][selections[spiralValues.NUM_COLOURS]])
-                    p5.fill(colour)
+                    setColour(p5, year[day], numColours, interval)
                 }
 
                 let val = baseline - ((year[day] - interval.low) * increment)
@@ -770,6 +712,7 @@ export const radialSpark = (
     yearIndicator,
     fillMissing,
     theme,
+    encoding
 ) => {
     const numYears = Math.min(selections[radialSparkValues.NUM_YEARS], locationData.length)
     let spiralWidth = selections[radialSparkValues.SPIRAL_WIDTH]
@@ -777,7 +720,7 @@ export const radialSpark = (
     let angle = -Math.PI / 2
     let innerRing = selections[radialSparkValues.CORE_SIZE]
     let outerRing = innerRing + spiralWidth * 2
-    let numColours = selections[radialSparkValues.NUM_COLOURS]
+    let numColours = encoding === 1 ? 0 : 8
     let increment = (spiralWidth * 2) / interval.range
 
     if (dataType === 'COVID') {
@@ -849,8 +792,8 @@ export const radialSpark = (
                     const colour = getCovidIntervalColour(year[pt], colours[dataType][numColours], manualIntervals[dataType][numColours])
                     p5.fill(colour)
                 } else {
-                    const colour = getColour(year[pt], interval.high, interval.interval, colours[dataType][numColours])
-                    p5.fill(colour)
+                    // const colour = getColour(year[pt], interval.high, interval.interval, colours[dataType][numColours])
+                    // p5.fill(colour)
                 }
             } else if (fillMissing) {
                 p5.fill(theme.missingData, 100)
@@ -958,7 +901,7 @@ export const radialBarSpark = (
                     const colour = getCovidIntervalColour(year[pt], colours[dataType][numColours], manualIntervals[dataType][numColours])
                     p5.fill(colour)
                 } else {
-                    const colour = getColour(year[pt], interval.high, interval.interval, colours[dataType][numColours])
+                    const colour = setColour(year[pt], interval.high, interval.interval, colours[dataType][numColours], dataType)
                     p5.fill(colour)
                 }
 

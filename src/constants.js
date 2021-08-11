@@ -18,6 +18,7 @@ export const themeColours = {
         pinColour: 50,
         pinBackground: 220,
         missingData: 150,
+        name: 'DEFAULT'
     },
     DARK: {
         background: 0,
@@ -26,6 +27,7 @@ export const themeColours = {
         pinColour: 200,
         pinBackground: 50,
         missingData: 150,
+        name: 'DARK',
     },
     COLOUR_DARK: {
         background: 0,
@@ -34,6 +36,7 @@ export const themeColours = {
         pinColour: 200,
         pinBackground: 50,
         missingData: 150,
+        name: 'COLOUR_DARK'
     },
 }
 

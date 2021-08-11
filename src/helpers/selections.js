@@ -1,50 +1,26 @@
-import {shapes, spiralValues, spiralVariables, rectValues, rectVariables, sparkValues, sparkVariables, radialSparkValues, radialSparkVariables, radialBarSparkValues, radialBarSparkVariables, themes} from '../constants'
+import { shapes, themeColours, themes } from '../constants'
 
-export const getDefaultSelections = (shape, view) => {
+export const getDefaultSelections = (shape) => {
     let selections = {
         mapPin: false,
         opaque: false,
         yearIndication: null,
         fillMissing: true,
-        theme: themes.DARK.val,
+        theme: themeColours[themes.DARK.val],
         cluster: false,
+        numYears: 1,
+        numColours: 8,
     }
 
     if (shape === shapes.SPIRAL.id) {
-        Object.keys(spiralValues).forEach(val => {
-            selections[spiralValues[val]] = spiralVariables[view][spiralValues[val]].default
-        })
+        selections['coreSize'] = 4
+        selections['spiralWidth'] = 10
+        selections['spiralTightness'] = 0.02
     } else if (shape === shapes.RECT.id) {
-        Object.keys(rectValues).forEach(val => {
-            selections[rectValues[val]] = rectVariables[view][rectValues[val]].default
-        })
-    } else if (shape === shapes.SPARK.id) {
-        Object.keys(sparkValues).forEach(val => {
-            selections[sparkValues[val]] = sparkVariables[view][sparkValues[val]].default
-        })
-    } else if (shape === shapes.RADIAL_SPARK.id) {
-        Object.keys(radialSparkValues).forEach(val => {
-            selections[radialSparkValues[val]] = radialSparkVariables[view][radialSparkValues[val]].default
-        })
-    } else if (shape === shapes.RADIAL_BAR_SPARK.id) {
-        Object.keys(radialBarSparkValues).forEach(val => {
-            selections[radialBarSparkValues[val]] = radialBarSparkVariables[view][radialBarSparkValues[val]].default
-        })
+        selections['dayWidth'] = 0.125
+        selections['rowHeight'] = 10
+        selections['spaceBetween'] = 1
     }
 
     return selections
-}
-
-export const getVariables = (shape, view) => {
-    if (shape === shapes.SPIRAL.id) {
-        return spiralVariables[view]
-    } else if (shape === shapes.RECT.id) {
-        return rectVariables[view]
-    } else if (shape === shapes.SPARK.id) {
-        return sparkVariables[view]
-    } else if (shape === shapes.RADIAL_SPARK.id) {
-        return radialSparkVariables[view]
-    } else if (shape === shapes.RADIAL_BAR_SPARK.id) {
-        return radialBarSparkVariables[view]
-    }
 }

@@ -1,5 +1,5 @@
 import { colours, manualIntervals, rectValues, spiralValues } from './constants'
-import { fillColourGradient, getColour } from "./helpers/colours";
+import { fillColourGradient, setColour } from "./helpers/colours";
 import { formatTradeNumbers } from './helpers/format';
 
 export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, textColour) => {
@@ -30,7 +30,7 @@ export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, t
         p5.textSize(10)
         for (let i = interval.high; i > interval.low; i = Math.round((i - interval.interval) * 100) / 100) {
             p5.textAlign(p5.CENTER, p5.CENTER)
-            p5.fill(getColour(i, interval.high, interval.interval, colours[dataType][selections[rectValues.NUM_COLOURS]]))
+            // p5.fill(getColour(i, interval.high, interval.interval, colours[dataType][selections[rectValues.NUM_COLOURS]]))
             p5.rect(xStart + counter * length, y, length, 5)
             p5.fill(0)
             p5.line(xStart + counter * length, y, xStart + counter * length, y + 8)

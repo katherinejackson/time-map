@@ -19,7 +19,8 @@ const style = {
 }
 
 const LeafletMap = ({ }) => {
-    const { theme } = useContext(SelectionContext)
+    const { selections } = useContext(SelectionContext)
+    const theme = selections.theme.name
 
     return (
         <MapContainer
@@ -29,9 +30,9 @@ const LeafletMap = ({ }) => {
             zoomControl={false}
             zoomSnap={0.5}
         >
-            {theme === themes.DEFAULT.val ? <DefaultMap /> : null}
-            {theme === themes.DARK.val ? <DarkMap /> : null}
-            {theme === themes.COLOUR_DARK.val ? <ColourDarkMap /> : null}
+            {theme === 'DEFAULT' ? <DefaultMap /> : null}
+            {theme === 'DARK' ? <DarkMap /> : null}
+            {theme === 'COLOUR_DARK' ? <ColourDarkMap /> : null}
             <Overlay />
         </MapContainer>
     );

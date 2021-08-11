@@ -8,7 +8,7 @@ import { getDefaultSelections } from "./helpers/selections";
 import { shapes, rectValues, themeColours } from "./constants";
 import { getInterval, getManualInterval } from "./helpers/intervals";
 import { calculateClusters, addLocations } from "./helpers/cluster";
-import { rectangle, getRowSize, getPinAdjustment } from "./shapes";
+import { row, getRowSize, getPinAdjustment } from "./shapes";
 import SelectionContext from "./SelectionContext";
 import DataContext from "./DataContext";
 import { getGlyph } from "./helpers/mapCanvas";
@@ -21,12 +21,12 @@ const Overlay = () => {
     const map = useMap()
     const view = 'MAP'
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
-    const { cluster, selections, theme, fillMissing, mapPin, opaque, shape, yearIndication } = useContext(SelectionContext)
-    const colourTheme = themeColours[theme]
+    const { encoding, selections, shape} = useContext(SelectionContext)
+    const {mapPin, opaque, yearIndication, fillMissing, theme, cluster} = selections
     const [p5, setP5] = useState(null)
     const interval = dataType === 'TEMP'
-        ? getInterval(dataBrackets, selections[rectValues.NUM_COLOURS])
-        : getManualInterval(dataBrackets, selections[rectValues.NUM_COLOURS], dataType)
+        ? getInterval(dataBrackets, selections.numColours)
+        : getManualInterval(dataBrackets, selections.numColours, dataType)
     const [locationPins, setLocationPins] = useState([])
     const [detailed, setDetailed] = useState([])
     const [hover, setHover] = useState(null)
@@ -71,7 +71,7 @@ const Overlay = () => {
         let startX = x - daysPerRow * hoverSelections[rectValues.DAY_WIDTH] / 2;
         let startY = y - ((hoverSelections[rectValues.NUM_ROWS] * (hoverSelections[rectValues.SPACE_BETWEEN_ROWS] + hoverSelections[rectValues.ROW_HEIGHT])) * locationData.length) / 2
 
-        rectangle(dataType, interval, locationData, x, y, false, p5, hoverSelections, startX, startY, opaque, false, yearIndication, fillMissing, colourTheme)
+        row(dataType, interval, locationData, x, y, false, p5, hoverSelections, startX, startY, opaque, false, yearIndication, fillMissing, theme)
     }
 
     const setup = (p5, parent) => {
@@ -167,7 +167,7 @@ const Overlay = () => {
         drawGlyphs()
 
         drawZoom()
-        drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType, null, colourTheme.textColour)
+        drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType, null, theme.textColour)
         if (detailed.length) {
             drawDetailed()
         }
@@ -194,7 +194,7 @@ const Overlay = () => {
             })
 
             p5.textAlign(p5.CENTER, p5.TOP)
-            p5.fill(colourTheme.textColour)
+            p5.fill(theme.textColour)
             p5.text(formatNames(names), location.x, location.y + pin.minDistanceY)
         }
     }
@@ -221,7 +221,7 @@ const Overlay = () => {
         let glyphs = []
 
         pins.forEach(pin => {
-            let { pg, width, height } = getGlyph(p5, pin, data, interval, selections, colourTheme, fillMissing, mapPin, opaque, shape, yearIndication, cluster)
+            let { pg, width, height } = getGlyph(p5, pin, data, dataType, interval, shape, selections, encoding)
             glyphs.push({ ...pin, pg, width, height })
         })
 
@@ -244,24 +244,22 @@ const Overlay = () => {
 
     const drawDetailed = () => {
         let newSelections = selections
-        if (shape !== shapes.RECT.id) {
-            newSelections = getDefaultSelections(shapes.RECT.id, view)
-            newSelections = {
-                ...newSelections,
-                [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],
-                [rectValues.DAY_WIDTH]: 0.25,
-            }
+        newSelections = getDefaultSelections(shapes.RECT.id, view)
+        newSelections = {
+            ...newSelections,
+            [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],
+            [rectValues.DAY_WIDTH]: 0.25,
         }
 
-        const { pinHeight } = getRowSize(newSelections, detailed.length, selections[rectValues.NUM_YEARS])
+        const { pinHeight } = getRowSize(newSelections, detailed.length, newSelections[rectValues.NUM_YEARS])
         const locationHeight = pinHeight + 30
 
-        p5.fill(colourTheme.background)
+        p5.fill(theme.background)
         p5.rect(mapWidth - 150, 0, 150, locationHeight * detailed.length)
         p5.textAlign(p5.LEFT, p5.TOP)
 
         detailed.forEach((id, index) => {
-            p5.fill(colourTheme.textColour)
+            p5.fill(theme.textColour)
             p5.textSize(10)
             p5.text(locations[id].name, mapWidth - 150, index * locationHeight)
             drawDetailedRect(mapWidth - 75, index * locationHeight + pinHeight / 2 + 15, id, newSelections)

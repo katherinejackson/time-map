@@ -1,8 +1,8 @@
 import { averageData, getLocationData } from "./data";
-import { rectangle, spiral, spark, radialSpark, radialBarSpark, getSpiralSize, getRowSize, getPinAdjustment } from "../shapes";
+import { row, spiral, spark, radialSpark, radialBarSpark, getSpiralSize, getRowSize, getPinAdjustment } from "../shapes";
 import { shapes, rectValues, spiralValues, sparkValues } from "../constants";
 
-export const getGlyph = (p5, pin, data, interval, selections, theme, fillMissing, mapPin, opaque, shape, yearIndication, cluster, hover) => {
+export const getGlyph = (p5, pin, data, dataType, interval, shape, selections, encoding) => {
     let width = 500
     let height = 500
 
@@ -11,18 +11,11 @@ export const getGlyph = (p5, pin, data, interval, selections, theme, fillMissing
     pg.clear()
     pg.noStroke()
 
-    if (shape === shapes.SPIRAL.id) {
-        drawSpiral(p5, pg, width / 2, height / 2, pin.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, cluster, hover)
+    if (shape === shapes.SPIRAL.id && encoding === 2) {
+        drawSpiral(p5, pg, width / 2, height / 2, pin.locations, data, dataType, interval, selections, encoding)
     } else if (shape === shapes.RECT.id) {
-        drawRect(p5, pg, width / 2, height / 2, pin.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, cluster, hover)
-    } else if (shape === shapes.SPARK.id) {
-        drawSpark(p5, pg, width / 2, height / 2, pin.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
-    } else if (shape === shapes.RADIAL_SPARK.id) {
-        drawRadialSpark(p5, pg, width / 2, height / 2, pin.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
-    } else if (shape === shapes.RADIAL_BAR_SPARK.id) {
-        drawRadialBarSpark(p5, pg, width / 2, height / 2, pin.locations, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover)
+        drawRow(p5, pg, width / 2, height / 2, pin.locations, data, dataType, interval, selections, encoding)
     }
-
 
     return { pg, width, height }
 }
@@ -67,41 +60,31 @@ const drawSpiral = (p5, pg, x, y, ids, data, interval, selections, theme, fillMi
     }
 }
 
-const drawRect = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, cluster, hover = false) => {
-    let dataType = 'TEMP'
+const drawRow = (p5, pg, x, y, ids, data, dataType, interval, selections, encoding) => {
     let locationData = []
+    const theme = selections.theme
     if (ids.length === 1) {
         locationData = getLocationData(ids[0], selections, data)
     } else {
         locationData = averageData(ids, selections, data)
     }
 
-    let numLocations = hover ? getHoverTransform(ids.length) : ids.length
-    let { dayWidth, rowWidth, rowHeight } = getRowSize(selections, numLocations, locationData.length)
-    const newSelections = {
-        ...selections,
-        [rectValues.DAY_WIDTH]: dayWidth,
-        [rectValues.ROW_HEIGHT]: rowHeight,
+    const numLocations = ids.length
+    const { rowWidth, pinHeight } = getRowSize(selections, numLocations)
+    const startX = x - rowWidth / 2;
+    const startY = y - pinHeight / 2
+    if (selections.mapPin) {
+        startY = y - getPinAdjustment(selections, shapes.RECT.id, locationData)
     }
 
-    let pinHeight = ((newSelections[rectValues.NUM_ROWS] * (newSelections[rectValues.SPACE_BETWEEN_ROWS] + newSelections[rectValues.ROW_HEIGHT])) * locationData.length)
-    let startX = x - rowWidth / 2;
-    let startY = y - pinHeight / 2
-    if (mapPin) {
-        startY = y - getPinAdjustment(newSelections, shapes.RECT.id, locationData)
-    }
+    row(pg, dataType, interval, locationData, x, y, startX, startY, selections, encoding)
 
-    rectangle(dataType, interval, locationData, x, y, mapPin, pg, newSelections, startX, startY, opaque, hover, yearIndication, fillMissing, theme)
-    
-    if (cluster) {
-        pg.fill(theme.textColour)
-        pg.textSize(10)
-        pg.textAlign(p5.CENTER, p5.CENTER)
-        if (hover) {
-            pg.textSize(16)
-        }
-    
-        if (mapPin) {
+    pg.fill(theme.textColour)
+    pg.textSize(10)
+    pg.textAlign(p5.CENTER, p5.CENTER)
+
+    if (selections.cluster) {
+        if (selections.mapPin) {
             pg.fill(theme.pinBackground)
             pg.ellipse(x, y + 8, 16, 16)
             pg.fill(theme.textColour)
@@ -113,9 +96,10 @@ const drawRect = (p5, pg, x, y, ids, data, interval, selections, theme, fillMiss
             pg.text(ids.length, x, y + pinHeight / 2 + 8)
         }
     }
+
 }
 
-const drawSpark = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover = false) => {
+const drawSpark = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, encoding) => {
     let dataType = 'TEMP'
     let locationData = []
     if (ids.length === 1) {
@@ -126,19 +110,19 @@ const drawSpark = (p5, pg, x, y, ids, data, interval, selections, theme, fillMis
 
     let startY;
     if (mapPin) {
-        startY = y - selections[sparkValues.SPARK_HEIGHT]/2 - getPinAdjustment(selections, shapes.SPARK.id, locationData)
+        startY = y - selections[sparkValues.SPARK_HEIGHT] / 2 - getPinAdjustment(selections, shapes.SPARK.id, locationData)
     } else {
-        startY = y - selections[sparkValues.SPARK_HEIGHT]/2
+        startY = y - selections[sparkValues.SPARK_HEIGHT] / 2
     }
 
     const lineWidth = 365 * selections[sparkValues.DAY_WIDTH]
     const startX = x - lineWidth / 2
 
-    spark(dataType, interval, locationData, x, y, mapPin, pg, selections, startX, startY, opaque, true, yearIndication, fillMissing, theme)
+    spark(dataType, interval, locationData, x, y, mapPin, pg, selections, startX, startY, opaque, true, yearIndication, fillMissing, theme, encoding)
 
 }
 
-const drawRadialSpark = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover = false) => {
+const drawRadialSpark = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, encoding) => {
     let dataType = 'TEMP'
     let locationData = []
     if (ids.length === 1) {
@@ -152,7 +136,7 @@ const drawRadialSpark = (p5, pg, x, y, ids, data, interval, selections, theme, f
         startY = y - getPinAdjustment(selections, shapes.RADIAL_SPARK.id, locationData)
     }
 
-    radialSpark(dataType, interval, locationData, x, y, mapPin, pg, selections, x, startY, opaque, true, yearIndication, fillMissing, theme)
+    radialSpark(dataType, interval, locationData, x, y, mapPin, pg, selections, x, startY, opaque, true, yearIndication, fillMissing, theme, encoding)
 
 }
 
