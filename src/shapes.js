@@ -444,7 +444,6 @@ export const spiral = (
             angle = -Math.PI / 2
             innerRing = coreSize
         }
-
     }
 
     locationData.forEach(year => {
@@ -493,6 +492,12 @@ export const spiral = (
     })
 }
 
+// export const getShapeSize = (selections, shape, numLocations) => {
+//     if (shape === shapes.SPIRAL.id) {
+//         get
+//     }
+// }
+
 export const getSpiralSize = (selections, numLocations) => {
     let spiralWidth = Math.min(selections.spiralWidth + (numLocations * 2), 30)
     let spiralTightness = spiralWidth / 600
@@ -500,9 +505,10 @@ export const getSpiralSize = (selections, numLocations) => {
 }
 
 export const getRadius = (selections, numYears = selections.numYears) => {
-    const { coreSize, spaceBetween, spiralWidth } = selections
+    const { coreSize, spiralTightness, spiralWidth } = selections
+
     return Math.abs(Math.sin(-Math.PI / 2 + radianPerDay * 365 * numYears)
-        * (coreSize + spaceBetween * 365 * numYears)) + spiralWidth / 2
+        * (coreSize + spiralTightness * 365 * numYears)) + spiralWidth / 2
 }
 
 export const getGraphRadius = (selections, numSections) => {

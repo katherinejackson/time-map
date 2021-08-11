@@ -24,9 +24,7 @@ const Overlay = () => {
     const { encoding, selections, shape} = useContext(SelectionContext)
     const {mapPin, opaque, yearIndication, fillMissing, theme, cluster} = selections
     const [p5, setP5] = useState(null)
-    const interval = dataType === 'TEMP'
-        ? getInterval(dataBrackets, selections.numColours)
-        : getManualInterval(dataBrackets, selections.numColours, dataType)
+    const interval = getInterval(dataBrackets, selections.numColours)
     const [locationPins, setLocationPins] = useState([])
     const [detailed, setDetailed] = useState([])
     const [hover, setHover] = useState(null)

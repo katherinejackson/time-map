@@ -3,10 +3,10 @@ import React, { useContext, useEffect, useState } from 'react'
 
 import { drawLegend } from "./legend";
 import SelectionContext from "./SelectionContext";
-import { scatterSpiral, scatterRow, spark, radialSpark, radialBarSpark } from "./shapes";
+import { spiral, row } from "./shapes";
 import DataContext from "./DataContext";
 import { getManualInterval } from "./helpers/intervals";
-import { shapes, spiralValues, themeColours, rectValues } from "./constants";
+import { shapes } from "./constants";
 import { formatNumbers } from "./helpers/format"
 import { getMinDistance } from "./helpers/cluster"
 
@@ -21,16 +21,20 @@ const graphHeight = canvasHeight - yBorder * 2
 
 const hoverTolerance = 5
 
+const getSpacePerPt = (minDistanceX, totalDataPts) => {
+    return (graphWidth - minDistanceX * 2) / totalDataPts
+}
+
 const ScatterPlot = ({ }) => {
-    const { selections, shape, theme, opaque, fillMissing } = useContext(SelectionContext)
+    const { encoding, selections, shape} = useContext(SelectionContext)
     const { data, dataBrackets, yBrackets, categories, dataType, totalDataPts } = useContext(DataContext)
+    const {opaque, fillMissing, theme, numColours, numYears } = selections
     const [p5, setP5] = useState(null)
     const { minDistanceX, minDistanceY } = getMinDistance(selections, shape)
-    const [spacePerPt, setSpacePerPoint] = useState((graphWidth - minDistanceX * 2) / totalDataPts)
+    const spacePerPt = getSpacePerPt(minDistanceX, totalDataPts)
     const [pts, setPts] = useState({})
-    const colourTheme = themeColours[theme]
     const [hover, setHover] = useState(null)
-    const interval = getManualInterval(dataBrackets, selections[rectValues.NUM_COLOURS], dataType)
+    const interval = getManualInterval(dataBrackets, numColours, dataType)
 
     useEffect(() => {
         if (p5) {
@@ -54,7 +58,6 @@ const ScatterPlot = ({ }) => {
             })
 
             setPts(newPts)
-            setSpacePerPoint((graphWidth - minDistanceX * 2) / totalDataPts)
         }
     }, [p5])
 
@@ -86,8 +89,8 @@ const ScatterPlot = ({ }) => {
     const draw = (p5) => {
         p5.clear()
         p5.textAlign(p5.CENTER, p5.CENTER)
-        p5.background(colourTheme.background)
-        p5.stroke(colourTheme.lineColour)
+        p5.background(theme.background)
+        p5.stroke(theme.lineColour)
         p5.line(xBorder, yBorder, xBorder, canvasHeight - yBorder)
         p5.line(xBorder, canvasHeight - yBorder, canvasWidth - xBorder, canvasHeight - yBorder)
 
@@ -103,12 +106,12 @@ const ScatterPlot = ({ }) => {
             }
 
             p5.noStroke()
-            p5.fill(colourTheme.textColour)
+            p5.fill(theme.textColour)
             p5.text(cat, xCounters[cat] + (spacePerPt * categories[cat]) / 2, canvasHeight - 40)
         })
 
         drawYAxis(p5)
-        drawLegend(p5, canvasWidth / 2, canvasHeight - 25, selections, null, dataType, dataBrackets, colourTheme.textColour)
+        drawLegend(p5, canvasWidth / 2, canvasHeight - 25, selections, null, dataType, dataBrackets, theme.textColour)
         drawGlyphs()
 
         p5.noLoop()
@@ -123,20 +126,16 @@ const ScatterPlot = ({ }) => {
         pg.noStroke()
 
         let ptData = data[id]['cases']['2020']
-        if (selections[spiralValues.NUM_YEARS] === 2) {
+        if (numYears === 2) {
             ptData = ptData.concat(data[id]['cases']['2021'])
         }
 
+        ptData = [[...ptData]]
+
         if (shape === shapes.SPIRAL.id) {
-            scatterSpiral(pg, width / 2, height / 2, ptData, selections, dataType)
+            spiral(pg, dataType, interval, ptData, width/2, height/2, width/2, height/2, selections, encoding)
         } else if (shape === shapes.RECT.id) {
-            scatterRow(pg, width / 2 - minDistanceX / 2, height / 2 - minDistanceY / 2, ptData, selections, dataType)
-        } else if (shape === shapes.SPARK.id) {
-            spark(dataType, interval, ptData, width / 2, height / 2, false, pg, selections, width / 2 - minDistanceX / 2, height / 2 - minDistanceY / 2, opaque, false, null, fillMissing, colourTheme)
-        } else if (shape === shapes.RADIAL_SPARK.id) {
-            radialSpark(dataType, interval, ptData, width / 2, height / 2, false, pg, selections, width / 2, height / 2, opaque, false, null, fillMissing, colourTheme)
-        } else if (shape === shapes.RADIAL_BAR_SPARK.id) {
-            radialBarSpark(dataType, interval, ptData, width / 2, height / 2, false, pg, selections, width / 2, height / 2, opaque, false, null, fillMissing, colourTheme)
+            row(pg, dataType, interval, ptData, width/2, height/2, width/2, height/2, selections, encoding)
         }
 
         return { pg, width, height }
@@ -156,7 +155,7 @@ const ScatterPlot = ({ }) => {
             const hoverpg = p5.createGraphics(pin.width, pin.height)
             hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
 
-            p5.fill(colourTheme.pinBackground, 150)
+            p5.fill(theme.pinBackground, 150)
             if (shape === shapes.SPIRAL.id) {
                 p5.ellipse(pin.x, pin.y, minDistanceX * 3, minDistanceY * 3)
             } else if (shape === shapes.RECT.id) {
@@ -165,7 +164,7 @@ const ScatterPlot = ({ }) => {
             p5.image(hoverpg, pin.x - pin.width * 0.75, pin.y - pin.height * 0.75)
 
             p5.textAlign(p5.CENTER, p5.TOP)
-            p5.fill(colourTheme.textColour)
+            p5.fill(theme.textColour)
             p5.text(pin.name, pin.x, pin.y + minDistanceY)
         }
     }
@@ -185,7 +184,7 @@ const ScatterPlot = ({ }) => {
         let logHigh = Math.ceil(Math.log2(yBrackets.high))
         let numSteps = logHigh - logLow
         let spacePer = graphHeight / numSteps
-        p5.fill(colourTheme.textColour)
+        p5.fill(theme.textColour)
 
         let yWalker = canvasHeight - yBorder
         for (let i = 0; i < numSteps; i = i + 1) {

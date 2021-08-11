@@ -31,27 +31,14 @@ export const getMinDistance = (selections, shape, mapPin = false) => {
         minDistanceY = radius * 2
     } else if (shape === shapes.RECT.id) {
         const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
-        minDistanceX = daysPerRow * selections[rectValues.DAY_WIDTH]
-        minDistanceY = ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * selections[rectValues.NUM_YEARS])
+        minDistanceX = daysPerRow * selections.dayWidth
+        minDistanceY = (selections.spaceBetween + selections.rowHeight) * selections.numYears
 
         if (mapPin) {
             minDistanceY = minDistanceY + 12
         } else {
             minDistanceY = minDistanceY + 4
         }
-    } else if (shape === shapes.SPARK.id) {
-        minDistanceX = selections[sparkValues.DAY_WIDTH] * 365
-        minDistanceY = selections[sparkValues.SPARK_HEIGHT] * ((1 + selections[sparkValues.NUM_YEARS])/2)
-    } else if (shape === shapes.RADIAL_SPARK.id) {
-        let radius = getRadialSparkRadius(selections)
-
-        minDistanceX = radius
-        minDistanceY = radius
-    } else if (shape === shapes.RADIAL_BAR_SPARK.id) {
-        let radius = getRadialSparkRadius(selections)
-
-        minDistanceX = radius
-        minDistanceY = radius
     }
 
     return { minDistanceX, minDistanceY }
