@@ -1,5 +1,5 @@
 import { rectValues, spiralValues } from "../constants";
-import { bigData as covidData } from "../data/covidData";
+import { smallData as covidData } from "../data/covidData";
 import { data as tradeData } from "../data/tradeData"
 import {data as mapData} from "../data/weatherData"
 import { views, dataSets } from "../constants";
@@ -185,7 +185,10 @@ export const getLocationData = (id, selections, data) => {
 
 export const getData = (view) => {
     if (view === views.SCATTER.val) {
-        const dataBrackets = getDataBracketsMultiYear(covidData, 'cases')
+        const logData = getLogData(covidData)
+        const dataBrackets = getDataBracketsMultiYear(logData, 'cases')
+        // console.log(getDataBracketsMultiYear(covidData, 'cases'))
+        // console.log(getDataBracketsMultiYear(logData, 'cases'))
         const dataType = dataSets.COVID.val
         const yBrackets = getVariableBrackets(covidData, 'population')
         const categories = getDataCategories(covidData, 'continent')
@@ -195,7 +198,7 @@ export const getData = (view) => {
             total += categories[cat]
         })
 
-        return { data: covidData, dataType, dataBrackets, yBrackets, categories, totalDataPts: total }
+        return { data: logData, dataType, dataBrackets, yBrackets, categories, totalDataPts: total }
 
     } else if (view === views.GRAPH.val) {
         let var1 = 'import'
@@ -215,4 +218,29 @@ export const getData = (view) => {
     }
 
     return {}
+}
+
+const getLogData = (data) => {
+    const logData = JSON.parse(JSON.stringify(data))
+
+    Object.keys(data).forEach(id => {
+       Object.keys( data[id]['cases']).forEach(year => {
+        let yearData = data[id]['cases'][year]
+        let logYear = []
+        yearData.forEach(day => {
+            if (day > 0) {
+                logYear.push(Math.log10(day))
+            } else if (day === ''){
+                logYear.push('')
+            } else {
+                logYear.push(0)
+            }
+        })
+
+        logData[id]['cases'][year] = logYear
+       })
+        
+    })
+
+    return logData
 }

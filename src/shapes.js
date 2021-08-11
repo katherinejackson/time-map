@@ -1,5 +1,5 @@
 import { colours, manualIntervals, radianPerDay, radianPerMonth, rectValues, spiralValues, months, yearIndicators, monthColours, abbreviatedMonths, shapes, sparkValues, radialSparkValues } from "./constants";
-import { fillColourGradient, strokeColourGradient, getColour, getManualIntervalColour, fillLogColourGradient } from "./helpers/colours";
+import { fillColourGradient, strokeColourGradient, getColour, getManualIntervalColour, fillLogColourGradient, getCovidIntervalColour } from "./helpers/colours";
 
 export const rectangle = (
     dataType,
@@ -136,7 +136,7 @@ export const scatterRow = (p5, x, y, data, selections, dataType) => {
             if (numColours === 256 || numColours === 1) {
                 fillLogColourGradient(p5, day, 6, numColours)
             } else if (numColours === 8) {
-                let colour = getManualIntervalColour(day, colours[dataType][numColours], manualIntervals[dataType][numColours])
+                let colour = getCovidIntervalColour(day, colours[dataType][numColours], manualIntervals[dataType][numColours])
                 p5.fill(colour)
             }
         }
@@ -345,7 +345,7 @@ export const scatterSpiral = (p5, startX, startY, data, selections, dataType) =>
             if (numColours === 256 || numColours === 1) {
                 fillLogColourGradient(p5, day, 6, numColours)
             } else if (numColours === 8) {
-                let colour = getManualIntervalColour(day, colours[dataType][numColours], manualIntervals[dataType][numColours])
+                let colour = getCovidIntervalColour(day, colours[dataType][numColours], manualIntervals[dataType][numColours])
                 p5.fill(colour)
             }
         }
@@ -665,7 +665,7 @@ export const getPinAdjustment = (selections, shape, locationData) => {
     } else if (shape === shapes.RECT.id) {
         startY = 7 + ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * numYears)
     } else if (shape === shapes.SPARK.id) {
-        startY = 7 + selections[sparkValues.SPARK_HEIGHT]/2 * ((1 + numYears) / 2)
+        startY = 7 + selections[sparkValues.SPARK_HEIGHT] / 2 * ((1 + numYears) / 2)
     } else if (shape === shapes.RADIAL_SPARK.id) {
         const radius = getRadialSparkRadius(selections, numYears)
         startY = radius + 7
@@ -700,8 +700,13 @@ export const spark = (
     const totalHeight = sparkHeight * ((1 + numYears) / 2)
     let baseline = startY + sparkHeight
     const increment = sparkHeight / interval.range
-    const middle = baseline - (interval.range/2 * increment)
+    const middle = baseline - (interval.range / 2 * increment)
     const sparkLength = dayWidth * 365
+    const numColours = selections[sparkValues.NUM_COLOURS]
+
+    if (dataType === 'COVID') {
+        locationData = [[...locationData]]
+    }
 
     if (mapPin) {
         p5.fill(theme.pinColour)
@@ -720,16 +725,22 @@ export const spark = (
     locationData.forEach(year => {
         for (let day = 0; day < year.length - 1; day++) {
             if (year[day] !== '') {
-                if (selections[sparkValues.NUM_COLOURS] === 1
-                    || selections[sparkValues.NUM_COLOURS] === 2
-                    || selections[sparkValues.NUM_COLOURS] === 360
+                if (numColours === 0) {
+                    p5.stroke(theme.textColour)
+                } else if (numColours === 1
+                    || numColours === 2
+                    || numColours === 256
+                    || numColours === 360
                 ) {
-                    strokeColourGradient(p5, year[day], interval, selections[sparkValues.NUM_COLOURS])
+                    strokeColourGradient(p5, year[day], interval, numColours)
+                } else if (dataType === 'COVID' && numColours === 8) {
+                    const colour = getCovidIntervalColour(year[day], colours[dataType][numColours], manualIntervals[dataType][numColours])
+                    p5.stroke(colour)
                 } else {
                     const colour = getColour(year[day], interval.high, interval.interval, colours[dataType][selections[spiralValues.NUM_COLOURS]])
                     p5.stroke(colour)
                 }
-    
+
                 let val1 = baseline - ((year[day] - interval.low) * increment)
                 let val2 = baseline - ((year[day + 1] - interval.low) * increment)
 
@@ -738,7 +749,7 @@ export const spark = (
                 p5.stroke(theme.missingData, 100)
                 p5.line(startX + day * dayWidth, middle, startX + (day + 1) * dayWidth, middle)
             }
-            
+
         }
 
         baseline = baseline + sparkHeight / 2
@@ -772,6 +783,10 @@ export const radialSpark = (
     let outerRing = innerRing + spiralWidth * 2
     let numColours = selections[radialSparkValues.NUM_COLOURS]
     let increment = (spiralWidth * 2) / interval.range
+
+    if (dataType === 'COVID') {
+        locationData = [[...locationData]]
+    }
 
     if (mapPin) {
         let radius = getRadialSparkRadius(selections, numYears)
@@ -807,8 +822,8 @@ export const radialSpark = (
                 val1 = year[pt] - interval.low
                 val2 = year[pt + 1] - interval.low
             } else {
-                val1 = interval.range/2
-                val2 = interval.range/2
+                val1 = interval.range / 2
+                val2 = interval.range / 2
             }
 
 
@@ -828,11 +843,17 @@ export const radialSpark = (
             }
 
             if (year[pt] !== '') {
-                if (numColours === 1
+                if (numColours === 0) {
+                    p5.stroke(theme.textColour)
+                } else if (numColours === 1
                     || numColours === 2
+                    || numColours === 256
                     || numColours === 360
                 ) {
                     strokeColourGradient(p5, year[pt], interval, numColours)
+                } else if (dataType === 'COVID' && numColours === 8) {
+                    const colour = getCovidIntervalColour(year[pt], colours[dataType][numColours], manualIntervals[dataType][numColours])
+                    p5.stroke(colour)
                 } else {
                     const colour = getColour(year[pt], interval.high, interval.interval, colours[dataType][numColours])
                     p5.stroke(colour)
@@ -878,6 +899,10 @@ export const radialBarSpark = (
     let increment = (spiralWidth * 2) / interval.range
     let zeroRing = innerRing + spiralWidth
 
+    if (dataType === 'COVID') {
+        locationData = [[...locationData]]
+    }
+
     if (mapPin) {
         let radius = getRadialSparkRadius(selections, numYears)
         p5.fill(theme.pinColour)
@@ -917,7 +942,7 @@ export const radialBarSpark = (
                     val2 = year[pt + 1]
                 }
             }
-            
+
             let x1 = startX + p5.cos(angle) * (zeroRing + val1 * increment)
             let y1 = startY + p5.sin(angle) * (zeroRing + val1 * increment)
 
@@ -930,11 +955,16 @@ export const radialBarSpark = (
             let y2 = startY + p5.sin(angle) * (zeroRing + val2 * increment)
 
             if (year[pt] !== '') {
-                if (numColours === 1
+                if (numColours === 0) {
+                    p5.fill(theme.textColour)
+                } else if (numColours === 1
                     || numColours === 2
                     || numColours === 360
                 ) {
                     fillColourGradient(p5, year[pt], interval, numColours)
+                } else if (dataType === 'COVID' && numColours === 8) {
+                    const colour = getCovidIntervalColour(year[pt], colours[dataType][numColours], manualIntervals[dataType][numColours])
+                    p5.fill(colour)
                 } else {
                     const colour = getColour(year[pt], interval.high, interval.interval, colours[dataType][numColours])
                     p5.fill(colour)

@@ -158,8 +158,8 @@ export const spiralVariables = {
         5: { default: 1, id: 5, name: "Number of Years", values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15] },
     },
     SCATTER: {
-        1: { default: 0, id: 1, name: "Core size", values: [0, 1, 2, 3, 4] },
-        2: { default: 10, id: 2, name: "Width of spiral", values: [2, 4, 6, 8, 10, 12, 14, 16] },
+        1: { default: 4, id: 1, name: "Core size", values: [0, 1, 2, 3, 4] },
+        2: { default: 16, id: 2, name: "Width of spiral", values: [2, 4, 6, 8, 10, 12, 14, 16] },
         3: { default: 0.02, id: 3, name: "Tightness of Spiral", values: [0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04] },
         4: { default: 8, id: 4, name: "Number of Colours", values: [1, 8, 256] },
         5: { default: 1, id: 5, name: "Number of Years", values: [1, 2] },
@@ -197,7 +197,7 @@ export const sparkVariables = {
     SCATTER: {
         1: { default: 0.25, id: 1, name: "Day Width", values: [0.125, 0.25, 0.375, 0.5, 1] },
         2: { default: 20, id: 2, name: "Row Height", values: [10, 15, 20, 25, 30, 35] },
-        4: { default: 0, id: 4, name: "Number of Colours", values: [0, 1, 8, 256] },
+        4: { default: 8, id: 4, name: "Number of Colours", values: [0, 1, 8, 256] },
         5: { default: 1, id: 5, name: "Number of Years", values: [1, 2, 3, 4, 5] },
     },
     GRAPH: {
@@ -231,10 +231,10 @@ export const radialSparkVariables = {
         5: { default: 1, id: 5, name: "Number of Years", values: [1, 2, 3, 4, 5] },
     },
     SCATTER: {
-        1: { default: 20, id: 1, name: "Core size", values: [5, 10, 15, 20, 25, 30] },
+        1: { default: 0, id: 1, name: "Core size", values: [5, 10, 15, 20, 25, 30] },
         2: { default: 15, id: 2, name: "Width of spiral", values: [5, 10, 15, 20, 25] },
         3: { default: 0.04, id: 3, name: "Tightness of Spiral", values: [0.03, 0.035, 0.04, 0.045, 0.05] },
-        4: { default: 0, id: 4, name: "Number of Colours", values: [0, 1, 8, 256] },
+        4: { default: 8, id: 4, name: "Number of Colours", values: [0, 1, 8, 256] },
         5: { default: 1, id: 5, name: "Number of Years", values: [1, 2, 3, 4, 5] },
     },
     GRAPH: {
@@ -270,10 +270,10 @@ export const radialBarSparkVariables = {
         5: { default: 1, id: 5, name: "Number of Years", values: [1, 2, 3, 4, 5] },
     },
     SCATTER: {
-        1: { default: 20, id: 1, name: "Core size", values: [5, 10, 15, 20, 25, 30] },
+        1: { default: 0, id: 1, name: "Core size", values: [5, 10, 15, 20, 25, 30] },
         2: { default: 15, id: 2, name: "Width of spiral", values: [5, 10, 15, 20, 25] },
         3: { default: 0.04, id: 3, name: "Tightness of Spiral", values: [0.03, 0.035, 0.04, 0.045, 0.05] },
-        4: { default: 0, id: 4, name: "Number of Colours", values: [0, 1, 8, 256] },
+        4: { default: 8, id: 4, name: "Number of Colours", values: [0, 1, 8, 256] },
         5: { default: 1, id: 5, name: "Number of Years", values: [1, 2, 3, 4, 5] },
     },
     GRAPH: {

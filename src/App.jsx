@@ -10,7 +10,7 @@ import SelectionContext from "./SelectionContext"
 import { alaska as locations } from "./data/locationCoords"
 import { getDefaultSelections, getVariables } from "./helpers/selections"
 
-let options = window.options || { view: 'MAP', 'shape': 1 };
+let options = window.options || { view: 'SCATTER', shape: 5 };
 
 const App = () => {
     const view = options.view

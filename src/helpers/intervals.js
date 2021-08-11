@@ -1,7 +1,15 @@
 import { manualIntervals } from '../constants'
 
 export const getManualInterval = (dataBrackets, numColours, dataType) => {
-    return { intervals: manualIntervals[dataType][numColours], highest: dataBrackets.highest, lowest: dataBrackets.lowest, range: dataBrackets.highest - dataBrackets.lowest }
+    if (numColours === 0) {
+        numColours = 8
+    }
+
+    let high = dataBrackets.high
+    let low = dataBrackets.low
+    let range = dataBrackets.high - dataBrackets.low 
+
+    return { intervals: manualIntervals[dataType][numColours], high, low, range}
 }
 
 export const getInterval = (dataBrackets, numColours) => {

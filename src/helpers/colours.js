@@ -44,6 +44,9 @@ export const fillColourGradient = (p5, pt, interval, numColours) => {
         } else {
             p5.fill(220, Math.abs(middle - pt), 1)
         }
+    } else if (numColours === 256) {
+        const newPt = Math.floor(pt / interval.high * 256)
+        p5.fill(colours['COVID'][256][newPt])
     } else if (numColours === 360) {
         const newPt = Math.floor((interval.range - (-1 * interval.low + pt)) * 270 / interval.range)
         p5.colorMode(p5.HSB, 360, 100, 100)
@@ -66,11 +69,14 @@ export const strokeColourGradient = (p5, pt, interval, numColours) => {
         } else {
             p5.stroke(220, Math.abs(middle - pt), 1)
         }
+    } else if (numColours === 256) {
+        const newPt = Math.floor(pt / interval.high * 256)
+        p5.stroke(colours['COVID'][256][newPt])
     } else if (numColours === 360) {
         const newPt = Math.floor((interval.range - (-1 * interval.low + pt)) * 270 / interval.range)
         p5.colorMode(p5.HSB, 360, 100, 100)
         p5.stroke(newPt, 100, 95)
-    }
+    } 
 
     p5.colorMode(p5.RGB)
 }
@@ -78,7 +84,7 @@ export const strokeColourGradient = (p5, pt, interval, numColours) => {
 export const fillLogColourGradient = (p5, pt, max, numColours) => {
     let scaledPt = 0
     if (pt > 0) {
-        scaledPt = Math.floor(Math.log10(pt) / max * 256)
+        scaledPt = Math.floor(pt / max * 256)
     }
 
     if (numColours === 1) {
@@ -88,6 +94,19 @@ export const fillLogColourGradient = (p5, pt, max, numColours) => {
     } else if (numColours === 256) {
         p5.fill(colours['COVID'][256][scaledPt])
     }
+}
 
+export const getCovidIntervalColour = (pt, colourSet, intervalSet) => {
+    let counter = 0
+
+    while (pt > Math.log10(intervalSet[counter + 1])) {
+        counter++
+    }
+
+    if (colourSet[counter] === undefined) {
+        console.log('error', pt, colourSet, counter)
+    }
+
+    return colourSet[counter]
 }
 

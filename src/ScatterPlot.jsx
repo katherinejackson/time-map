@@ -3,11 +3,12 @@ import React, { useContext, useEffect, useState } from 'react'
 
 import { drawLegend } from "./legend";
 import SelectionContext from "./SelectionContext";
-import { scatterSpiral, scatterRow } from "./shapes";
+import { scatterSpiral, scatterRow, spark, radialSpark, radialBarSpark } from "./shapes";
 import DataContext from "./DataContext";
-import { shapes, spiralValues, themeColours } from "./constants";
+import { getManualInterval } from "./helpers/intervals";
+import { shapes, spiralValues, themeColours, rectValues } from "./constants";
 import { formatNumbers } from "./helpers/format"
-import {getMinDistance} from "./helpers/cluster"
+import { getMinDistance } from "./helpers/cluster"
 
 const canvasWidth = 1000
 const canvasHeight = window.innerHeight
@@ -21,7 +22,7 @@ const graphHeight = canvasHeight - yBorder * 2
 const hoverTolerance = 5
 
 const ScatterPlot = ({ }) => {
-    const { selections, shape, theme } = useContext(SelectionContext)
+    const { selections, shape, theme, opaque, fillMissing } = useContext(SelectionContext)
     const { data, dataBrackets, yBrackets, categories, dataType, totalDataPts } = useContext(DataContext)
     const [p5, setP5] = useState(null)
     const { minDistanceX, minDistanceY } = getMinDistance(selections, shape)
@@ -29,6 +30,7 @@ const ScatterPlot = ({ }) => {
     const [pts, setPts] = useState({})
     const colourTheme = themeColours[theme]
     const [hover, setHover] = useState(null)
+    const interval = getManualInterval(dataBrackets, selections[rectValues.NUM_COLOURS], dataType)
 
     useEffect(() => {
         if (p5) {
@@ -128,7 +130,13 @@ const ScatterPlot = ({ }) => {
         if (shape === shapes.SPIRAL.id) {
             scatterSpiral(pg, width / 2, height / 2, ptData, selections, dataType)
         } else if (shape === shapes.RECT.id) {
-            scatterRow(pg, width / 2 - minDistanceX/2, height / 2 - minDistanceY/2, ptData, selections, dataType)
+            scatterRow(pg, width / 2 - minDistanceX / 2, height / 2 - minDistanceY / 2, ptData, selections, dataType)
+        } else if (shape === shapes.SPARK.id) {
+            spark(dataType, interval, ptData, width / 2, height / 2, false, pg, selections, width / 2 - minDistanceX / 2, height / 2 - minDistanceY / 2, opaque, false, null, fillMissing, colourTheme)
+        } else if (shape === shapes.RADIAL_SPARK.id) {
+            radialSpark(dataType, interval, ptData, width / 2, height / 2, false, pg, selections, width / 2, height / 2, opaque, false, null, fillMissing, colourTheme)
+        } else if (shape === shapes.RADIAL_BAR_SPARK.id) {
+            radialBarSpark(dataType, interval, ptData, width / 2, height / 2, false, pg, selections, width / 2, height / 2, opaque, false, null, fillMissing, colourTheme)
         }
 
         return { pg, width, height }
