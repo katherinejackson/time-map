@@ -30,7 +30,7 @@ export const getMinDistance = (selections, shape, mapPin = false) => {
         minDistanceX = radius * 2
         minDistanceY = radius * 2
     } else if (shape === shapes.RECT.id) {
-        const daysPerRow = Math.ceil(365 / selections[rectValues.NUM_ROWS])
+        const daysPerRow = 365
         minDistanceX = daysPerRow * selections.dayWidth
         minDistanceY = (selections.spaceBetween + selections.rowHeight) * selections.numYears
 

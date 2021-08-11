@@ -28,7 +28,7 @@ const getSpacePerPt = (minDistanceX, totalDataPts) => {
 const ScatterPlot = ({ }) => {
     const { encoding, selections, shape} = useContext(SelectionContext)
     const { data, dataBrackets, yBrackets, categories, dataType, totalDataPts } = useContext(DataContext)
-    const {opaque, fillMissing, theme, numColours, numYears } = selections
+    const {theme, numColours, numYears } = selections
     const [p5, setP5] = useState(null)
     const { minDistanceX, minDistanceY } = getMinDistance(selections, shape)
     const spacePerPt = getSpacePerPt(minDistanceX, totalDataPts)
