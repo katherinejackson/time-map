@@ -721,41 +721,37 @@ export const spark = (
 
     p5.stroke(theme.lineColour)
     p5.rect(startX, startY, sparkLength, totalHeight)
+    p5.noStroke()
 
     locationData.forEach(year => {
         for (let day = 0; day < year.length - 1; day++) {
             if (year[day] !== '') {
                 if (numColours === 0) {
-                    p5.stroke(theme.textColour)
+                    p5.fill(theme.textColour)
                 } else if (numColours === 1
                     || numColours === 2
                     || numColours === 256
                     || numColours === 360
                 ) {
-                    strokeColourGradient(p5, year[day], interval, numColours)
+                    fillColourGradient(p5, year[day], interval, numColours)
                 } else if (dataType === 'COVID' && numColours === 8) {
                     const colour = getCovidIntervalColour(year[day], colours[dataType][numColours], manualIntervals[dataType][numColours])
-                    p5.stroke(colour)
+                    p5.fill(colour)
                 } else {
                     const colour = getColour(year[day], interval.high, interval.interval, colours[dataType][selections[spiralValues.NUM_COLOURS]])
-                    p5.stroke(colour)
+                    p5.fill(colour)
                 }
 
-                let val1 = baseline - ((year[day] - interval.low) * increment)
-                let val2 = baseline - ((year[day + 1] - interval.low) * increment)
-
-                p5.line(startX + day * dayWidth, val1, startX + (day + 1) * dayWidth, val2)
+                let val = baseline - ((year[day] - interval.low) * increment)
+                p5.ellipse(startX + day * dayWidth, val, 1, 1)
             } else if (fillMissing) {
-                p5.stroke(theme.missingData, 100)
-                p5.line(startX + day * dayWidth, middle, startX + (day + 1) * dayWidth, middle)
+                p5.fill(theme.missingData, 100)
+                p5.ellipse(startX + day * dayWidth, middle, 1, 1)
             }
-
         }
 
         baseline = baseline + sparkHeight / 2
     })
-
-    p5.noStroke()
 }
 
 export const radialSpark = (
@@ -834,41 +830,37 @@ export const radialSpark = (
             innerRing += spiralTightness
             outerRing += spiralTightness
 
-            let x2 = startX + p5.cos(angle) * (innerRing + val2 * increment)
-            let y2 = startY + p5.sin(angle) * (innerRing + val2 * increment)
-
             if (!opaque && !mapPin) {
                 p5.stroke(theme.pinBackground)
                 p5.ellipse(startX + p5.cos(angle) * innerRing, startY + p5.sin(angle) * innerRing, 1, 1)
             }
 
+            p5.noStroke()
             if (year[pt] !== '') {
                 if (numColours === 0) {
-                    p5.stroke(theme.textColour)
+                    p5.fill(theme.textColour)
                 } else if (numColours === 1
                     || numColours === 2
                     || numColours === 256
                     || numColours === 360
                 ) {
-                    strokeColourGradient(p5, year[pt], interval, numColours)
+                    fillColourGradient(p5, year[pt], interval, numColours)
                 } else if (dataType === 'COVID' && numColours === 8) {
                     const colour = getCovidIntervalColour(year[pt], colours[dataType][numColours], manualIntervals[dataType][numColours])
-                    p5.stroke(colour)
+                    p5.fill(colour)
                 } else {
                     const colour = getColour(year[pt], interval.high, interval.interval, colours[dataType][numColours])
-                    p5.stroke(colour)
+                    p5.fill(colour)
                 }
             } else if (fillMissing) {
-                p5.stroke(theme.missingData, 100)
+                p5.fill(theme.missingData, 100)
             } else {
                 p5.noStroke()
             }
 
-            p5.line(x1, y1, x2, y2)
+            p5.ellipse(x1, y1, 1, 1)
         }
     })
-
-    p5.noStroke()
 }
 
 export const radialBarSpark = (
