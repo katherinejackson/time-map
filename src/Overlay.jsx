@@ -64,14 +64,15 @@ const Overlay = () => {
         }
     }, [p5, locationPins, detailed, cluster, shape])
 
-    const drawDetailedRect = (x, y, id, hoverSelections) => {
+    const drawDetailedRect = (x, y, id, detailedSelections) => {
         let locationData = getLocationData(id, selections, data)
-        const daysPerRow = Math.ceil(365 / hoverSelections[rectValues.NUM_ROWS])
+        const daysPerRow = 365
 
-        let startX = x - daysPerRow * hoverSelections[rectValues.DAY_WIDTH] / 2;
-        let startY = y - ((hoverSelections[rectValues.NUM_ROWS] * (hoverSelections[rectValues.SPACE_BETWEEN_ROWS] + hoverSelections[rectValues.ROW_HEIGHT])) * locationData.length) / 2
+        const { rowWidth, pinHeight } = getRowSize(detailedSelections, 1)
+        const startX = x - rowWidth / 2;
+        const startY = y - pinHeight / 2
 
-        row(dataType, interval, locationData, x, y, false, p5, hoverSelections, startX, startY, opaque, false, yearIndication, fillMissing, theme)
+        row(p5, dataType, interval, locationData, x, y, startX, startY, detailedSelections, encoding)
     }
 
     const setup = (p5, parent) => {
@@ -243,15 +244,14 @@ const Overlay = () => {
     }
 
     const drawDetailed = () => {
-        let newSelections = selections
-        newSelections = getDefaultSelections(shapes.RECT.id, view)
+        let newSelections = getDefaultSelections(shapes.RECT.id, view)
         newSelections = {
             ...newSelections,
-            [rectValues.NUM_COLOURS]: selections[rectValues.NUM_COLOURS],
+            [rectValues.NUM_COLOURS]: selections.numColours,
             [rectValues.DAY_WIDTH]: 0.25,
         }
 
-        const { pinHeight } = getRowSize(newSelections, detailed.length, newSelections[rectValues.NUM_YEARS])
+        const { pinHeight } = getRowSize(newSelections, detailed.length, newSelections.numYears)
         const locationHeight = pinHeight + 30
 
         p5.fill(theme.background)

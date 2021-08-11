@@ -11,30 +11,27 @@ export const getGlyph = (p5, pin, data, dataType, interval, shape, selections, e
     pg.clear()
     pg.noStroke()
 
-    if (shape === shapes.SPIRAL.id && encoding === 2) {
-        drawSpiral(p5, pg, width / 2, height / 2, pin.locations, data, dataType, interval, selections, encoding)
-    } else if (shape === shapes.RECT.id) {
-        drawRow(p5, pg, width / 2, height / 2, pin.locations, data, dataType, interval, selections, encoding)
-    }
-
-    return { pg, width, height }
-}
-
-export const getHoverTransform = (numLocations) => {
-    return numLocations + 5
-}
-
-const drawSpiral = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, pin, hover = false) => {
-    let dataType = 'TEMP'
     let locationData = []
+    const ids = pin.locations
     if (ids.length === 1) {
         locationData = getLocationData(ids[0], selections, data)
     } else {
         locationData = averageData(ids, selections, data)
     }
 
-    let numLocations = hover ? getHoverTransform(ids.length) : ids.length
-    let { spiralWidth, spiralTightness } = getSpiralSize(selections, numLocations)
+    if (shape === shapes.SPIRAL.id) {
+        drawSpiral(p5, pg, width / 2, height / 2, ids, locationData, dataType, interval, selections, encoding)
+    } else if (shape === shapes.RECT.id) {
+        drawRow(p5, pg, width / 2, height / 2, ids, locationData, dataType, interval, selections, encoding)
+    }
+
+    return { pg, width, height }
+}
+
+const drawSpiral = (p5, pg, x, y, ids, data, dataType, interval, selections, encoding) => {
+    const numLocations = ids.length
+    const { spiralWidth, spiralTightness } = getSpiralSize(selections, numLocations)
+    const {mapPin, theme, hover} = selections
 
     const newSelections = {
         ...selections,
@@ -44,12 +41,12 @@ const drawSpiral = (p5, pg, x, y, ids, data, interval, selections, theme, fillMi
 
     let startY = y
     if (mapPin) {
-        startY = startY - getPinAdjustment(newSelections, shapes.SPIRAL.id, locationData)
+        startY = startY - getPinAdjustment(newSelections, shapes.SPIRAL.id, data)
     }
 
-    spiral(dataType, interval, locationData, x, y, mapPin, pg, newSelections, x, startY, opaque, hover, yearIndication, fillMissing, theme)
+    spiral(pg, dataType, interval, data, x, y, x, startY, selections, encoding)
 
-    if (pin) {
+    if (mapPin) {
         pg.fill(theme.textColour)
         pg.textSize(10)
         if (hover) {
@@ -61,30 +58,24 @@ const drawSpiral = (p5, pg, x, y, ids, data, interval, selections, theme, fillMi
 }
 
 const drawRow = (p5, pg, x, y, ids, data, dataType, interval, selections, encoding) => {
-    let locationData = []
-    const theme = selections.theme
-    if (ids.length === 1) {
-        locationData = getLocationData(ids[0], selections, data)
-    } else {
-        locationData = averageData(ids, selections, data)
-    }
+    const {theme, mapPin, cluster} = selections
 
     const numLocations = ids.length
     const { rowWidth, pinHeight } = getRowSize(selections, numLocations)
     const startX = x - rowWidth / 2;
     const startY = y - pinHeight / 2
-    if (selections.mapPin) {
-        startY = y - getPinAdjustment(selections, shapes.RECT.id, locationData)
+    if (mapPin) {
+        startY = y - getPinAdjustment(selections, shapes.RECT.id, data)
     }
 
-    row(pg, dataType, interval, locationData, x, y, startX, startY, selections, encoding)
+    row(pg, dataType, interval, data, x, y, startX, startY, selections, encoding)
 
     pg.fill(theme.textColour)
     pg.textSize(10)
     pg.textAlign(p5.CENTER, p5.CENTER)
 
-    if (selections.cluster) {
-        if (selections.mapPin) {
+    if (cluster) {
+        if (mapPin) {
             pg.fill(theme.pinBackground)
             pg.ellipse(x, y + 8, 16, 16)
             pg.fill(theme.textColour)
