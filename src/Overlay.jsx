@@ -164,9 +164,11 @@ const Overlay = () => {
     const redrawOverlay = () => {
         p5.clear()
         drawGlyphs()
-
         drawZoom()
-        drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType, null, theme.textColour)
+        if (encoding !== 1) {
+            drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType, null, theme.textColour)
+        }
+
         if (detailed.length) {
             drawDetailed()
         }

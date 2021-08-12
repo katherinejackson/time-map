@@ -17,8 +17,8 @@ export const getDefaultSelections = (shape) => {
         selections['spiralWidth'] = 10
         selections['spiralTightness'] = 0.02
     } else if (shape === shapes.RECT.id) {
-        selections['dayWidth'] = 0.125
-        selections['rowHeight'] = 10
+        selections['dayWidth'] = 0.25
+        selections['rowHeight'] = 25
         selections['spaceBetween'] = 1
     }
 

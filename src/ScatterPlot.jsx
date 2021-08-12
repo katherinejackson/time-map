@@ -111,7 +111,10 @@ const ScatterPlot = ({ }) => {
         })
 
         drawYAxis(p5)
-        drawLegend(p5, canvasWidth / 2, canvasHeight - 25, selections, null, dataType, dataBrackets, theme.textColour)
+        if (encoding !== 1) {
+            drawLegend(p5, canvasWidth / 2, canvasHeight - 25, selections, interval, dataType, null, theme.textColour)
+        }
+
         drawGlyphs()
 
         p5.noLoop()
@@ -135,7 +138,7 @@ const ScatterPlot = ({ }) => {
         if (shape === shapes.SPIRAL.id) {
             spiral(pg, dataType, interval, ptData, width/2, height/2, width/2, height/2, selections, encoding)
         } else if (shape === shapes.RECT.id) {
-            row(pg, dataType, interval, ptData, width/2, height/2, width/2, height/2, selections, encoding)
+            row(pg, dataType, interval, ptData, width/2, height/2, width/2 - minDistanceX/2, height/2 - minDistanceY, selections, encoding)
         }
 
         return { pg, width, height }
@@ -165,7 +168,7 @@ const ScatterPlot = ({ }) => {
 
             p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(theme.textColour)
-            p5.text(pin.name, pin.x, pin.y + minDistanceY)
+            p5.text(pin.name, pin.x, pin.y + minDistanceY + 10)
         }
     }
 

@@ -1,36 +1,22 @@
 import { colours, manualIntervals, rectValues, spiralValues } from './constants'
 import { fillColourGradient, setColour } from "./helpers/colours";
-import { formatTradeNumbers } from './helpers/format';
+import { formatNumbers, formatTradeNumbers } from './helpers/format';
 
 export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, textColour) => {
-    if (selections[spiralValues.NUM_COLOURS] === 0) {
-        return 
-    }
-
-    if (dataType === 'COVID') {
-        if (selections[spiralValues.NUM_COLOURS] === 8) {
-            drawManualLegend(p5, x, y, selections, dataType, textColour)
-        } else if (selections[spiralValues.NUM_COLOURS] === 256) {
-            drawLogarithmicLegend(p5, x, y, textColour)
-        } else if (selections[spiralValues.NUM_COLOURS] === 1) {
-            drawLogarithmicSingleColourLegend(p5, x, y, brackets, textColour)
-        }
-    } else if (dataType === 'TRADE' || dataType === 'WIND' || dataType === 'PRECIP' || dataType === 'BRIDGE') {
+    if (dataType === 'COVID' && selections.numColours === 8) {
         drawManualLegend(p5, x, y, selections, dataType, textColour)
-    } else if (dataType === 'WIND' || dataType === 'PRECIP') {
-        drawManualLegend(p5, x, y, selections, dataType, textColour)
-    } else if (selections[rectValues.NUM_COLOURS] <= 2 || selections[rectValues.NUM_COLOURS] > 10) {
+    } else if (selections.numColours <= 2 || selections.numColours > 10) {
         drawGradientLegend(p5, x, y, selections, interval, textColour)
     } else {
         p5.stroke(1)
         const length = 25
-        const xStart = x - selections[rectValues.NUM_COLOURS] * length / 2
+        const xStart = x - selections.numColours * length / 2
         let counter = 0
 
         p5.textSize(10)
-        for (let i = interval.high; i > interval.low; i = Math.round((i - interval.interval) * 100) / 100) {
+        for (let i = interval.low; i > interval.high; i = Math.round((i + interval.interval) * 100) / 100) {
             p5.textAlign(p5.CENTER, p5.CENTER)
-            // p5.fill(getColour(i, interval.high, interval.interval, colours[dataType][selections[rectValues.NUM_COLOURS]]))
+            setColour(p5, i, selections.numColours, interval, dataType)
             p5.rect(xStart + counter * length, y, length, 5)
             p5.fill(0)
             p5.line(xStart + counter * length, y, xStart + counter * length, y + 8)
@@ -51,7 +37,7 @@ export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, t
 
 export const drawManualLegend = (p5, x, y, selections, dataType, textColour) => {
     p5.stroke(1)
-    const numColours = selections[spiralValues.NUM_COLOURS]
+    const numColours = selections.numColours
     const length = 75
     const xStart = x - numColours * length / 2
     const intervals = manualIntervals[dataType][numColours]
@@ -59,7 +45,7 @@ export const drawManualLegend = (p5, x, y, selections, dataType, textColour) => 
 
     p5.textSize(10)
 
-    for (let i = 1; i < intervals.length ; i++) {
+    for (let i = 1; i < intervals.length; i++) {
         p5.textAlign(p5.CENTER, p5.CENTER)
         p5.fill(colours[dataType][numColours][i - 1])
         p5.rect(xStart + counter * length, y, length, 5)
@@ -88,10 +74,10 @@ export const drawManualLegend = (p5, x, y, selections, dataType, textColour) => 
         p5.text(intervals[intervals.length - 1], xStart + counter * length, y + 15)
     }
 
-    // p5.fill(200)
-    // p5.rect(x + numColours * length / 2 + 50, y, 40, 10)
-    // p5.fill(textColour)
-    // p5.text('No Data', x + numColours * length / 2 + 50 + 20, y + 15)
+    p5.fill(200)
+    p5.rect(x + numColours * length / 2 + 50, y, 40, 10)
+    p5.fill(textColour)
+    p5.text('No Data', x + numColours * length / 2 + 50 + 20, y + 15)
 }
 
 const drawGradientLegend = (p5, x, y, selections, interval, textColour) => {
