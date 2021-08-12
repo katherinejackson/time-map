@@ -408,7 +408,7 @@ export const spiral = (
     encoding,
 ) => {
     const { spiralWidth, spiralTightness, coreSize, mapPin, opaque, theme, numColours, fillMissing } = selections
-    const increment = (spiralWidth * 2) / interval.range
+    const increment = spiralWidth / interval.range
     let angle = -Math.PI / 2
     let radius = getRadius(selections, locationData.length)
     let innerRing = coreSize
@@ -464,6 +464,9 @@ export const spiral = (
                     const x = startX + p5.cos(angle) * (innerRing + val * increment)
                     const y = startY + p5.sin(angle) * (innerRing + val * increment)
                     p5.ellipse(x, y, 1, 1)
+                    if (val * increment >= 20) {
+                        console.log(val, increment, val * increment)
+                    }
                 }
             } else if (fillMissing) {
                 p5.fill(theme.missingData, 100)

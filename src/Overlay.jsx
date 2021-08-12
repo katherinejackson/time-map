@@ -5,14 +5,15 @@ import { useMap } from "react-leaflet";
 import { drawLegend } from "./legend";
 import { getLocationData } from "./helpers/data";
 import { getDefaultSelections } from "./helpers/selections";
-import { shapes, rectValues, themeColours } from "./constants";
-import { getInterval, getManualInterval } from "./helpers/intervals";
+import { shapes } from "./constants";
+import { getInterval } from "./helpers/intervals";
 import { calculateClusters, addLocations } from "./helpers/cluster";
 import { row, getRowSize, getPinAdjustment } from "./shapes";
 import SelectionContext from "./SelectionContext";
 import DataContext from "./DataContext";
 import { getGlyph } from "./helpers/mapCanvas";
 import { formatNames } from "./helpers/format";
+import { getMinDistance } from "./helpers/cluster"
 
 const mapWidth = 1000
 const mapHeight = window.innerHeight * 0.75
@@ -28,6 +29,7 @@ const Overlay = () => {
     const [locationPins, setLocationPins] = useState([])
     const [detailed, setDetailed] = useState([])
     const [hover, setHover] = useState(null)
+    const { minDistanceX, minDistanceY } = getMinDistance(selections, shape)
 
     useEffect(() => {
         if (locations && p5) {
@@ -187,6 +189,13 @@ const Overlay = () => {
             let location = map.latLngToContainerPoint([pin.lat, pin.long])
             let hoverpg = p5.createGraphics(pin.width, pin.height)
             hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
+
+            p5.fill(theme.pinBackground, 150)
+            if (shape === shapes.SPIRAL.id) {
+                p5.ellipse(pin.x, pin.y, minDistanceX * 3, minDistanceY * 3)
+            } else if (shape === shapes.RECT.id) {
+                p5.rect(pin.x - minDistanceX, pin.y - minDistanceY, minDistanceX * 2, minDistanceY * 3)
+            }
             p5.image(hoverpg, location.x - pin.width * 0.75, location.y - pin.height * 0.75)
 
             let names = []
@@ -196,7 +205,7 @@ const Overlay = () => {
 
             p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(theme.textColour)
-            p5.text(formatNames(names), location.x, location.y + pin.minDistanceY)
+            p5.text(formatNames(names), location.x, location.y + minDistanceY)
         }
     }
 
@@ -247,8 +256,8 @@ const Overlay = () => {
         let newSelections = getDefaultSelections(shapes.RECT.id, view)
         newSelections = {
             ...newSelections,
-            [rectValues.NUM_COLOURS]: selections.numColours,
-            [rectValues.DAY_WIDTH]: 0.25,
+            numColours: selections.numColours,
+            dayWidth: 0.25,
         }
 
         const { pinHeight } = getRowSize(newSelections, detailed.length, newSelections.numYears)

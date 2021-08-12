@@ -14,7 +14,7 @@ export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, t
         let counter = 0
 
         p5.textSize(10)
-        for (let i = interval.low; i > interval.high; i = Math.round((i + interval.interval) * 100) / 100) {
+        for (let i = interval.low; i < interval.high; i = Math.round((i + interval.interval) * 100) / 100) {
             p5.textAlign(p5.CENTER, p5.CENTER)
             setColour(p5, i, selections.numColours, interval, dataType)
             p5.rect(xStart + counter * length, y, length, 5)
@@ -31,7 +31,7 @@ export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, t
         p5.line(xStart + counter * length, y, xStart + counter * length, y + 8)
         p5.noStroke()
 
-        p5.text(interval.low, xStart + counter * length, y + 15)
+        p5.text(interval.high, xStart + counter * length, y + 15)
     }
 }
 

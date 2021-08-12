@@ -1,10 +1,12 @@
 import { averageData, getLocationData } from "./data";
 import { row, spiral, spark, radialSpark, radialBarSpark, getSpiralSize, getRowSize, getPinAdjustment } from "../shapes";
 import { shapes, rectValues, spiralValues, sparkValues } from "../constants";
+import { getMinDistance } from "./cluster";
 
 export const getGlyph = (p5, pin, data, dataType, interval, shape, selections, encoding) => {
     let width = 500
     let height = 500
+    const { minDistanceX, minDistanceY } = getMinDistance(selections, shape)
 
     let pg = p5.createGraphics(width, height)
 
@@ -22,7 +24,7 @@ export const getGlyph = (p5, pin, data, dataType, interval, shape, selections, e
     if (shape === shapes.SPIRAL.id) {
         drawSpiral(p5, pg, width / 2, height / 2, ids, locationData, dataType, interval, selections, encoding)
     } else if (shape === shapes.RECT.id) {
-        drawRow(p5, pg, width / 2, height / 2, ids, locationData, dataType, interval, selections, encoding)
+        drawRow(p5, pg, width / 2 - minDistanceX/2, height / 2 - minDistanceY / 2, ids, locationData, dataType, interval, selections, encoding)
     }
 
     return { pg, width, height }
@@ -62,13 +64,11 @@ const drawRow = (p5, pg, x, y, ids, data, dataType, interval, selections, encodi
 
     const numLocations = ids.length
     const { rowWidth, pinHeight } = getRowSize(selections, numLocations)
-    const startX = x - rowWidth / 2;
-    const startY = y - pinHeight / 2
     if (mapPin) {
-        startY = y - getPinAdjustment(selections, shapes.RECT.id, data)
+        y = y - getPinAdjustment(selections, shapes.RECT.id, data)
     }
 
-    row(pg, dataType, interval, data, x, y, startX, startY, selections, encoding)
+    row(pg, dataType, interval, data, x, y, x, y, selections, encoding)
 
     pg.fill(theme.textColour)
     pg.textSize(10)
