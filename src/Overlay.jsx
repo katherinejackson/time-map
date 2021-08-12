@@ -109,59 +109,59 @@ const Overlay = () => {
         }
     }
 
-    const mouseClicked = (p5) => {
-        let pinAdjustment = 0
+    // const mouseClicked = (p5) => {
+    //     let pinAdjustment = 0
 
-        if (mapPin) {
-            pinAdjustment = getPinAdjustment(selections, shape)
-        }
+    //     if (mapPin) {
+    //         pinAdjustment = getPinAdjustment(selections, shape)
+    //     }
 
-        if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 20 && p5.mouseY < 50) {
-            map.zoomIn(0.5)
+    //     if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 20 && p5.mouseY < 50) {
+    //         map.zoomIn(0.5)
 
-        } else if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 80) {
-            map.zoomOut(0.5)
-        } else {
-            let locationFound = { found: false, distance: null, index: null }
-            locationPins.forEach((pin, index) => {
-                let location = map.latLngToContainerPoint([pin.lat, pin.long])
-                if (Math.abs(p5.mouseX - location.x) < pin.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < pin.minDistanceY) {
-                    let distance = Math.pow(Math.abs(p5.mouseX - location.x), 2) + Math.pow(Math.abs(p5.mouseY - location.y + pinAdjustment), 2)
-                    if (!locationFound.found || distance < locationFound.distance) {
-                        locationFound = { found: true, distance, index }
-                    }
-                }
-            })
+    //     } else if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 80) {
+    //         map.zoomOut(0.5)
+    //     } else {
+    //         let locationFound = { found: false, distance: null, index: null }
+    //         locationPins.forEach((pin, index) => {
+    //             let location = map.latLngToContainerPoint([pin.lat, pin.long])
+    //             if (Math.abs(p5.mouseX - location.x) < pin.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < pin.minDistanceY) {
+    //                 let distance = Math.pow(Math.abs(p5.mouseX - location.x), 2) + Math.pow(Math.abs(p5.mouseY - location.y + pinAdjustment), 2)
+    //                 if (!locationFound.found || distance < locationFound.distance) {
+    //                     locationFound = { found: true, distance, index }
+    //                 }
+    //             }
+    //         })
 
-            if (locationFound.found) {
-                let pin = locationPins[locationFound.index]
-                let allDisplayed = true
-                pin.locations.forEach(id => {
-                    if (!detailed.includes(id)) {
-                        allDisplayed = false
-                    }
-                })
+    //         if (locationFound.found) {
+    //             let pin = locationPins[locationFound.index]
+    //             let allDisplayed = true
+    //             pin.locations.forEach(id => {
+    //                 if (!detailed.includes(id)) {
+    //                     allDisplayed = false
+    //                 }
+    //             })
 
-                if (allDisplayed) {
-                    let newDetailed = [...detailed]
-                    pin.locations.forEach(id => {
-                        let index = newDetailed.indexOf(id)
-                        newDetailed.splice(index, 1)
-                    })
-                    setDetailed(newDetailed)
-                } else {
-                    let newDetailed = [...detailed]
-                    pin.locations.forEach(id => {
-                        if (!detailed.includes(id)) {
-                            newDetailed.push(id)
-                        }
-                    })
+    //             if (allDisplayed) {
+    //                 let newDetailed = [...detailed]
+    //                 pin.locations.forEach(id => {
+    //                     let index = newDetailed.indexOf(id)
+    //                     newDetailed.splice(index, 1)
+    //                 })
+    //                 setDetailed(newDetailed)
+    //             } else {
+    //                 let newDetailed = [...detailed]
+    //                 pin.locations.forEach(id => {
+    //                     if (!detailed.includes(id)) {
+    //                         newDetailed.push(id)
+    //                     }
+    //                 })
 
-                    setDetailed(newDetailed)
-                }
-            }
-        }
-    }
+    //                 setDetailed(newDetailed)
+    //             }
+    //         }
+    //     }
+    // }
 
     const redrawOverlay = () => {
         p5.clear()
@@ -277,7 +277,7 @@ const Overlay = () => {
 
     return (
         <div className="position-absolute fixed-top">
-            <Sketch draw={draw} mouseClicked={mouseClicked} mouseMoved={mouseMoved} setup={setup} />
+            <Sketch draw={draw} mouseMoved={mouseMoved} setup={setup} />
         </div >
     )
 }
