@@ -1,6 +1,6 @@
 import { averageData, getLocationData } from "./data";
-import { row, spiral, spark, radialSpark, radialBarSpark, getSpiralSize, getRowSize, getPinAdjustment } from "../shapes";
-import { shapes, rectValues, spiralValues, sparkValues } from "../constants";
+import { row, spiral, getSpiralSize, getRowSize, getPinAdjustment } from "../shapes";
+import { shapes } from "../constants";
 import { getMinDistance } from "./cluster";
 
 export const getGlyph = (p5, pin, data, dataType, interval, shape, selections, encoding) => {
@@ -37,8 +37,8 @@ const drawSpiral = (p5, pg, x, y, ids, data, dataType, interval, selections, enc
 
     const newSelections = {
         ...selections,
-        [spiralValues.SPIRAL_WIDTH]: spiralWidth,
-        [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
+        spiralWidth,
+        spiralTightness
     }
 
     let startY = y
@@ -87,64 +87,5 @@ const drawRow = (p5, pg, x, y, ids, data, dataType, interval, selections, encodi
             pg.text(ids.length, x, y + pinHeight / 2 + 8)
         }
     }
-
-}
-
-const drawSpark = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, encoding) => {
-    let dataType = 'TEMP'
-    let locationData = []
-    if (ids.length === 1) {
-        locationData = getLocationData(ids[0], selections, data)
-    } else {
-        locationData = averageData(ids, selections, data)
-    }
-
-    let startY;
-    if (mapPin) {
-        startY = y - selections[sparkValues.SPARK_HEIGHT] / 2 - getPinAdjustment(selections, shapes.SPARK.id, locationData)
-    } else {
-        startY = y - selections[sparkValues.SPARK_HEIGHT] / 2
-    }
-
-    const lineWidth = 365 * selections[sparkValues.DAY_WIDTH]
-    const startX = x - lineWidth / 2
-
-    spark(dataType, interval, locationData, x, y, mapPin, pg, selections, startX, startY, opaque, true, yearIndication, fillMissing, theme, encoding)
-
-}
-
-const drawRadialSpark = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, encoding) => {
-    let dataType = 'TEMP'
-    let locationData = []
-    if (ids.length === 1) {
-        locationData = getLocationData(ids[0], selections, data)
-    } else {
-        locationData = averageData(ids, selections, data)
-    }
-
-    let startY = y
-    if (mapPin) {
-        startY = y - getPinAdjustment(selections, shapes.RADIAL_SPARK.id, locationData)
-    }
-
-    radialSpark(dataType, interval, locationData, x, y, mapPin, pg, selections, x, startY, opaque, true, yearIndication, fillMissing, theme, encoding)
-
-}
-
-const drawRadialBarSpark = (p5, pg, x, y, ids, data, interval, selections, theme, fillMissing, mapPin, opaque, yearIndication, hover = false) => {
-    let dataType = 'TEMP'
-    let locationData = []
-    if (ids.length === 1) {
-        locationData = getLocationData(ids[0], selections, data)
-    } else {
-        locationData = averageData(ids, selections, data)
-    }
-
-    let startY = y
-    if (mapPin) {
-        startY = y - getPinAdjustment(selections, shapes.RADIAL_SPARK.id, locationData)
-    }
-
-    radialBarSpark(dataType, interval, locationData, x, y, mapPin, pg, selections, x, startY, opaque, true, yearIndication, fillMissing, theme)
 
 }
