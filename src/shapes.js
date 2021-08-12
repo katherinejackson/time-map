@@ -54,7 +54,7 @@ export const row = (
                 }
 
                 if (encoding === 2) {
-                    p5.rect(startX + day * dayWidth, baseline, 1, rowHeight)
+                    p5.rect(startX + day * dayWidth, baseline - rowHeight, 1, rowHeight)
                 } else {
                     let val = baseline - ((year[day] - interval.low) * increment)
                     p5.ellipse(startX + day * dayWidth, val, 1, 1)
@@ -63,7 +63,7 @@ export const row = (
                 p5.fill(theme.missingData, 100)
 
                 if (encoding === 2) {
-                    p5.rect(startX + day * dayWidth, baseline, 1, rowHeight)
+                    p5.rect(startX + day * dayWidth, baseline - rowHeight, 1, rowHeight)
                 } else {
                     p5.ellipse(startX + day * dayWidth, middle, 1, 1)
                 }

@@ -26,9 +26,9 @@ const getSpacePerPt = (minDistanceX, totalDataPts) => {
 }
 
 const ScatterPlot = ({ }) => {
-    const { encoding, selections, shape} = useContext(SelectionContext)
+    const { encoding, selections, shape } = useContext(SelectionContext)
     const { data, dataBrackets, yBrackets, categories, dataType, totalDataPts } = useContext(DataContext)
-    const {theme, numColours, numYears } = selections
+    const { theme, numColours, numYears } = selections
     const [p5, setP5] = useState(null)
     const { minDistanceX, minDistanceY } = getMinDistance(selections, shape)
     const spacePerPt = getSpacePerPt(minDistanceX, totalDataPts)
@@ -136,9 +136,9 @@ const ScatterPlot = ({ }) => {
         ptData = [[...ptData]]
 
         if (shape === shapes.SPIRAL.id) {
-            spiral(pg, dataType, interval, ptData, width/2, height/2, width/2, height/2, selections, encoding)
+            spiral(pg, dataType, interval, ptData, width / 2, height / 2, width / 2, height / 2, selections, encoding)
         } else if (shape === shapes.RECT.id) {
-            row(pg, dataType, interval, ptData, width/2, height/2, width/2 - minDistanceX/2, height/2 - minDistanceY, selections, encoding)
+            row(pg, dataType, interval, ptData, width / 2, height / 2, width / 2 - minDistanceX / 2, height / 2 - minDistanceY / 2, selections, encoding)
         }
 
         return { pg, width, height }
@@ -158,7 +158,7 @@ const ScatterPlot = ({ }) => {
             const hoverpg = p5.createGraphics(pin.width, pin.height)
             hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
 
-            p5.fill(theme.pinBackground, 150)
+            p5.fill(theme.pinBackground, 100)
             if (shape === shapes.SPIRAL.id) {
                 p5.ellipse(pin.x, pin.y, minDistanceX * 3, minDistanceY * 3)
             } else if (shape === shapes.RECT.id) {
@@ -168,7 +168,7 @@ const ScatterPlot = ({ }) => {
 
             p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(theme.textColour)
-            p5.text(pin.name, pin.x, pin.y + minDistanceY + 10)
+            p5.text(pin.name, pin.x, pin.y + minDistanceY)
         }
     }
 
