@@ -448,7 +448,20 @@ export const spiral = (
 
     locationData.forEach(year => {
         for (let day = 0; day < year.length - 1; day++) {
-            if (year[day] !== '') {
+            if (encoding !== 2 && !opaque && !mapPin) {
+                let val;
+                if (interval.low < 0) {
+                    val = -interval.low
+                } else {
+                    val = 0
+                }
+                const x = startX + p5.cos(angle) * (innerRing + val * increment)
+                const y = startY + p5.sin(angle) * (innerRing + val * increment)
+                p5.fill(theme.missingData)
+                p5.ellipse(x, y, 1, 1)
+            }
+
+            if (year[day] !== '') {                
                 if (encoding === 1) {
                     p5.fill(theme.textColour)
                 } else {
@@ -464,9 +477,6 @@ export const spiral = (
                     const x = startX + p5.cos(angle) * (innerRing + val * increment)
                     const y = startY + p5.sin(angle) * (innerRing + val * increment)
                     p5.ellipse(x, y, 1, 1)
-                    if (val * increment >= 20) {
-                        console.log(val, increment, val * increment)
-                    }
                 }
             } else if (fillMissing) {
                 p5.fill(theme.missingData, 100)
@@ -475,18 +485,7 @@ export const spiral = (
                     const x = startX + p5.cos(angle) * innerRing
                     const y = startY + p5.sin(angle) * innerRing
                     p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerDay * 10, p5.PIE)
-                } else {
-                    const val = interval.range / 2
-                    const x = startX + p5.cos(angle) * (innerRing + val * increment)
-                    const y = startY + p5.sin(angle) * (innerRing + val * increment)
-                    p5.fill(theme.missingData, 100)
-                    p5.ellipse(x, y, 1, 1)
                 }
-            }
-
-            if (encoding !== 2 && !opaque && !mapPin) {
-                p5.fill(theme.textColour)
-                p5.ellipse(startX + p5.cos(angle) * innerRing, startY + p5.sin(angle) * innerRing, 2, 2)
             }
 
             angle += radianPerDay

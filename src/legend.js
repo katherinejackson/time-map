@@ -1,10 +1,10 @@
-import { colours, manualIntervals, rectValues, spiralValues } from './constants'
+import { colours, manualIntervals, rectValues } from './constants'
 import { fillColourGradient, setColour } from "./helpers/colours";
-import { formatNumbers, formatTradeNumbers } from './helpers/format';
+import { formatTradeNumbers } from './helpers/format';
 
 export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, textColour) => {
-    if (dataType === 'COVID' && selections.numColours === 8) {
-        drawManualLegend(p5, x, y, selections, dataType, textColour)
+    if (dataType === 'COVID' && selections.numColours === 6) {
+        drawManualLegend(p5, x, y, selections, interval, dataType, textColour)
     } else if (selections.numColours <= 2 || selections.numColours > 10) {
         drawGradientLegend(p5, x, y, selections, interval, textColour)
     } else {
@@ -14,7 +14,7 @@ export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, t
         let counter = 0
 
         p5.textSize(10)
-        for (let i = interval.low; i < interval.high; i = Math.round((i + interval.interval) * 100) / 100) {
+        for (let i = interval.low; i < interval.high; i = Math.ceil((i + interval.interval) * 100) / 100) {
             p5.textAlign(p5.CENTER, p5.CENTER)
             setColour(p5, i, selections.numColours, interval, dataType)
             p5.rect(xStart + counter * length, y, length, 5)
@@ -23,7 +23,7 @@ export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, t
 
             p5.noStroke()
             p5.fill(textColour)
-            p5.text(i, xStart + counter * length, y + 15)
+            p5.text(Math.ceil(i), xStart + counter * length, y + 15)
             p5.stroke(1)
             counter = counter + 1
         }
@@ -31,11 +31,11 @@ export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, t
         p5.line(xStart + counter * length, y, xStart + counter * length, y + 8)
         p5.noStroke()
 
-        p5.text(interval.high, xStart + counter * length, y + 15)
+        p5.text(Math.ceil(interval.high), xStart + counter * length, y + 15)
     }
 }
 
-export const drawManualLegend = (p5, x, y, selections, dataType, textColour) => {
+export const drawManualLegend = (p5, x, y, selections, interval, dataType, textColour) => {
     p5.stroke(1)
     const numColours = selections.numColours
     const length = 75
@@ -47,7 +47,7 @@ export const drawManualLegend = (p5, x, y, selections, dataType, textColour) => 
 
     for (let i = 1; i < intervals.length; i++) {
         p5.textAlign(p5.CENTER, p5.CENTER)
-        p5.fill(colours[dataType][numColours][i - 1])
+        setColour(p5, i, selections.numColours, interval, dataType)
         p5.rect(xStart + counter * length, y, length, 5)
         p5.fill(0)
         p5.line(xStart + counter * length, y, xStart + counter * length, y + 8)

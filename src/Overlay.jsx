@@ -6,7 +6,7 @@ import { drawLegend } from "./legend";
 import { getLocationData } from "./helpers/data";
 import { getDefaultSelections } from "./helpers/selections";
 import { shapes } from "./constants";
-import { getInterval } from "./helpers/intervals";
+import { getInterval, getRoundedInterval } from "./helpers/intervals";
 import { calculateClusters, addLocations } from "./helpers/cluster";
 import { row, getRowSize, getPinAdjustment } from "./shapes";
 import SelectionContext from "./SelectionContext";
@@ -25,7 +25,7 @@ const Overlay = () => {
     const { encoding, selections, shape} = useContext(SelectionContext)
     const {mapPin, opaque, yearIndication, fillMissing, theme, cluster} = selections
     const [p5, setP5] = useState(null)
-    const interval = getInterval(dataBrackets, selections.numColours)
+    const interval = getRoundedInterval(dataBrackets, selections.numColours)
     const [locationPins, setLocationPins] = useState([])
     const [detailed, setDetailed] = useState([])
     const [hover, setHover] = useState(null)

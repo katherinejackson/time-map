@@ -7,11 +7,11 @@ export const setColour = (p5, pt, numColours, interval, dataType) => {
         || numColours === 360
     ) {
         fillColourGradient(p5, pt, interval, numColours)
-    } else if (dataType === 'COVID' && numColours === 8) {
+    } else if (dataType === 'COVID' && numColours === 6) {
         const colour = getCovidIntervalColour(pt, colours[dataType][numColours], manualIntervals[dataType][numColours])
         p5.fill(colour)
     } else {
-        const colour = getColourFromSet(pt, interval.high, interval.interval, colours[dataType][numColours])
+        const colour = getColourFromSet(pt, interval, colours[dataType][numColours])
         p5.fill(colour)
     }
 }
@@ -30,18 +30,16 @@ export const getManualIntervalColour = (pt, colourSet, intervalSet) => {
     return colourSet[counter]
 }
 
-export const getColourFromSet = (pt, highest, interval, colourSet) => {
-    let bracket = Math.floor((highest - pt) / interval)
-    
-    //TODO: shouldnt need this; there is some kind of bug
-    if (bracket < 0) {
-        bracket = 0
-    } else if (bracket >= colourSet.length) {
-        bracket = colourSet.length - 1
-    }
+export const getColourFromSet = (pt, interval, colourSet) => {
+    const bracket = Math.floor((pt - interval.low)/ interval.interval)
+    const length = colourSet.length
 
-    if (colourSet[bracket]) {
-        return colourSet[bracket]
+    // if (pt < -30) {
+    //     console.log(pt, bracket)
+    // }
+
+    if (colourSet[length - bracket - 1]) {
+        return colourSet[length - bracket - 1]
     } else {
         return 'white'
     }
@@ -119,10 +117,6 @@ export const getCovidIntervalColour = (pt, colourSet, intervalSet) => {
         counter++
     }
 
-    if (colourSet[counter] === undefined) {
-        console.log('error', pt, colourSet, counter)
-    }
-
-    return colourSet[counter]
+    return colourSet[colourSet.length - counter - 1]
 }
 

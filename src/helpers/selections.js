@@ -9,7 +9,7 @@ export const getDefaultSelections = (shape) => {
         theme: themeColours[themes.DARK.val],
         cluster: false,
         numYears: 1,
-        numColours: 8,
+        numColours: 6,
     }
 
     if (shape === shapes.SPIRAL.id) {
