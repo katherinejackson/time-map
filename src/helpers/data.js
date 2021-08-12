@@ -1,5 +1,4 @@
-import { rectValues, spiralValues } from "../constants";
-import { smallData as covidData } from "../data/covidData";
+import { bigData as covidData } from "../data/covidData";
 import { data as tradeData } from "../data/tradeData"
 import {data as mapData} from "../data/weatherData"
 import { views, dataSets } from "../constants";
@@ -133,7 +132,7 @@ export const averageData = (locations, selections, allData) => {
         data.push(getLocationData(id, selections, allData))
     })
 
-    for (let year = 0; year < selections[rectValues.NUM_YEARS]; year++) {
+    for (let year = 0; year < selections.numYears; year++) {
         let newYear = []
         for (let day = 0; day < 365; day++) {
             let sum = 0
@@ -167,11 +166,10 @@ export const getLocationData = (id, selections, data) => {
     let newData = []
 
     let years = Object.keys(data[id].data)
-    //TODO: determine what is up with this
-    // let currentYearIndex = years.indexOf('2021')
-    // if (currentYearIndex > -1) {
-    //     years.splice(currentYearIndex, 1)
-    // }
+    let currentYearIndex = years.indexOf('2021')
+    if (currentYearIndex > -1) {
+        years.splice(currentYearIndex, 1)
+    }
 
     if (years.length - selections.numYears > 0) {
         years = years.slice(years.length - selections.numYears, years.length)
@@ -188,8 +186,6 @@ export const getData = (view) => {
     if (view === views.SCATTER.val) {
         const logData = getLogData(covidData)
         const dataBrackets = getDataBracketsMultiYear(logData, 'cases')
-        // console.log(getDataBracketsMultiYear(covidData, 'cases'))
-        // console.log(getDataBracketsMultiYear(logData, 'cases'))
         const dataType = dataSets.COVID.val
         const yBrackets = getVariableBrackets(covidData, 'population')
         const categories = getDataCategories(covidData, 'continent')
