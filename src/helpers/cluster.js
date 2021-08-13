@@ -1,5 +1,5 @@
-import { shapes, rectValues, spiralValues, sparkValues } from "../constants";
-import {getSpiralSize, getRadius, getRowSize, getRadialSparkRadius} from "../shapes";
+import { shapes } from "../constants";
+import { getSpiralSize, getRadius, getRowSize } from "../shapes";
 
 const averageCoords = (ids, map, locations) => {
     let x = 0
@@ -91,28 +91,16 @@ export const calculateClusters = (locations, selections, shape, mapPin, map) => 
 
                 newSelections = {
                     ...selections,
-                    [spiralValues.SPIRAL_WIDTH]: spiralWidth,
-                    [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
+                    spiralWidth,
+                    spiralTightness
                 }
             } else if (shape === shapes.ROW.id) {
-                let { dayWidth, rowHeight } = getRowSize(selections, numLocations, selections[rectValues.NUM_YEARS])
+                let { dayWidth, rowHeight } = getRowSize(selections, numLocations, selections.numYears)
 
                 newSelections = {
                     ...selections,
-                    [rectValues.DAY_WIDTH]: dayWidth,
-                    [rectValues.ROW_HEIGHT]: rowHeight,
-                }
-            } else if (shape === shapes.SPARK.id) {
-                newSelections = {
-                    ...selections
-                }
-            } else if (shape === shapes.RADIAL_SPARK.id) {
-                newSelections = {
-                    ...selections
-                }
-            } else if (shape === shapes.RADIAL_BAR_SPARK.id) {
-                newSelections = {
-                    ...selections
+                    dayWidth,
+                    rowHeight,
                 }
             }
 

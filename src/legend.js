@@ -1,4 +1,4 @@
-import { colours, manualIntervals, rectValues } from './constants'
+import { colours, manualIntervals } from './constants'
 import { fillColourGradient, setColour } from "./helpers/colours";
 import { formatTradeNumbers } from './helpers/format';
 
@@ -127,7 +127,7 @@ const drawGradientLegend = (p5, x, y, selections, interval, textColour) => {
     let counter = 0
     for (let i = interval.high; i > interval.low; i = i - 1) {
         p5.textAlign(p5.CENTER, p5.CENTER)
-        fillColourGradient(p5, i, interval, selections[rectValues.NUM_COLOURS])
+        fillColourGradient(p5, i, interval, selections.numColours)
         p5.rect(xStart + counter, y, width, 5)
         counter = counter + width
     }
