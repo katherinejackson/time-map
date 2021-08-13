@@ -26,7 +26,7 @@ const getSpacePerPt = (minDistanceX, totalDataPts) => {
 
 const ScatterPlot = ({ encoding, selections, shape }) => {
     const { data, dataBrackets, yBrackets, categories, dataType, totalDataPts } = useContext(DataContext)
-    const { theme, numColours, numYears } = selections
+    const { theme, numColours, numYears, mapPin } = selections
     const [p5, setP5] = useState(null)
     const { minDistanceX, minDistanceY } = getMinDistance(selections, shape)
     const spacePerPt = getSpacePerPt(minDistanceX, totalDataPts)
@@ -156,12 +156,15 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
             const hoverpg = p5.createGraphics(pin.width, pin.height)
             hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
 
-            p5.fill(theme.pinBackground, 100)
-            if (shape === shapes.SPIRAL.id) {
-                p5.ellipse(pin.x, pin.y, minDistanceX * 3, minDistanceY * 3)
-            } else if (shape === shapes.ROW.id) {
-                p5.rect(pin.x - minDistanceX, pin.y - minDistanceY, minDistanceX * 2, minDistanceY * 3)
+            if (!mapPin) {
+                p5.fill(theme.pinBackground, 100)
+                if (shape === shapes.SPIRAL.id) {
+                    p5.ellipse(pin.x, pin.y, minDistanceX * 3, minDistanceY * 3)
+                } else if (shape === shapes.ROW.id) {
+                    p5.rect(pin.x - minDistanceX, pin.y - minDistanceY, minDistanceX * 2, minDistanceY * 3)
+                }
             }
+
             p5.image(hoverpg, pin.x - pin.width * 0.75, pin.y - pin.height * 0.75)
 
             p5.textAlign(p5.CENTER, p5.TOP)

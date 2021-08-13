@@ -14,7 +14,8 @@ const Tile = ({ encoding, numX, selections, shape}) => {
     const { mapPin, theme } = selections
     const interval = getInterval(dataBrackets, selections.numColours)
     const [p5, setP5] = useState(null)
-    const canvasSize = window.innerWidth * 0.95 / numX
+    // const canvasSize = window.innerWidth * 0.95 / numX
+    const canvasSize = 150
 
     useEffect(() => {
         if (p5) {
@@ -71,9 +72,9 @@ const Tile = ({ encoding, numX, selections, shape}) => {
         p5.noStroke()
         drawPin(canvasSize / 2, canvasSize / 2, [locations[0].id])
 
-        if (encoding !== 1) {
-            drawLegend(p5, canvasSize / 2, 1, selections, interval, dataType, null, theme.textColour)
-        }
+        // if (encoding !== 1) {
+        //     drawLegend(p5, canvasSize / 2, 1, selections, interval, dataType, null, theme.textColour)
+        // }
 
         p5.noLoop()
     }

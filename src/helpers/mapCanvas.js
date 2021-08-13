@@ -6,7 +6,6 @@ import { getMinDistance } from "./cluster";
 export const getGlyph = (p5, pin, data, dataType, interval, shape, selections, encoding) => {
     let width = 500
     let height = 500
-    const { minDistanceX, minDistanceY } = getMinDistance(selections, shape)
 
     let pg = p5.createGraphics(width, height)
 
@@ -24,7 +23,7 @@ export const getGlyph = (p5, pin, data, dataType, interval, shape, selections, e
     if (shape === shapes.SPIRAL.id) {
         drawSpiral(p5, pg, width / 2, height / 2, ids, locationData, dataType, interval, selections, encoding)
     } else if (shape === shapes.ROW.id) {
-        drawRow(p5, pg, width / 2 - minDistanceX/2, height / 2 - minDistanceY / 2, ids, locationData, dataType, interval, selections, encoding)
+        drawRow(p5, pg, width / 2, height / 2, ids, locationData, dataType, interval, selections, encoding)
     }
 
     return { pg, width, height }
@@ -61,14 +60,18 @@ const drawSpiral = (p5, pg, x, y, ids, data, dataType, interval, selections, enc
 
 const drawRow = (p5, pg, x, y, ids, data, dataType, interval, selections, encoding) => {
     const {theme, mapPin, cluster} = selections
-
     const numLocations = ids.length
     const { rowWidth, pinHeight } = getRowSize(selections, numLocations)
+    let startX = x - rowWidth/2
+    let startY = y
+
     if (mapPin) {
-        y = y - getPinAdjustment(selections, shapes.ROW.id, data)
+        startY = y - getPinAdjustment(selections, shapes.ROW.id, data)
+    } else {
+        startY = y - pinHeight/2
     }
 
-    row(pg, dataType, interval, data, x, y, x, y, selections, encoding)
+    row(pg, dataType, interval, data, x, y, startX, startY, selections, encoding)
 
     pg.fill(theme.textColour)
     pg.textSize(10)

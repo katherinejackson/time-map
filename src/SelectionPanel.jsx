@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { getBasicSelectionOptions, getShapeSelectionOptions } from './helpers/selections'
-import { views } from './constants'
+import { themeColours, views } from './constants'
 
 const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x, y }) => {
     const basicOptions = getBasicSelectionOptions()
@@ -9,7 +9,18 @@ const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x,
     const options = { ...basicOptions, ...shapeOptions }
 
     const handleSelectionChange = (event, option) => {
-        setSelections({ ...selections, [option]: event.target.value })
+        let val = event.target.value
+        if (val === 'true') {
+            val = 1
+        } else if (val === 'false') {
+            val = 0
+        } 
+
+        if (option === 'theme') {
+            val = themeColours[val]
+        }
+
+        setSelections({ ...selections, [option]: val })
     }
 
     return (

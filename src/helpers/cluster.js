@@ -1,5 +1,5 @@
 import { shapes } from "../constants";
-import { getSpiralSize, getRadius, getRowSize } from "../shapes";
+import { getSpiralSize, getRadius, getRowSize, getShapeSize } from "../shapes";
 
 const averageCoords = (ids, map, locations) => {
     let x = 0
@@ -58,7 +58,7 @@ export const addLocations = (locations, selections, shape, mapPin, map) => {
     const locationPins = []
 
     locations.forEach((item) => {
-        let { minDistanceX, minDistanceY } = getMinDistance(selections, shape, mapPin)
+        let {width, height} = getShapeSize(selections, shape)
         const location = map.latLngToContainerPoint([item.x, item.y])
         locationPins.push({
             x: location.x,
@@ -66,8 +66,8 @@ export const addLocations = (locations, selections, shape, mapPin, map) => {
             lat: item.x,
             long: item.y,
             locations: [item.id],
-            minDistanceX,
-            minDistanceY,
+            minDistanceX: width,
+            minDistanceY: height,
             name: item.name,
         })
     })

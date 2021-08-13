@@ -26,6 +26,7 @@ const App = () => {
     useEffect(() => {
         setX(null)
         setY(null)
+        setSelections(getDefaultSelections(shape, view))
     }, [shape])
 
     const handleViewChange = (event) => {

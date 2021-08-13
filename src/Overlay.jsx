@@ -8,18 +8,16 @@ import { getDefaultSelections } from "./helpers/selections";
 import { shapes } from "./constants";
 import { getRoundedInterval } from "./helpers/intervals";
 import { calculateClusters, addLocations } from "./helpers/cluster";
-import { row, getRowSize, getPinAdjustment } from "./shapes";
+import { row, getRowSize, getPinAdjustment, getShapeSize } from "./shapes";
 import DataContext from "./DataContext";
 import { getGlyph } from "./helpers/mapCanvas";
 import { formatNames } from "./helpers/format";
-import { getMinDistance } from "./helpers/cluster"
 
 const mapWidth = 1000
 const mapHeight = window.innerHeight * 0.75
 
 const Overlay = ({ encoding, selections, shape }) => {
     const map = useMap()
-    const view = 'MAP'
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
     const { mapPin, opaque, yearIndication, fillMissing, theme, cluster } = selections
     const [p5, setP5] = useState(null)
@@ -27,14 +25,14 @@ const Overlay = ({ encoding, selections, shape }) => {
     const [locationPins, setLocationPins] = useState([])
     const [detailed, setDetailed] = useState([])
     const [hover, setHover] = useState(null)
-    const { minDistanceX, minDistanceY } = getMinDistance(selections, shape)
+    const {width, height} = getShapeSize(selections, shape)
 
     useEffect(() => {
         if (locations && p5) {
             resetPins()
         }
 
-    }, [locations, p5, cluster, shape])
+    }, [locations, p5, cluster, selections])
 
     useEffect(() => {
         if (p5 && locationPins.length) {
@@ -107,59 +105,59 @@ const Overlay = ({ encoding, selections, shape }) => {
         }
     }
 
-    // const mouseClicked = (p5) => {
-    //     let pinAdjustment = 0
+    const mouseClicked = (p5) => {
+        let pinAdjustment = 0
 
-    //     if (mapPin) {
-    //         pinAdjustment = getPinAdjustment(selections, shape)
-    //     }
+        if (mapPin) {
+            pinAdjustment = getPinAdjustment(selections, shape)
+        }
 
-    //     if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 20 && p5.mouseY < 50) {
-    //         map.zoomIn(0.5)
+        if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 20 && p5.mouseY < 50) {
+            map.zoomIn(0.5)
 
-    //     } else if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 80) {
-    //         map.zoomOut(0.5)
-    //     } else {
-    //         let locationFound = { found: false, distance: null, index: null }
-    //         locationPins.forEach((pin, index) => {
-    //             let location = map.latLngToContainerPoint([pin.lat, pin.long])
-    //             if (Math.abs(p5.mouseX - location.x) < pin.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < pin.minDistanceY) {
-    //                 let distance = Math.pow(Math.abs(p5.mouseX - location.x), 2) + Math.pow(Math.abs(p5.mouseY - location.y + pinAdjustment), 2)
-    //                 if (!locationFound.found || distance < locationFound.distance) {
-    //                     locationFound = { found: true, distance, index }
-    //                 }
-    //             }
-    //         })
+        } else if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 80) {
+            map.zoomOut(0.5)
+        } else {
+            let locationFound = { found: false, distance: null, index: null }
+            locationPins.forEach((pin, index) => {
+                let location = map.latLngToContainerPoint([pin.lat, pin.long])
+                if (Math.abs(p5.mouseX - location.x) < pin.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < pin.minDistanceY) {
+                    let distance = Math.pow(Math.abs(p5.mouseX - location.x), 2) + Math.pow(Math.abs(p5.mouseY - location.y + pinAdjustment), 2)
+                    if (!locationFound.found || distance < locationFound.distance) {
+                        locationFound = { found: true, distance, index }
+                    }
+                }
+            })
 
-    //         if (locationFound.found) {
-    //             let pin = locationPins[locationFound.index]
-    //             let allDisplayed = true
-    //             pin.locations.forEach(id => {
-    //                 if (!detailed.includes(id)) {
-    //                     allDisplayed = false
-    //                 }
-    //             })
+            if (locationFound.found) {
+                let pin = locationPins[locationFound.index]
+                let allDisplayed = true
+                pin.locations.forEach(id => {
+                    if (!detailed.includes(id)) {
+                        allDisplayed = false
+                    }
+                })
 
-    //             if (allDisplayed) {
-    //                 let newDetailed = [...detailed]
-    //                 pin.locations.forEach(id => {
-    //                     let index = newDetailed.indexOf(id)
-    //                     newDetailed.splice(index, 1)
-    //                 })
-    //                 setDetailed(newDetailed)
-    //             } else {
-    //                 let newDetailed = [...detailed]
-    //                 pin.locations.forEach(id => {
-    //                     if (!detailed.includes(id)) {
-    //                         newDetailed.push(id)
-    //                     }
-    //                 })
+                if (allDisplayed) {
+                    let newDetailed = [...detailed]
+                    pin.locations.forEach(id => {
+                        let index = newDetailed.indexOf(id)
+                        newDetailed.splice(index, 1)
+                    })
+                    setDetailed(newDetailed)
+                } else {
+                    let newDetailed = [...detailed]
+                    pin.locations.forEach(id => {
+                        if (!detailed.includes(id)) {
+                            newDetailed.push(id)
+                        }
+                    })
 
-    //                 setDetailed(newDetailed)
-    //             }
-    //         }
-    //     }
-    // }
+                    setDetailed(newDetailed)
+                }
+            }
+        }
+    }
 
     const redrawOverlay = () => {
         p5.clear()
@@ -188,12 +186,15 @@ const Overlay = ({ encoding, selections, shape }) => {
             let hoverpg = p5.createGraphics(pin.width, pin.height)
             hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
 
-            p5.fill(theme.pinBackground, 150)
-            if (shape === shapes.SPIRAL.id) {
-                p5.ellipse(pin.x, pin.y, minDistanceX * 3, minDistanceY * 3)
-            } else if (shape === shapes.ROW.id) {
-                p5.rect(pin.x - minDistanceX, pin.y - minDistanceY, minDistanceX * 2, minDistanceY * 3)
+            if (!mapPin) {
+                p5.fill(theme.pinBackground, 150)
+                if (shape === shapes.SPIRAL.id) {
+                    p5.ellipse(pin.x, pin.y, width * 3, height * 3)
+                } else if (shape === shapes.ROW.id) {
+                    p5.rect(pin.x - width, pin.y - height, width * 2, height * 3)
+                }
             }
+
             p5.image(hoverpg, location.x - pin.width * 0.75, location.y - pin.height * 0.75)
 
             let names = []
@@ -203,7 +204,7 @@ const Overlay = ({ encoding, selections, shape }) => {
 
             p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(theme.textColour)
-            p5.text(formatNames(names), location.x, location.y + minDistanceY)
+            p5.text(formatNames(names), location.x, location.y + height)
         }
     }
 
@@ -251,7 +252,7 @@ const Overlay = ({ encoding, selections, shape }) => {
     }
 
     const drawDetailed = () => {
-        let newSelections = getDefaultSelections(shapes.ROW.id, view)
+        let newSelections = getDefaultSelections(shapes.ROW.id)
         newSelections = {
             ...newSelections,
             numColours: selections.numColours,
@@ -275,7 +276,7 @@ const Overlay = ({ encoding, selections, shape }) => {
 
     return (
         <div className="position-absolute fixed-top">
-            <Sketch draw={draw} mouseMoved={mouseMoved} setup={setup} />
+            <Sketch draw={draw} mouseMoved={mouseMoved} mouseClicked={mouseClicked} setup={setup} />
         </div >
     )
 }

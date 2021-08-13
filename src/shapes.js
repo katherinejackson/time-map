@@ -432,11 +432,17 @@ export const spiral = (
     })
 }
 
-// export const getShapeSize = (selections, shape, numLocations) => {
-//     if (shape === shapes.SPIRAL.id) {
-//         get
-//     }
-// }
+export const getShapeSize = (selections, shape, numLocations=1) => {
+    if (shape === shapes.SPIRAL.id) {
+        const radius = getRadius(selections)
+
+        return {width: radius, height: radius}
+    } else if (shape === shapes.ROW.id) {
+        const {rowWidth, pinHeight} = getRowSize(selections, numLocations)
+
+        return {width: rowWidth, height: pinHeight}
+    }
+}
 
 export const getSpiralSize = (selections, numLocations) => {
     let spiralWidth = Math.min(selections.spiralWidth + (numLocations * 2), 30)
@@ -460,7 +466,18 @@ export const getGraphRadius = (selections, numSections) => {
         + selections.spiralWidth / 2
 }
 
-export const getRowSize = (selections, numLocations) => {
+export const getRowSize = (selections) => {
+    const daysPerRow = 365
+    const dayWidth = selections.dayWidth
+    const rowWidth = daysPerRow * dayWidth
+    const rowHeight = selections.rowHeight 
+    const pinHeight = (selections.spaceBetween + selections.rowHeight) * selections.numYears
+
+    return { dayWidth, rowWidth, rowHeight, pinHeight }
+}
+
+
+export const getClusterRowSize = (selections, numLocations) => {
     const daysPerRow = 365
     const dayWidth = Math.min(selections.dayWidth + numLocations / 25, 0.75)
     const rowWidth = daysPerRow * dayWidth
