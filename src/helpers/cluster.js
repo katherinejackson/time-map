@@ -29,7 +29,7 @@ export const getMinDistance = (selections, shape, mapPin = false) => {
 
         minDistanceX = radius * 2
         minDistanceY = radius * 2
-    } else if (shape === shapes.RECT.id) {
+    } else if (shape === shapes.ROW.id) {
         const daysPerRow = 365
         minDistanceX = daysPerRow * selections.dayWidth
         minDistanceY = (selections.spaceBetween + selections.rowHeight) * selections.numYears
@@ -94,7 +94,7 @@ export const calculateClusters = (locations, selections, shape, mapPin, map) => 
                     [spiralValues.SPIRAL_WIDTH]: spiralWidth,
                     [spiralValues.SPACE_BETWEEN_SPIRAL]: spiralTightness
                 }
-            } else if (shape === shapes.RECT.id) {
+            } else if (shape === shapes.ROW.id) {
                 let { dayWidth, rowHeight } = getRowSize(selections, numLocations, selections[rectValues.NUM_YEARS])
 
                 newSelections = {

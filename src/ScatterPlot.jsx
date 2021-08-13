@@ -2,7 +2,6 @@ import Sketch from "react-p5";
 import React, { useContext, useEffect, useState } from 'react'
 
 import { drawLegend } from "./legend";
-import SelectionContext from "./SelectionContext";
 import { spiral, row } from "./shapes";
 import DataContext from "./DataContext";
 import { getManualInterval } from "./helpers/intervals";
@@ -25,8 +24,7 @@ const getSpacePerPt = (minDistanceX, totalDataPts) => {
     return (graphWidth - minDistanceX * 2) / totalDataPts
 }
 
-const ScatterPlot = ({ }) => {
-    const { encoding, selections, shape } = useContext(SelectionContext)
+const ScatterPlot = ({ encoding, selections, shape }) => {
     const { data, dataBrackets, yBrackets, categories, dataType, totalDataPts } = useContext(DataContext)
     const { theme, numColours, numYears } = selections
     const [p5, setP5] = useState(null)
@@ -65,7 +63,7 @@ const ScatterPlot = ({ }) => {
         if (p5) {
             draw(p5)
         }
-    }, [selections, shape, theme, pts, hover])
+    }, [selections, shape, theme, pts, hover, encoding])
 
     const calcCategories = () => {
         let xCounters = {}
@@ -137,7 +135,7 @@ const ScatterPlot = ({ }) => {
 
         if (shape === shapes.SPIRAL.id) {
             spiral(pg, dataType, interval, ptData, width / 2, height / 2, width / 2, height / 2, selections, encoding)
-        } else if (shape === shapes.RECT.id) {
+        } else if (shape === shapes.ROW.id) {
             row(pg, dataType, interval, ptData, width / 2, height / 2, width / 2 - minDistanceX / 2, height / 2 - minDistanceY / 2, selections, encoding)
         }
 
@@ -161,7 +159,7 @@ const ScatterPlot = ({ }) => {
             p5.fill(theme.pinBackground, 100)
             if (shape === shapes.SPIRAL.id) {
                 p5.ellipse(pin.x, pin.y, minDistanceX * 3, minDistanceY * 3)
-            } else if (shape === shapes.RECT.id) {
+            } else if (shape === shapes.ROW.id) {
                 p5.rect(pin.x - minDistanceX, pin.y - minDistanceY, minDistanceX * 2, minDistanceY * 3)
             }
             p5.image(hoverpg, pin.x - pin.width * 0.75, pin.y - pin.height * 0.75)

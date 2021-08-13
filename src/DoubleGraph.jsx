@@ -1,11 +1,11 @@
 import Sketch from "react-p5";
 import React, { useContext, useEffect, useState } from 'react'
 
-import { drawLegend } from "./legend";
-import SelectionContext from "./SelectionContext";
-import { getRadius, graphPerimeterSpiral, graphSpiral, graphRow } from "./shapes";
+import { drawGraphLegend } from "./legend";
+import {  graphPerimeterSpiral,  graphRow } from "./shapes";
 import DataContext from "./DataContext";
-import { rectValues, spiralValues, themeColours } from "./constants";
+import { shapes, themeColours } from "./constants";
+import { getDefaultSelections } from "./helpers/selections";
 
 const canvasWidth = window.innerWidth * 0.95
 const canvasHeight = window.innerHeight
@@ -13,18 +13,15 @@ const canvasHeight = window.innerHeight
 const edgeLength = 200
 
 const DoubleGraph = ({ }) => {
-    const { selections, shape, theme } = useContext(SelectionContext)
-    const { data, dataBrackets, dataType, variable } = useContext(DataContext)
     const [p5, setP5] = useState(null)
-    const [radius, setRadius] = useState(getRadius(selections))
-    const { background, textColour, lineColour} = themeColours[theme]
-    const [spiralSelections, setSpiralSelections] = useState({ ...selections })
-    const [rowSelections, setRowSelections] = useState({ ...selections })
+    const { background, textColour, lineColour } = themeColours['DEFAULT']
+    const spiralSelections = { ...getDefaultSelections(shapes.SPIRAL.id), ['numColours']: 7, ['spiralWidth']: 80 }
+    const rowSelections = { ...getDefaultSelections(shapes.ROW.id), ['numColours']: 7 }
+    const { data, dataBrackets, dataType, variable } = useContext(DataContext)
     const [pts, setPts] = useState([])
-    const countryData = {...data}
+    const countryData = { ...data }
     delete countryData['World']
     
-
     useEffect(() => {
         setUpCircularPts()
     }, [])
@@ -33,24 +30,7 @@ const DoubleGraph = ({ }) => {
         if (p5) {
             draw(p5)
         }
-    }, [shape, theme, spiralSelections, pts])
-
-    useEffect(() => {
-        setSpiralSelections({
-            ...selections,
-            [spiralValues.SPIRAL_WIDTH]: 75,
-            [spiralValues.SPACE_BETWEEN_SPIRAL]: 0.75,
-            [spiralValues.CORE_SIZE]: 0,
-        })
-
-        setRowSelections({
-            ...selections,
-            [rectValues.NUM_ROWS]: 1,
-            [rectValues.ROW_HEIGHT]: 10
-        })
-
-        setRadius(getRadius(spiralSelections))
-    }, [selections])
+    }, [pts])
 
     const setup = (p5, parent) => {
         setP5(p5)
@@ -68,7 +48,7 @@ const DoubleGraph = ({ }) => {
 
         doubleGraph(p5, pts)
         
-        drawLegend(p5, canvasWidth / 2, canvasHeight - 25, selections, null, dataType, dataBrackets, textColour)
+        drawGraphLegend(p5, canvasWidth / 2, canvasHeight - 25, spiralSelections, dataType, textColour)
 
         p5.noLoop()
     }

@@ -309,11 +309,11 @@ export const scatterSpiral = (p5, startX, startY, data, selections, dataType) =>
 }
 
 export const graphSpiral = (p5, startX, startY, data, selections, dataType, variable, backgroundColour) => {
-    let spiralWidth = selections[spiralValues.SPIRAL_WIDTH]
-    let spiralTightness = selections[spiralValues.SPACE_BETWEEN_SPIRAL]
+    let spiralWidth = selections.spiralWidth
+    let spiralTightness = selections.spiralTightness
     let angle = -Math.PI / 2
-    let coreSize = selections[spiralValues.CORE_SIZE]
-    let numColours = selections[spiralValues.NUM_COLOURS]
+    let coreSize = selections.coreSize
+    let numColours = selections.numColours
     let radianPer = Math.PI * 2 / Object.keys(data).length
 
     p5.noStroke()
@@ -342,7 +342,6 @@ export const graphSpiral = (p5, startX, startY, data, selections, dataType, vari
         }
 
         p5.stroke(backgroundColour)
-        // p5.noStroke()
         p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPer, p5.PIE)
         p5.fill(backgroundColour)
         p5.arc(x, y, spiralWidth / 2, spiralWidth / 2, angle, angle + radianPer, p5.PIE)
@@ -353,11 +352,11 @@ export const graphSpiral = (p5, startX, startY, data, selections, dataType, vari
 }
 
 export const graphPerimeterSpiral = (p5, startX, startY, data, selections, dataType, variable, backgroundColour) => {
-    let spiralWidth = selections[spiralValues.SPIRAL_WIDTH]
+    let spiralWidth = selections.spiralWidth
     let spiralTightness = 0
     let angle = -Math.PI / 2
-    let coreSize = selections[spiralValues.CORE_SIZE]
-    let numColours = selections[spiralValues.NUM_COLOURS]
+    let coreSize = selections.coreSize
+    let numColours = selections.numColours
     let radianPer = Math.PI * 2 / Object.keys(data).length
 
     p5.noStroke()
@@ -461,7 +460,7 @@ export const spiral = (
                 p5.ellipse(x, y, 1, 1)
             }
 
-            if (year[day] !== '') {                
+            if (year[day] !== '') {              
                 if (encoding === 1) {
                     p5.fill(theme.textColour)
                 } else {
@@ -546,7 +545,7 @@ export const getPinAdjustment = (selections, shape, locationData) => {
     if (shape === shapes.SPIRAL.id) {
         const radius = getRadius(selections, numYears)
         startY = radius + 15
-    } else if (shape === shapes.RECT.id) {
+    } else if (shape === shapes.ROW.id) {
         startY = 7 + ((selections[rectValues.NUM_ROWS] * (selections[rectValues.SPACE_BETWEEN_ROWS] + selections[rectValues.ROW_HEIGHT])) * numYears)
     } else if (shape === shapes.SPARK.id) {
         startY = 7 + selections[sparkValues.SPARK_HEIGHT] / 2 * ((1 + numYears) / 2)

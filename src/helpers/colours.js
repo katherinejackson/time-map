@@ -34,10 +34,6 @@ export const getColourFromSet = (pt, interval, colourSet) => {
     const bracket = Math.floor((pt - interval.low)/ interval.interval)
     const length = colourSet.length
 
-    // if (pt < -30) {
-    //     console.log(pt, bracket)
-    // }
-
     if (colourSet[length - bracket - 1]) {
         return colourSet[length - bracket - 1]
     } else {

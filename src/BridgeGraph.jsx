@@ -1,10 +1,10 @@
 import Sketch from "react-p5";
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { drawLegend } from "./legend";
-import SelectionContext from "./SelectionContext";
+import { drawGraphLegend } from "./legend";
 import { bridgeRow } from "./shapes";
-import { rectValues, spiralValues, themeColours } from "./constants";
+import { shapes, themeColours } from "./constants";
+import { getDefaultSelections } from "./helpers/selections";
 
 const canvasWidth = window.innerWidth * 0.95
 const canvasHeight = window.innerHeight
@@ -72,35 +72,16 @@ const generateData = () => {
 }
 
 const BridgeGraph = ({ }) => {
-    const { selections, shape, theme } = useContext(SelectionContext)
     const [p5, setP5] = useState(null)
-    const { background, textColour, pinBackground } = themeColours[theme]
-    const [spiralSelections, setSpiralSelections] = useState({ ...selections })
-    const [rowSelections, setRowSelections] = useState({ ...selections })
+    const { background, textColour, pinBackground } = themeColours['DEFAULT']
     const data = generateData()
+    const selections = getDefaultSelections(shapes.ROW.id)
 
     useEffect(() => {
         if (p5) {
             draw(p5)
         }
-    }, [shape, theme, spiralSelections, pts])
-
-    useEffect(() => {
-        setSpiralSelections({
-            ...selections,
-            [spiralValues.SPIRAL_WIDTH]: 30,
-            [spiralValues.SPACE_BETWEEN_SPIRAL]: 0,
-            [spiralValues.CORE_SIZE]: 4
-        })
-
-        setRowSelections({
-            ...selections,
-            [rectValues.NUM_ROWS]: 1,
-            [rectValues.ROW_HEIGHT]: 10,
-            [rectValues.NUM_COLOURS]: 6,
-        })
-
-    }, [selections])
+    }, [])
 
     const setup = (p5, parent) => {
         setP5(p5)
@@ -119,7 +100,7 @@ const BridgeGraph = ({ }) => {
 
         edgeGraph(p5, pts)
 
-        drawLegend(p5, canvasWidth/2, canvasHeight - 25, rowSelections, null, 'BRIDGE', null, textColour)
+        drawGraphLegend(p5, canvasWidth/2, canvasHeight - 25, selections, 'BRIDGE', textColour)
 
         p5.noLoop()
     }
@@ -133,13 +114,6 @@ const BridgeGraph = ({ }) => {
             let startY = bridge.start.y
             let endX = bridge.end.x
             let endY = bridge.end.y
-
-            // let angle = Math.atan(Math.abs(startX - endX)/Math.abs(startY - endY))
-            // let x1 = startX + Math.cos(angle) * nodeDiameter/2
-            // let y1 = startY + Math.sin(angle) * nodeDiameter/2
-
-            // p5.stroke(50)
-            // p5.line(startX, startY, endX, endY)
 
             bridgeRow(p5, startX, startY, endX, endY, data[index])
         })

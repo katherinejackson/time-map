@@ -35,6 +35,47 @@ export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, t
     }
 }
 
+export const drawGraphLegend = (p5, x, y, selections, dataType, textColour) => {
+    p5.stroke(1)
+    const numColours = selections.numColours
+    const length = 75
+    const xStart = x - numColours * length / 2
+    const intervals = manualIntervals[dataType][numColours]
+    let counter = 0
+
+    p5.textSize(10)
+
+    for (let i = 1; i < intervals.length ; i++) {
+        p5.textAlign(p5.CENTER, p5.CENTER)
+        p5.fill(colours[dataType][numColours][i - 1])
+        p5.rect(xStart + counter * length, y, length, 5)
+        p5.fill(0)
+        p5.line(xStart + counter * length, y, xStart + counter * length, y + 8)
+
+        p5.noStroke()
+        p5.fill(textColour)
+        if (dataType === 'TRADE') {
+            p5.text(formatTradeNumbers(intervals[i - 1]), xStart + counter * length, y + 15)
+        } else {
+            p5.text(intervals[i - 1], xStart + counter * length, y + 15)
+        }
+
+        p5.stroke(1)
+        counter = counter + 1
+    }
+
+    p5.line(xStart + counter * length, y, xStart + counter * length, y + 8)
+    p5.noStroke()
+    p5.fill(textColour)
+
+    if (dataType === 'TRADE') {
+        p5.text(formatTradeNumbers(intervals[intervals.length - 1]), xStart + counter * length, y + 15)
+    } else {
+        p5.text(intervals[intervals.length - 1], xStart + counter * length, y + 15)
+    }
+
+}
+
 export const drawManualLegend = (p5, x, y, selections, interval, dataType, textColour) => {
     p5.stroke(1)
     const numColours = selections.numColours

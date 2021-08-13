@@ -6,10 +6,9 @@ import { drawLegend } from "./legend";
 import { getLocationData } from "./helpers/data";
 import { getDefaultSelections } from "./helpers/selections";
 import { shapes } from "./constants";
-import { getInterval, getRoundedInterval } from "./helpers/intervals";
+import { getRoundedInterval } from "./helpers/intervals";
 import { calculateClusters, addLocations } from "./helpers/cluster";
 import { row, getRowSize, getPinAdjustment } from "./shapes";
-import SelectionContext from "./SelectionContext";
 import DataContext from "./DataContext";
 import { getGlyph } from "./helpers/mapCanvas";
 import { formatNames } from "./helpers/format";
@@ -18,12 +17,11 @@ import { getMinDistance } from "./helpers/cluster"
 const mapWidth = 1000
 const mapHeight = window.innerHeight * 0.75
 
-const Overlay = () => {
+const Overlay = ({ encoding, selections, shape }) => {
     const map = useMap()
     const view = 'MAP'
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
-    const { encoding, selections, shape} = useContext(SelectionContext)
-    const {mapPin, opaque, yearIndication, fillMissing, theme, cluster} = selections
+    const { mapPin, opaque, yearIndication, fillMissing, theme, cluster } = selections
     const [p5, setP5] = useState(null)
     const interval = getRoundedInterval(dataBrackets, selections.numColours)
     const [locationPins, setLocationPins] = useState([])
@@ -42,7 +40,7 @@ const Overlay = () => {
         if (p5 && locationPins.length) {
             setLocationPins(updateGlyphs(locationPins))
         }
-    }, [selections, map, mapPin, opaque, yearIndication, fillMissing, theme, p5])
+    }, [selections, map, mapPin, opaque, yearIndication, fillMissing, theme, p5, encoding])
 
     useEffect(() => {
         if (p5 && locationPins.length) {
@@ -193,7 +191,7 @@ const Overlay = () => {
             p5.fill(theme.pinBackground, 150)
             if (shape === shapes.SPIRAL.id) {
                 p5.ellipse(pin.x, pin.y, minDistanceX * 3, minDistanceY * 3)
-            } else if (shape === shapes.RECT.id) {
+            } else if (shape === shapes.ROW.id) {
                 p5.rect(pin.x - minDistanceX, pin.y - minDistanceY, minDistanceX * 2, minDistanceY * 3)
             }
             p5.image(hoverpg, location.x - pin.width * 0.75, location.y - pin.height * 0.75)
@@ -253,7 +251,7 @@ const Overlay = () => {
     }
 
     const drawDetailed = () => {
-        let newSelections = getDefaultSelections(shapes.RECT.id, view)
+        let newSelections = getDefaultSelections(shapes.ROW.id, view)
         newSelections = {
             ...newSelections,
             numColours: selections.numColours,

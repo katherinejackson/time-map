@@ -1,4 +1,4 @@
-import { bigData as covidData } from "../data/covidData";
+import { smallData as covidData } from "../data/covidData";
 import { data as tradeData } from "../data/tradeData"
 import {data as mapData} from "../data/weatherData"
 import { views, dataSets } from "../constants";
@@ -209,11 +209,6 @@ export const getData = (view) => {
 
     } else if (view === views.COMPARISON.val || view === views.MAP.val) {
         let data = mapData[dataSets.TEMP.id].data
-
-        Object.keys(data).forEach(location => {
-            const newData = getMaxData(data[location].data)
-            data[location].data = newData
-        })
         const dataType = dataSets.TEMP.val
         const dataBrackets = getDataBrackets(data)
 

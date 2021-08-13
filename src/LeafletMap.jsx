@@ -18,8 +18,7 @@ const style = {
     height: mapHeight
 }
 
-const LeafletMap = ({ }) => {
-    const { selections } = useContext(SelectionContext)
+const LeafletMap = ({ selections, shape, encoding }) => {
     const theme = selections.theme.name
 
     return (
@@ -33,11 +32,10 @@ const LeafletMap = ({ }) => {
             {theme === 'DEFAULT' ? <DefaultMap /> : null}
             {theme === 'DARK' ? <DarkMap /> : null}
             {theme === 'COLOUR_DARK' ? <ColourDarkMap /> : null}
-            <Overlay />
+            <Overlay encoding={encoding} selections={selections} shape={shape} />
         </MapContainer>
     );
 }
-
 
 const DefaultMap = () => (
     <TileLayer

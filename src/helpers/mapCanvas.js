@@ -23,7 +23,7 @@ export const getGlyph = (p5, pin, data, dataType, interval, shape, selections, e
 
     if (shape === shapes.SPIRAL.id) {
         drawSpiral(p5, pg, width / 2, height / 2, ids, locationData, dataType, interval, selections, encoding)
-    } else if (shape === shapes.RECT.id) {
+    } else if (shape === shapes.ROW.id) {
         drawRow(p5, pg, width / 2 - minDistanceX/2, height / 2 - minDistanceY / 2, ids, locationData, dataType, interval, selections, encoding)
     }
 
@@ -65,7 +65,7 @@ const drawRow = (p5, pg, x, y, ids, data, dataType, interval, selections, encodi
     const numLocations = ids.length
     const { rowWidth, pinHeight } = getRowSize(selections, numLocations)
     if (mapPin) {
-        y = y - getPinAdjustment(selections, shapes.RECT.id, data)
+        y = y - getPinAdjustment(selections, shapes.ROW.id, data)
     }
 
     row(pg, dataType, interval, data, x, y, x, y, selections, encoding)

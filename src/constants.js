@@ -299,10 +299,13 @@ export const radialSparkValues = {
 
 export const shapes = {
     SPIRAL: { id: 1, name: "Spiral" },
-    RECT: { id: 2, name: "Row" },
-    SPARK: {id: 3, name: "Spark"},
-    RADIAL_SPARK: {id: 4, name: "Radial Spark"},
-    RADIAL_BAR_SPARK: {id: 5, name: "Radial Bar Spark"}
+    ROW: { id: 2, name: "Row" },
+}
+
+export const encodings = {
+    DISTANCE: { id: 1, name: "Distance" },
+    COLOUR: { id: 2, name: "Colour" },
+    DISTANCE_COLOUR: {id: 3, name: "Distance and Colour"},
 }
 
 export const dataSets = {
