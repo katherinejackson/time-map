@@ -1,6 +1,75 @@
 import { colours, manualIntervals, radianPerDay, radianPerMonth, shapes } from "./constants";
 import { fillColourGradient, getManualIntervalColour, fillLogColourGradient, getCovidIntervalColour, setColour } from "./helpers/colours";
 
+export const getShapeSize = (selections, shape, numLocations=1) => {
+    if (shape === shapes.SPIRAL.id) {
+        const radius = getRadius(selections)
+
+        return {width: radius * 2, height: radius * 2}
+    } else if (shape === shapes.ROW.id) {
+        const {rowWidth, pinHeight} = getRowSize(selections, numLocations)
+
+        return {width: rowWidth, height: pinHeight}
+    }
+}
+
+export const getSpiralSize = (selections, numLocations) => {
+    let spiralWidth = Math.min(selections.spiralWidth + (numLocations * 2), 30)
+    let spiralTightness = spiralWidth / 600
+    return { spiralWidth, spiralTightness }
+}
+
+export const getRadius = (selections, numYears = selections.numYears) => {
+    const { coreSize, spiralTightness, spiralWidth } = selections
+
+    return Math.abs(Math.sin(-Math.PI / 2 + radianPerDay * 365 * numYears)
+        * (coreSize + spiralTightness * 365 * numYears)) + spiralWidth
+}
+
+export const getGraphRadius = (selections, numSections) => {
+    let numYears = selections.numYears
+    let radianPer = Math.PI * 2 / numSections
+
+    return Math.abs(Math.sin(-Math.PI / 2 + radianPer * numSections * numYears)
+        * (selections.coreSize + selections.spiralTightness * numSections * numYears))
+        + selections.spiralWidth / 2
+}
+
+export const getRowSize = (selections) => {
+    const daysPerRow = 365
+    const dayWidth = selections.dayWidth
+    const rowWidth = daysPerRow * dayWidth
+    const rowHeight = selections.rowHeight 
+    const pinHeight = (selections.spaceBetween + selections.rowHeight) * selections.numYears
+
+    return { dayWidth, rowWidth, rowHeight, pinHeight }
+}
+
+
+export const getClusterRowSize = (selections, numLocations) => {
+    const daysPerRow = 365
+    const dayWidth = Math.min(selections.dayWidth + numLocations / 25, 0.75)
+    const rowWidth = daysPerRow * dayWidth
+    const rowHeight = Math.min(selections.rowHeight + numLocations * 1.5, 20)
+    const pinHeight = (selections.spaceBetween + selections.rowHeight) * selections.numYears
+
+    return { dayWidth, rowWidth, rowHeight, pinHeight }
+}
+
+export const getPinAdjustment = (selections, shape, locationData) => {
+    let numYears = locationData ? locationData.length : selections.numYears
+    let startY = 0
+
+    if (shape === shapes.SPIRAL.id) {
+        const radius = getRadius(selections, numYears)
+        startY = radius + 15
+    } else if (shape === shapes.ROW.id) {
+        startY = 7 + (selections.spaceBetween + selections.rowHeight) * numYears
+    }
+
+    return startY
+}
+
 export const row = (
     p5,
     dataType,
@@ -409,7 +478,7 @@ export const spiral = (
                 if (encoding === 2) {
                     const x = startX + p5.cos(angle) * innerRing
                     const y = startY + p5.sin(angle) * innerRing
-                    p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerDay * 10, p5.PIE)
+                    p5.arc(x, y, spiralWidth * 2, spiralWidth * 2, angle, angle + radianPerDay * 10, p5.PIE)
                 } else {
                     const val = year[day] - interval.low
                     const x = startX + p5.cos(angle) * (innerRing + val * increment)
@@ -430,75 +499,6 @@ export const spiral = (
             innerRing += spiralTightness
         }
     })
-}
-
-export const getShapeSize = (selections, shape, numLocations=1) => {
-    if (shape === shapes.SPIRAL.id) {
-        const radius = getRadius(selections)
-
-        return {width: radius, height: radius}
-    } else if (shape === shapes.ROW.id) {
-        const {rowWidth, pinHeight} = getRowSize(selections, numLocations)
-
-        return {width: rowWidth, height: pinHeight}
-    }
-}
-
-export const getSpiralSize = (selections, numLocations) => {
-    let spiralWidth = Math.min(selections.spiralWidth + (numLocations * 2), 30)
-    let spiralTightness = spiralWidth / 600
-    return { spiralWidth, spiralTightness }
-}
-
-export const getRadius = (selections, numYears = selections.numYears) => {
-    const { coreSize, spiralTightness, spiralWidth } = selections
-
-    return Math.abs(Math.sin(-Math.PI / 2 + radianPerDay * 365 * numYears)
-        * (coreSize + spiralTightness * 365 * numYears)) + spiralWidth / 2
-}
-
-export const getGraphRadius = (selections, numSections) => {
-    let numYears = selections.numYears
-    let radianPer = Math.PI * 2 / numSections
-
-    return Math.abs(Math.sin(-Math.PI / 2 + radianPer * numSections * numYears)
-        * (selections.coreSize + selections.spiralTightness * numSections * numYears))
-        + selections.spiralWidth / 2
-}
-
-export const getRowSize = (selections) => {
-    const daysPerRow = 365
-    const dayWidth = selections.dayWidth
-    const rowWidth = daysPerRow * dayWidth
-    const rowHeight = selections.rowHeight 
-    const pinHeight = (selections.spaceBetween + selections.rowHeight) * selections.numYears
-
-    return { dayWidth, rowWidth, rowHeight, pinHeight }
-}
-
-
-export const getClusterRowSize = (selections, numLocations) => {
-    const daysPerRow = 365
-    const dayWidth = Math.min(selections.dayWidth + numLocations / 25, 0.75)
-    const rowWidth = daysPerRow * dayWidth
-    const rowHeight = Math.min(selections.rowHeight + numLocations * 1.5, 20)
-    const pinHeight = (selections.spaceBetween + selections.rowHeight) * selections.numYears
-
-    return { dayWidth, rowWidth, rowHeight, pinHeight }
-}
-
-export const getPinAdjustment = (selections, shape, locationData) => {
-    let numYears = locationData ? locationData.length : selections.numYears
-    let startY = 0
-
-    if (shape === shapes.SPIRAL.id) {
-        const radius = getRadius(selections, numYears)
-        startY = radius + 15
-    } else if (shape === shapes.ROW.id) {
-        startY = 7 + (selections.spaceBetween + selections.rowHeight) * numYears
-    }
-
-    return startY
 }
 
 export const radialBarSpark = (
