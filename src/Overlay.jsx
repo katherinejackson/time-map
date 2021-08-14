@@ -202,7 +202,11 @@ const Overlay = ({ encoding, selections, shape }) => {
 
             p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(colourTheme.textColour)
-            p5.text(formatNames(names), location.x, location.y + height)
+            if (mapPin) {
+                p5.text(formatNames(names), location.x, location.y)
+            } else {
+                p5.text(formatNames(names), location.x, location.y + height)
+            }
         }
     }
 
