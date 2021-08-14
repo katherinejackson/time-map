@@ -86,11 +86,8 @@ export const row = (
     const {width, height} = getShapeSize(selections, shapes.ROW.id)
     const startX = x - width/2
     const startY = mapPin ? y - height - pinSize : y - height/2
-    const daysPerRow = 365
-    const rowWidth = daysPerRow * dayWidth
-    const glyphHeight = (spaceBetween + rowHeight) * locationData.length - spaceBetween
-    let baseline = startY + glyphHeight
-    const increment = glyphHeight / interval.range
+    let baseline = startY + height
+    const increment = height / interval.range
     const middle = baseline - (interval.range / 2 * increment)
 
     if (mapPin) {
@@ -102,17 +99,17 @@ export const row = (
         } else {
             p5.noFill()
         }
-        p5.rect(startX - 2, startY - 2, rowWidth + 4, glyphHeight + 4, 5)
+        p5.rect(startX, startY, width, height)
         p5.noStroke()
     } else if (opaque) {
         p5.fill(colourTheme.pinBackground)
-        p5.rect(startX - 2, startY - 2, rowWidth + 4, glyphHeight + 4, 5)
+        p5.rect(startX - 2, startY - 2, width + 4, height + 4)
     }
 
     if (encoding !== 2) {
         p5.stroke(colourTheme.lineColour)
         p5.noFill()
-        p5.rect(startX, startY, rowWidth, glyphHeight)
+        p5.rect(startX, startY, width, height)
         p5.noStroke()
     }
 
@@ -142,7 +139,7 @@ export const row = (
             }
         }
 
-        baseline = baseline + glyphHeight / 2
+        baseline = baseline + height / 2
     })
 
     if (cluster) {
@@ -454,7 +451,8 @@ export const spiral = (
             p5.noFill()
         }
 
-        p5.ellipse(startX, startY, radius * 2, radius * 2 + 2)
+        p5.stroke(colourTheme.pinColour)
+        p5.ellipse(startX, startY, height, height)
         p5.noStroke()
     } else if (opaque) {
         p5.fill(colourTheme.pinBackground)
