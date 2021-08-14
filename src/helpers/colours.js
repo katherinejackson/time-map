@@ -7,7 +7,8 @@ export const setColour = (p5, pt, numColours, interval, dataType) => {
         || numColours === 360
     ) {
         fillColourGradient(p5, pt, interval, numColours)
-    } else if (dataType === 'COVID' && numColours === 6) {
+    } else if (dataType === 'COVID') {
+        numColours = 6
         const colour = getCovidIntervalColour(pt, colours[dataType][numColours], manualIntervals[dataType][numColours])
         p5.fill(colour)
     } else {

@@ -5,7 +5,7 @@ import { useMap } from "react-leaflet";
 import { drawLegend } from "./legend";
 import { getLocationData } from "./helpers/data";
 import { getDefaultSelections } from "./helpers/selections";
-import { shapes } from "./constants";
+import { shapes, themeColours } from "./constants";
 import { getRoundedInterval } from "./helpers/intervals";
 import { calculateClusters, addLocations } from "./helpers/cluster";
 import { row, getRowSize, getPinAdjustment, getShapeSize } from "./shapes";
@@ -19,7 +19,8 @@ const mapHeight = window.innerHeight * 0.75
 const Overlay = ({ encoding, selections, shape }) => {
     const map = useMap()
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
-    const { mapPin, opaque, yearIndication, fillMissing, theme, cluster } = selections
+    const { mapPin, theme, cluster } = selections
+    const colourTheme = themeColours[theme]
     const [p5, setP5] = useState(null)
     const interval = getRoundedInterval(dataBrackets, selections.numColours)
     const [locationPins, setLocationPins] = useState([])
@@ -32,13 +33,13 @@ const Overlay = ({ encoding, selections, shape }) => {
             resetPins()
         }
 
-    }, [locations, p5, cluster, selections])
+    }, [p5, shape])
 
     useEffect(() => {
         if (p5 && locationPins.length) {
             setLocationPins(updateGlyphs(locationPins))
         }
-    }, [selections, map, mapPin, opaque, yearIndication, fillMissing, theme, p5, encoding])
+    }, [map, encoding, selections])
 
     useEffect(() => {
         if (p5 && locationPins.length) {
@@ -81,7 +82,7 @@ const Overlay = ({ encoding, selections, shape }) => {
     }
 
     const mouseMoved = (p5) => {
-        let hoverFound = { found: false, distance: null, index: null }
+        let hoverFound = { distance: null, index: null }
         let pinAdjustment = 0
 
         if (mapPin) {
@@ -93,16 +94,13 @@ const Overlay = ({ encoding, selections, shape }) => {
             if (Math.abs(p5.mouseX - location.x) < pin.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < pin.minDistanceY) {
                 let distance = Math.pow(Math.abs(p5.mouseX - location.x), 2) + Math.pow(Math.abs(p5.mouseY - location.y + pinAdjustment), 2)
                 if (!hoverFound.found || distance < hoverFound.distance) {
-                    hoverFound = { found: true, distance, index }
+                    hoverFound = { distance, index }
                 }
             }
         })
 
-        if (hoverFound.found) {
-            setHover(hoverFound.index)
-        } else {
-            setHover(null)
-        }
+        setHover(hoverFound.index)
+        
     }
 
     const mouseClicked = (p5) => {
@@ -164,7 +162,7 @@ const Overlay = ({ encoding, selections, shape }) => {
         drawGlyphs()
         drawZoom()
         if (encoding !== 1) {
-            drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType, null, theme.textColour)
+            drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType, null, colourTheme.textColour)
         }
 
         if (detailed.length) {
@@ -187,7 +185,7 @@ const Overlay = ({ encoding, selections, shape }) => {
             hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
 
             if (!mapPin) {
-                p5.fill(theme.pinBackground, 150)
+                p5.fill(colourTheme.pinBackground, 150)
                 if (shape === shapes.SPIRAL.id) {
                     p5.ellipse(pin.x, pin.y, width * 3, height * 3)
                 } else if (shape === shapes.ROW.id) {
@@ -203,7 +201,7 @@ const Overlay = ({ encoding, selections, shape }) => {
             })
 
             p5.textAlign(p5.CENTER, p5.TOP)
-            p5.fill(theme.textColour)
+            p5.fill(colourTheme.textColour)
             p5.text(formatNames(names), location.x, location.y + height)
         }
     }
@@ -262,12 +260,12 @@ const Overlay = ({ encoding, selections, shape }) => {
         const { pinHeight } = getRowSize(newSelections, detailed.length, newSelections.numYears)
         const locationHeight = pinHeight + 30
 
-        p5.fill(theme.background)
+        p5.fill(colourTheme.background)
         p5.rect(mapWidth - 150, 0, 150, locationHeight * detailed.length)
         p5.textAlign(p5.LEFT, p5.TOP)
 
         detailed.forEach((id, index) => {
-            p5.fill(theme.textColour)
+            p5.fill(colourTheme.textColour)
             p5.textSize(10)
             p5.text(locations[id].name, mapWidth - 150, index * locationHeight)
             drawDetailedRect(mapWidth - 75, index * locationHeight + pinHeight / 2 + 15, id, newSelections)

@@ -19,7 +19,7 @@ const style = {
 }
 
 const LeafletMap = ({ selections, shape, encoding }) => {
-    const theme = selections.theme.name
+    const theme = selections.theme
 
     return (
         <MapContainer

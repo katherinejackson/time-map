@@ -1,41 +1,69 @@
-import { shapes, themeColours, themes } from '../constants'
+import { shapes, themes } from '../constants'
 
-export const getDefaultSelections = (shape) => {
+export const getDefaultSelections = () => {
     let selections = {
         mapPin: false,
         opaque: false,
         // yearIndication: null,
         fillMissing: true,
-        theme: themeColours[themes.DARK.val],
+        theme: themes.DARK.val,
         cluster: false,
         numYears: 1,
         numColours: 6,
-    }
 
-    if (shape === shapes.SPIRAL.id) {
-        selections['coreSize'] = 4
-        selections['spiralWidth'] = 20
-        selections['spiralTightness'] = 0.02
-    } else if (shape === shapes.ROW.id) {
-        selections['dayWidth'] = 0.25
-        selections['rowHeight'] = 25
-        selections['spaceBetween'] = 0
+        coreSize: 4,
+        spiralWidth: 20,
+        spiralTightness: 0.02,
+
+        dayWidth: 0.25,
+        rowHeight: 25,
+        spaceBetween: 0,
     }
 
     return selections
 }
 
-export const getBasicSelectionOptions = () => {
-    return {
-        mapPin: { name: 'Map Pin', values: ['true', 'false'] },
-        opaque: { name: 'Opaque Background', values: ['true', 'false'] },
-        fillMissing: { name: 'Fill Missing Data', values: ['true', 'false'] },
-        theme: { name: 'Theme', values: Object.keys(themes) },
-        cluster: { name: 'Cluster Data Points', values: ['true', 'false'] },
-        numYears: { name: 'Number of Years', values: [1, 2] },
-        numColours: { name: 'Number of Colours', values: [1, 2, 3, 4, 5, 6, 7, 8, 256, 360] },
+export const getShapeSelections = (shape) => {
+    if (shape === shapes.SPIRAL.id) {
+        return {
+            coreSize: 4,
+            spiralWidth: 20,
+            spiralTightness: 0.02,
+        }
+
+    } else if (shape === shapes.ROW.id) {
+        return {
+            dayWidth: 0.25,
+            rowHeight: 25,
+            spaceBetween: 0,
+        }
+
     }
 }
+
+export const getBasicSelectionOptions = () => {
+    return {
+        mapPin: { name: 'Map Pin', values: [true, false] },
+        opaque: { name: 'Opaque Background', values: [true, false] },
+        fillMissing: { name: 'Fill Missing Data', values: [true, false] },
+        theme: { name: 'Theme', values: Object.keys(themes) },
+        cluster: { name: 'Cluster Data Points', values: [true, false] },
+        numYears: { name: 'Number of Years', values: [1, 2] },
+        numColours: { name: 'Number of Colours', values: [1, 2, 3, 4, 5, 6, 7, 8, 360] },
+    }
+}
+
+// export const getBasicSelectionOptions = () => {
+//     return {
+//         mapPin: { name: 'Map Pin', values: [{name: 'true', val: 1}, {name: 'false', val: 0}] },
+//         opaque: { name: 'Opaque Background', values: [{name: 'true', val: 1}, {name: 'false', val: 0}] },
+//         fillMissing: { name: 'Fill Missing Data', values: [{name: 'true', val: 1}, {name: 'false', val: 0}] },
+//         theme: { name: 'Theme', values: [{name: 'Default', val: 'DEFAULT'}, {name: 'Dark', val: 'DARK'}, {name: 'Colour Dark', val: 'COLOURED_DARK'}] },
+//         cluster: { name: 'Cluster Data Points', values: [{name: 'true', val: 1}, {name: 'false', val: 0}] },
+//         numYears: { name: 'Number of Years', values: [{name: 1, val: 1}, {name: 2, val: 2}] },
+//         // numColours: { name: 'Number of Colours', values: [1, 2, 3, 4, 5, 6, 7, 8, 256, 360] },
+//     }
+// }
 
 export const getShapeSelectionOptions = (shape) => {
     if (shape === shapes.SPIRAL.id) {

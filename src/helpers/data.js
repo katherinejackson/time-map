@@ -1,4 +1,4 @@
-import { smallData as covidData } from "../data/covidData";
+import { bigData as covidData } from "../data/covidData";
 import { data as tradeData } from "../data/tradeData"
 import {data as mapData} from "../data/weatherData"
 import { views, dataSets } from "../constants";

@@ -4,6 +4,8 @@ export const radianPerDay = 0.01721420632
 
 export const radianPerMonth = 0.52359877559
 
+export const pinSize = 5
+
 export const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
 
 export const abbreviatedMonths = ["JA", "FE", "MR", "AL", "MA", "JN", "JL", "AU", "SE", "OC", "NO", "DE"]

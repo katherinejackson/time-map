@@ -1,4 +1,4 @@
-import { colours, manualIntervals, radianPerDay, radianPerMonth, shapes } from "./constants";
+import { colours, manualIntervals, radianPerDay, radianPerMonth, shapes, themeColours, pinSize } from "./constants";
 import { fillColourGradient, getManualIntervalColour, fillLogColourGradient, getCovidIntervalColour, setColour } from "./helpers/colours";
 
 export const getShapeSize = (selections, shape, numLocations=1) => {
@@ -75,14 +75,17 @@ export const row = (
     dataType,
     interval,
     locationData,
-    locationX,
-    locationY,
-    startX,
-    startY,
+    x,
+    y,
     selections,
     encoding,
+    numLocations,
 ) => {
-    const { numColours, mapPin, opaque, dayWidth, theme, spaceBetween, rowHeight, fillMissing } = selections
+    const { numColours, mapPin, opaque, dayWidth, theme, spaceBetween, rowHeight, fillMissing, cluster } = selections
+    const colourTheme = themeColours[theme]
+    const {width, height} = getShapeSize(selections, shapes.ROW.id)
+    const startX = x - width/2
+    const startY = mapPin ? y - height - pinSize : y - height/2
     const daysPerRow = 365
     const rowWidth = daysPerRow * dayWidth
     const glyphHeight = (spaceBetween + rowHeight) * locationData.length - spaceBetween
@@ -92,22 +95,22 @@ export const row = (
 
     if (mapPin) {
         p5.stroke(50)
-        p5.fill(theme.pinColour)
-        p5.triangle(locationX, locationY, locationX - 5, locationY - 5, locationX + 5, locationY - 5)
+        p5.fill(colourTheme.pinColour)
+        p5.triangle(x, y, x - pinSize, y - pinSize, x + pinSize, y - pinSize)
         if (opaque) {
-            p5.fill(theme.pinBackground)
+            p5.fill(colourTheme.pinBackground)
         } else {
             p5.noFill()
         }
         p5.rect(startX - 2, startY - 2, rowWidth + 4, glyphHeight + 4, 5)
         p5.noStroke()
     } else if (opaque) {
-        p5.fill(theme.pinBackground)
+        p5.fill(colourTheme.pinBackground)
         p5.rect(startX - 2, startY - 2, rowWidth + 4, glyphHeight + 4, 5)
     }
 
     if (encoding !== 2) {
-        p5.stroke(theme.lineColour)
+        p5.stroke(colourTheme.lineColour)
         p5.noFill()
         p5.rect(startX, startY, rowWidth, glyphHeight)
         p5.noStroke()
@@ -117,7 +120,7 @@ export const row = (
         for (let day = 0; day < year.length - 1; day++) {
             if (year[day] !== '') {
                 if (encoding === 1) {
-                    p5.fill(theme.textColour)
+                    p5.fill(colourTheme.textColour)
                 } else {
                     setColour(p5, year[day], numColours, interval, dataType)
                 }
@@ -129,7 +132,7 @@ export const row = (
                     p5.ellipse(startX + day * dayWidth, val, 1, 1)
                 }
             } else if (fillMissing) {
-                p5.fill(theme.missingData, 100)
+                p5.fill(colourTheme.missingData, 100)
 
                 if (encoding === 2) {
                     p5.rect(startX + day * dayWidth, baseline - rowHeight, 1, rowHeight)
@@ -141,6 +144,24 @@ export const row = (
 
         baseline = baseline + glyphHeight / 2
     })
+
+    if (cluster) {
+        p5.fill(colourTheme.textColour)
+        p5.textSize(10)
+        p5.textAlign(p5.CENTER, p5.CENTER)
+
+        if (mapPin) {
+            p5.fill(colourTheme.pinBackground)
+            p5.ellipse(x, y - pinSize - height/2, 16, 16)
+            p5.fill(colourTheme.textColour)
+            p5.text(numLocations, x, y - pinSize - height/2)
+        } else {
+            p5.fill(colourTheme.pinBackground)
+            p5.ellipse(x, y, 16, 16)
+            p5.fill(colourTheme.textColour)
+            p5.text(numLocations, x, y)
+        }
+    }
 }
 
 export const bridgeRow = (p5, startX, startY, endX, endY, data) => {
@@ -407,25 +428,28 @@ export const spiral = (
     dataType,
     interval,
     locationData,
-    locationX,
-    locationY,
-    startX,
-    startY,
+    x,
+    y,
     selections,
     encoding,
+    numLocations,
 ) => {
-    const { spiralWidth, spiralTightness, coreSize, mapPin, opaque, theme, numColours, fillMissing } = selections
+    const { spiralWidth, spiralTightness, coreSize, mapPin, opaque, theme, numColours, fillMissing, cluster } = selections
+    const colourTheme = themeColours[theme]
     const increment = spiralWidth / interval.range
+    const { height } = getShapeSize(selections, shapes.SPIRAL.id)
+    const startX = x
+    const startY = mapPin ? y - pinSize - height/2 : y
     let angle = -Math.PI / 2
     let radius = getRadius(selections, locationData.length)
     let innerRing = coreSize
 
     if (mapPin) {
-        p5.fill(theme.pinColour)
-        p5.triangle(locationX, locationY, locationX - 5, locationY - 15, locationX + 5, locationY - 15)
+        p5.fill(colourTheme.pinColour)
+        p5.triangle(x, y, x - pinSize, y - pinSize, x + pinSize, y - pinSize)
 
         if (opaque) {
-            p5.fill(theme.pinBackground)
+            p5.fill(colourTheme.pinBackground)
         } else {
             p5.noFill()
         }
@@ -433,14 +457,14 @@ export const spiral = (
         p5.ellipse(startX, startY, radius * 2, radius * 2 + 2)
         p5.noStroke()
     } else if (opaque) {
-        p5.fill(theme.pinBackground)
+        p5.fill(colourTheme.pinBackground)
 
         if (encoding === 2) {
             p5.ellipse(startX, startY, radius * 2, radius * 2 + 2)
         } else {
             locationData.forEach(year => {
                 for (let pt = 0; pt < year.length - 1; pt++) {
-                    p5.fill(theme.pinBackground)
+                    p5.fill(colourTheme.pinBackground)
                     p5.noStroke()
                     p5.arc(startX + p5.cos(angle) * innerRing, startY + p5.sin(angle) * innerRing, spiralWidth * 4, spiralWidth * 4, angle, angle + radianPerDay * 10, p5.PIE)
                     angle += radianPerDay
@@ -464,13 +488,13 @@ export const spiral = (
                 }
                 const x = startX + p5.cos(angle) * (innerRing + val * increment)
                 const y = startY + p5.sin(angle) * (innerRing + val * increment)
-                p5.fill(theme.missingData)
+                p5.fill(colourTheme.missingData)
                 p5.ellipse(x, y, 1, 1)
             }
 
             if (year[day] !== '') {
                 if (encoding === 1) {
-                    p5.fill(theme.textColour)
+                    p5.fill(colourTheme.textColour)
                 } else {
                     setColour(p5, year[day], numColours, interval, dataType)
                 }
@@ -486,12 +510,12 @@ export const spiral = (
                     p5.ellipse(x, y, 1, 1)
                 }
             } else if (fillMissing) {
-                p5.fill(theme.missingData, 100)
+                p5.fill(colourTheme.missingData, 100)
 
                 if (encoding === 2) {
                     const x = startX + p5.cos(angle) * innerRing
                     const y = startY + p5.sin(angle) * innerRing
-                    p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPerDay * 10, p5.PIE)
+                    p5.arc(x, y, spiralWidth * 2, spiralWidth * 2, angle, angle + radianPerDay * 10, p5.PIE)
                 }
             }
 
@@ -499,6 +523,24 @@ export const spiral = (
             innerRing += spiralTightness
         }
     })
+
+    if (cluster) {
+        p5.fill(colourTheme.textColour)
+        p5.textSize(10)
+        p5.textAlign(p5.CENTER, p5.CENTER)
+
+        if (mapPin) {
+            p5.fill(colourTheme.pinBackground)
+            p5.ellipse(x, y - pinSize - height/2, 16, 16)
+            p5.fill(colourTheme.textColour)
+            p5.text(numLocations, x, y - pinSize - height/2)
+        } else {
+            p5.fill(colourTheme.pinBackground)
+            p5.ellipse(x, y, 16, 16)
+            p5.fill(colourTheme.textColour)
+            p5.text(numLocations, x, y)
+        }
+    }
 }
 
 export const radialBarSpark = (

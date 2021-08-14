@@ -66,8 +66,8 @@ export const addLocations = (locations, selections, shape, mapPin, map) => {
             lat: item.x,
             long: item.y,
             locations: [item.id],
-            minDistanceX: width,
-            minDistanceY: height,
+            minDistanceX: width/2,
+            minDistanceY: height/2,
             name: item.name,
         })
     })

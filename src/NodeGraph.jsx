@@ -12,7 +12,7 @@ const canvasHeight = window.innerHeight
 
 const Graph = ({ }) => {
     const [p5, setP5] = useState(null)
-    const { background, lineColour, textColour, pinBackground } = themeColours['DEFAULT']
+    const { background, lineColour, textColour } = themeColours['DEFAULT']
     const spiralSelections = { ...getDefaultSelections(shapes.SPIRAL.id), ['numColours']: 7,  ['spiralWidth']: 80 }
     const { data, dataType, variable } = useContext(DataContext)
     const [pts, setPts] = useState([])

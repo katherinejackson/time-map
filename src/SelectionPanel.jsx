@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { getBasicSelectionOptions, getShapeSelectionOptions } from './helpers/selections'
-import { themeColours, views } from './constants'
+import { views } from './constants'
 
 const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x, y }) => {
     const basicOptions = getBasicSelectionOptions()
@@ -16,11 +16,21 @@ const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x,
             val = 0
         } 
 
-        if (option === 'theme') {
-            val = themeColours[val]
+        if (parseFloat(val)) {
+            val = parseFloat(val)
         }
 
         setSelections({ ...selections, [option]: val })
+    }
+
+    const getValString = (val) => {
+        if (typeof val === "boolean" && val) {
+            val = 'true'
+        } else if (typeof val === "boolean" && !val) {
+            val = 'false'
+        } 
+
+        return val
     }
 
     return (
@@ -57,7 +67,7 @@ const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x,
                     <div className="row justify-content-center gap-3">
                         <label className="col-form-label w-auto">{basicOptions[option]['name']}</label>
                         <select className="form-select w-auto" defaultValue={selections[option]} onChange={event => handleSelectionChange(event, option)} name="Display type">
-                            {basicOptions[option]['values'].map(val => <option key={`basicOption-${option}-${val}`} value={val}>{val}</option>)}
+                            {basicOptions[option]['values'].map(val => <option key={`basicOption-${option}-${val}`} value={val}>{getValString(val)}</option>)}
                         </select>
                     </div>
                 ))}
