@@ -15,7 +15,7 @@ import Comparison from './Comparison';
 import GraphView from './GraphView'
 
 const App = () => {
-    const [view, setView] = useState('MAP')
+    const [view, setView] = useState(null)
     const [shape, setShape] = useState(1)
     const [encoding, setEncoding] = useState(1)
     const [x, setX] = useState(null)
@@ -26,7 +26,7 @@ const App = () => {
     useEffect(() => {
         setX(null)
         setY(null)
-    }, [shape])
+    }, [shape, view])
 
     const handleViewChange = (event) => {
         setView(event.target.value)
@@ -43,8 +43,7 @@ const App = () => {
     return (
         <div className="container-fluid my-5">
             <ViewSelector handleViewChange={handleViewChange} />
-            <ShapeEncodingSelector handleEncodingChange={handleEncodingChange} handleShapeChange={handleShapeChange} />
-
+            {view === views.GRAPH.val ? null : <ShapeEncodingSelector handleEncodingChange={handleEncodingChange} handleShapeChange={handleShapeChange} />}
 
             {view && shape && encoding ? (
                 <DataContext.Provider value={{ data, dataType, yBrackets, dataBrackets, categories, totalDataPts, locations, variable }}>
