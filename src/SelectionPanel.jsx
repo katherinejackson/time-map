@@ -14,7 +14,7 @@ const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x,
             val = 1
         } else if (val === 'false') {
             val = 0
-        } 
+        }
 
         if (parseFloat(val)) {
             val = parseFloat(val)
@@ -28,7 +28,7 @@ const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x,
             val = 'true'
         } else if (typeof val === "boolean" && !val) {
             val = 'false'
-        } 
+        }
 
         return val
     }
@@ -38,15 +38,15 @@ const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x,
             {view === views.COMPARISON.val ? (
                 <div className="col justify-content-center gap-3">
                     <label className="col-form-label w-auto">X-Axis</label>
-                    <select className="form-select w-auto" defaultValue={x || 'select'} onChange={e => setX(e.target.value)} name="Display type">
+                    <select className="form-select w-auto" defaultValue={x || 'select'} onChange={e => setX(e.target.value)} >
                         <option disabled value="select" id="select"> -- select an option -- </option>
                         {Object.keys(options).map(opt => <option key={`x-${opt}`} value={opt}>{options[opt].name}</option>)}
                     </select>
 
                     <label className="col-form-label w-auto">Y-Axis</label>
-                    <select className="form-select w-auto" defaultValue={y || 'select'} onChange={e => setY(e.target.value)} name="Display type">
+                    <select className="form-select w-auto" defaultValue={y || 'select'} onChange={e => setY(e.target.value)} >
                         <option disabled value="select" id="select"> -- select an option -- </option>
-                        {Object.keys(options).map(opt => <option key={`x-${opt}`} value={opt}>{options[opt].name}</option>)}
+                        {Object.keys(options).map(opt => <option key={`y-${opt}`} value={opt}>{options[opt].name}</option>)}
                     </select>
                 </div>
             ) : null}
@@ -55,7 +55,7 @@ const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x,
                 {Object.keys(shapeOptions).map(option => (
                     <div className="row justify-content-center gap-3">
                         <label className="col-form-label w-auto">{shapeOptions[option]['name']}</label>
-                        <select className="form-select w-auto" defaultValue={selections[option]} disabled={option === x || option === y} nChange={event => handleSelectionChange(event, option)} name="Display type">
+                        <select className="form-select w-auto" defaultValue={selections[option]} disabled={option === x || option === y} onChange={event => handleSelectionChange(event, option)}>
                             {shapeOptions[option]['values'].map(val => <option key={`shapeOption-${option}-${val}`} value={val}>{val}</option>)}
                         </select>
                     </div>
@@ -66,7 +66,7 @@ const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x,
                 {Object.keys(basicOptions).map(option => (
                     <div className="row justify-content-center gap-3">
                         <label className="col-form-label w-auto">{basicOptions[option]['name']}</label>
-                        <select className="form-select w-auto" defaultValue={selections[option]} disabled={option === x || option === y} onChange={event => handleSelectionChange(event, option)} name="Display type">
+                        <select className="form-select w-auto" defaultValue={selections[option]} disabled={option === x || option === y} onChange={event => handleSelectionChange(event, option)} >
                             {basicOptions[option]['values'].map(val => <option key={`basicOption-${option}-${val}`} value={val}>{getValString(val)}</option>)}
                         </select>
                     </div>
