@@ -13,7 +13,7 @@ import DataContext from "./DataContext";
 import { getGlyph } from "./helpers/mapCanvas";
 import { formatNames } from "./helpers/format";
 
-const mapWidth = 1000
+const mapWidth = window.options ? 1000 : window.innerWidth * 0.95
 const mapHeight = window.innerHeight * 0.75
 
 const Overlay = ({ encoding, selections, shape }) => {

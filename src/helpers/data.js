@@ -21,18 +21,18 @@ export const getDataBrackets = (data) => {
     let lowest;
 
     Object.keys(data).forEach(id => {
-        Object.keys(data[id].data).forEach(year => {
-            data[id].data[year].forEach(pt => {
-                if (pt) {
-                    if (!highest || pt > highest) {
-                        highest = pt
-                    }
-
-                    if (!lowest || pt < lowest) {
-                        lowest = pt
-                    }
+        const years = Object.keys(data[id].data)
+        const year = years[0]
+        data[id].data[year].forEach(pt => {
+            if (pt) {
+                if (!highest || pt > highest) {
+                    highest = pt
                 }
-            })
+
+                if (!lowest || pt < lowest) {
+                    lowest = pt
+                }
+            }
         })
     })
 
@@ -183,22 +183,39 @@ export const getLocationData = (id, selections, data) => {
     return newData
 }
 
-export const getData = (view) => {
-    if (view === views.SCATTER.val) {
-        const logData = getLogData(covidData)
-        const dataBrackets = getDataBracketsMultiYear(logData, 'cases')
-        const dataType = dataSets.COVID.val
-        const yBrackets = getVariableBrackets(covidData, 'population')
-        const categories = getDataCategories(covidData, 'continent')
+const cleanCovidData = () => {
+    const clean = {}
+    let num = 0
 
-        // getCovidDataInfo(covidData)
-
-        let total = 0
-        Object.keys(categories).forEach(cat => {
-            total += categories[cat]
+    Object.keys(covidData).forEach(country => {
+        let numDaysWithData = 0
+        covidData[country]['cases'][2020].forEach(day => {
+            if (day !== '') {
+                numDaysWithData++
+            }
         })
 
-        return { data: logData, dataType, dataBrackets, yBrackets, categories, totalDataPts: total }
+        if (numDaysWithData >= 50) {
+            num++
+            clean[country] = covidData[country]
+        }
+    })
+
+    return clean
+}
+
+export const getData = (view) => {
+    if (view === views.SCATTER.val) {
+        const cleanData = cleanCovidData()
+        const logData = getLogData(cleanData)
+        const dataBrackets = getDataBracketsMultiYear(logData, 'cases')
+        const dataType = dataSets.COVID.val
+        const yBrackets = getVariableBrackets(cleanData, 'population')
+        const xBrackets = getVariableBrackets(cleanData, 'human_development_index')
+
+        // getCovidDataInfo(cleanData)
+
+        return { data: logData, dataType, dataBrackets, yBrackets, xBrackets }
 
     } else if (view === views.GRAPH.val) {
         let var1 = 'import'
@@ -214,7 +231,7 @@ export const getData = (view) => {
         const dataType = dataSets.TEMP.val
         const dataBrackets = getDataBrackets(data)
 
-        // getDataInfo(data, dataBrackets)
+        // getMapDataInfo(data, dataBrackets)
 
         return { data, dataType, dataBrackets }
     }
@@ -252,41 +269,82 @@ const getMaxData = (data) => {
     return newData
 }
 
-const getDataInfo = (data, dataBrackets) => {
+const getMapDataInfo = (data, dataBrackets) => {
+    let mapInfo = {}
+
+    const locations = []
+
     Object.keys(data).forEach((location, index) => {
         const locationData = data[location].data
         const years = Object.keys(locationData)
+        const year = years[years.length - 1]
         const locationInfo = {}
 
-        let numDaysAbove25 = 0
+        let numDaysAbove30 = 0
         let numDaysBelow30 = 0
-        years.forEach(year => {
-            const yearData = locationData[year]
+        let numDaysAbove0 = 0
+        let numDaysBelow0 = 0
+        const yearData = locationData[year]
 
-            yearData.forEach(day => {
-                if (day === dataBrackets.high) {
-                    locationInfo['highestTemp'] = true
-                }
+        yearData.forEach(day => {
+            if (day === dataBrackets.high) {
+                mapInfo['highestTemp'] = { name: alaska[index].name, value: day }
+            }
 
-                if (day === dataBrackets.low) {
-                    locationInfo['lowestTemp'] = true
-                }
+            if (day === dataBrackets.low) {
+                mapInfo['lowestTemp'] = { name: alaska[index].name, value: day }
+            }
 
-                if (day >= 25) {
-                    numDaysAbove25++
-                }
+            if (day >= 30) {
+                numDaysAbove30++
+            }
 
-                if (day < -30) {
-                    numDaysBelow30++
-                }
-            })
+            if (day < -30) {
+                numDaysBelow30++
+            }
+
+            if (day > 0) {
+                numDaysAbove0++
+            } else {
+                numDaysBelow0++
+            }
         })
 
-        locationInfo['daysAbove25'] = numDaysAbove25
+        locationInfo['daysAbove30'] = numDaysAbove30
         locationInfo['daysBelow30'] = numDaysBelow30
+        locationInfo['daysAbove0'] = numDaysAbove0
+        locationInfo['daysBelow0'] = numDaysBelow0
+        locationInfo['name'] = alaska[index].name
 
-        console.log(alaska[index].name, locationInfo)
+        locations.push(locationInfo)
+
+        // console.log(alaska[index].name, locationInfo)
+
     })
+
+    mapInfo = { ...mapInfo, ...getTotals(locations) }
+    console.log(mapInfo)
+}
+
+const getTotals = (locations) => {
+    const findLargest = (variable) => {
+        let current = null
+        locations.forEach(location => {
+            if (!current || current.value < location[variable]) {
+                current = { name: location.name, value: location[variable] }
+            }
+        })
+
+        return current
+    }
+
+    return {
+        mostDaysAbove0: findLargest('daysAbove0'),
+        mostDaysBelow0: findLargest('daysBelow0'),
+        mostDaysAbove30: findLargest('daysAbove30'),
+        mostDaysBelow30: findLargest('daysBelow30'),
+
+    }
 }
 
 const getCovidDataInfo = (data) => {
@@ -317,13 +375,10 @@ const getCovidDataInfo = (data) => {
         }
 
         if (!info['latestDay'] || info['latestDay'].day < firstDay) {
-            info['latestDay'] = {country, day: firstDay}
+            info['latestDay'] = { country, day: firstDay }
         }
 
     })
-
-    console.log(info)
-
 }
 
 const getLogData = (data) => {

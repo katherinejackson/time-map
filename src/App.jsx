@@ -23,7 +23,7 @@ const App = () => {
     const [encoding, setEncoding] = useState(options.encoding)
     const [x, setX] = useState(null)
     const [y, setY] = useState(null)
-    const { data, dataType, dataBrackets, yBrackets, categories, variable, totalDataPts } = getData(view)
+    const { data, dataType, dataBrackets, yBrackets, xBrackets, variable } = getData(view)
     const [selections, setSelections] = useState(getDefaultSelections(shape, view))
 
     useEffect(() => {
@@ -43,14 +43,14 @@ const App = () => {
         setEncoding(parseInt(event.target.value))
     }
 
-    if (!window.options) {
+    if (true) {
         return (
             <div className="container-fluid my-5">
                 <ViewSelector handleViewChange={handleViewChange} />
                 {view === views.GRAPH.val ? null : <ShapeEncodingSelector encoding={encoding} handleEncodingChange={handleEncodingChange} handleShapeChange={handleShapeChange} shape={shape}/>}
 
                 {view && shape && encoding ? (
-                    <DataContext.Provider value={{ data, dataType, yBrackets, dataBrackets, categories, totalDataPts, locations, variable }}>
+                    <DataContext.Provider value={{ data, dataType, yBrackets, xBrackets, dataBrackets, locations, variable }}>
                         {view === views.GRAPH.val ? <GraphView /> : (
                             <>
                                 <SelectionPanel selections={selections} setSelections={setSelections} setX={setX} setY={setY} shape={shape} view={view} x={x} y={y} />
@@ -68,7 +68,7 @@ const App = () => {
         );
     } else {
         return (
-            <DataContext.Provider value={{ data, dataType, yBrackets, dataBrackets, categories, totalDataPts, locations, variable }}>
+            <DataContext.Provider value={{ data, dataType, yBrackets, dataBrackets, xBrackets, locations, variable }}>
                 <div className="d-flex justify-content-center">
                     {view === views.MAP.val ? <LeafletMap encoding={encoding} selections={selections} shape={shape} /> : null}
                     {view === views.SCATTER.val ? <ScatterPlot encoding={encoding} selections={selections} shape={shape} /> : null}

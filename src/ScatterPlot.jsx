@@ -8,7 +8,7 @@ import { getManualInterval } from "./helpers/intervals";
 import { shapes, themeColours } from "./constants";
 import { formatNumbers } from "./helpers/format"
 
-const canvasWidth = window.innerWidth * 0.95
+const canvasWidth = window.options ? 1000 : window.innerWidth * 0.95
 const canvasHeight = window.innerHeight
 
 const xBorder = 50
@@ -17,17 +17,12 @@ const graphWidth = canvasWidth - xBorder * 2
 const yBorder = 50
 const graphHeight = canvasHeight - yBorder * 2
 
-const getSpacePerPt = (width, totalDataPts) => {
-    return (graphWidth - width) / totalDataPts
-}
-
 const ScatterPlot = ({ encoding, selections, shape }) => {
-    const { data, dataBrackets, yBrackets, categories, dataType, totalDataPts } = useContext(DataContext)
+    const { data, dataBrackets, yBrackets, xBrackets, dataType } = useContext(DataContext)
     const { theme, numColours, numYears, mapPin } = selections
     const colourTheme = themeColours[theme]
     const [p5, setP5] = useState(null)
     const { width, height } = getShapeSize(selections, shape)
-    const spacePerPt = getSpacePerPt(width, totalDataPts)
     const [pts, setPts] = useState({})
     const [hover, setHover] = useState(null)
     const interval = getManualInterval(dataBrackets, numColours, dataType)
@@ -52,14 +47,12 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
 
     const reset = () => {
         let newPts = {}
-        let xCounters = calcCategories()
 
         Object.keys(data).forEach(id => {
-            let x = xCounters[data[id]['continent']]
+            let x = calcX(data[id]['human_development_index'])
             let y = calcY(id)
 
             const { pg, width, height } = getGlyph(id)
-            xCounters[data[id]['continent']] = xCounters[data[id]['continent']] + spacePerPt
             newPts[id] = {
                 name: data[id]['location'],
                 x,
@@ -90,19 +83,6 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         setPts(newPts)
     }
 
-    const calcCategories = () => {
-        let xCounters = {}
-        let walker = xBorder + width
-
-        Object.keys(categories).forEach(cat => {
-            let numInCategory = categories[cat]
-            xCounters[cat] = walker
-            walker += spacePerPt * numInCategory
-        })
-
-        return xCounters
-    }
-
     const setup = (p5, parent) => {
         setP5(p5)
         p5.createCanvas(canvasWidth, canvasHeight).parent(parent)
@@ -117,22 +97,7 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         p5.line(xBorder, yBorder, xBorder, canvasHeight - yBorder)
         p5.line(xBorder, canvasHeight - yBorder, canvasWidth - xBorder, canvasHeight - yBorder)
 
-        let xCounters = calcCategories()
-        Object.keys(categories).forEach(cat => {
-            if (xCounters[cat] > xBorder + width) {
-                p5.stroke(50)
-                p5.line(
-                    xCounters[cat] - spacePerPt / 2,
-                    canvasHeight - yBorder,
-                    xCounters[cat] - spacePerPt / 2,
-                    yBorder)
-            }
-
-            p5.noStroke()
-            p5.fill(colourTheme.textColour)
-            p5.text(cat, xCounters[cat] + (spacePerPt * categories[cat]) / 2, canvasHeight - 40)
-        })
-
+        drawXAxis(p5)
         drawYAxis(p5)
         if (encoding !== 1) {
             drawLegend(p5, canvasWidth / 2, canvasHeight - 25, selections, interval, dataType, null, colourTheme.textColour)
@@ -198,13 +163,22 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
     }
 
     const calcY = (id) => {
-        const bottom = canvasHeight - yBorder - height/2
+        const bottom = canvasHeight - yBorder - height / 2
         const graphRange = graphHeight - height
         let logLow = Math.floor(Math.log2(yBrackets.low))
         let logHigh = Math.ceil(Math.log2(yBrackets.high))
         let logRange = logHigh - logLow
 
         return Math.round(bottom - ((Math.log2(data[id]['population']) - logLow) * graphRange / logRange))
+    }
+
+    const calcX = (num) => {
+        const left = xBorder + width / 2
+        const graphRange = graphWidth - width
+        const dataRange = xBrackets.high - xBrackets.low
+        const increment = graphRange / dataRange
+
+        return left + (num - xBrackets.low) * increment
     }
 
     const drawYAxis = (p5) => {
@@ -222,12 +196,22 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         }
     }
 
+    const drawXAxis = (p5) => {
+        const increments = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+
+        p5.fill(colourTheme.textColour)
+        increments.forEach(num => {
+            let x = calcX(num)
+            p5.text(num, x, canvasHeight - 40)
+        })
+    }
+
     const mouseMoved = () => {
         let ptFound = null
         let distance = null
 
         Object.keys(pts).forEach(id => {
-            if (Math.abs(pts[id]['x'] - p5.mouseX) < width/2 && Math.abs(pts[id]['y'] - p5.mouseY) < height/2) {
+            if (Math.abs(pts[id]['x'] - p5.mouseX) < width / 2 && Math.abs(pts[id]['y'] - p5.mouseY) < height / 2) {
                 let newDistance = Math.pow(pts[id]['x'] - p5.mouseX, 2) + Math.pow(pts[id]['y'] - p5.mouseY, 2)
 
                 if ((!distance || newDistance < distance)) {

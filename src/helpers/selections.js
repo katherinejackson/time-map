@@ -15,8 +15,8 @@ export const getDefaultSelections = () => {
         spiralWidth: 20,
         spiralTightness: 0.02,
 
-        dayWidth: 0.25,
-        rowHeight: 25,
+        dayWidth: 0.125,
+        rowHeight: 15,
         spaceBetween: 0,
     }
 
@@ -33,8 +33,8 @@ export const getShapeSelections = (shape) => {
 
     } else if (shape === shapes.ROW.id) {
         return {
-            dayWidth: 0.25,
-            rowHeight: 25,
+            dayWidth: 0.125,
+            rowHeight: 15,
             spaceBetween: 0,
         }
 
