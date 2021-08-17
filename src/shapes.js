@@ -564,6 +564,7 @@ export const radialBarSpark = (
     let spiralTightness = selections.spiralTightness
     let angle = -Math.PI / 2
     let innerRing = selections.coreSize
+    let outerRing = innerRing + spiralWidth * 2
     let numColours = selections.numColours
     let increment = (spiralWidth * 2) / interval.range
     let zeroRing = innerRing + spiralWidth
