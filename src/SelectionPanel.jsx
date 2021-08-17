@@ -53,10 +53,10 @@ const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x,
 
             <div className="col justify-content-center gap-3">
                 {Object.keys(shapeOptions).map(option => (
-                    <div className="row justify-content-center gap-3">
+                    <div className="row justify-content-center gap-3" key={`${option}-selection`}>
                         <label className="col-form-label w-auto">{shapeOptions[option]['name']}</label>
                         <select className="form-select w-auto" defaultValue={selections[option]} disabled={option === x || option === y} onChange={event => handleSelectionChange(event, option)}>
-                            {shapeOptions[option]['values'].map(val => <option key={`shapeOption-${option}-${val}`} value={val}>{val}</option>)}
+                            {shapeOptions[option]['values'].map(val => <option key={`basicOption-${option}-${val}`} value={val}>{val}</option>)}
                         </select>
                     </div>
                 ))}
@@ -64,7 +64,7 @@ const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x,
 
             <div className="col justify-content-center gap-3">
                 {Object.keys(basicOptions).map(option => (
-                    <div className="row justify-content-center gap-3">
+                    <div className="row justify-content-center gap-3" key={`${option}-selection`}>
                         <label className="col-form-label w-auto">{basicOptions[option]['name']}</label>
                         <select className="form-select w-auto" defaultValue={selections[option]} disabled={option === x || option === y} onChange={event => handleSelectionChange(event, option)} >
                             {basicOptions[option]['values'].map(val => <option key={`basicOption-${option}-${val}`} value={val}>{getValString(val)}</option>)}
