@@ -211,7 +211,6 @@ const Overlay = ({ encoding, selections, shape }) => {
     }
 
     const resetPins = () => {
-        console.log(cluster)
         if (cluster) {
             resetClusters()
         } else {
@@ -222,7 +221,6 @@ const Overlay = ({ encoding, selections, shape }) => {
     const resetClusters = () => {
         const clusters = calculateClusters(locations, selections, shape, mapPin, map)
         setLocationPins(updateGlyphs(clusters))
-        console.log(clusters.length)
     }
 
     const setPins = () => {
@@ -238,7 +236,6 @@ const Overlay = ({ encoding, selections, shape }) => {
             glyphs.push({ ...pin, pg, width, height })
         })
 
-        console.log(glyphs.length)
         return glyphs
     }
 
