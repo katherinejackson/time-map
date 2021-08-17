@@ -187,9 +187,9 @@ const Overlay = ({ encoding, selections, shape }) => {
             if (!mapPin) {
                 p5.fill(colourTheme.pinBackground, 150)
                 if (shape === shapes.SPIRAL.id) {
-                    p5.ellipse(pin.x, pin.y, width * 3, height * 3)
+                    p5.ellipse(location.x, location.y, width * 3, height * 3)
                 } else if (shape === shapes.ROW.id) {
-                    p5.rect(pin.x - width, pin.y - height, width * 2, height * 3)
+                    p5.rect(location.x - width, location.y - height, width * 2, height * 3)
                 }
             }
 
