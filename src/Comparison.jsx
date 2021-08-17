@@ -8,7 +8,7 @@ const Comparison = ({ selections, shape, encoding, x, y }) => {
     const options = getAllOptions(shape)
 
     if (!x || !y || !options[x] || !options[y]) {
-        return null
+        return <p className="text-danger" >Please select new values.</p>
     }
 
     const xOptions = options[x].values
