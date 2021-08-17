@@ -20,6 +20,7 @@ const Overlay = ({ encoding, selections, shape }) => {
     const map = useMap()
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
     const { mapPin, theme, cluster } = selections
+    const [shouldCluster, setShouldCluster] = useState(cluster)
     const colourTheme = themeColours[theme]
     const [p5, setP5] = useState(null)
     const interval = getRoundedInterval(dataBrackets, selections.numColours)
@@ -31,12 +32,13 @@ const Overlay = ({ encoding, selections, shape }) => {
     useEffect(() => {
         if (locations && p5) {
             resetPins()
+            setShouldCluster(cluster)
         }
 
-    }, [p5, shape])
+    }, [p5, shape, cluster])
 
     useEffect(() => {
-        if (p5 && locationPins.length) {
+        if (p5 && locationPins.length && cluster === shouldCluster) {
             setLocationPins(updateGlyphs(locationPins))
         }
     }, [map, encoding, selections])
@@ -63,8 +65,6 @@ const Overlay = ({ encoding, selections, shape }) => {
 
     const drawDetailedRect = (x, y, id, detailedSelections) => {
         let locationData = getLocationData(id, selections, data)
-        const daysPerRow = 365
-
         const { rowWidth, pinHeight } = getRowSize(detailedSelections, 1)
         const startX = x - rowWidth / 2;
         const startY = y - pinHeight / 2
@@ -211,6 +211,7 @@ const Overlay = ({ encoding, selections, shape }) => {
     }
 
     const resetPins = () => {
+        console.log(cluster)
         if (cluster) {
             resetClusters()
         } else {
@@ -221,6 +222,7 @@ const Overlay = ({ encoding, selections, shape }) => {
     const resetClusters = () => {
         const clusters = calculateClusters(locations, selections, shape, mapPin, map)
         setLocationPins(updateGlyphs(clusters))
+        console.log(clusters.length)
     }
 
     const setPins = () => {
@@ -236,6 +238,7 @@ const Overlay = ({ encoding, selections, shape }) => {
             glyphs.push({ ...pin, pg, width, height })
         })
 
+        console.log(glyphs.length)
         return glyphs
     }
 

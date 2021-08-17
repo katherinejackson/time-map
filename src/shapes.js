@@ -149,14 +149,14 @@ export const row = (
 
         if (mapPin) {
             p5.fill(colourTheme.pinBackground)
-            p5.ellipse(x, y - pinSize - height/2, 16, 16)
+            p5.ellipse(x, y + 8, 16, 16)
             p5.fill(colourTheme.textColour)
-            p5.text(numLocations, x, y - pinSize - height/2)
+            p5.text(numLocations, x, y + 8)
         } else {
             p5.fill(colourTheme.pinBackground)
-            p5.ellipse(x, y, 16, 16)
+            p5.ellipse(x, y + height/2 + 8, 16, 16)
             p5.fill(colourTheme.textColour)
-            p5.text(numLocations, x, y)
+            p5.text(numLocations, x, y + height/2 + 8)
         }
     }
 }

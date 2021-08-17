@@ -11,9 +11,9 @@ const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x,
     const handleSelectionChange = (event, option) => {
         let val = event.target.value
         if (val === 'true') {
-            val = 1
+            val = true
         } else if (val === 'false') {
-            val = 0
+            val = false
         }
 
         if (parseFloat(val)) {
