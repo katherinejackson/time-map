@@ -1,6 +1,6 @@
 import { bigData as covidData } from "../data/covidData";
 import { data as tradeData } from "../data/tradeData"
-import {data as mapData} from "../data/weatherData"
+import { data as mapData } from "../data/weatherData"
 import { views, dataSets } from "../constants";
 import { alaska } from "../data/locationCoords";
 
@@ -191,6 +191,8 @@ export const getData = (view) => {
         const yBrackets = getVariableBrackets(covidData, 'population')
         const categories = getDataCategories(covidData, 'continent')
 
+        // getCovidDataInfo(covidData)
+
         let total = 0
         Object.keys(categories).forEach(cat => {
             total += categories[cat]
@@ -238,12 +240,12 @@ const getMaxData = (data) => {
     })
 
     let newData = {}
-    let highest = {val: 0, year: null}
+    let highest = { val: 0, year: null }
     Object.keys(yearTotals).forEach(year => {
         if (!highest.year || yearTotals[year] > highest.val) {
-            highest = {val: yearTotals[year], year}
+            highest = { val: yearTotals[year], year }
         }
-    }) 
+    })
 
     newData[highest.year] = data[highest.year]
 
@@ -255,12 +257,12 @@ const getDataInfo = (data, dataBrackets) => {
         const locationData = data[location].data
         const years = Object.keys(locationData)
         const locationInfo = {}
-    
+
         let numDaysAbove25 = 0
         let numDaysBelow30 = 0
         years.forEach(year => {
             const yearData = locationData[year]
-    
+
             yearData.forEach(day => {
                 if (day === dataBrackets.high) {
                     locationInfo['highestTemp'] = true
@@ -285,7 +287,42 @@ const getDataInfo = (data, dataBrackets) => {
 
         console.log(alaska[index].name, locationInfo)
     })
+}
 
+const getCovidDataInfo = (data) => {
+    const info = {
+        above100K: {},
+        latestDay: null
+    }
+
+    Object.keys(data).forEach(country => {
+        const countryData = data[country].cases
+        let numDaysAbove100K = 0
+        let firstDay = 0
+        let year = '2020'
+
+        const yearData = countryData[year]
+        yearData.forEach((day, index) => {
+            if (day > 100000) {
+                numDaysAbove100K++
+            }
+
+            if (day && !firstDay) {
+                firstDay = index
+            }
+        })
+
+        if (numDaysAbove100K) {
+            info['above100K'][country] = numDaysAbove100K
+        }
+
+        if (!info['latestDay'] || info['latestDay'].day < firstDay) {
+            info['latestDay'] = {country, day: firstDay}
+        }
+
+    })
+
+    console.log(info)
 
 }
 
@@ -293,22 +330,22 @@ const getLogData = (data) => {
     const logData = JSON.parse(JSON.stringify(data))
 
     Object.keys(data).forEach(id => {
-       Object.keys( data[id]['cases']).forEach(year => {
-        let yearData = data[id]['cases'][year]
-        let logYear = []
-        yearData.forEach(day => {
-            if (day > 0) {
-                logYear.push(Math.log10(day))
-            } else if (day === ''){
-                logYear.push('')
-            } else {
-                logYear.push(0)
-            }
+        Object.keys(data[id]['cases']).forEach(year => {
+            let yearData = data[id]['cases'][year]
+            let logYear = []
+            yearData.forEach(day => {
+                if (day > 0) {
+                    logYear.push(Math.log10(day))
+                } else if (day === '') {
+                    logYear.push('')
+                } else {
+                    logYear.push(0)
+                }
+            })
+
+            logData[id]['cases'][year] = logYear
         })
 
-        logData[id]['cases'][year] = logYear
-       })
-        
     })
 
     return logData
