@@ -53,29 +53,17 @@ export const getBasicSelectionOptions = () => {
     }
 }
 
-// export const getBasicSelectionOptions = () => {
-//     return {
-//         mapPin: { name: 'Map Pin', values: [{name: 'true', val: 1}, {name: 'false', val: 0}] },
-//         opaque: { name: 'Opaque Background', values: [{name: 'true', val: 1}, {name: 'false', val: 0}] },
-//         fillMissing: { name: 'Fill Missing Data', values: [{name: 'true', val: 1}, {name: 'false', val: 0}] },
-//         theme: { name: 'Theme', values: [{name: 'Default', val: 'DEFAULT'}, {name: 'Dark', val: 'DARK'}, {name: 'Colour Dark', val: 'COLOURED_DARK'}] },
-//         cluster: { name: 'Cluster Data Points', values: [{name: 'true', val: 1}, {name: 'false', val: 0}] },
-//         numYears: { name: 'Number of Years', values: [{name: 1, val: 1}, {name: 2, val: 2}] },
-//         // numColours: { name: 'Number of Colours', values: [1, 2, 3, 4, 5, 6, 7, 8, 256, 360] },
-//     }
-// }
-
 export const getShapeSelectionOptions = (shape) => {
     if (shape === shapes.SPIRAL.id) {
         return {
             coreSize: { name: 'Core Size', values: [0, 1, 2, 3, 4, 5, 6, 7, 8] },
-            spiralWidth: { name: 'Spiral Width', values: [1, 5, 10, 15, 20, 25, 30, 35] },
-            spiralTightness: { name: 'Spiral Tightness', values: [0.01, 0.015, 0.02, 0.025, 0.03] }
+            spiralWidth: { name: 'Spiral Width', values: [1, 2, 5, 10, 15, 20, 25, 30, 35] },
+            spiralTightness: { name: 'Spiral Tightness', values: [0.01, 0.015, 0.02, 0.03, 0.04] }
         }
     } else if (shape === shapes.ROW.id) {
         return {
-            dayWidth: { name: 'Day Width', values: [0.0625, 0.125, 0.25, 0.5] },
-            rowHeight: { name: 'Row Height', values: [1, 5, 10, 15, 20, 25, 30] },
+            dayWidth: { name: 'Day Width', values: [0.03125, 0.0625, 0.125, 0.25, 0.5] },
+            rowHeight: { name: 'Row Height', values: [1, 2, 5, 10, 15, 20, 25, 30] },
             spaceBetween: { name: 'Space between Rows', values: [0, 1, 2, 3, 4, 5] }
         }
     }
