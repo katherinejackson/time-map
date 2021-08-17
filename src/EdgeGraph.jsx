@@ -12,7 +12,7 @@ const canvasHeight = window.innerHeight
 
 const edgeLength = 275
 
-const EdgeGraph = ({ }) => {
+const EdgeGraph = () => {
     const [p5, setP5] = useState(null)
     const { background, textColour, pinBackground } = themeColours['DEFAULT']
     const rowSelections = {...getDefaultSelections(shapes.ROW.id), ['numColours']: 7 }

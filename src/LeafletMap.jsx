@@ -1,10 +1,8 @@
-import React, { useContext } from "react";
+import React from "react";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer } from "react-leaflet";
 
 import Overlay from "./Overlay";
-import SelectionContext from "./SelectionContext";
-import { themes } from "./constants";
 
 const initialCenter = [63, -149];   // alaska
 

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { getAllOptions, getDefaultSelections } from './helpers/selections'
+import { getAllOptions } from './helpers/selections'
 import Tile from "./Tile"
 import { getShapeSize } from './shapes'
 

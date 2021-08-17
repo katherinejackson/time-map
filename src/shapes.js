@@ -81,7 +81,7 @@ export const row = (
     encoding,
     numLocations,
 ) => {
-    const { numColours, mapPin, opaque, dayWidth, theme, spaceBetween, rowHeight, fillMissing, cluster } = selections
+    const { numColours, mapPin, opaque, dayWidth, theme, rowHeight, fillMissing, cluster } = selections
     const colourTheme = themeColours[theme]
     const {width, height} = getShapeSize(selections, shapes.ROW.id)
     const startX = x - width/2
@@ -564,7 +564,6 @@ export const radialBarSpark = (
     let spiralTightness = selections.spiralTightness
     let angle = -Math.PI / 2
     let innerRing = selections.coreSize
-    let outerRing = innerRing + spiralWidth * 2
     let numColours = selections.numColours
     let increment = (spiralWidth * 2) / interval.range
     let zeroRing = innerRing + spiralWidth

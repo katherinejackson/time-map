@@ -5,7 +5,7 @@ import EdgeGraph from "./EdgeGraph"
 import DoubleGraph from "./DoubleGraph"
 import BridgeGraph from "./BridgeGraph"
 
-const GraphView = ({}) => (
+const GraphView = () => (
         <div className="py-8">
              <BridgeGraph />
              <br />

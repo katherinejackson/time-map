@@ -116,4 +116,3 @@ export const getCovidIntervalColour = (pt, colourSet, intervalSet) => {
 
     return colourSet[colourSet.length - counter - 1]
 }
-

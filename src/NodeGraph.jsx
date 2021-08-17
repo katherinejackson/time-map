@@ -10,7 +10,7 @@ import { getDefaultSelections } from "./helpers/selections";
 const canvasWidth = window.innerWidth * 0.95
 const canvasHeight = window.innerHeight
 
-const Graph = ({ }) => {
+const Graph = () => {
     const [p5, setP5] = useState(null)
     const { background, lineColour, textColour } = themeColours['DEFAULT']
     const spiralSelections = { ...getDefaultSelections(shapes.SPIRAL.id), ['numColours']: 7,  ['spiralWidth']: 80 }

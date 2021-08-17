@@ -7,7 +7,7 @@ import ScatterPlot from "./ScatterPlot"
 import DataContext from './DataContext'
 import { getData } from './helpers/data'
 import { alaska as locations } from "./data/locationCoords"
-import { getDefaultSelections, getShapeSelections } from "./helpers/selections"
+import { getDefaultSelections } from "./helpers/selections"
 import ViewSelector from './ViewSelector';
 import ShapeEncodingSelector from './ShapeEncodingSelector'
 import SelectionPanel from './SelectionPanel'
