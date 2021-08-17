@@ -47,7 +47,7 @@ const App = () => {
         return (
             <div className="container-fluid my-5">
                 <ViewSelector handleViewChange={handleViewChange} />
-                {view === views.GRAPH.val ? null : <ShapeEncodingSelector handleEncodingChange={handleEncodingChange} handleShapeChange={handleShapeChange} />}
+                {view === views.GRAPH.val ? null : <ShapeEncodingSelector encoding={encoding} handleEncodingChange={handleEncodingChange} handleShapeChange={handleShapeChange} shape={shape}/>}
 
                 {view && shape && encoding ? (
                     <DataContext.Provider value={{ data, dataType, yBrackets, dataBrackets, categories, totalDataPts, locations, variable }}>
