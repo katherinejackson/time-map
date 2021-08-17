@@ -3,7 +3,7 @@ import React, { useEffect, useState, useContext } from "react";
 
 import { shapes, themeColours } from './constants'
 import { getInterval } from "./helpers/intervals";
-import { row, spiral, getPinAdjustment} from "./shapes";
+import { row, spiral} from "./shapes";
 import { drawLegend } from "./legend";
 import DataContext from "./DataContext";
 import { getLocationData } from "./helpers/data";
@@ -11,7 +11,7 @@ import { getLocationData } from "./helpers/data";
 
 const Tile = ({ encoding, numX, selections, shape}) => {
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
-    const { mapPin, theme } = selections
+    const { theme } = selections
     const colourTheme = themeColours[theme]
     const interval = getInterval(dataBrackets, selections.numColours)
     const [p5, setP5] = useState(null)
@@ -49,9 +49,9 @@ const Tile = ({ encoding, numX, selections, shape}) => {
         p5.noStroke()
         drawPin(canvasSize / 2, canvasSize / 2, [locations[0].id])
 
-        // if (encoding !== 1) {
-        //     drawLegend(p5, canvasSize / 2, 1, selections, interval, dataType, null, colourTheme.textColour)
-        // }
+        if (encoding !== 1) {
+            drawLegend(p5, canvasSize / 2, 1, selections, interval, dataType, null, colourTheme.textColour)
+        }
 
         p5.noLoop()
     }
