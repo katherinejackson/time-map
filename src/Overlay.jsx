@@ -12,6 +12,7 @@ import { row, getRowSize, getPinAdjustment, getShapeSize } from "./shapes";
 import DataContext from "./DataContext";
 import { getGlyph } from "./helpers/mapCanvas";
 import { formatNames } from "./helpers/format";
+import { onClick, onHover, onZoom } from "./helpers/studyEventHandlers";
 
 const mapWidth = window.options ? 1000 : window.innerWidth * 0.95
 const mapHeight = window.innerHeight * 0.75
@@ -59,6 +60,7 @@ const Overlay = ({ encoding, selections, shape }) => {
             map.off('zoom')
             map.on('zoom', () => {
                 resetPins()
+                onZoom(map.getZoom())
             })
         }
     }, [p5, locationPins, detailed, cluster, shape])
@@ -99,8 +101,11 @@ const Overlay = ({ encoding, selections, shape }) => {
             }
         })
 
+        if (hoverFound.index && hoverFound.index !== hover) {
+            onHover(locationPins[hoverFound.index]['name'])
+        }
+
         setHover(hoverFound.index)
-        
     }
 
     const mouseClicked = (p5) => {
@@ -128,31 +133,33 @@ const Overlay = ({ encoding, selections, shape }) => {
             })
 
             if (locationFound.found) {
-                let pin = locationPins[locationFound.index]
-                let allDisplayed = true
-                pin.locations.forEach(id => {
-                    if (!detailed.includes(id)) {
-                        allDisplayed = false
-                    }
-                })
+                let val = locationPins[locationFound.index]['name']
+                onClick(val)
+                // let pin = locationPins[locationFound.index]
+                // let allDisplayed = true
+                // pin.locations.forEach(id => {
+                //     if (!detailed.includes(id)) {
+                //         allDisplayed = false
+                //     }
+                // })
 
-                if (allDisplayed) {
-                    let newDetailed = [...detailed]
-                    pin.locations.forEach(id => {
-                        let index = newDetailed.indexOf(id)
-                        newDetailed.splice(index, 1)
-                    })
-                    setDetailed(newDetailed)
-                } else {
-                    let newDetailed = [...detailed]
-                    pin.locations.forEach(id => {
-                        if (!detailed.includes(id)) {
-                            newDetailed.push(id)
-                        }
-                    })
+                // if (allDisplayed) {
+                //     let newDetailed = [...detailed]
+                //     pin.locations.forEach(id => {
+                //         let index = newDetailed.indexOf(id)
+                //         newDetailed.splice(index, 1)
+                //     })
+                //     setDetailed(newDetailed)
+                // } else {
+                //     let newDetailed = [...detailed]
+                //     pin.locations.forEach(id => {
+                //         if (!detailed.includes(id)) {
+                //             newDetailed.push(id)
+                //         }
+                //     })
 
-                    setDetailed(newDetailed)
-                }
+                //     setDetailed(newDetailed)
+                // }
             }
         }
     }

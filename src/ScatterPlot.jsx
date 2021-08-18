@@ -7,6 +7,7 @@ import DataContext from "./DataContext";
 import { getManualInterval } from "./helpers/intervals";
 import { shapes, themeColours } from "./constants";
 import { formatNumbers } from "./helpers/format"
+import { onClick, onHover } from "./helpers/studyEventHandlers";
 
 const canvasWidth = window.options ? 1000 : window.innerWidth * 0.95
 const canvasHeight = window.innerHeight
@@ -221,10 +222,34 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
             }
         })
 
+        if (ptFound && ptFound !== hover) {
+            onHover(pts[ptFound]['name'])
+        }
+
         setHover(ptFound)
     }
 
-    return <Sketch setup={setup} draw={draw} mouseMoved={mouseMoved} />
+    const mouseClicked = () => {
+        let ptFound = null
+        let distance = null
+
+        Object.keys(pts).forEach(id => {
+            if (Math.abs(pts[id]['x'] - p5.mouseX) < width / 2 && Math.abs(pts[id]['y'] - p5.mouseY) < height / 2) {
+                let newDistance = Math.pow(pts[id]['x'] - p5.mouseX, 2) + Math.pow(pts[id]['y'] - p5.mouseY, 2)
+
+                if ((!distance || newDistance < distance)) {
+                    distance = Math.pow(pts[id]['x'] - p5.mouseX, 2) + Math.pow(pts[id]['y'] - p5.mouseY, 2)
+                    ptFound = id
+                }
+            }
+        })
+
+        if (ptFound) {
+            onClick(pts[ptFound]['name'])
+        }
+    }
+
+    return <Sketch setup={setup} draw={draw} mouseMoved={mouseMoved} mouseClicked={mouseClicked} />
 }
 
 export default ScatterPlot

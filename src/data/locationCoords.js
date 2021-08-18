@@ -61,7 +61,7 @@ export const alaska = [
     },
     {
         "id": "10",
-        "name": "Eielson AFB",
+        "name": "Eielson",
         "x": 64.67,
         "y": -147.04
     },
