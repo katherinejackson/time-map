@@ -277,6 +277,12 @@ const getMapDataInfo = (data, dataBrackets) => {
     Object.keys(data).forEach((location, index) => {
         const locationData = data[location].data
         const years = Object.keys(locationData)
+        
+        let currentYearIndex = years.indexOf('2021')
+        if (currentYearIndex > -1) {
+            years.splice(currentYearIndex, 1)
+        }
+
         const year = years[years.length - 1]
         const locationInfo = {}
 
