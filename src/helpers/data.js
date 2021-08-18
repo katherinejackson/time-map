@@ -222,6 +222,7 @@ export const getData = (view) => {
         const yBrackets = getVariableBrackets(data, 'population')
         const xBrackets = getVariableBrackets(data, 'human_development_index')
 
+        // getCovidDataInfo(data)
         // console.log(Object.keys(data).length + ' countries')
 
         return { data: logData, dataType, dataBrackets, yBrackets, xBrackets }
