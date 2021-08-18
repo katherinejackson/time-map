@@ -183,37 +183,46 @@ export const getLocationData = (id, selections, data) => {
     return newData
 }
 
-const cleanCovidData = () => {
-    const clean = {}
-    let num = 0
+const getDataByPopulation = (data, population) => {
+    const newData = {}
 
-    Object.keys(covidData).forEach(country => {
-        let numDaysWithData = 0
-        covidData[country]['cases'][2020].forEach(day => {
-            if (day !== '') {
-                numDaysWithData++
-            }
-        })
-
-        if (numDaysWithData >= 50) {
-            num++
-            clean[country] = covidData[country]
+    Object.keys(data).forEach(country => {
+        if (data[country]['population'] >= population) {
+            newData[country] = data[country]
         }
     })
 
-    return clean
+    // console.log(Object.keys(newData).length + ' countries')
+
+    return newData
+}
+
+const getDataByContinent = (data, continents) => {
+    const newData = {}
+
+    Object.keys(data).forEach(country => {
+        if (continents.includes(data[country]['continent'])) {
+            newData[country] = data[country]
+        }
+    })
+
+    // console.log(Object.keys(newData).length + ' countries')
+
+    return newData
 }
 
 export const getData = (view) => {
     if (view === views.SCATTER.val) {
-        const cleanData = cleanCovidData()
-        const logData = getLogData(cleanData)
+        let data = covidData
+        // data = getDataByContinent(data, ['North America', 'Asia'])
+        // data = getDataByPopulation(data, 10000000)
+        const logData = getLogData(data)
         const dataBrackets = getDataBracketsMultiYear(logData, 'cases')
         const dataType = dataSets.COVID.val
-        const yBrackets = getVariableBrackets(cleanData, 'population')
-        const xBrackets = getVariableBrackets(cleanData, 'human_development_index')
+        const yBrackets = getVariableBrackets(data, 'population')
+        const xBrackets = getVariableBrackets(data, 'human_development_index')
 
-        // getCovidDataInfo(cleanData)
+        // console.log(Object.keys(data).length + ' countries')
 
         return { data: logData, dataType, dataBrackets, yBrackets, xBrackets }
 
