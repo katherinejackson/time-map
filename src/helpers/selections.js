@@ -10,24 +10,16 @@ export const getDefaultSelections = () => {
         cluster: false,
         numYears: 1,
         numColours: 6,
-
-        coreSize: 4,
-        spiralWidth: 20,
-        spiralTightness: 0.02,
-
-        dayWidth: 0.125,
-        rowHeight: 15,
-        spaceBetween: 0,
     }
 
-    return selections
+    return {...selections, ...getShapeSelections(shapes.SPIRAL.id), ...getShapeSelections(shapes.ROW.id)}
 }
 
 export const getShapeSelections = (shape) => {
     if (shape === shapes.SPIRAL.id) {
         return {
             coreSize: 4,
-            spiralWidth: 20,
+            spiralWidth: 10,
             spiralTightness: 0.02,
         }
 
