@@ -105,7 +105,9 @@ const Overlay = ({ encoding, selections, shape }) => {
             onHover(locationPins[hoverFound.index]['name'])
         }
 
-        setHover(hoverFound.index)
+        if (hoverFound.index !== hover) {
+            setHover(hoverFound.index)
+        }
     }
 
     const mouseClicked = (p5) => {

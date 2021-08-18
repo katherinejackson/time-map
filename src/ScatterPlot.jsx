@@ -226,7 +226,9 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
             onHover(pts[ptFound]['name'])
         }
 
-        setHover(ptFound)
+        if (ptFound !== hover) {
+            setHover(ptFound)
+        }
     }
 
     const mouseClicked = () => {
