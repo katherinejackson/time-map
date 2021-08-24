@@ -10,8 +10,8 @@ import { shapes } from "./constants";
 import { formatNumbers } from "./helpers/format"
 import { getMinDistance } from "./helpers/cluster"
 
-const canvasWidth = 1000
-const canvasHeight = window.innerHeight
+const canvasWidth = 1200
+const canvasHeight = 800
 
 const xBorder = 50
 const graphWidth = canvasWidth - xBorder * 2

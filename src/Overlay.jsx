@@ -15,8 +15,8 @@ import { getGlyph } from "./helpers/mapCanvas";
 import { formatNames } from "./helpers/format";
 import { getMinDistance } from "./helpers/cluster"
 
-const mapWidth = 1000
-const mapHeight = window.innerHeight * 0.75
+const mapWidth = 1200
+const mapHeight = 800
 
 const Overlay = () => {
     const map = useMap()

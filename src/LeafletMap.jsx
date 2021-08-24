@@ -10,8 +10,8 @@ const initialCenter = [63, -149];   // alaska
 
 // const initialCenter = [52, -103];  // sask
 
-const mapWidth = 1000
-const mapHeight = window.innerHeight * 0.75
+const mapWidth = 1200;
+const mapHeight = 800;
 
 const style = {
     width: mapWidth,
