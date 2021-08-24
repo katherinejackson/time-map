@@ -1,11 +1,11 @@
 import React from 'react'
 
 import { getBasicSelectionOptions, getShapeSelectionOptions } from './helpers/selections'
-import { views } from './constants'
+import { shapes, views } from './constants'
 
 const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x, y }) => {
     const basicOptions = getBasicSelectionOptions()
-    const shapeOptions = getShapeSelectionOptions(shape)
+    const shapeOptions = view !== views.MULTI_COMPARISON.val ? getShapeSelectionOptions(shape) : {...getShapeSelectionOptions(shapes.SPIRAL.id), ...getShapeSelectionOptions(shapes.ROW.id)}
     const options = { ...basicOptions, ...shapeOptions }
 
     const handleSelectionChange = (event, option) => {

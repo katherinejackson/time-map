@@ -15,8 +15,8 @@ const Tile = ({ encoding, numX, selections, shape}) => {
     const colourTheme = themeColours[theme]
     const interval = getInterval(dataBrackets, selections.numColours)
     const [p5, setP5] = useState(null)
-    const canvasSize = window.innerWidth * 0.95 / numX
-    // const canvasSize = 150
+    // const canvasSize = window.innerWidth * 0.95 / numX
+    const canvasSize = 150
 
     useEffect(() => {
         if (p5) {

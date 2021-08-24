@@ -13,6 +13,7 @@ import ShapeEncodingSelector from './ShapeEncodingSelector'
 import SelectionPanel from './SelectionPanel'
 import Comparison from './Comparison';
 import GraphView from './GraphView'
+import MultiComparison from './MultiComparison'
 
 let options = window.options || { view: null, shape: 2, encoding: 1 };
 
@@ -47,7 +48,7 @@ const App = () => {
         return (
             <div className="container-fluid my-5">
                 <ViewSelector handleViewChange={handleViewChange} />
-                {view === views.GRAPH.val ? null : <ShapeEncodingSelector encoding={encoding} handleEncodingChange={handleEncodingChange} handleShapeChange={handleShapeChange} shape={shape}/>}
+                {view === views.GRAPH.val || view === views.MULTI_COMPARISON.val ? null : <ShapeEncodingSelector encoding={encoding} handleEncodingChange={handleEncodingChange} handleShapeChange={handleShapeChange} shape={shape}/>}
 
                 {view && shape && encoding ? (
                     <DataContext.Provider value={{ data, dataType, yBrackets, xBrackets, dataBrackets, locations, variable }}>
@@ -58,6 +59,7 @@ const App = () => {
                                     {view === views.MAP.val ? <LeafletMap encoding={encoding} selections={selections} shape={shape} /> : null}
                                     {view === views.SCATTER.val ? <ScatterPlot encoding={encoding} selections={selections} shape={shape} /> : null}
                                     {view === views.COMPARISON.val ? <Comparison encoding={encoding} selections={selections} shape={shape} x={x} y={y} /> : null}
+                                    {view === views.MULTI_COMPARISON.val ? <MultiComparison encoding={encoding} selections={selections} shape={shape} x={x} y={y} /> : null}
                                 </div>
                             </>
                         )}

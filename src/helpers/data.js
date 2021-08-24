@@ -236,7 +236,7 @@ export const getData = (view) => {
 
         return { data: tradeData, dataType, dataBrackets, variable: var1 }
 
-    } else if (view === views.COMPARISON.val || view === views.MAP.val) {
+    } else if (view === views.COMPARISON.val || view === views.MAP.val || view === views.MULTI_COMPARISON.val) {
         let data = mapData[dataSets.TEMP.id].data
         const dataType = dataSets.TEMP.val
         const dataBrackets = getDataBrackets(data)
