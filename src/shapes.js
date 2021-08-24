@@ -8,6 +8,7 @@ export const getShapeSize = (selections, shape, numLocations=1) => {
         return {width: radius * 2, height: radius * 2}
     } else if (shape === shapes.ROW.id) {
         const {rowWidth, pinHeight} = getRowSize(selections, numLocations)
+        console.log(pinHeight)
 
         return {width: rowWidth, height: pinHeight}
     }
@@ -40,7 +41,7 @@ export const getRowSize = (selections) => {
     const dayWidth = selections.dayWidth
     const rowWidth = daysPerRow * dayWidth
     const rowHeight = selections.rowHeight 
-    const pinHeight = (selections.spaceBetween + selections.rowHeight) * selections.numYears
+    const pinHeight = (selections.rowHeight * selections.numYears) + (selections.spaceBetween * (selections.numYears - 1))
 
     return { dayWidth, rowWidth, rowHeight, pinHeight }
 }
@@ -81,13 +82,13 @@ export const row = (
     encoding,
     numLocations,
 ) => {
-    const { numColours, mapPin, opaque, dayWidth, theme, rowHeight, fillMissing, cluster } = selections
+    const { numColours, mapPin, opaque, dayWidth, theme, rowHeight, fillMissing, cluster, spaceBetween } = selections
     const colourTheme = themeColours[theme]
     const {width, height} = getShapeSize(selections, shapes.ROW.id)
     const startX = x - width/2
     const startY = mapPin ? y - height - pinSize : y - height/2
     let baseline = startY + height
-    const increment = height / interval.range
+    const increment = rowHeight / interval.range
     const middle = baseline - (interval.range / 2 * increment)
 
     if (mapPin) {
@@ -139,7 +140,7 @@ export const row = (
             }
         }
 
-        baseline = baseline + height / 2
+        baseline = baseline - rowHeight - spaceBetween
     })
 
     if (cluster) {
