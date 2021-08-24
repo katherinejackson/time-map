@@ -16,7 +16,7 @@ const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x,
             val = false
         }
 
-        if (parseFloat(val)) {
+        if (parseFloat(val) !== NaN) {
             val = parseFloat(val)
         }
 

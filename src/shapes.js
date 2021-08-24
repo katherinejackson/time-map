@@ -8,7 +8,6 @@ export const getShapeSize = (selections, shape, numLocations=1) => {
         return {width: radius * 2, height: radius * 2}
     } else if (shape === shapes.ROW.id) {
         const {rowWidth, pinHeight} = getRowSize(selections, numLocations)
-        console.log(pinHeight)
 
         return {width: rowWidth, height: pinHeight}
     }
