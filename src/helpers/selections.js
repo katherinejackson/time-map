@@ -1,5 +1,53 @@
 import { shapes, themes } from '../constants'
 
+const size = window?.options?.size || 'small'
+
+const defaultSizes = {
+    spiral: {
+        xsmall: {
+            coreSize: 0,
+            spiralWidth: 10,
+            spiralTightness: 0.02,
+        },
+        small: {
+            coreSize: 0,
+            spiralWidth: 10,
+            spiralTightness: 0.02,
+        },
+        large: {
+            coreSize: 0,
+            spiralWidth: 10,
+            spiralTightness: 0.02,
+        },
+        xlarge: {
+            coreSize: 0,
+            spiralWidth: 10,
+            spiralTightness: 0.02,
+        },
+    },
+    row: {
+        xsmall: {
+            dayWidth: 0.125,
+            rowHeight: 15,
+            spaceBetween: 0,
+        },
+        small: {
+            dayWidth: 0.125,
+            rowHeight: 15,
+            spaceBetween: 0,
+        },
+        large: {
+            dayWidth: 0.125,
+            rowHeight: 15,
+            spaceBetween: 0,
+        },
+        xlarge: {
+            dayWidth: 0.125,
+            rowHeight: 15,
+            spaceBetween: 0,
+        },
+    }
+}
 export const getDefaultSelections = () => {
     let selections = {
         mapPin: false,
@@ -17,19 +65,10 @@ export const getDefaultSelections = () => {
 
 export const getShapeSelections = (shape) => {
     if (shape === shapes.SPIRAL.id) {
-        return {
-            coreSize: 4,
-            spiralWidth: 10,
-            spiralTightness: 0.02,
-        }
+        return defaultSizes['spiral'][size]
 
     } else if (shape === shapes.ROW.id) {
-        return {
-            dayWidth: 0.125,
-            rowHeight: 15,
-            spaceBetween: 0,
-        }
-
+        return defaultSizes['row'][size]
     }
 }
 
