@@ -9,7 +9,7 @@ const MultiComparison = ({ selections}) => {
     const getSizeString = (shape) => {
         const {width, height} = getShapeSize(selections, shape)
 
-        return `width: ${Math.round(width)}  height: ${Math.round(height)}`
+        return `width: ${Math.round(width)}  height: ${Math.round(height)} area: ${Math.round(width * height)}`
     }
 
     return (

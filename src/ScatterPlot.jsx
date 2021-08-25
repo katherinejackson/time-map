@@ -23,7 +23,7 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
     const { theme, numColours, numYears, mapPin } = selections
     const colourTheme = themeColours[theme]
     const [p5, setP5] = useState(null)
-    const { width, height } = getShapeSize(selections, shape)
+    const { width, height, maxRadius } = getShapeSize(selections, shape)
     const [pts, setPts] = useState({})
     const [hover, setHover] = useState(null)
     const interval = getManualInterval(dataBrackets, numColours, dataType)
@@ -149,7 +149,7 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
             if (!mapPin) {
                 p5.fill(colourTheme.pinBackground, 100)
                 if (shape === shapes.SPIRAL.id) {
-                    p5.ellipse(pin.x, pin.y, width * 3, height * 3)
+                    p5.ellipse(pin.x, pin.y, maxRadius * 3, maxRadius * 3)
                 } else if (shape === shapes.ROW.id) {
                     p5.rect(pin.x - width, pin.y - height, width * 2, height * 3)
                 }

@@ -3,9 +3,12 @@ import { fillColourGradient, getManualIntervalColour, fillLogColourGradient, get
 
 export const getShapeSize = (selections, shape, numLocations=1) => {
     if (shape === shapes.SPIRAL.id) {
-        const radius = getRadius(selections)
+        const topRadius = getRadius(selections)
+        const bottomRadius = getRadiusAtDay(365/2, selections)
+        const rightRadius = getRadiusAtDay(365/4, selections)
+        const leftRadius = getRadiusAtDay(365 * 0.75, selections)
 
-        return {width: radius * 2, height: radius * 2}
+        return {width: leftRadius + rightRadius, height: topRadius + bottomRadius, maxRadius: topRadius}
     } else if (shape === shapes.ROW.id) {
         const {rowWidth, pinHeight} = getRowSize(selections, numLocations)
 
@@ -22,8 +25,15 @@ export const getSpiralSize = (selections, numLocations) => {
 export const getRadius = (selections, numYears = selections.numYears) => {
     const { coreSize, spiralTightness, spiralWidth } = selections
 
-    return Math.abs(Math.sin(-Math.PI / 2 + radianPerDay * 365 * numYears)
-        * (coreSize + spiralTightness * 365 * numYears)) + spiralWidth
+    return (coreSize + spiralTightness * 365 * numYears) + spiralWidth
+}
+
+export const getRadiusAtDay = (day, selections, numYears = selections.numYears) => {
+    const { coreSize, spiralTightness, spiralWidth } = selections
+
+    const numDays = 365 * (numYears - 1) + day 
+
+    return (coreSize + spiralTightness * numDays) + spiralWidth
 }
 
 export const getGraphRadius = (selections, numSections) => {
@@ -434,9 +444,9 @@ export const spiral = (
     const { spiralWidth, spiralTightness, coreSize, mapPin, opaque, theme, numColours, fillMissing, cluster } = selections
     const colourTheme = themeColours[theme]
     const increment = spiralWidth / interval.range
-    const { height } = getShapeSize(selections, shapes.SPIRAL.id)
+    const { maxRadius } = getShapeSize(selections, shapes.SPIRAL.id)
     const startX = x
-    const startY = mapPin ? y - pinSize - height/2 : y
+    const startY = mapPin ? y - pinSize - maxRadius : y
     let angle = -Math.PI / 2
     let radius = getRadius(selections, locationData.length)
     let innerRing = coreSize
@@ -452,7 +462,7 @@ export const spiral = (
         }
 
         p5.stroke(colourTheme.pinColour)
-        p5.ellipse(startX, startY, height, height)
+        p5.ellipse(startX, startY, maxRadius * 2, maxRadius * 2)
         p5.noStroke()
     } else if (opaque) {
         p5.fill(colourTheme.pinBackground)
@@ -529,9 +539,9 @@ export const spiral = (
 
         if (mapPin) {
             p5.fill(colourTheme.pinBackground)
-            p5.ellipse(x, y - pinSize - height/2, 16, 16)
+            p5.ellipse(x, y - pinSize - maxRadius, 16, 16)
             p5.fill(colourTheme.textColour)
-            p5.text(numLocations, x, y - pinSize - height/2)
+            p5.text(numLocations, x, y - pinSize - maxRadius/2)
         } else {
             p5.fill(colourTheme.pinBackground)
             p5.ellipse(x, y, 16, 16)
