@@ -188,6 +188,7 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         let numSteps = logHigh - logLow
         let spacePer = graphHeight / numSteps
         p5.fill(colourTheme.textColour)
+        p5.noStroke()
 
         let yWalker = canvasHeight - yBorder
         for (let i = 0; i < numSteps; i = i + 1) {
@@ -195,16 +196,29 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
             p5.text(formatNumbers(Math.pow(2, i + logLow)), xBorder - 2, yWalker)
             yWalker = yWalker - spacePer
         }
+
+        let labelGraphics = p5.createGraphics(100, 100)
+        labelGraphics.translate(0, 70)
+        labelGraphics.rotate(p5.radians(-90))
+
+        labelGraphics.fill(colourTheme.textColour)
+        labelGraphics.text('Population', 0, 10)
+
+        p5.image(labelGraphics, 1, graphHeight/2)
     }
 
     const drawXAxis = (p5) => {
         const increments = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-
+        p5.textAlign(p5.CENTER, p5.CENTER)
+        p5.noStroke()
         p5.fill(colourTheme.textColour)
+        
         increments.forEach(num => {
             let x = calcX(num)
             p5.text(num, x, canvasHeight - 40)
         })
+
+        p5.text('Human Development Index', xBorder + canvasWidth / 2, canvasHeight - 20)
     }
 
     const mouseMoved = () => {
