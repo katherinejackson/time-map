@@ -1,49 +1,59 @@
 import { shapes, themes } from '../constants'
 
-const size = window?.options?.size || 'small'
+const size = window?.options?.size || 'medium'
 
 const defaultSizes = {
     spiral: {
         xsmall: {
             coreSize: 0,
-            spiralWidth: 10,
-            spiralTightness: 0.02,
+            spiralWidth: 2,
+            spiralTightness: 0.015,
         },
         small: {
+            coreSize: 0,
+            spiralWidth: 5,
+            spiralTightness: 0.015,
+        },
+        medium: {
             coreSize: 0,
             spiralWidth: 10,
             spiralTightness: 0.02,
         },
         large: {
             coreSize: 0,
-            spiralWidth: 10,
-            spiralTightness: 0.02,
+            spiralWidth: 15,
+            spiralTightness: 0.03,
         },
         xlarge: {
             coreSize: 0,
-            spiralWidth: 10,
-            spiralTightness: 0.02,
+            spiralWidth: 20,
+            spiralTightness: 0.03,
         },
     },
     row: {
         xsmall: {
-            dayWidth: 0.125,
-            rowHeight: 15,
+            dayWidth: 0.0625,
+            rowHeight: 5,
             spaceBetween: 0,
         },
         small: {
+            dayWidth: 0.125,
+            rowHeight: 5,
+            spaceBetween: 0,
+        },
+        medium: {
             dayWidth: 0.125,
             rowHeight: 15,
             spaceBetween: 0,
         },
         large: {
-            dayWidth: 0.125,
-            rowHeight: 15,
+            dayWidth: 0.25,
+            rowHeight: 20,
             spaceBetween: 0,
         },
         xlarge: {
-            dayWidth: 0.125,
-            rowHeight: 15,
+            dayWidth: 0.25,
+            rowHeight: 30,
             spaceBetween: 0,
         },
     }
