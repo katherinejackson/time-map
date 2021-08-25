@@ -57,7 +57,7 @@ export const updateClusters = (map, locationClusters) => {
 export const addLocations = (locations, selections, shape, mapPin, map) => {
     const locationPins = []
 
-    locations.forEach((item) => {
+    locations.forEach((item, index) => {
         let {width, height} = getShapeSize(selections, shape)
         const location = map.latLngToContainerPoint([item.x, item.y])
         locationPins.push({
@@ -65,7 +65,7 @@ export const addLocations = (locations, selections, shape, mapPin, map) => {
             y: location.y,
             lat: item.x,
             long: item.y,
-            locations: [item.id],
+            locations: [index],
             minDistanceX: width/2,
             minDistanceY: height/2,
             name: item.name,
