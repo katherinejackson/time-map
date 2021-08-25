@@ -214,8 +214,8 @@ const getDataByContinent = (data, continents) => {
 export const getData = (view) => {
     if (view === views.SCATTER.val) {
         let data = covidData
-        // data = getDataByContinent(data, ['North America', 'Asia'])
-        // data = getDataByPopulation(data, 10000000)
+        data = getDataByContinent(data, ['North America', 'Asia'])
+        data = getDataByPopulation(data, 10000000)
         const logData = getLogData(data)
         const dataBrackets = getDataBracketsMultiYear(logData, 'cases')
         const dataType = dataSets.COVID.val
