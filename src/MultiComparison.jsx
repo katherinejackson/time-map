@@ -1,15 +1,14 @@
 import React from 'react'
 
-import { getAllOptions } from './helpers/selections'
 import Tile from "./Tile"
 import { getShapeSize } from './shapes'
 import { shapes, encodings } from './constants'
 
-const MultiComparison = ({ selections}) => {
+const MultiComparison = ({ selections }) => {
     const getSizeString = (shape) => {
-        const {width, height} = getShapeSize(selections, shape)
+        const { width, height, area } = getShapeSize(selections, shape)
 
-        return `width: ${Math.round(width)}  height: ${Math.round(height)} area: ${Math.round(width * height)}`
+        return `width: ${Math.round(width)}  height: ${Math.round(height)} area: ${Math.round(area)}`
     }
 
     return (

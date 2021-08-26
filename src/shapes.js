@@ -1,18 +1,20 @@
-import { colours, manualIntervals, radianPerDay, radianPerMonth, shapes, themeColours, pinSize } from "./constants";
+import { colours, manualIntervals, radianPerDay, radianPerMonth, shapes, themeColours, pinSize, abbreviatedMonths } from "./constants";
 import { fillColourGradient, getManualIntervalColour, fillLogColourGradient, getCovidIntervalColour, setColour } from "./helpers/colours";
 
-export const getShapeSize = (selections, shape, numLocations=1) => {
+export const getShapeSize = (selections, shape, numLocations = 1) => {
     if (shape === shapes.SPIRAL.id) {
         const topRadius = getRadius(selections)
-        const bottomRadius = getRadiusAtDay(365/2, selections)
-        const rightRadius = getRadiusAtDay(365/4, selections)
+        const bottomRadius = getRadiusAtDay(365 / 2, selections)
+        const rightRadius = getRadiusAtDay(365 / 4, selections)
         const leftRadius = getRadiusAtDay(365 * 0.75, selections)
+        const wedgeArea = Math.pow(selections.spiralWidth, 2) * radianPerDay /2
+        const spiralArea = wedgeArea * 365
 
-        return {width: leftRadius + rightRadius, height: topRadius + bottomRadius, maxRadius: topRadius}
+        return { width: leftRadius + rightRadius, height: topRadius + bottomRadius, maxRadius: topRadius, area: spiralArea }
     } else if (shape === shapes.ROW.id) {
-        const {rowWidth, pinHeight} = getRowSize(selections, numLocations)
+        const { rowWidth, pinHeight } = getRowSize(selections, numLocations)
 
-        return {width: rowWidth, height: pinHeight}
+        return { width: rowWidth, height: pinHeight, area: rowWidth * pinHeight }
     }
 }
 
@@ -31,7 +33,7 @@ export const getRadius = (selections, numYears = selections.numYears) => {
 export const getRadiusAtDay = (day, selections, numYears = selections.numYears) => {
     const { coreSize, spiralTightness, spiralWidth } = selections
 
-    const numDays = 365 * (numYears - 1) + day 
+    const numDays = 365 * (numYears - 1) + day
 
     return (coreSize + spiralTightness * numDays) + spiralWidth
 }
@@ -49,7 +51,7 @@ export const getRowSize = (selections) => {
     const daysPerRow = 365
     const dayWidth = selections.dayWidth
     const rowWidth = daysPerRow * dayWidth
-    const rowHeight = selections.rowHeight 
+    const rowHeight = selections.rowHeight
     const pinHeight = (selections.rowHeight * selections.numYears) + (selections.spaceBetween * (selections.numYears - 1))
 
     return { dayWidth, rowWidth, rowHeight, pinHeight }
@@ -93,9 +95,9 @@ export const row = (
 ) => {
     const { numColours, mapPin, opaque, dayWidth, theme, rowHeight, fillMissing, cluster, spaceBetween } = selections
     const colourTheme = themeColours[theme]
-    const {width, height} = getShapeSize(selections, shapes.ROW.id)
-    const startX = x - width/2
-    const startY = mapPin ? y - height - pinSize : y - height/2
+    const { width, height } = getShapeSize(selections, shapes.ROW.id)
+    const startX = x - width / 2
+    const startY = mapPin ? y - height - pinSize : y - height / 2
     let baseline = startY + height
     const increment = rowHeight / interval.range
     const middle = baseline - (interval.range / 2 * increment)
@@ -164,9 +166,9 @@ export const row = (
             p5.text(numLocations, x, y + 8)
         } else {
             p5.fill(colourTheme.pinBackground)
-            p5.ellipse(x, y + height/2 + 8, 16, 16)
+            p5.ellipse(x, y + height / 2 + 8, 16, 16)
             p5.fill(colourTheme.textColour)
-            p5.text(numLocations, x, y + height/2 + 8)
+            p5.text(numLocations, x, y + height / 2 + 8)
         }
     }
 }
@@ -515,7 +517,7 @@ export const spiral = (
                     const val = year[day] - interval.low
                     const x = startX + p5.cos(angle) * (innerRing + val * increment)
                     const y = startY + p5.sin(angle) * (innerRing + val * increment)
-                    p5.ellipse(x, y, 1, 1)
+                    p5.ellipse(x, y, 2, 2)
                 }
             } else if (fillMissing) {
                 p5.fill(colourTheme.missingData, 100)
@@ -541,13 +543,49 @@ export const spiral = (
             p5.fill(colourTheme.pinBackground)
             p5.ellipse(x, y - pinSize - maxRadius, 16, 16)
             p5.fill(colourTheme.textColour)
-            p5.text(numLocations, x, y - pinSize - maxRadius/2)
+            p5.text(numLocations, x, y - pinSize - maxRadius / 2)
         } else {
             p5.fill(colourTheme.pinBackground)
             p5.ellipse(x, y, 16, 16)
             p5.fill(colourTheme.textColour)
             p5.text(numLocations, x, y)
         }
+    }
+
+    // drawSpiralMonth(p5, x, y, selections)
+}
+
+const drawSpiralMonth = (p5, x, y, selections) => {
+    const { spiralWidth, spiralTightness, coreSize, theme } = selections
+    const colourTheme = themeColours[theme]
+    let innerCore = coreSize
+    let outerCore = coreSize + spiralTightness * 365 + spiralWidth
+    let angle = -Math.PI / 2
+    p5.fill(colourTheme.textColour)
+    p5.textAlign(p5.CENTER)
+
+    for (let i = 0; i < 24; i++) {
+        if (i % 2 === 0) {
+            let x1 = x + p5.cos(angle) * innerCore
+            let y1 = y + p5.sin(angle) * innerCore
+            let x2 = x + p5.cos(angle) * outerCore
+            let y2 = y + p5.sin(angle) * outerCore
+
+            p5.stroke(colourTheme.textColour, 100)
+            p5.line(x1, y1, x2, y2)
+            p5.noStroke()
+        } else {
+            let xText = x + p5.cos(angle) * outerCore
+            let yText = y + p5.sin(angle) * outerCore
+
+            p5.textSize(6)
+            p5.text(abbreviatedMonths[Math.floor(i / 2)], xText, yText)
+        }
+
+        angle += radianPerMonth / 2
+
+        innerCore += (spiralTightness * 15)
+        outerCore += (spiralTightness * 15)
     }
 }
 
