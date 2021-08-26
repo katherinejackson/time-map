@@ -8,7 +8,7 @@ const initialCenter = [63, -149];   // alaska
 
 // const initialCenter = [52, -103];  // sask
 
-const mapWidth = 1000
+const mapWidth = window.options ? 1000 : window.innerWidth * 0.95
 const mapHeight = window.innerHeight * 0.75
 
 const style = {
