@@ -70,9 +70,9 @@ export const alaska = [
         "y": -135.45
     },
     {
-        "name": "Seward",
-        "x": 60.11,
-        "y": -149.39
+        "name": "Kodiak",
+        "x": 57.79,
+        "y": -152.4
     },
     {
         "name": "Kotzebue",
@@ -95,9 +95,9 @@ export const alaska = [
         "y": -161.79
     },
     {
-        "name": "Valdez",
-        "x": 61.1,
-        "y": -146.31
+        "name": "Perryville",
+        "x": 55.9,
+        "y": -159
     },
     {
         "name": "Kodiak",
