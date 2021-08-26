@@ -47,7 +47,7 @@ const Tile = ({ encoding, numX, selections, shape}) => {
         p5.stroke(colourTheme.lineColour)
         p5.rect(0, 0, canvasSize, canvasSize)
         p5.noStroke()
-        drawPin(canvasSize / 2, canvasSize / 2, [locations[0].id])
+        drawPin(canvasSize / 2, canvasSize / 2, [0])
 
         if (encoding !== 1) {
             drawLegend(p5, canvasSize / 2, 1, selections, interval, dataType, null, colourTheme.textColour)
