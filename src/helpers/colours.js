@@ -42,24 +42,25 @@ export const getColourFromSet = (pt, interval, colourSet) => {
     }
 }
 
-export const fillColourGradient = (p5, pt, interval, numColours) => {
+export const fillColourGradient = (p5, pt, brackets, numColours) => {
+    const { high, low, range } = brackets
     if (numColours === 1) {
-        const scaledPt = Math.abs(-1 * interval.low + pt)
-        p5.colorMode(p5.HSB, 255, interval.range, 1)
+        const scaledPt = Math.abs(-1 * low + pt)
+        p5.colorMode(p5.HSB, 255, range, 1)
         p5.fill(0, scaledPt, 1)
     } else if (numColours === 2) {
-        const middle = interval.low + interval.range / 2
-        p5.colorMode(p5.HSB, 360, interval.range / 2, 1)
+        const middle = low + range / 2
+        p5.colorMode(p5.HSB, 360, range / 2, 1)
         if (pt > middle) {
             p5.fill(0, Math.abs(middle - pt), 1)
         } else {
             p5.fill(220, Math.abs(middle - pt), 1)
         }
     } else if (numColours === 256) {
-        const newPt = Math.floor(pt / interval.high * 256)
+        const newPt = Math.floor(pt / high * 256)
         p5.fill(colours['COVID'][256][newPt])
     } else if (numColours === 360) {
-        const newPt = Math.floor((interval.range - (-1 * interval.low + pt)) * 270 / interval.range)
+        const newPt = Math.floor((range - (-1 * low + pt)) * 270 / range)
         p5.colorMode(p5.HSB, 360, 100, 100)
         p5.fill(newPt, 100, 95)
     }

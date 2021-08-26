@@ -101,7 +101,7 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         drawXAxis(p5)
         drawYAxis(p5)
         if (encoding !== 1) {
-            drawLegend(p5, canvasWidth / 2, canvasHeight - 25, selections, interval, dataType, null, colourTheme.textColour)
+            drawLegend(p5, canvasWidth * 0.75, canvasHeight - 25, selections, interval, dataType, dataBrackets, colourTheme.textColour)
         }
 
         drawGlyphs()
@@ -218,7 +218,8 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
             p5.text(num, x, canvasHeight - 40)
         })
 
-        p5.text('Human Development Index', xBorder + canvasWidth / 2, canvasHeight - 20)
+        p5.textSize(12)
+        p5.text('Human Development Index', canvasWidth / 2, canvasHeight - 20)
     }
 
     const mouseMoved = () => {

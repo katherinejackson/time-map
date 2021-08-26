@@ -39,7 +39,7 @@ export const getDataBrackets = (data) => {
     lowest = Math.round(lowest * 100) / 100
     highest = Math.round(highest * 100) / 100
 
-    return { low: lowest, high: highest }
+    return { low: lowest, high: highest, range: highest - lowest }
 }
 
 export const getVariableBrackets = (data, variable) => {
@@ -73,7 +73,7 @@ export const getDataBracketsMultiYear = (data, variable) => {
         })
     })
 
-    return { high, low }
+    return { high, low, range: high - low }
 }
 
 export const getTradeDataBrackets = (data, variable) => {
@@ -216,16 +216,18 @@ export const getData = (view) => {
         let data = covidData
         data = getDataByContinent(data, ['North America', 'Asia'])
         data = getDataByPopulation(data, 10000000)
+        const dataBrackets = getDataBracketsMultiYear(data, 'cases')
         const logData = getLogData(data)
-        const dataBrackets = getDataBracketsMultiYear(logData, 'cases')
+        const logDataBrackets = getDataBracketsMultiYear(logData, 'cases')
         const dataType = dataSets.COVID.val
         const yBrackets = getVariableBrackets(data, 'population')
         const xBrackets = getVariableBrackets(data, 'human_development_index')
+        const combinedBrackets = {...logDataBrackets, displayHigh: dataBrackets.high, displayLow: dataBrackets.low}
 
         // getCovidDataInfo(data)
         // console.log(Object.keys(data).length + ' countries')
 
-        return { data: logData, dataType, dataBrackets, yBrackets, xBrackets }
+        return { data: logData, dataType, dataBrackets: combinedBrackets, yBrackets, xBrackets }
 
     } else if (view === views.GRAPH.val) {
         let var1 = 'import'

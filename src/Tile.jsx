@@ -50,7 +50,7 @@ const Tile = ({ encoding, numX, selections, shape}) => {
         drawPin(canvasSize / 2, canvasSize / 2, [0])
 
         if (encoding !== 1) {
-            drawLegend(p5, canvasSize / 2, 1, selections, interval, dataType, null, colourTheme.textColour)
+            drawLegend(p5, canvasSize / 2, 1, selections, interval, dataType, dataBrackets, colourTheme.textColour)
         }
 
         p5.noLoop()

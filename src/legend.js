@@ -1,12 +1,12 @@
 import { colours, manualIntervals } from './constants'
 import { fillColourGradient, setColour } from "./helpers/colours";
-import { formatTradeNumbers } from './helpers/format';
+import { formatNumbers, formatTradeNumbers } from './helpers/format';
 
 export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, textColour) => {
     if (dataType === 'COVID' && selections.numColours === 6) {
         drawManualLegend(p5, x, y, selections, interval, dataType, textColour)
     } else if (selections.numColours <= 2 || selections.numColours > 10) {
-        drawGradientLegend(p5, x, y, selections, interval, textColour)
+        drawGradientLegend(p5, x, y, selections, brackets, textColour)
     } else {
         p5.stroke(1)
         const length = 25
@@ -37,7 +37,7 @@ export const drawLegend = (p5, x, y, selections, interval, dataType, brackets, t
 
 export const drawGraphLegend = (p5, x, y, selections, dataType, textColour) => {
     p5.stroke(1)
-    const numColours = selections.numColours
+    const numColours = Object.keys(manualIntervals[dataType])[0]
     const length = 75
     const xStart = x - numColours * length / 2
     const intervals = manualIntervals[dataType][numColours]
@@ -45,7 +45,7 @@ export const drawGraphLegend = (p5, x, y, selections, dataType, textColour) => {
 
     p5.textSize(10)
 
-    for (let i = 1; i < intervals.length ; i++) {
+    for (let i = 1; i < intervals.length; i++) {
         p5.textAlign(p5.CENTER, p5.CENTER)
         p5.fill(colours[dataType][numColours][i - 1])
         p5.rect(xStart + counter * length, y, length, 5)
@@ -121,20 +121,26 @@ export const drawManualLegend = (p5, x, y, selections, interval, dataType, textC
     p5.text('No Data', x + numColours * length / 2 + 50 + 20, y + 15)
 }
 
-const drawGradientLegend = (p5, x, y, selections, interval, textColour) => {
-    const width = 2
-    const xStart = x - interval.range / 2 * width
+const drawGradientLegend = (p5, x, y, selections, brackets, textColour) => {
+    const { high, low, range, displayLow, displayHigh } = brackets
+    const width = 1
+    const legendWidth = 200
+    const xStart = x - legendWidth/2
+
+    const increase = range / legendWidth
     let counter = 0
-    for (let i = interval.high; i > interval.low; i = i - 1) {
+
+    for (let i = low; i < high; i = i + increase) {
         p5.textAlign(p5.CENTER, p5.CENTER)
-        fillColourGradient(p5, i, interval, selections.numColours)
+        fillColourGradient(p5, i, brackets, selections.numColours)
         p5.rect(xStart + counter, y, width, 5)
         counter = counter + width
     }
+
     p5.textSize(10)
     p5.fill(textColour)
-    p5.text(interval.high, xStart, y + 15)
-    p5.text(interval.low, xStart + interval.range * width, y + 15)
+    p5.text(formatNumbers(displayLow || low), xStart, y + 15)
+    p5.text(formatNumbers(displayHigh || high), xStart + legendWidth, y + 15)
 }
 
 export const drawLogarithmicLegend = (p5, x, y, textColour) => {
@@ -167,7 +173,7 @@ export const drawLogarithmicLegend = (p5, x, y, textColour) => {
 
 }
 
-export const drawLogarithmicSingleColourLegend = (p5, x, y, brackets, textColour) => {
+export const drawLogarithmicGradientLegend = (p5, x, y, brackets, textColour) => {
     const width = 2
     const height = 5
     const range = brackets.high - brackets.low

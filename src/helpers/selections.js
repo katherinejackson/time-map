@@ -67,7 +67,7 @@ export const getDefaultSelections = () => {
         theme: themes.DARK.val,
         cluster: false,
         numYears: 1,
-        numColours: 6,
+        numColours: 2,
     }
 
     return {...selections, ...getShapeSelections(shapes.SPIRAL.id), ...getShapeSelections(shapes.ROW.id)}
