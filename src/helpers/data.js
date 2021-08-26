@@ -1,6 +1,6 @@
 import { bigData as covidData } from "../data/covidData";
 import { data as tradeData } from "../data/tradeData"
-import { data as mapData } from "../data/weatherData"
+import { tempData as mapData } from "../data/tempData"
 import { views, dataSets } from "../constants";
 import { alaska } from "../data/locationCoords";
 
@@ -237,7 +237,7 @@ export const getData = (view) => {
         return { data: tradeData, dataType, dataBrackets, variable: var1 }
 
     } else if (view === views.COMPARISON.val || view === views.MAP.val || view === views.MULTI_COMPARISON.val) {
-        let data = mapData[dataSets.TEMP.id].data
+        const data = mapData
         const dataType = dataSets.TEMP.val
         const dataBrackets = getDataBrackets(data)
 
