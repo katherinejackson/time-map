@@ -16,7 +16,7 @@ const defaultSizes = {
         },
         medium: {
             coreSize: 0,
-            spiralWidth: 10,
+            spiralWidth: 15,
             spiralTightness: 0.02,
         },
         large: {
