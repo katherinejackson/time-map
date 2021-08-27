@@ -22,6 +22,7 @@ const LeafletMap = ({ selections, shape, encoding }) => {
     return (
         <MapContainer
             center={initialCenter}
+            scrollWheelZoom={false}
             style={style}
             zoom={4}
             zoomControl={false}

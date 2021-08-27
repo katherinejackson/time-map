@@ -117,12 +117,12 @@ const Overlay = ({ encoding, selections, shape }) => {
             pinAdjustment = getPinAdjustment(selections, shape)
         }
 
-        if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 20 && p5.mouseY < 50) {
-            map.zoomIn(0.5)
+        // if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 20 && p5.mouseY < 50) {
+        //     map.zoomIn(0.5)
 
-        } else if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 80) {
-            map.zoomOut(0.5)
-        } else {
+        // } else if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 80) {
+        //     map.zoomOut(0.5)
+        // } else {
             let locationFound = { found: false, distance: null, index: null }
             locationPins.forEach((pin, index) => {
                 let location = map.latLngToContainerPoint([pin.lat, pin.long])
@@ -162,17 +162,15 @@ const Overlay = ({ encoding, selections, shape }) => {
 
                 //     setDetailed(newDetailed)
                 // }
-            }
+            // }
         }
     }
 
     const redrawOverlay = () => {
         p5.clear()
         drawGlyphs()
-        drawZoom()
-        if (encoding !== 1) {
-            drawLegend(p5, mapWidth / 2, mapHeight - 40, selections, interval, dataType, dataBrackets, colourTheme.textColour)
-        }
+        // drawZoom()
+        drawLegend(p5, mapWidth - 20, 20, selections, interval, dataType, dataBrackets, shape, encoding)
 
         if (detailed.length) {
             drawDetailed()
