@@ -100,11 +100,7 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
 
         drawXAxis(p5)
         drawYAxis(p5)
-
         drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth)
-
-        // p5.fill(colourTheme.backgroundColour)
-
         drawGlyphs()
 
         p5.noLoop()
@@ -149,10 +145,11 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
 
             if (!mapPin) {
                 p5.fill(colourTheme.pinBackground, 100)
+                p5.noStroke()
                 if (shape === shapes.SPIRAL.id) {
-                    p5.ellipse(pin.x, pin.y, maxRadius * 3, maxRadius * 3)
+                    p5.ellipse(pin.x, pin.y, maxRadius * 5, maxRadius * 5)
                 } else if (shape === shapes.ROW.id) {
-                    p5.rect(pin.x - width, pin.y - height, width * 2, height * 3)
+                    p5.rect(pin.x - width * 1.5, pin.y - height * 2, width * 3, height * 4)
                 }
             }
 
@@ -160,7 +157,7 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
 
             p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(colourTheme.textColour)
-            p5.text(pin.name, pin.x, pin.y + height)
+            p5.text(pin.name, pin.x, pin.y + height * 0.75 + 5)
         }
     }
 
@@ -227,10 +224,12 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         let ptFound = null
         let distance = null
         let pinAdjustment = mapPin ? getPinAdjustment(selections, shape) : 0
+        const xTolerance = shape === 1 ? maxRadius * 3 : width * 1.5
+        const yTolerance = shape === 1 ? maxRadius * 3 : height * 2
 
         // if user is already hovering, give them a lot of tolerance to keep that hover
         if (hover !== null) {
-            if (Math.abs(p5.mouseX - pts[hover]['x']) < width/2 + width * 0.75 && Math.abs(p5.mouseY - pts[hover]['y'] + pinAdjustment) < height/ 2 + height * 0.75) {
+            if (Math.abs(p5.mouseX - pts[hover]['x']) < xTolerance && Math.abs(p5.mouseY - pts[hover]['y'] + pinAdjustment) < yTolerance) {
                 distance = Math.pow(Math.abs(p5.mouseX - pts[hover]['x']), 2) + Math.pow(Math.abs(p5.mouseY - pts[hover]['x'] + pinAdjustment), 2)
                 ptFound = hover
             }
@@ -257,22 +256,8 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
     }
 
     const mouseClicked = () => {
-        let ptFound = null
-        let distance = null
-
-        Object.keys(pts).forEach(id => {
-            if (Math.abs(pts[id]['x'] - p5.mouseX) < width / 2 && Math.abs(pts[id]['y'] - p5.mouseY) < height / 2) {
-                let newDistance = Math.pow(pts[id]['x'] - p5.mouseX, 2) + Math.pow(pts[id]['y'] - p5.mouseY, 2)
-
-                if ((!distance || newDistance < distance)) {
-                    distance = Math.pow(pts[id]['x'] - p5.mouseX, 2) + Math.pow(pts[id]['y'] - p5.mouseY, 2)
-                    ptFound = id
-                }
-            }
-        })
-
-        if (ptFound) {
-            onClick(pts[ptFound]['name'])
+        if (hover !== null) {
+            onClick(pts[hover]['name'])
         }
     }
 

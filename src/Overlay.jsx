@@ -86,6 +86,8 @@ const Overlay = ({ encoding, selections, shape }) => {
     const mouseMoved = (p5) => {
         let hoverFound = { distance: null, index: null }
         let pinAdjustment = 0
+        const xTolerance = shape === 1 ? maxRadius * 3 : width * 1.5
+        const yTolerance = shape === 1 ? maxRadius * 3 : height * 2
 
         if (mapPin) {
             pinAdjustment = getPinAdjustment(selections, shape)
@@ -95,7 +97,7 @@ const Overlay = ({ encoding, selections, shape }) => {
         if (hover !== null) {
             let pin = locationPins[hover]
             let location = map.latLngToContainerPoint([pin.lat, pin.long])
-            if (Math.abs(p5.mouseX - location.x) < width * 2 && Math.abs(p5.mouseY - location.y + pinAdjustment) < height * 2) {
+            if (Math.abs(p5.mouseX - location.x) < xTolerance && Math.abs(p5.mouseY - location.y + pinAdjustment) < yTolerance) {
                 let distance = Math.pow(Math.abs(p5.mouseX - location.x), 2) + Math.pow(Math.abs(p5.mouseY - location.y + pinAdjustment), 2)
                 hoverFound = { distance, index: hover }
             }
@@ -133,19 +135,9 @@ const Overlay = ({ encoding, selections, shape }) => {
         // } else if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 80) {
         //     map.zoomOut(0.5)
         // } else {
-        let locationFound = { found: false, distance: null, index: null }
-        locationPins.forEach((pin, index) => {
-            let location = map.latLngToContainerPoint([pin.lat, pin.long])
-            if (Math.abs(p5.mouseX - location.x) < pin.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < pin.minDistanceY) {
-                let distance = Math.pow(Math.abs(p5.mouseX - location.x), 2) + Math.pow(Math.abs(p5.mouseY - location.y + pinAdjustment), 2)
-                if (!locationFound.found || distance < locationFound.distance) {
-                    locationFound = { found: true, distance, index }
-                }
-            }
-        })
 
-        if (locationFound.found) {
-            let val = locationPins[locationFound.index]['name']
+        if (hover !== null) {
+            let val = locationPins[hover]['name']
             onClick(val)
             // let pin = locationPins[locationFound.index]
             // let allDisplayed = true
@@ -203,10 +195,11 @@ const Overlay = ({ encoding, selections, shape }) => {
 
             if (!mapPin) {
                 p5.fill(colourTheme.pinBackground, 200)
+                p5.noStroke()
                 if (shape === shapes.SPIRAL.id) {
-                    p5.ellipse(location.x, location.y, maxRadius * 3, maxRadius * 3)
+                    p5.ellipse(location.x, location.y, maxRadius * 5, maxRadius * 5)
                 } else if (shape === shapes.ROW.id) {
-                    p5.rect(location.x - width, location.y - height, width * 2, height * 3)
+                    p5.rect(location.x - width * 1.5, location.y - height * 2, width * 3, height * 4)
                 }
             }
 
@@ -219,10 +212,11 @@ const Overlay = ({ encoding, selections, shape }) => {
 
             p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(colourTheme.textColour)
+            p5.noStroke()
             if (mapPin) {
                 p5.text(formatNames(names), location.x, location.y)
             } else {
-                p5.text(formatNames(names), location.x, location.y + height)
+                p5.text(formatNames(names), location.x, location.y + height * 0.75 + 5)
             }
         }
     }
