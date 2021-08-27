@@ -225,13 +225,22 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
     const mouseMoved = () => {
         let ptFound = null
         let distance = null
+        let pinAdjustment = mapPin ? getPinAdjustment(selections, shape) : 0
+
+        // if user is already hovering, give them a lot of tolerance to keep that hover
+        if (hover !== null) {
+            if (Math.abs(p5.mouseX - pts[hover]['x']) < width/2 + width * 0.75 && Math.abs(p5.mouseY - pts[hover]['y'] + pinAdjustment) < height/ 2 + height * 0.75) {
+                distance = Math.pow(Math.abs(p5.mouseX - pts[hover]['x']), 2) + Math.pow(Math.abs(p5.mouseY - pts[hover]['x'] + pinAdjustment), 2)
+                ptFound = hover
+            }
+        }
 
         Object.keys(pts).forEach(id => {
-            if (Math.abs(pts[id]['x'] - p5.mouseX) < width / 2 && Math.abs(pts[id]['y'] - p5.mouseY) < height / 2) {
-                let newDistance = Math.pow(pts[id]['x'] - p5.mouseX, 2) + Math.pow(pts[id]['y'] - p5.mouseY, 2)
+            if (Math.abs(pts[id]['x'] - p5.mouseX) < width / 2 && Math.abs(pts[id]['y'] - p5.mouseY + pinAdjustment) < height / 2) {
+                let newDistance = Math.pow(pts[id]['x'] - p5.mouseX, 2) + Math.pow(pts[id]['y'] - p5.mouseY  + pinAdjustment, 2)
 
                 if ((!distance || newDistance < distance)) {
-                    distance = Math.pow(pts[id]['x'] - p5.mouseX, 2) + Math.pow(pts[id]['y'] - p5.mouseY, 2)
+                    distance = newDistance
                     ptFound = id
                 }
             }

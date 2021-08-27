@@ -28,7 +28,7 @@ const Overlay = ({ encoding, selections, shape }) => {
     const [locationPins, setLocationPins] = useState([])
     const [detailed, setDetailed] = useState([])
     const [hover, setHover] = useState(null)
-    const {width, height} = getShapeSize(selections, shape)
+    const { width, height, maxRadius } = getShapeSize(selections, shape)
 
     useEffect(() => {
         if (locations && p5) {
@@ -91,9 +91,19 @@ const Overlay = ({ encoding, selections, shape }) => {
             pinAdjustment = getPinAdjustment(selections, shape)
         }
 
+        // if user is already hovering, give them a lot of tolerance to keep that hover
+        if (hover !== null) {
+            let pin = locationPins[hover]
+            let location = map.latLngToContainerPoint([pin.lat, pin.long])
+            if (Math.abs(p5.mouseX - location.x) < width * 2 && Math.abs(p5.mouseY - location.y + pinAdjustment) < height * 2) {
+                let distance = Math.pow(Math.abs(p5.mouseX - location.x), 2) + Math.pow(Math.abs(p5.mouseY - location.y + pinAdjustment), 2)
+                hoverFound = { distance, index: hover }
+            }
+        }
+        
         locationPins.forEach((pin, index) => {
             let location = map.latLngToContainerPoint([pin.lat, pin.long])
-            if (Math.abs(p5.mouseX - location.x) < pin.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < pin.minDistanceY) {
+            if (Math.abs(p5.mouseX - location.x) < width/2 && Math.abs(p5.mouseY - location.y + pinAdjustment) < height/2) {
                 let distance = Math.pow(Math.abs(p5.mouseX - location.x), 2) + Math.pow(Math.abs(p5.mouseY - location.y + pinAdjustment), 2)
                 if (!hoverFound.found || distance < hoverFound.distance) {
                     hoverFound = { distance, index }
@@ -192,9 +202,9 @@ const Overlay = ({ encoding, selections, shape }) => {
             hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
 
             if (!mapPin) {
-                p5.fill(colourTheme.pinBackground, 150)
+                p5.fill(colourTheme.pinBackground, 200)
                 if (shape === shapes.SPIRAL.id) {
-                    p5.ellipse(location.x, location.y, width * 3, height * 3)
+                    p5.ellipse(location.x, location.y, maxRadius * 3, maxRadius * 3)
                 } else if (shape === shapes.ROW.id) {
                     p5.rect(location.x - width, location.y - height, width * 2, height * 3)
                 }
