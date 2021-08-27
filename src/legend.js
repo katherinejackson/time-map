@@ -315,7 +315,7 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
         p5.noStroke()
         p5.textAlign(p5.LEFT, p5.CENTER)
         p5.textSize(10)
-        p5.text(lowString, x + maxRadius, startY - 20)
-        p5.text(highString, x + maxRadius, startY)
+        p5.text(lowString, x + maxRadius + 3, startY - 20)
+        p5.text(highString, x + maxRadius + 3, startY)
     }
 }
