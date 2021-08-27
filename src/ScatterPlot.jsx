@@ -2,7 +2,7 @@ import Sketch from "react-p5";
 import React, { useContext, useEffect, useState } from 'react'
 
 import { drawLegend } from "./legend";
-import { spiral, row, getShapeSize } from "./shapes";
+import { spiral, row, getShapeSize,  getPinAdjustment } from "./shapes";
 import DataContext from "./DataContext";
 import { getManualInterval } from "./helpers/intervals";
 import { shapes, themeColours } from "./constants";
@@ -100,9 +100,10 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
 
         drawXAxis(p5)
         drawYAxis(p5)
-        if (encoding !== 1) {
-            drawLegend(p5, canvasWidth * 0.75, canvasHeight - 25, selections, interval, dataType, dataBrackets, colourTheme.textColour)
-        }
+
+        drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth)
+
+        // p5.fill(colourTheme.backgroundColour)
 
         drawGlyphs()
 
@@ -204,7 +205,7 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         labelGraphics.fill(colourTheme.textColour)
         labelGraphics.text('Population', 0, 10)
 
-        p5.image(labelGraphics, 1, graphHeight/2)
+        p5.image(labelGraphics, 1, graphHeight / 2)
     }
 
     const drawXAxis = (p5) => {
@@ -212,7 +213,7 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         p5.textAlign(p5.CENTER, p5.CENTER)
         p5.noStroke()
         p5.fill(colourTheme.textColour)
-        
+
         increments.forEach(num => {
             let x = calcX(num)
             p5.text(num, x, canvasHeight - 40)

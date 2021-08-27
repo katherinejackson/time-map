@@ -7,10 +7,10 @@ export const getShapeSize = (selections, shape, numLocations = 1) => {
         const bottomRadius = getRadiusAtDay(365 / 2, selections)
         const rightRadius = getRadiusAtDay(365 / 4, selections)
         const leftRadius = getRadiusAtDay(365 * 0.75, selections)
-        const wedgeArea = Math.pow(selections.spiralWidth, 2) * radianPerDay /2
+        const wedgeArea = Math.pow(selections.spiralWidth, 2) * radianPerDay / 2
         const spiralArea = wedgeArea * 365
 
-        return { width: leftRadius + rightRadius, height: topRadius + bottomRadius, maxRadius: topRadius, area: spiralArea }
+        return { width: leftRadius + rightRadius, height: topRadius + bottomRadius, maxRadius: topRadius, area: spiralArea, rightRadius: rightRadius }
     } else if (shape === shapes.ROW.id) {
         const { rowWidth, pinHeight } = getRowSize(selections, numLocations)
 
@@ -113,16 +113,11 @@ export const row = (
         }
         p5.rect(startX, startY, width, height)
         p5.noStroke()
-    } else if (opaque) {
-        p5.fill(colourTheme.pinBackground)
-        p5.rect(startX - 2, startY - 2, width + 4, height + 4)
     }
 
     if (encoding !== 2) {
-        p5.stroke(colourTheme.lineColour)
-        p5.noFill()
-        p5.rect(startX, startY, width, height)
-        p5.noStroke()
+        p5.fill(colourTheme.pinBackground, 200)
+        p5.rect(startX - 2, startY - 2, width + 4, height + 4)
     }
 
     locationData.forEach(year => {
@@ -138,7 +133,7 @@ export const row = (
                     p5.rect(startX + day * dayWidth, baseline - rowHeight, 1, rowHeight)
                 } else {
                     let val = baseline - ((year[day] - interval.low) * increment)
-                    p5.ellipse(startX + day * dayWidth, val, 1, 1)
+                    p5.ellipse(startX + day * dayWidth, val, 2, 2)
                 }
             } else if (fillMissing) {
                 p5.fill(colourTheme.missingData, 100)
@@ -555,14 +550,49 @@ export const spiral = (
     // drawSpiralMonth(p5, x, y, selections)
 }
 
-const drawSpiralMonth = (p5, x, y, selections) => {
+export const spiralOutline = (
+    p5,
+    x,
+    y,
+    selections,
+) => {
+    const { spiralWidth, spiralTightness, coreSize, theme } = selections
+    const colourTheme = themeColours[theme]
+    const { maxRadius } = getShapeSize(selections, shapes.SPIRAL.id)
+    const startX = x
+    const startY = y
+    let angle = -Math.PI / 2
+    let innerRing = coreSize
+    let outerRing = coreSize + spiralWidth
+
+    p5.fill(colourTheme.textColour)
+    p5.noStroke()
+    for (let day = 0; day < 365; day++) {
+        const innerX = startX + p5.cos(angle) * innerRing
+        const innerY = startY + p5.sin(angle) * innerRing
+        p5.ellipse(innerX, innerY, 1, 1)
+
+        const outerX = startX + p5.cos(angle) * outerRing
+        const outerY = startY + p5.sin(angle) * outerRing
+        p5.ellipse(outerX, outerY, 1, 1)
+
+        angle += radianPerDay
+        innerRing += spiralTightness
+        outerRing += spiralTightness
+    }
+
+    p5.stroke(colourTheme.textColour)
+    p5.line(startX, startY, startX, startY - maxRadius)
+}
+
+export const drawSpiralMonth = (p5, x, y, selections) => {
     const { spiralWidth, spiralTightness, coreSize, theme } = selections
     const colourTheme = themeColours[theme]
     let innerCore = coreSize
     let outerCore = coreSize + spiralTightness * 365 + spiralWidth
     let angle = -Math.PI / 2
     p5.fill(colourTheme.textColour)
-    p5.textAlign(p5.CENTER)
+    p5.textAlign(p5.CENTER, p5.CENTER)
 
     for (let i = 0; i < 24; i++) {
         if (i % 2 === 0) {

@@ -133,45 +133,45 @@ const Overlay = ({ encoding, selections, shape }) => {
         // } else if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 80) {
         //     map.zoomOut(0.5)
         // } else {
-            let locationFound = { found: false, distance: null, index: null }
-            locationPins.forEach((pin, index) => {
-                let location = map.latLngToContainerPoint([pin.lat, pin.long])
-                if (Math.abs(p5.mouseX - location.x) < pin.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < pin.minDistanceY) {
-                    let distance = Math.pow(Math.abs(p5.mouseX - location.x), 2) + Math.pow(Math.abs(p5.mouseY - location.y + pinAdjustment), 2)
-                    if (!locationFound.found || distance < locationFound.distance) {
-                        locationFound = { found: true, distance, index }
-                    }
+        let locationFound = { found: false, distance: null, index: null }
+        locationPins.forEach((pin, index) => {
+            let location = map.latLngToContainerPoint([pin.lat, pin.long])
+            if (Math.abs(p5.mouseX - location.x) < pin.minDistanceX && Math.abs(p5.mouseY - location.y + pinAdjustment) < pin.minDistanceY) {
+                let distance = Math.pow(Math.abs(p5.mouseX - location.x), 2) + Math.pow(Math.abs(p5.mouseY - location.y + pinAdjustment), 2)
+                if (!locationFound.found || distance < locationFound.distance) {
+                    locationFound = { found: true, distance, index }
                 }
-            })
+            }
+        })
 
-            if (locationFound.found) {
-                let val = locationPins[locationFound.index]['name']
-                onClick(val)
-                // let pin = locationPins[locationFound.index]
-                // let allDisplayed = true
-                // pin.locations.forEach(id => {
-                //     if (!detailed.includes(id)) {
-                //         allDisplayed = false
-                //     }
-                // })
+        if (locationFound.found) {
+            let val = locationPins[locationFound.index]['name']
+            onClick(val)
+            // let pin = locationPins[locationFound.index]
+            // let allDisplayed = true
+            // pin.locations.forEach(id => {
+            //     if (!detailed.includes(id)) {
+            //         allDisplayed = false
+            //     }
+            // })
 
-                // if (allDisplayed) {
-                //     let newDetailed = [...detailed]
-                //     pin.locations.forEach(id => {
-                //         let index = newDetailed.indexOf(id)
-                //         newDetailed.splice(index, 1)
-                //     })
-                //     setDetailed(newDetailed)
-                // } else {
-                //     let newDetailed = [...detailed]
-                //     pin.locations.forEach(id => {
-                //         if (!detailed.includes(id)) {
-                //             newDetailed.push(id)
-                //         }
-                //     })
+            // if (allDisplayed) {
+            //     let newDetailed = [...detailed]
+            //     pin.locations.forEach(id => {
+            //         let index = newDetailed.indexOf(id)
+            //         newDetailed.splice(index, 1)
+            //     })
+            //     setDetailed(newDetailed)
+            // } else {
+            //     let newDetailed = [...detailed]
+            //     pin.locations.forEach(id => {
+            //         if (!detailed.includes(id)) {
+            //             newDetailed.push(id)
+            //         }
+            //     })
 
-                //     setDetailed(newDetailed)
-                // }
+            //     setDetailed(newDetailed)
+            // }
             // }
         }
     }
@@ -180,7 +180,7 @@ const Overlay = ({ encoding, selections, shape }) => {
         p5.clear()
         drawGlyphs()
         // drawZoom()
-        drawLegend(p5, mapWidth - 20, 20, selections, interval, dataType, dataBrackets, shape, encoding)
+        drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, mapWidth)
 
         if (detailed.length) {
             drawDetailed()
