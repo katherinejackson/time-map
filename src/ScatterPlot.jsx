@@ -94,9 +94,6 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         p5.clear()
         p5.textAlign(p5.CENTER, p5.CENTER)
         p5.background(colourTheme.background)
-        p5.stroke(colourTheme.lineColour)
-        p5.line(xBorder, yBorder, xBorder, canvasHeight - yBorder)
-        p5.line(xBorder, canvasHeight - yBorder, canvasWidth - xBorder, canvasHeight - yBorder)
 
         drawXAxis(p5)
         drawYAxis(p5)
@@ -172,7 +169,7 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
     }
 
     const calcX = (num) => {
-        const left = xBorder + width / 2
+        const left = xBorder + 10 + width / 2
         const graphRange = graphWidth - width
         const dataRange = xBrackets.high - xBrackets.low
         const increment = graphRange / dataRange
@@ -185,6 +182,10 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         let logHigh = Math.ceil(Math.log2(yBrackets.high))
         let numSteps = logHigh - logLow
         let spacePer = graphHeight / numSteps
+
+        p5.stroke(colourTheme.lineColour)
+        p5.line(xBorder, yBorder, xBorder, canvasHeight - yBorder)
+
         p5.fill(colourTheme.textColour)
         p5.noStroke()
 
@@ -206,6 +207,9 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
     }
 
     const drawXAxis = (p5) => {
+        p5.stroke(colourTheme.lineColour)
+        p5.line(xBorder, canvasHeight - yBorder, canvasWidth - xBorder, canvasHeight - yBorder)
+
         const increments = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
         p5.textAlign(p5.CENTER, p5.CENTER)
         p5.noStroke()
