@@ -194,7 +194,7 @@ const Overlay = ({ encoding, selections, shape }) => {
             hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
 
             if (!mapPin) {
-                p5.fill(colourTheme.pinBackground, 200)
+                p5.fill(colourTheme.background, 200)
                 p5.noStroke()
                 if (shape === shapes.SPIRAL.id) {
                     p5.ellipse(location.x, location.y, maxRadius * 5, maxRadius * 5)

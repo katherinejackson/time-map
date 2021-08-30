@@ -116,7 +116,7 @@ export const row = (
     }
 
     if (encoding !== 2) {
-        p5.fill(colourTheme.pinBackground, 200)
+        p5.fill(colourTheme.pinBackground)
         p5.rect(startX - 2, startY - 2, width + 4, height + 4)
     }
 
@@ -133,7 +133,7 @@ export const row = (
                     p5.rect(startX + day * dayWidth, baseline - rowHeight, 1, rowHeight)
                 } else {
                     let val = baseline - ((year[day] - interval.low) * increment)
-                    p5.ellipse(startX + day * dayWidth, val, 2, 2)
+                    p5.ellipse(startX + day * dayWidth, val, 1, 1)
                 }
             } else if (fillMissing) {
                 p5.fill(colourTheme.missingData, 100)

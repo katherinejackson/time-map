@@ -27,7 +27,7 @@ export const themeColours = {
         lineColour: 200,
         textColour: 255,
         pinColour: 200,
-        pinBackground: 50,
+        pinBackground: 80,
         missingData: 150,
         name: 'DARK',
     },
@@ -36,7 +36,7 @@ export const themeColours = {
         lineColour: 200,
         textColour: 255,
         pinColour: 200,
-        pinBackground: 50,
+        pinBackground: 80,
         missingData: 150,
         name: 'COLOUR_DARK'
     },
