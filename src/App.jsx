@@ -23,8 +23,8 @@ const App = () => {
     const [encoding, setEncoding] = useState(options.encoding)
     const [x, setX] = useState(null)
     const [y, setY] = useState(null)
-    const { data, dataType, dataBrackets, yBrackets, xBrackets, variable } = getData(view)
-    const [selections, setSelections] = useState(getDefaultSelections(shape, view))
+    const { data, dataType, dataBrackets, yBrackets, xBrackets, variable } = getData(view, options.practice)
+    const [selections, setSelections] = useState(getDefaultSelections())
     const locations = options.practice ? yukon : alaska
 
     useEffect(() => {

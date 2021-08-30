@@ -211,11 +211,18 @@ const getDataByContinent = (data, continents) => {
     return newData
 }
 
-export const getData = (view) => {
+export const getData = (view, practice) => {
     if (view === views.SCATTER.val) {
         let data = covidData
-        data = getDataByContinent(data, ['North America', 'Asia'])
-        data = getDataByPopulation(data, 10000000)
+
+        if (practice) {
+            data = getDataByContinent(data, ['Europe'])
+            data = getDataByPopulation(data, 60000000)
+        } else {
+            data = getDataByContinent(data, ['North America', 'Asia'])
+            data = getDataByPopulation(data, 10000000)
+        }
+
         const dataBrackets = getDataBracketsMultiYear(data, 'cases')
         const logData = getLogData(data)
         const logDataBrackets = getDataBracketsMultiYear(logData, 'cases')
