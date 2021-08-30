@@ -4,30 +4,28 @@ import { MapContainer, TileLayer } from "react-leaflet";
 
 import Overlay from "./Overlay";
 
-const initialCenter = [63, -149];   // alaska
-
-// const initialCenter = [52, -103];  // sask
-
-const mapWidth = window.options ? 1000 : window.innerWidth * 0.95
-const mapHeight = window.innerHeight * 0.75
+const practice = window.options?.practice
 
 const style = {
-    width: mapWidth,
-    height: mapHeight
+    width: window.options ? 1000 : window.innerWidth * 0.95,
+    height: window.innerHeight * 0.75
 }
+
+const mapOptions = {
+    center: practice ? [62, -137] : [63, -149],
+    scrollWheelZoom: false,
+    style: style,
+    zoom: practice ? 5 : 4,
+    zoomControl: false,
+    zoomSnap: 0.5,
+}
+
 
 const LeafletMap = ({ selections, shape, encoding }) => {
     const theme = selections.theme
 
     return (
-        <MapContainer
-            center={initialCenter}
-            scrollWheelZoom={false}
-            style={style}
-            zoom={4}
-            zoomControl={false}
-            zoomSnap={0.5}
-        >
+        <MapContainer { ...mapOptions } >
             {theme === 'DEFAULT' ? <DefaultMap /> : null}
             {theme === 'DARK' ? <DarkMap /> : null}
             {theme === 'COLOUR_DARK' ? <ColourDarkMap /> : null}

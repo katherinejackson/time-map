@@ -6,7 +6,7 @@ import { views } from './constants'
 import ScatterPlot from "./ScatterPlot"
 import DataContext from './DataContext'
 import { getData } from './helpers/data'
-import { alaska as locations } from "./data/locationCoords"
+import { alaska, yukon } from "./data/locationCoords"
 import { getDefaultSelections } from "./helpers/selections"
 import ViewSelector from './ViewSelector';
 import ShapeEncodingSelector from './ShapeEncodingSelector'
@@ -15,7 +15,7 @@ import Comparison from './Comparison';
 import GraphView from './GraphView'
 import MultiComparison from './MultiComparison'
 
-let options = window.options || { view: null, shape: 2, encoding: 1 };
+let options = window.options || { view: null, shape: 2, encoding: 1, practice: false };
 
 const App = () => {
     const [view, setView] = useState(options.view)
@@ -25,6 +25,7 @@ const App = () => {
     const [y, setY] = useState(null)
     const { data, dataType, dataBrackets, yBrackets, xBrackets, variable } = getData(view)
     const [selections, setSelections] = useState(getDefaultSelections(shape, view))
+    const locations = options.practice ? yukon : alaska
 
     useEffect(() => {
         setX(null)
