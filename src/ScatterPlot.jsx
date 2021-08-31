@@ -9,8 +9,8 @@ import { shapes, themeColours } from "./constants";
 import { formatNumbers } from "./helpers/format"
 import { onClick, onHover } from "./helpers/studyEventHandlers";
 
-const canvasWidth = window.options ? 1000 : window.innerWidth * 0.95
-const canvasHeight = window.innerHeight
+const canvasWidth = window.options ? 1200 : window.innerWidth * 0.95
+const canvasHeight = window.options ? 800 : window.innerHeight * 0.95
 
 const xBorder = 50
 const graphWidth = canvasWidth - xBorder * 2

@@ -14,10 +14,7 @@ import { getGlyph } from "./helpers/mapCanvas";
 import { formatNames } from "./helpers/format";
 import { onClick, onHover, onZoom } from "./helpers/studyEventHandlers";
 
-const mapWidth = window.options ? 1000 : window.innerWidth * 0.95
-const mapHeight = window.innerHeight * 0.75
-
-const Overlay = ({ encoding, selections, shape }) => {
+const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
     const map = useMap()
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
     const { mapPin, theme, cluster } = selections

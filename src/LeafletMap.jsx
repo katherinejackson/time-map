@@ -5,10 +5,12 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import Overlay from "./Overlay";
 
 const practice = window.options?.practice
+const mapWidth = window.options ? 1200 : window.innerWidth * 0.95
+const mapHeight = window.options ? 800 : window.innerHeight * 0.75
 
 const style = {
-    width: window.options ? 1000 : window.innerWidth * 0.95,
-    height: window.innerHeight * 0.75
+    width: mapWidth,
+    height: mapHeight
 }
 
 const mapOptions = {
@@ -29,7 +31,7 @@ const LeafletMap = ({ selections, shape, encoding }) => {
             {theme === 'DEFAULT' ? <DefaultMap /> : null}
             {theme === 'DARK' ? <DarkMap /> : null}
             {theme === 'COLOUR_DARK' ? <ColourDarkMap /> : null}
-            <Overlay encoding={encoding} selections={selections} shape={shape} />
+            <Overlay encoding={encoding} selections={selections} shape={shape} mapWidth={mapWidth} mapHeight={mapHeight} />
         </MapContainer>
     );
 }
