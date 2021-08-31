@@ -15,7 +15,8 @@ import Comparison from './Comparison';
 import GraphView from './GraphView'
 import MultiComparison from './MultiComparison'
 
-let options = window.options || { view: null, shape: 2, encoding: 1, practice: false };
+const options = window.options || { view: null, shape: 2, encoding: 1, practice: false };
+const study = window.options !== undefined
 
 const App = () => {
     const [view, setView] = useState(options.view)
@@ -44,8 +45,7 @@ const App = () => {
         setEncoding(parseInt(event.target.value))
     }
 
-    // change this to false when building for study
-    if (true) {
+    if (!study) {
         return (
             <div className="container-fluid my-5">
                 <ViewSelector handleViewChange={handleViewChange} />
