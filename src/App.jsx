@@ -45,6 +45,7 @@ const App = () => {
         setEncoding(parseInt(event.target.value))
     }
 
+    // if this is not a study
     if (!study) {
         return (
             <div className="container-fluid my-5">
