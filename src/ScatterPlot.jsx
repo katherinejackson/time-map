@@ -111,12 +111,25 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         pg.clear()
         pg.noStroke()
 
-        let ptData = data[id]['cases']['2020']
+        const ptData = []
+
+        let temp = data[id]['cases']['2020']
+        ptData.push(temp)
+
         if (numYears === 2) {
-            ptData = ptData.concat(data[id]['cases']['2021'])
+            ptData.push(data[id]['cases']['2021'])
         }
 
-        ptData = [[...ptData]]
+
+
+
+
+        // let ptData = data[id]['cases']['2020']
+        // if (numYears === 2) {
+        //     ptData = ptData.concat(data[id]['cases']['2021'])
+        // }
+
+        // ptData = [[...ptData]]
 
         if (shape === shapes.SPIRAL.id) {
             spiral(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding)
@@ -128,6 +141,7 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
     }
 
     const drawGlyphs = () => {
+        //console.log(pts)
         Object.keys(pts).forEach((id) => {
             let pt = pts[id]
             if (id !== hover) {

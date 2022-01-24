@@ -20,6 +20,7 @@ export const getGlyph = (p5, pin, data, dataType, interval, shape, selections, e
         locationData = averageData(ids, selections, data)
     }
 
+
     if (shape === shapes.SPIRAL.id) {
         spiral(pg, dataType, interval, locationData, width/2, height/2, selections, encoding, numLocations)
     } else if (shape === shapes.ROW.id) {
