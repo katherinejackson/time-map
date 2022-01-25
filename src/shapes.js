@@ -102,6 +102,18 @@ export const row = (
     const increment = rowHeight / interval.range
     const middle = baseline - (interval.range / 2 * increment)
 
+    //console.log("LENGTH ", locationData)
+
+    // console.log("x ", x)
+
+
+    // console.log("starty ", startY)
+    // console.log("height ", height)
+    // console.log("baseline ", baseline)
+    // console.log("rowHeight ", rowHeight)
+    // console.log("increment ", increment)
+    // console.log("middle ", middle)
+
     if (mapPin) {
         p5.stroke(50)
         p5.fill(colourTheme.pinColour)
@@ -120,6 +132,8 @@ export const row = (
         p5.rect(startX - 2, startY - 2, width + 4, height + 4)
     }
 
+ 
+
     locationData.forEach(year => {
         for (let day = 0; day < year.length - 1; day++) {
             if (year[day] !== '') {
@@ -130,6 +144,9 @@ export const row = (
                 }
 
                 if (encoding === 2) {
+                    //console.log("y ", baseline - rowHeight)
+                    // console.log("baseline ", baseline)
+                    // console.log("rowHeight ", rowHeight)
                     p5.rect(startX + day * dayWidth, baseline - rowHeight, 1, rowHeight)
                 } else {
                     let val = baseline - ((year[day] - interval.low) * increment)
@@ -147,6 +164,7 @@ export const row = (
         }
 
         baseline = baseline - rowHeight - spaceBetween
+        //console.log("bl after ", baseline)
     })
 
     if (cluster) {
