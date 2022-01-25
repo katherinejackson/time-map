@@ -1,4 +1,4 @@
-import { bigData as covidData } from "../data/covidData";
+import { bigData as covidData } from "../data/covidData2022";
 import { data as tradeData } from "../data/tradeData"
 import { tempData as mapData } from "../data/tempData"
 import { views, dataSets } from "../constants";
@@ -187,12 +187,13 @@ const getDataByPopulation = (data, population) => {
     const newData = {}
 
     Object.keys(data).forEach(country => {
+
         if (data[country]['population'] >= population) {
             newData[country] = data[country]
         }
     })
 
-    // console.log(Object.keys(newData).length + ' countries')
+    console.log(Object.keys(newData).length + ' countries')
 
     return newData
 }
@@ -206,7 +207,7 @@ const getDataByContinent = (data, continents) => {
         }
     })
 
-    // console.log(Object.keys(newData).length + ' countries')
+    //console.log(Object.keys(newData).length + ' countries')
 
     return newData
 }
@@ -215,13 +216,16 @@ export const getData = (view, practice) => {
     if (view === views.SCATTER.val) {
         let data = covidData
 
+
         if (practice) {
             data = getDataByContinent(data, ['Europe'])
             data = getDataByPopulation(data, 60000000)
         } else {
             data = getDataByContinent(data, ['North America', 'Asia'])
+            console.log("d ", data)
             data = getDataByPopulation(data, 10000000)
         }
+
 
         const dataBrackets = getDataBracketsMultiYear(data, 'cases')
         const logData = getLogData(data)
@@ -232,7 +236,7 @@ export const getData = (view, practice) => {
         const combinedBrackets = {...logDataBrackets, displayHigh: dataBrackets.high, displayLow: dataBrackets.low}
 
         // getCovidDataInfo(data)
-        // console.log(Object.keys(data).length + ' countries')
+        //console.log(Object.keys(data).length + ' countries')
 
         return { data: logData, dataType, dataBrackets: combinedBrackets, yBrackets, xBrackets }
 

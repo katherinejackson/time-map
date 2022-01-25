@@ -29,21 +29,18 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
     const interval = getManualInterval(dataBrackets, numColours, dataType)
 
     useEffect(() => {
-        console.log("first ue")
         if (p5) {
             reset()
         }
     }, [p5, shape])
 
     useEffect(() => {
-        console.log("second ue")
         if (p5) {
             resetGlyphs()
         }
     }, [selections, encoding])
 
     useEffect(() => {
-        console.log("third ue")
         if (p5) {
             draw(p5)
         }
@@ -88,14 +85,12 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
     }
 
     const setup = (p5, parent) => {
-        console.log("setup")
         setP5(p5)
         p5.createCanvas(canvasWidth, canvasHeight).parent(parent)
         p5.textAlign(p5.CENTER, p5.CENTER)
     }
 
     const draw = (p5) => {
-        console.log("draw")
         p5.clear()
         p5.textAlign(p5.CENTER, p5.CENTER)
         p5.background(colourTheme.background)
@@ -122,8 +117,6 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
             ptData.push(data[id]['cases']['2021'])
         }
         ptData.push(data[id]['cases']['2020'])
-
-        console.log("pd ", ptData)
 
 
 
