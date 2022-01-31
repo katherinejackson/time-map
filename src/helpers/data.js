@@ -255,11 +255,13 @@ export const getData = (view, practice) => {
         const dataBrackets = getDataBrackets(data)
 
 
-        mapData.forEach(i => {
-            console.log(i.name, Object.keys(i.data))
-        })
+        // mapData.forEach(i => {
+        //     console.log(i.name, Object.keys(i.data))
+        // })
 
         // getMapDataInfo(data, dataBrackets)
+
+        console.log({ data, dataType, dataBrackets })
 
         return { data, dataType, dataBrackets }
     }

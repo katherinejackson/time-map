@@ -89,7 +89,7 @@ export const getBasicSelectionOptions = () => {
         fillMissing: { name: 'Fill Missing Data', values: [true, false] },
         theme: { name: 'Theme', values: Object.keys(themes) },
         cluster: { name: 'Cluster Data Points', values: [true, false] },
-        numYears: { name: 'Number of Years', values: [1, 2] },
+        numYears: { name: 'Number of Years', values: [1, 2, 3] },
         numColours: { name: 'Number of Colours', values: [1, 2, 3, 4, 5, 6, 7, 8, 360] },
     }
 }
