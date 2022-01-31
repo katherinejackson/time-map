@@ -14,6 +14,7 @@ import { getGlyph } from "./helpers/mapCanvas";
 import { formatNames } from "./helpers/format";
 import { onClick, onHover, onZoom } from "./helpers/studyEventHandlers";
 
+// Displays the pins (w/ hover capability) that are positioned on the map
 const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
     const map = useMap()
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)

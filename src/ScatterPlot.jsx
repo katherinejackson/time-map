@@ -113,7 +113,13 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
 
         const ptData = []
 
-        if (numYears === 2) {
+        console.log(data)
+
+        if (numYears === 3) {            
+            ptData.push(data[id]['cases']['2022'])
+            ptData.push(data[id]['cases']['2021']) 
+        }
+        else if (numYears === 2) {
             ptData.push(data[id]['cases']['2021'])
         }
         ptData.push(data[id]['cases']['2020'])
