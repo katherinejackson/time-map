@@ -254,6 +254,11 @@ export const getData = (view, practice) => {
         const dataType = dataSets.TEMP.val
         const dataBrackets = getDataBrackets(data)
 
+
+        mapData.forEach(i => {
+            console.log(i.name, Object.keys(i.data))
+        })
+
         // getMapDataInfo(data, dataBrackets)
 
         return { data, dataType, dataBrackets }
