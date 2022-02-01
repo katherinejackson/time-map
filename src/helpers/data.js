@@ -166,6 +166,9 @@ export const averageData = (locations, selections, allData) => {
 export const getLocationData = (id, selections, data) => {
     let newData = []
 
+    console.log(id)
+    console.log(data[id])
+
     let years = Object.keys(data[id].data)
     let currentYearIndex = years.indexOf('2021')
     if (currentYearIndex > -1) {
