@@ -80,7 +80,7 @@ const Graph = () => {
         let x;
         let y;
 
-        drawImportYearLegend(p5, canvasWidth-125, 100, data, spiralSelections, background)
+        drawImportYearLegend(p5, canvasWidth-150, 100, data, spiralSelections, background)
 
         console.log(pts)
 

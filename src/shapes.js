@@ -360,7 +360,7 @@ export const monthSpiral = (p5, startX, startY, data, highest, lowest) => {
 }
 
 export const legendGraphSpiral = (p5, startX, startY, data, selections, backgroundColour) => {
-    let spiralWidth = selections.spiralWidth
+    let spiralWidth = 150;
     let angle = -Math.PI / 2
     let radianPer = Math.PI * 2 / Object.keys(data).length
 
@@ -368,64 +368,31 @@ export const legendGraphSpiral = (p5, startX, startY, data, selections, backgrou
     p5.fill(255);
     p5.ellipse(startX, startY, spiralWidth, spiralWidth);
     Object.keys(data).forEach((i) => {
+
+    // draw arc that splits up the circle (like a pizza)
       p5.fill(225);
       p5.stroke(backgroundColour);
       p5.arc(startX, startY, spiralWidth, spiralWidth, angle, angle + radianPer, p5.PIE);
+
+      // draw inner arc that looks like a smaller circle
       p5.fill(backgroundColour);
-  
       p5.stroke(backgroundColour);
       p5.arc(startX, startY, spiralWidth / 2, spiralWidth / 2, angle, angle + radianPer, p5.PIE);
   
-      // add label here
+      // add label
       let textAngle = angle + radianPer / 2;
   
-      // Use sine and cosine to determine the position for the text
-      // Since sine is opposite / hypotenuse, taking the sine of the angle and
-      // multiplying by distance gives us the vertical offset (i.e. the Y
-      // coordinate).
-      // Likewise with cosine for the X coordinate
       p5.noStroke();
       p5.fill(0);
-      p5.textSize(6);
+      p5.textSize(10);
       p5.text(
         i,
         startX + p5.cos(textAngle) * spiralWidth / 2 * 0.75,
         startY + p5.sin(textAngle) * spiralWidth / 2 * 0.75
       );
-  
-      // Don't update angle until after calculating the angle for the label
+
       angle += radianPer;
     });
-
-    // p5.noStroke()
-    // p5.fill(backgroundColour)
-    // p5.ellipse(startX, startY, coreSize + spiralWidth, coreSize + spiralWidth)
-    // //console.log(data)
-    // Object.keys(data).forEach(year => {
-
-    //     console.log(year)
-    //     let x = startX + p5.cos(angle) * coreSize
-    //     let y = startY + p5.sin(angle) * coreSize
-
-    //     p5.fill(50)
-
-    //     p5.stroke(backgroundColour)
-    //     p5.arc(x, y, spiralWidth, spiralWidth, angle, angle + radianPer, p5.PIE)
-    //     p5.fill(backgroundColour)
-        
-    //     p5.arc(x, y, spiralWidth / 2, spiralWidth / 2, angle, angle + radianPer, p5.PIE)
-
-
-    //     let textAngle= angle + radianPer / 2;
-    //     p5.fill(255, 0, 0);
-    //     p5.textSize(8)
-    //     p5.text(year, 
-    //         x * p5.cos(textAngle) * spiralWidth / 2 * 0.75, 
-    //         y * p5.sin(textAngle) * spiralWidth / 2 * 0.75)
-
-    //     angle += radianPer
-    //     coreSize += spiralTightness
-    // })
 }
 
 

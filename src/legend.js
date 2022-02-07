@@ -322,7 +322,7 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
 
 export const drawImportYearLegend = (p5, x, y, data, spiralSelections, background) => {
     p5.fill(background)
-    p5.rect(x, y, 125, 150)
+    p5.rect(x, y, 150, 150)
 
     legendGraphSpiral(p5, x +  60, y + 50, data['World']['data'], spiralSelections, background)
 
@@ -330,13 +330,13 @@ export const drawImportYearLegend = (p5, x, y, data, spiralSelections, backgroun
     p5.noStroke()
     p5.textSize(12)
     p5.fill("#59a14f")
-    p5.ellipse(x + 10, y + 100, 10, 10)
+    p5.ellipse(x + 10, y + 135, 10, 10)
     p5.fill(0)
-    p5.text("+ trade balance", x + 60, y + 100)
+    p5.text("+ trade balance", x + 60, y + 135)
 
     p5.fill('#e15759')
-    p5.ellipse(x + 10, y + 115, 10, 10)
+    p5.ellipse(x + 10, y + 150, 10, 10)
     p5.fill(0)
-    p5.text("- trade balance", x + 60, y + 115)
+    p5.text("- trade balance", x + 60, y + 150)
 
 }

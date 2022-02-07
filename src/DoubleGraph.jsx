@@ -78,7 +78,7 @@ const DoubleGraph = ({ }) => {
         let nodeDiameter = 75
         p5.noStroke()
 
-        drawImportYearLegend(p5, canvasWidth-125, 100, data, spiralSelections, background)
+        drawImportYearLegend(p5, canvasWidth-150, 100, data, spiralSelections, background)
 
         let startX = canvasWidth/2
         let startY = canvasHeight/2
