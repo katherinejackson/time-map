@@ -1,8 +1,8 @@
 import Sketch from "react-p5";
 import React, { useContext, useEffect, useState } from 'react'
 
-import { drawGraphLegend } from "./legend";
-import { getGraphRadius, graphSpiral } from "./shapes";
+import { drawGraphLegend, drawImportYearLegend } from "./legend";
+import { getGraphRadius, graphSpiral, legendGraphSpiral } from "./shapes";
 import DataContext from "./DataContext";
 import { shapes, themeColours } from "./constants";
 import { getDefaultSelections } from "./helpers/selections";
@@ -72,9 +72,17 @@ const Graph = () => {
         setPts(pts)
     }
 
+    
+
+
+
     const nodeGraph = (p5, pts) => {
         let x;
         let y;
+
+        drawImportYearLegend(p5, canvasWidth-125, 100, data, spiralSelections, background)
+
+        console.log(pts)
 
         pts.forEach(pt => {
             x = pt['x']

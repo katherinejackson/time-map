@@ -1,7 +1,7 @@
 import { colours, manualIntervals, themeColours, shapes, abbreviatedMonths } from './constants'
 import { fillColourGradient, setColour } from "./helpers/colours";
 import { formatNumbers, formatTradeNumbers } from './helpers/format';
-import { drawSpiralMonth, getShapeSize, spiralOutline } from './shapes';
+import { drawSpiralMonth, getShapeSize, spiralOutline, legendGraphSpiral } from './shapes';
 
 
 export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth) => {
@@ -318,4 +318,25 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
         p5.text(lowString, x + maxRadius + 3, startY - 20)
         p5.text(highString, x + maxRadius + 3, startY)
     }
+}
+
+export const drawImportYearLegend = (p5, x, y, data, spiralSelections, background) => {
+    p5.fill(background)
+    p5.rect(x, y, 125, 150)
+
+    legendGraphSpiral(p5, x +  60, y + 50, data['World']['data'], spiralSelections, background)
+
+    // show legend for the trade balance colours
+    p5.noStroke()
+    p5.textSize(12)
+    p5.fill("#59a14f")
+    p5.ellipse(x + 10, y + 100, 10, 10)
+    p5.fill(0)
+    p5.text("+ trade balance", x + 60, y + 100)
+
+    p5.fill('#e15759')
+    p5.ellipse(x + 10, y + 115, 10, 10)
+    p5.fill(0)
+    p5.text("- trade balance", x + 60, y + 115)
+
 }
