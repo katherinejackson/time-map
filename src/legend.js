@@ -330,13 +330,13 @@ export const drawImportYearLegend = (p5, x, y, data, spiralSelections, backgroun
     p5.noStroke()
     p5.textSize(12)
     p5.fill("#59a14f")
-    p5.ellipse(x + 10, y + 135, 10, 10)
+    p5.ellipse(x, y + 135, 10, 10)
     p5.fill(0)
-    p5.text("+ trade balance", x + 60, y + 135)
+    p5.text("Positive trade balance", x + 70, y + 135)
 
     p5.fill('#e15759')
-    p5.ellipse(x + 10, y + 150, 10, 10)
+    p5.ellipse(x, y + 150, 10, 10)
     p5.fill(0)
-    p5.text("- trade balance", x + 60, y + 150)
+    p5.text("Negative trade balance", x + 70, y + 150)
 
 }
