@@ -26,7 +26,7 @@ const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
     const [locationPins, setLocationPins] = useState([])
     const [detailed, setDetailed] = useState([])
     const [hover, setHover] = useState(null)
-    const { width, height, maxRadius } = getShapeSize(selections, shape)
+    const { width, height, maxRadius } = getShapeSize(selections, shape, 365)
 
     useEffect(() => {
         if (locations && p5) {
@@ -65,7 +65,7 @@ const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
 
     const drawDetailedRect = (x, y, id, detailedSelections) => {
         let locationData = getLocationData(id, selections, data)
-        const { rowWidth, pinHeight } = getRowSize(detailedSelections, 1)
+        const { rowWidth, pinHeight } = getRowSize(detailedSelections, 365)
         const startX = x - rowWidth / 2;
         const startY = y - pinHeight / 2
 
@@ -270,7 +270,8 @@ const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
             dayWidth: 0.25,
         }
 
-        const { pinHeight } = getRowSize(newSelections, detailed.length, newSelections.numYears)
+        // const { pinHeight } = getRowSize(newSelections, detailed.length, newSelections.numYears)
+        const { pinHeight } = getRowSize(newSelections, 365)
         const locationHeight = pinHeight + 30
 
         p5.fill(colourTheme.background)

@@ -1,7 +1,7 @@
 import { colours, manualIntervals, radianPerDay, radianPerMonth, shapes, themeColours, pinSize, abbreviatedMonths } from "./constants";
 import { fillColourGradient, getManualIntervalColour, fillLogColourGradient, getCovidIntervalColour, setColour } from "./helpers/colours";
 
-export const getShapeSize = (selections, shape, numLocations = 1) => {
+export const getShapeSize = (selections, shape, dataLength, numLocations = 1) => {
     if (shape === shapes.SPIRAL.id) {
         const topRadius = getRadius(selections)
         const bottomRadius = getRadiusAtDay(365 / 2, selections)
@@ -12,7 +12,7 @@ export const getShapeSize = (selections, shape, numLocations = 1) => {
 
         return { width: leftRadius + rightRadius, height: topRadius + bottomRadius, maxRadius: topRadius, area: spiralArea, rightRadius: rightRadius }
     } else if (shape === shapes.ROW.id) {
-        const { rowWidth, pinHeight } = getRowSize(selections, numLocations)
+        const { rowWidth, pinHeight } = getRowSize(selections, dataLength)
 
         return { width: rowWidth, height: pinHeight, area: rowWidth * pinHeight }
     }
@@ -47,8 +47,8 @@ export const getGraphRadius = (selections, numSections) => {
         + selections.spiralWidth / 2
 }
 
-export const getRowSize = (selections) => {
-    const daysPerRow = 365
+export const getRowSize = (selections, daysPerRow) => {
+    //const daysPerRow = 365
     const dayWidth = selections.dayWidth
     const rowWidth = daysPerRow * dayWidth
     const rowHeight = selections.rowHeight
@@ -95,7 +95,7 @@ export const row = (
 ) => {
     const { numColours, mapPin, opaque, dayWidth, theme, rowHeight, fillMissing, cluster, spaceBetween } = selections
     const colourTheme = themeColours[theme]
-    const { width, height } = getShapeSize(selections, shapes.ROW.id)
+    const { width, height } = getShapeSize(selections, shapes.ROW.id, 365)
     const startX = x - width / 2
     const startY = mapPin ? y - height - pinSize : y - height / 2
     let baseline = startY + height
@@ -197,7 +197,7 @@ export const migrationRow = (
     numLocations,) => {
     const { numColours, mapPin, opaque, dayWidth, theme, rowHeight, fillMissing, cluster, spaceBetween } = selections
     const colourTheme = themeColours[theme]
-    const { width, height } = getShapeSize(selections, shapes.ROW.id)
+    const { width, height } = getShapeSize(selections, shapes.ROW.id, locationData.length)
     const startX = x - width / 2
     const startY = mapPin ? y - height - pinSize : y - height / 2
     let baseline = startY + height
@@ -205,6 +205,8 @@ export const migrationRow = (
     const middle = baseline - (interval.range / 2 * increment)
 
     //console.log("int ", interval)
+
+    console.log("y" , startY)
 
 
 
@@ -635,7 +637,7 @@ export const spiral = (
     const { spiralWidth, spiralTightness, coreSize, mapPin, opaque, theme, numColours, fillMissing, cluster } = selections
     const colourTheme = themeColours[theme]
     const increment = spiralWidth / interval.range
-    const { maxRadius } = getShapeSize(selections, shapes.SPIRAL.id)
+    const { maxRadius } = getShapeSize(selections, shapes.SPIRAL.id, 365)
     const startX = x
     const startY = mapPin ? y - pinSize - maxRadius : y
     let angle = -Math.PI / 2
@@ -752,7 +754,7 @@ export const spiralOutline = (
 ) => {
     const { spiralWidth, spiralTightness, coreSize, theme } = selections
     const colourTheme = themeColours[theme]
-    const { maxRadius } = getShapeSize(selections, shapes.SPIRAL.id)
+    const { maxRadius } = getShapeSize(selections, shapes.SPIRAL.id, 365)
     const startX = x
     const startY = y
     let angle = -Math.PI / 2

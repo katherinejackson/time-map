@@ -23,7 +23,7 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
     const { theme, numColours, numYears, mapPin } = selections
     const colourTheme = themeColours[theme]
     const [p5, setP5] = useState(null)
-    const { width, height, maxRadius } = getShapeSize(selections, shape)
+    const { width, height, maxRadius } = getShapeSize(selections, shape, 365)
     const [pts, setPts] = useState({})
     const [hover, setHover] = useState(null)
     const interval = getManualInterval(dataBrackets, numColours, dataType)

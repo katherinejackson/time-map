@@ -293,7 +293,7 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
     const lowString = formatNumbers(brackets.displayLow || brackets.low)
     const highString = formatNumbers(brackets.displayHigh || brackets.high)
     selections = { ...selections, ['coreSize']: 0, ['spiralWidth']: 20 }
-    const { rightRadius, maxRadius, width, height } = getShapeSize(selections, shapes.SPIRAL.id)
+    const { rightRadius, maxRadius, width, height } = getShapeSize(selections, shapes.SPIRAL.id, 365)
 
     const startX = encoding === 1 || encoding === 3 ? legendWidth * 0.33 : legendWidth / 2
     const startY = legendHeight / 2

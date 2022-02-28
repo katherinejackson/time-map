@@ -30,6 +30,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
     
         p.setup = () => {
             p.createCanvas(canvasWidth, canvasHeight);
+            console.log(canvasWidth, canvasHeight)
             p.textAlign(p.CENTER, p.CENTER);
             p.noLoop();
         };
@@ -49,7 +50,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
         .range([0, 1799.3]);
 
         const yScale = scaleLinear()
-        .domain([0, 2046])
+        .domain([0, 1990])
         .range([0, 1205.55]);
 
         Object.keys(data).forEach(id => {
@@ -66,7 +67,6 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
                 height,
             }
         });
-
         setPts(newPts);
     }
 

@@ -15,7 +15,7 @@ const Comparison = ({ selections, shape, encoding, x, y }) => {
     const yOptions = options[y].values
 
     const getSizeString = (xval, yval) => {
-        const {width, height} = getShapeSize({ ...selections, [x]: xval, [y]: yval }, shape)
+        const {width, height} = getShapeSize({ ...selections, [x]: xval, [y]: yval }, shape, 365)
 
         return `width: ${Math.round(width)}  height: ${Math.round(height)}`
     }

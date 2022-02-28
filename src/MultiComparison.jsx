@@ -6,7 +6,7 @@ import { shapes, encodings } from './constants'
 
 const MultiComparison = ({ selections }) => {
     const getSizeString = (shape) => {
-        const { width, height, area } = getShapeSize(selections, shape)
+        const { width, height, area } = getShapeSize(selections, shape, 365)
 
         return `width: ${Math.round(width)}  height: ${Math.round(height)} area: ${Math.round(area)}`
     }

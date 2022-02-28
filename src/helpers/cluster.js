@@ -58,7 +58,7 @@ export const addLocations = (locations, selections, shape, mapPin, map) => {
     const locationPins = []
 
     locations.forEach((item, index) => {
-        let {width, height} = getShapeSize(selections, shape)
+        let {width, height} = getShapeSize(selections, shape, 365)
         const location = map.latLngToContainerPoint([item.x, item.y])
         locationPins.push({
             x: location.x,
@@ -95,8 +95,8 @@ export const calculateClusters = (locations, selections, shape, mapPin, map) => 
                     spiralTightness
                 }
             } else if (shape === shapes.ROW.id) {
-                let { dayWidth, rowHeight } = getRowSize(selections, numLocations, selections.numYears)
-
+                // let { dayWidth, rowHeight } = getRowSize(selections, numLocations, selections.numYears)
+                let { dayWidth, rowHeight } = getRowSize(selections, 365)
                 newSelections = {
                     ...selections,
                     dayWidth,
