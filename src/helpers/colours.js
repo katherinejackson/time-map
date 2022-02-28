@@ -20,6 +20,8 @@ export const setColour = (p5, pt, numColours, interval, dataType) => {
 export const getManualIntervalColour = (pt, colourSet, intervalSet) => {
     let counter = 0
 
+    //console.log(intervalSet)
+
     while (pt > intervalSet[counter + 1]) {
         counter++
     }

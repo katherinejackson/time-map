@@ -20,7 +20,6 @@ const EdgeGraph = () => {
     const [pts, setPts] = useState([])
     const countryData = {...data}
     delete countryData['World']
-    
 
     useEffect(() => {
         setUpCircularPts()
