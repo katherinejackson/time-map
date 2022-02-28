@@ -28,6 +28,8 @@ export const getRoundedInterval = (dataBrackets, numColours) => {
         numColours = 1
     }
 
+    
+
     const range = dataBrackets.high - dataBrackets.low
     const interval = Math.ceil((range / numColours) / 5) * 5
     const coverage = numColours * interval

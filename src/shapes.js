@@ -102,11 +102,10 @@ export const row = (
     const increment = rowHeight / interval.range
     const middle = baseline - (interval.range / 2 * increment)
 
+
+
     //console.log("LENGTH ", locationData)
-
     // console.log("x ", x)
-
-
     // console.log("starty ", startY)
     // console.log("height ", height)
     // console.log("baseline ", baseline)
@@ -184,6 +183,144 @@ export const row = (
             p5.text(numLocations, x, y + height / 2 + 8)
         }
     }
+}
+
+export const migrationRow = (
+    p5,
+    dataType,
+    interval,
+    locationData,
+    x,
+    y,
+    selections,
+    encoding,
+    numLocations,) => {
+    const { numColours, mapPin, opaque, dayWidth, theme, rowHeight, fillMissing, cluster, spaceBetween } = selections
+    const colourTheme = themeColours[theme]
+    const { width, height } = getShapeSize(selections, shapes.ROW.id)
+    const startX = x - width / 2
+    const startY = mapPin ? y - height - pinSize : y - height / 2
+    let baseline = startY + height
+    const increment = rowHeight / interval.range
+    const middle = baseline - (interval.range / 2 * increment)
+
+    //console.log("int ", interval)
+
+
+
+    //console.log("LENGTH ", locationData)
+    // console.log("x ", x)
+    // console.log("starty ", startY)
+    // console.log("height ", height)
+    // console.log("baseline ", baseline)
+    // console.log("rowHeight ", rowHeight)
+    // console.log("increment ", increment)
+    // console.log("middle ", middle)
+
+    if (mapPin) {
+        p5.stroke(50)
+        p5.fill(colourTheme.pinColour)
+        p5.triangle(x, y, x - pinSize, y - pinSize, x + pinSize, y - pinSize)
+        if (opaque) {
+            p5.fill(colourTheme.pinBackground)
+        } else {
+            p5.noFill()
+        }
+        p5.rect(startX, startY, width, height)
+        p5.noStroke()
+    }
+
+    if (encoding !== 2) {
+        p5.fill(colourTheme.pinBackground)
+        p5.rect(startX - 2, startY - 2, width + 4, height + 4)
+    }
+
+
+    let count = 0;
+    locationData.forEach(year => {
+        if (year !== -1) {
+            // distance
+            if (encoding === 1) {
+                p5.fill(colourTheme.textColour)
+            } else {
+                setColour(p5, year, numColours, interval, dataType)
+            }
+            // colour
+            if (encoding === 2) {
+                //console.log("y ", baseline - rowHeight)
+                // console.log("baseline ", baseline)
+                // console.log("rowHeight ", rowHeight)
+                p5.rect(startX + count * dayWidth, baseline - rowHeight, 1, rowHeight)
+            } else {
+                // console.log("bl ", baseline)
+                // console.log(year)
+                // console.log("int ", interval.low)
+                // console.log("incre", increment)
+                // console.log()
+                let val = baseline - ((year - interval.low) * increment)
+                p5.ellipse(startX + count * dayWidth, val, 1, 1)
+            }
+        } else if (fillMissing) {
+            p5.fill(colourTheme.missingData, 100)
+
+            if (encoding === 2) {
+                p5.rect(startX + count * dayWidth, baseline - rowHeight, 1, rowHeight)
+            } else {
+                p5.ellipse(startX + count * dayWidth, middle, 1, 1)
+            }
+            }
+        // for (let day = 0; day < year.length - 1; day++) {
+        //     if (year[day] !== '') {
+        //         if (encoding === 1) {
+        //             p5.fill(colourTheme.textColour)
+        //         } else {
+        //             setColour(p5, year[day], numColours, interval, dataType)
+        //         }
+
+        //         if (encoding === 2) {
+        //             //console.log("y ", baseline - rowHeight)
+        //             // console.log("baseline ", baseline)
+        //             // console.log("rowHeight ", rowHeight)
+        //             p5.rect(startX + day * dayWidth, baseline - rowHeight, 1, rowHeight)
+        //         } else {
+        //             let val = baseline - ((year[day] - interval.low) * increment)
+        //             p5.ellipse(startX + day * dayWidth, val, 1, 1)
+        //         }
+        //     } else if (fillMissing) {
+        //         p5.fill(colourTheme.missingData, 100)
+
+        //         if (encoding === 2) {
+        //             p5.rect(startX + day * dayWidth, baseline - rowHeight, 1, rowHeight)
+        //         } else {
+        //             p5.ellipse(startX + day * dayWidth, middle, 1, 1)
+        //         }
+        //     }
+        // }
+
+        baseline = baseline - rowHeight - spaceBetween
+        //console.log("bl after ", baseline)
+
+        count += 1;
+    })
+
+    if (cluster) {
+        p5.fill(colourTheme.textColour)
+        p5.textSize(10)
+        p5.textAlign(p5.CENTER, p5.CENTER)
+
+        if (mapPin) {
+            p5.fill(colourTheme.pinBackground)
+            p5.ellipse(x, y + 8, 16, 16)
+            p5.fill(colourTheme.textColour)
+            p5.text(numLocations, x, y + 8)
+        } else {
+            p5.fill(colourTheme.pinBackground)
+            p5.ellipse(x, y + height / 2 + 8, 16, 16)
+            p5.fill(colourTheme.textColour)
+            p5.text(numLocations, x, y + height / 2 + 8)
+        }
+    }
+
 }
 
 export const bridgeRow = (p5, startX, startY, endX, endY, data) => {

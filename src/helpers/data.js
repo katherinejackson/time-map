@@ -97,6 +97,27 @@ export const getTradeDataBrackets = (data, variable) => {
     return { high, low }
 }
 
+export const getMigrationDataBrackets = (data) => {
+    let high;
+    let low;
+
+    Object.keys(data).forEach(id => {
+        Object.keys(data[id]["data"]).forEach(year => {
+            let value = data[id]["data"][year];
+            // ignore -1 since it indicates missing data and not a value
+            if (value !== -1) {
+                if (!high || value > high) {
+                    high = value
+                }
+                if (!low || value < low) {
+                    low = value
+                }
+            }
+        });
+    });
+    return { high, low }
+}
+
 export const getAverage = (data, variable) => {
     let total = 0
     let num = 0
@@ -230,7 +251,6 @@ export const getData = (view, practice) => {
 
         const dataBrackets = getDataBracketsMultiYear(data, 'cases')
         const logData = getLogData(data)
-        console.log(data)
         const logDataBrackets = getDataBracketsMultiYear(logData, 'cases')
         const dataType = dataSets.COVID.val
         const yBrackets = getVariableBrackets(data, 'population')
@@ -269,8 +289,10 @@ export const getData = (view, practice) => {
     }
     else if (view === views.MIGRATION_GRAPH.val) {
         const data = migrationData;
+        const dataType = dataSets.MIGRATION.val
+        const dataBrackets = getMigrationDataBrackets(migrationData)
 
-        return { data }
+        return { data, dataType, dataBrackets }
     }
 
     return {}

@@ -126,6 +126,7 @@ export const dataSets = {
     PRECIP: { id: 3, name: 'Precipitation', val: 'PRECIP' },
     COVID: { id: 4, name: 'Covid', val: 'COVID' },
     TRADE: { id: 5, name: 'Trade', val: 'TRADE' },
+    MIGRATION: {id: 6, name: 'Migration', val: 'MIGRATION'}
 }
 
 export const views = {

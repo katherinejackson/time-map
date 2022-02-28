@@ -1,90 +1,99 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import p5 from "p5";
 import DataContext from "./DataContext";
+import { scaleLinear } from "d3";
 import Sketch from "react-p5";
+import { getManualInterval, getRoundedInterval } from "./helpers/intervals";
+import { spiral, row, migrationRow, getShapeSize,  getPinAdjustment } from "./shapes";
+import { shapes, themeColours } from "./constants";
 import background from "./data/layout-noblobs.png";
 
 const canvasWidth = window.options ? 1200 : window.innerWidth * 0.95;
 const canvasHeight = window.options ? 800 : window.innerHeight * 0.95;
 
-const MigrationGraph = (props) => {
+const MigrationGraph = ({ encoding, selections, shape }) => {
 
     const containerRef = useRef();
     const { data, dataBrackets, yBrackets, xBrackets, dataType } = useContext(DataContext);
+    const { theme, numColours, numYears, mapPin } = selections
     const [pts, setPts] = useState({});
     const [hover, setHover] = useState(null);
+    const interval = getRoundedInterval(dataBrackets, numColours)
   
     const Sketch = (p) => {
 
         let backgroundImage;
 
-  
-      p.preload = () => {
-        backgroundImage = p.loadImage(background);
-      }
-  
-      p.setup = () => {
-        p.createCanvas(canvasWidth, canvasHeight);
-        p.textAlign(p.CENTER, p.CENTER);
-        p.noLoop();
-      };
-  
-      p.draw = () => {
-          p.image(backgroundImage, 0, 0, canvasWidth, canvasHeight);
-          console.log("data ", data)
-          drawGlyphs();
+        p.preload = () => {
+            backgroundImage = p.loadImage(background);
+        }
+    
+        p.setup = () => {
+            p.createCanvas(canvasWidth, canvasHeight);
+            p.textAlign(p.CENTER, p.CENTER);
+            p.noLoop();
+        };
+    
+        p.draw = () => {
+            p.image(backgroundImage, 0, 0, canvasWidth, canvasHeight);
+            reset();
+            drawGlyphs();
 
-      };
+        };
 
 
     const reset = () => {
-        let newPts = {}
+        let newPts = {};
+        const xScale = scaleLinear()
+        .domain([0, 4002])
+        .range([0, 1799.3]);
 
-        // Object.keys(data).forEach(id => {
-        //     let x = calcX(data[id]['human_development_index'])
-        //     let y = calcY(id)
+        const yScale = scaleLinear()
+        .domain([0, 2046])
+        .range([0, 1205.55]);
 
-        //     const { pg, width, height } = getGlyph(id)
-        //     newPts[id] = {
-        //         name: data[id]['location'],
-        //         x,
-        //         y,
-        //         pg,
-        //         width,
-        //         height,
-        //     }
-        // })
+        Object.keys(data).forEach(id => {
+            let x = xScale(data[id]["x"]);
+            let y = yScale(data[id]["y"])
 
-        // setPts(newPts)
+            const { pg, width, height } = getGlyph(id)
+            newPts[id] = {
+                name: id,
+                x,
+                y,
+                pg,
+                width,
+                height,
+            }
+        });
+
+        setPts(newPts);
     }
 
 
       const resetGlyphs = () => {
-        // let newPts = {}
-
-        // Object.keys(pts).forEach(id => {
-
-        //     const { pg, width, height } = getGlyph(id)
-        //     newPts[id] = {
-        //         ...pts[id],
-        //         pg,
-        //         width,
-        //         height,
-        //     }
-        // })
-
-        // setPts(newPts)
+        let newPts = {};
+        Object.keys(pts).forEach(id => {
+            const { pg, width, height } = getGlyph(id)
+            newPts[id] = {
+                ...pts[id],
+                pg,
+                width,
+                height,
+            }
+        });
+        setPts(newPts);
     }
 
       const drawGlyphs = () => {
-        //console.log(pts)
-        // Object.keys(pts).forEach((id) => {
-        //     let pt = pts[id]
-        //     if (id !== hover) {
-        //         // p5.image(pt.pg, pt.x - pt.width / 2, pt.y - pt.height / 2)
-        //         p.image(pt.pg, pt.x - pt.width / 2, pt.y - pt.height / 2)
-        //     }
-        // })
+        console.log(pts)
+        Object.keys(pts).forEach((id) => {
+            let pt = pts[id]
+            if (id !== hover) {
+                // p5.image(pt.pg, pt.x - pt.width / 2, pt.y - pt.height / 2)
+                p.image(pt.pg, pt.x - pt.width / 2, pt.y - pt.height / 2)
+            }
+        })
 
         // if (hover !== null) {
         //     const pin = pts[hover]
@@ -107,6 +116,25 @@ const MigrationGraph = (props) => {
         //     p5.fill(colourTheme.textColour)
         //     p5.text(pin.name, pin.x, pin.y + height * 0.75 + 5)
         // }
+    }
+    const getGlyph = (id) => {
+        let canvasWidth = 500
+        let canvasHeight = 500
+
+        let pg = p.createGraphics(canvasWidth, canvasHeight)
+        pg.clear()
+        pg.noStroke()
+
+        const ptData = Object.values(data[id]["data"])
+
+        if (shape === shapes.SPIRAL.id) {
+            
+            //spiral(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding)
+        } else if (shape === shapes.ROW.id) {
+            migrationRow(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding)
+        }
+
+        return { pg, width: canvasWidth, height: canvasHeight }
     }
     };
   

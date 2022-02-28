@@ -132,6 +132,7 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
 
         // ptData = [[...ptData]]
 
+
         if (shape === shapes.SPIRAL.id) {
             spiral(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding)
         } else if (shape === shapes.ROW.id) {

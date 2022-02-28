@@ -29,12 +29,22 @@ for l in lines[1:]:
     else:
         temp = dict(zip(years, migration))
 
-    temp["start"] = l[0]
-    temp["end"] = l[1]
-    temp["x"] = float(l[2])
-    temp["y"] = float(l[3])
+    # temp["start"] = l[0]
+    # temp["end"] = l[1]
+    # temp["x"] = float(l[2])
+    # temp["y"] = float(l[3])
 
-    data[id] = temp
+    # data[id] = temp
+
+    newTemp = {
+        "data": temp,
+        "start": l[0],
+        "end": l[1],
+        "x": float(l[2]),
+        "y": float(l[3])
+    }
+
+    data[id] = newTemp
 
 #print(data)
 
