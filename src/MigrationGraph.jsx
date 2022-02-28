@@ -21,11 +21,11 @@ const MigrationGraph = (props) => {
   
       p.setup = () => {
         p.createCanvas(canvasWidth, canvasHeight);
+        p.textAlign(p.CENTER, p.CENTER)
         p.noLoop();
       };
   
       p.draw = () => {
-          p.background(255, 0, 0)
           p.image(backgroundImage, 0, 0, canvasWidth, canvasHeight)
 
       };
