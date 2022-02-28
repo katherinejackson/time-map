@@ -3,6 +3,7 @@ import { data as tradeData } from "../data/tradeData"
 import { tempData as mapData } from "../data/tempData"
 import { views, dataSets } from "../constants";
 import { alaska } from "../data/locationCoords";
+import { migrationData } from "../data/migrationData";
 
 export const sortData = (pt) => {
     if (pt < -15) {
@@ -229,6 +230,7 @@ export const getData = (view, practice) => {
 
         const dataBrackets = getDataBracketsMultiYear(data, 'cases')
         const logData = getLogData(data)
+        console.log(data)
         const logDataBrackets = getDataBracketsMultiYear(logData, 'cases')
         const dataType = dataSets.COVID.val
         const yBrackets = getVariableBrackets(data, 'population')
@@ -264,6 +266,11 @@ export const getData = (view, practice) => {
         console.log({ data, dataType, dataBrackets })
 
         return { data, dataType, dataBrackets }
+    }
+    else if (view === views.MIGRATION_GRAPH.val) {
+        const data = migrationData;
+
+        return { data }
     }
 
     return {}
