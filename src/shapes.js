@@ -4,11 +4,11 @@ import { fillColourGradient, getManualIntervalColour, fillLogColourGradient, get
 export const getShapeSize = (selections, shape, dataLength, numLocations = 1) => {
     if (shape === shapes.SPIRAL.id) {
         const topRadius = getRadius(selections)
-        const bottomRadius = getRadiusAtDay(365 / 2, selections)
-        const rightRadius = getRadiusAtDay(365 / 4, selections)
-        const leftRadius = getRadiusAtDay(365 * 0.75, selections)
+        const bottomRadius = getRadiusAtDay(dataLength / 2, selections)
+        const rightRadius = getRadiusAtDay(dataLength / 4, selections)
+        const leftRadius = getRadiusAtDay(dataLength * 0.75, selections)
         const wedgeArea = Math.pow(selections.spiralWidth, 2) * radianPerDay / 2
-        const spiralArea = wedgeArea * 365
+        const spiralArea = wedgeArea * dataLength
 
         return { width: leftRadius + rightRadius, height: topRadius + bottomRadius, maxRadius: topRadius, area: spiralArea, rightRadius: rightRadius }
     } else if (shape === shapes.ROW.id) {
@@ -197,7 +197,10 @@ export const migrationRow = (
     numLocations,) => {
     const { numColours, mapPin, opaque, dayWidth, theme, rowHeight, fillMissing, cluster, spaceBetween } = selections
     const colourTheme = themeColours[theme]
-    const { width, height } = getShapeSize(selections, shapes.ROW.id, locationData.length)
+    const { width: tempWidth, height } = getShapeSize(selections, shapes.ROW.id, locationData.length)
+    // Have to make the pins larger since we only have ~40 datapoints
+    const magnification = 9;
+    const width = tempWidth * magnification
     const startX = x - width / 2
     const startY = mapPin ? y - height - pinSize : y - height / 2
     let baseline = startY + height
@@ -205,6 +208,8 @@ export const migrationRow = (
     const middle = baseline - (interval.range / 2 * increment)
 
     //console.log("int ", interval)
+    
+    //console.log("w ", width, "h ", height)
 
 
 
@@ -242,8 +247,7 @@ export const migrationRow = (
         if (year !== -1) {
             // distance
             if (encoding === 1) {
-                p5.fill(255, 0, 0)
-                //p5.fill(colourTheme.textColour)
+                p5.fill(colourTheme.textColour)
             } else {
                 setColour(p5, year, numColours, interval, dataType)
             }
@@ -253,7 +257,7 @@ export const migrationRow = (
                 // console.log("baseline ", baseline)
                 // console.log("rowHeight ", rowHeight)
                 
-                p5.rect(startX + i * dayWidth, baseline - rowHeight, 1, rowHeight)
+                p5.rect(startX + i * dayWidth * magnification, baseline - rowHeight, magnification, rowHeight)
             } else {
                 // console.log("bl ", baseline)
                 // console.log("year ", year)
@@ -267,6 +271,7 @@ export const migrationRow = (
             }
         } else if (fillMissing) {
             p5.fill(colourTheme.missingData, 100)
+            //p5.fill( 98, 101, 103 )
 
             if (encoding === 2) {
                 p5.rect(startX + i * dayWidth, baseline - rowHeight, 1, rowHeight)
@@ -695,6 +700,184 @@ export const spiral = (
             innerRing += spiralTightness
         }
     })
+
+    if (cluster) {
+        p5.fill(colourTheme.textColour)
+        p5.textSize(10)
+        p5.textAlign(p5.CENTER, p5.CENTER)
+
+        if (mapPin) {
+            p5.fill(colourTheme.pinBackground)
+            p5.ellipse(x, y - pinSize - maxRadius, 16, 16)
+            p5.fill(colourTheme.textColour)
+            p5.text(numLocations, x, y - pinSize - maxRadius / 2)
+        } else {
+            p5.fill(colourTheme.pinBackground)
+            p5.ellipse(x, y, 16, 16)
+            p5.fill(colourTheme.textColour)
+            p5.text(numLocations, x, y)
+        }
+    }
+
+    // drawSpiralMonth(p5, x, y, selections)
+}
+
+export const migrationSpiral = (
+    p5,
+    dataType,
+    interval,
+    locationData,
+    x,
+    y,
+    selections,
+    encoding,
+    numLocations,
+) => {
+    const { spiralWidth, spiralTightness, coreSize, mapPin, opaque, theme, numColours, fillMissing, cluster } = selections
+    const colourTheme = themeColours[theme]
+    const increment = spiralWidth / interval.range
+    const { maxRadius } = getShapeSize(selections, shapes.SPIRAL.id, locationData.length)
+    const startX = x
+    const startY = mapPin ? y - pinSize - maxRadius : y
+    let angle = -Math.PI / 2
+    let radius = getRadius(selections, locationData.length)
+    let innerRing = coreSize
+
+    console.log("start", startX)
+
+    if (mapPin) {
+        p5.fill(colourTheme.pinColour)
+        p5.triangle(x, y, x - pinSize, y - pinSize, x + pinSize, y - pinSize)
+
+        if (opaque) {
+            p5.fill(colourTheme.pinBackground)
+        } else {
+            p5.noFill()
+        }
+
+        p5.stroke(colourTheme.pinColour)
+        p5.ellipse(startX, startY, maxRadius * 2, maxRadius * 2)
+        p5.noStroke()
+    } else if (opaque) {
+        p5.fill(colourTheme.pinBackground)
+
+        if (encoding === 2) {
+            p5.ellipse(startX, startY, radius * 2, radius * 2 + 2)
+        } else {
+            for (let i=0; i < locationData.length - 1; i++) {
+                p5.fill(colourTheme.pinBackground)
+                p5.noStroke()
+                p5.arc(startX + p5.cos(angle) * innerRing, startY + p5.sin(angle) * innerRing, spiralWidth * 4, spiralWidth * 4, angle, angle + radianPerDay * 10, p5.PIE)
+                angle += radianPerDay
+                innerRing += spiralTightness
+            }
+            // locationData.forEach(year => {
+            //     for (let pt = 0; pt < year.length - 1; pt++) {
+            //         p5.fill(colourTheme.pinBackground)
+            //         p5.noStroke()
+            //         p5.arc(startX + p5.cos(angle) * innerRing, startY + p5.sin(angle) * innerRing, spiralWidth * 4, spiralWidth * 4, angle, angle + radianPerDay * 10, p5.PIE)
+            //         angle += radianPerDay
+            //         innerRing += spiralTightness
+            //     }
+            // })
+
+            angle = -Math.PI / 2
+            innerRing = coreSize
+        }
+    }
+
+    
+    for (let i=0; i<locationData.length; i++) {
+        let year = locationData[i]
+        if (encoding !== 2 && !opaque && !mapPin) {
+            let val;
+            if (interval.low < 0) {
+                val = -interval.low
+            } else {
+                val = 0
+            }
+            const x = startX + p5.cos(angle) * (innerRing + val * increment)
+            const y = startY + p5.sin(angle) * (innerRing + val * increment)
+            p5.fill(colourTheme.missingData)
+            p5.ellipse(x, y, 1, 1)
+        }
+
+        if (year !== -1) {
+            if (encoding === 1) {
+                p5.fill(colourTheme.textColour)
+            } else {
+                setColour(p5, year, numColours, interval, dataType)
+            }
+
+            if (encoding === 2) {
+                const x = startX + p5.cos(angle) * innerRing
+                const y = startY + p5.sin(angle) * innerRing
+                p5.arc(x, y, spiralWidth * 2, spiralWidth * 2, angle, angle + radianPerDay * 10, p5.PIE)
+            } else {
+                const val = year - interval.low
+                const x = startX + p5.cos(angle) * (innerRing + val * increment)
+                const y = startY + p5.sin(angle) * (innerRing + val * increment)
+                p5.ellipse(x, y, 2, 2)
+            }
+        } else if (fillMissing) {
+            p5.fill(colourTheme.missingData, 100)
+
+            if (encoding === 2) {
+                const x = startX + p5.cos(angle) * innerRing
+                const y = startY + p5.sin(angle) * innerRing
+                p5.arc(x, y, spiralWidth * 2, spiralWidth * 2, angle, angle + radianPerDay * 10, p5.PIE)
+            }
+        }
+
+        angle += radianPerDay
+        innerRing += spiralTightness
+    }
+    // locationData.forEach(year => {
+    //     for (let day = 0; day < year.length - 1; day++) {
+    //         if (encoding !== 2 && !opaque && !mapPin) {
+    //             let val;
+    //             if (interval.low < 0) {
+    //                 val = -interval.low
+    //             } else {
+    //                 val = 0
+    //             }
+    //             const x = startX + p5.cos(angle) * (innerRing + val * increment)
+    //             const y = startY + p5.sin(angle) * (innerRing + val * increment)
+    //             p5.fill(colourTheme.missingData)
+    //             p5.ellipse(x, y, 1, 1)
+    //         }
+
+    //         if (year[day] !== '') {
+    //             if (encoding === 1) {
+    //                 p5.fill(colourTheme.textColour)
+    //             } else {
+    //                 setColour(p5, year[day], numColours, interval, dataType)
+    //             }
+
+    //             if (encoding === 2) {
+    //                 const x = startX + p5.cos(angle) * innerRing
+    //                 const y = startY + p5.sin(angle) * innerRing
+    //                 p5.arc(x, y, spiralWidth * 2, spiralWidth * 2, angle, angle + radianPerDay * 10, p5.PIE)
+    //             } else {
+    //                 const val = year[day] - interval.low
+    //                 const x = startX + p5.cos(angle) * (innerRing + val * increment)
+    //                 const y = startY + p5.sin(angle) * (innerRing + val * increment)
+    //                 p5.ellipse(x, y, 2, 2)
+    //             }
+    //         } else if (fillMissing) {
+    //             p5.fill(colourTheme.missingData, 100)
+
+    //             if (encoding === 2) {
+    //                 const x = startX + p5.cos(angle) * innerRing
+    //                 const y = startY + p5.sin(angle) * innerRing
+    //                 p5.arc(x, y, spiralWidth * 2, spiralWidth * 2, angle, angle + radianPerDay * 10, p5.PIE)
+    //             }
+    //         }
+
+    //         angle += radianPerDay
+    //         innerRing += spiralTightness
+    //     }
+    // })
 
     if (cluster) {
         p5.fill(colourTheme.textColour)

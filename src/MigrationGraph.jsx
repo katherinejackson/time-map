@@ -4,7 +4,7 @@ import DataContext from "./DataContext";
 import { scaleLinear } from "d3";
 import Sketch from "react-p5";
 import { getManualInterval, getRoundedInterval } from "./helpers/intervals";
-import { spiral, row, migrationRow, getShapeSize,  getPinAdjustment } from "./shapes";
+import { spiral, row, migrationRow, getShapeSize,  getPinAdjustment, migrationSpiral } from "./shapes";
 import { shapes, themeColours } from "./constants";
 import background from "./data/layout-noblobs.png";
 
@@ -31,9 +31,13 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
         }
     
         p.setup = () => {
+            console.log("sel ", selections)
+            console.log("shape ", shape)
+            console.log("encoding", encoding)
             p.createCanvas(canvasWidth, canvasHeight);
             console.log(canvasWidth, canvasHeight)
             p.textAlign(p.CENTER, p.CENTER);
+
             p.noLoop();
         };
     
@@ -70,6 +74,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
             }
         });
         setPts(newPts);
+        p.redraw();
     }
 
 
@@ -84,7 +89,6 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
                 height,
             }
         });
-        setPts(newPts);
     }
 
       const drawGlyphs = () => {
@@ -130,8 +134,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
         const ptData = Object.values(data[id]["data"])
 
         if (shape === shapes.SPIRAL.id) {
-            
-            //spiral(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding)
+            migrationSpiral(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding)
         } else if (shape === shapes.ROW.id) {
             migrationRow(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding)
         }
@@ -144,7 +147,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
       let inst = new p5(Sketch, containerRef.current);
       // eslint-disable-next-line react-hooks/exhaustive-deps
       return () => inst.remove();
-    }, []);
+    }, [encoding, selections, shape]);
     
     return (
       <div ref={containerRef}> </div>
