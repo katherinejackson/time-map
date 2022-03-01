@@ -13,7 +13,6 @@ export const setColour = (p5, pt, numColours, interval, dataType) => {
         p5.fill(colour)
     } else {
         const colour = getColourFromSet(pt, interval, colours[dataType][numColours])
-        console.log("col ", colour)
         p5.fill(colour)
     }
 }

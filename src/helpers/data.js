@@ -98,24 +98,27 @@ export const getTradeDataBrackets = (data, variable) => {
 }
 
 export const getMigrationDataBrackets = (data) => {
-    let high;
-    let low;
+    let highest;
+    let lowest;
 
     Object.keys(data).forEach(id => {
         Object.keys(data[id]["data"]).forEach(year => {
             let value = data[id]["data"][year];
             // ignore -1 since it indicates missing data and not a value
             if (value !== -1) {
-                if (!high || value > high) {
-                    high = value
+                if (!highest || value > highest) {
+                    highest = value
                 }
-                if (!low || value < low) {
-                    low = value
+                if (!lowest || value < lowest) {
+                    lowest = value
                 }
             }
         });
     });
-    return { high, low }
+    lowest = Math.round(lowest * 100) / 100
+    highest = Math.round(highest * 100) / 100
+
+    return { low: lowest, high: highest, range: highest - lowest }
 }
 
 export const getAverage = (data, variable) => {

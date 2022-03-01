@@ -19,6 +19,8 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
     const [pts, setPts] = useState({});
     const [hover, setHover] = useState(null);
     const interval = getRoundedInterval(dataBrackets, numColours)
+
+    console.log("db ", dataBrackets)
   
     const Sketch = (p) => {
 

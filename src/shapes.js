@@ -206,7 +206,6 @@ export const migrationRow = (
 
     //console.log("int ", interval)
 
-    console.log("y" , startY)
 
 
 
@@ -238,12 +237,13 @@ export const migrationRow = (
     }
 
 
-    let count = 0;
-    locationData.forEach(year => {
+    for (let i=0; i<locationData.length; i++) {
+        let year = locationData[i];
         if (year !== -1) {
             // distance
             if (encoding === 1) {
-                p5.fill(colourTheme.textColour)
+                p5.fill(255, 0, 0)
+                //p5.fill(colourTheme.textColour)
             } else {
                 setColour(p5, year, numColours, interval, dataType)
             }
@@ -252,58 +252,29 @@ export const migrationRow = (
                 //console.log("y ", baseline - rowHeight)
                 // console.log("baseline ", baseline)
                 // console.log("rowHeight ", rowHeight)
-                p5.rect(startX + count * dayWidth, baseline - rowHeight, 1, rowHeight)
+                
+                p5.rect(startX + i * dayWidth, baseline - rowHeight, 1, rowHeight)
             } else {
                 // console.log("bl ", baseline)
-                // console.log(year)
+                // console.log("year ", year)
                 // console.log("int ", interval.low)
                 // console.log("incre", increment)
-                // console.log()
+        
+                
                 let val = baseline - ((year - interval.low) * increment)
-                p5.ellipse(startX + count * dayWidth, val, 1, 1)
+                //console.log("x ", startX + i * dayWidth, "y ", val)
+                p5.ellipse(startX + i * dayWidth, val, 1, 1)
             }
         } else if (fillMissing) {
             p5.fill(colourTheme.missingData, 100)
 
             if (encoding === 2) {
-                p5.rect(startX + count * dayWidth, baseline - rowHeight, 1, rowHeight)
+                p5.rect(startX + i * dayWidth, baseline - rowHeight, 1, rowHeight)
             } else {
-                p5.ellipse(startX + count * dayWidth, middle, 1, 1)
+                p5.ellipse(startX + i * dayWidth, middle, 1, 1)
             }
             }
-        // for (let day = 0; day < year.length - 1; day++) {
-        //     if (year[day] !== '') {
-        //         if (encoding === 1) {
-        //             p5.fill(colourTheme.textColour)
-        //         } else {
-        //             setColour(p5, year[day], numColours, interval, dataType)
-        //         }
-
-        //         if (encoding === 2) {
-        //             //console.log("y ", baseline - rowHeight)
-        //             // console.log("baseline ", baseline)
-        //             // console.log("rowHeight ", rowHeight)
-        //             p5.rect(startX + day * dayWidth, baseline - rowHeight, 1, rowHeight)
-        //         } else {
-        //             let val = baseline - ((year[day] - interval.low) * increment)
-        //             p5.ellipse(startX + day * dayWidth, val, 1, 1)
-        //         }
-        //     } else if (fillMissing) {
-        //         p5.fill(colourTheme.missingData, 100)
-
-        //         if (encoding === 2) {
-        //             p5.rect(startX + day * dayWidth, baseline - rowHeight, 1, rowHeight)
-        //         } else {
-        //             p5.ellipse(startX + day * dayWidth, middle, 1, 1)
-        //         }
-        //     }
-        // }
-
-        baseline = baseline - rowHeight - spaceBetween
-        //console.log("bl after ", baseline)
-
-        count += 1;
-    })
+    }
 
     if (cluster) {
         p5.fill(colourTheme.textColour)
