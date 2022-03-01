@@ -30,6 +30,8 @@ export const getRadius = (selections, numYears = selections.numYears) => {
     return (coreSize + spiralTightness * 365 * numYears) + spiralWidth
 }
 
+
+
 export const getRadiusAtDay = (day, selections, numYears = selections.numYears) => {
     const { coreSize, spiralTightness, spiralWidth } = selections
 
@@ -245,6 +247,7 @@ export const migrationRow = (
     for (let i=0; i<locationData.length; i++) {
         let year = locationData[i];
         if (year !== -1) {
+    
             // distance
             if (encoding === 1) {
                 p5.fill(colourTheme.textColour)
@@ -620,6 +623,11 @@ export const spiral = (
     let radius = getRadius(selections, locationData.length)
     let innerRing = coreSize
 
+    console.log("interval range ", interval.range)
+
+    console.log("spiral : increment", increment)
+
+
    
 
     if (mapPin) {
@@ -745,7 +753,11 @@ export const migrationSpiral = (
     let radius = getRadius(selections, locationData.length)
     let innerRing = coreSize
 
-    console.log("max radius ", maxRadius)
+    // console.log("max radius ", maxRadius)
+
+    // console.log("mig spiral : inc", increment)
+    // console.log("interval range ", interval.range)
+    // console.log("rad ", radius)
 
     if (mapPin) {
         p5.fill(colourTheme.pinColour)
@@ -819,7 +831,7 @@ export const migrationSpiral = (
                 // console.log("y", y)
                 // console.log("sw ", spiralWidth)
                 //console.log("angle ", angle)
-                //p5.arc(x, y, spiralWidth * 5, spiralWidth * 5, angle, angle + radianPerDay * 10, p5.PIE)
+                p5.arc(x, y, spiralWidth * 2, spiralWidth * 2, angle, angle + radianPerDay * 10, p5.PIE)
             } else {
                 const val = year - interval.low
                 const x = startX + p5.cos(angle) * (innerRing + val * increment)

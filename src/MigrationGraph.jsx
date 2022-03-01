@@ -140,6 +140,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
 
         const ptData = Object.values(data[id]["data"])
 
+
         if (shape === shapes.SPIRAL.id) {
             migrationSpiral(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding)
         } else if (shape === shapes.ROW.id) {
