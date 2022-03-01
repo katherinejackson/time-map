@@ -218,7 +218,7 @@ const getDataByPopulation = (data, population) => {
         }
     })
 
-    console.log(Object.keys(newData).length + ' countries')
+    //console.log(Object.keys(newData).length + ' countries')
 
     return newData
 }
@@ -247,7 +247,7 @@ export const getData = (view, practice) => {
             data = getDataByPopulation(data, 60000000)
         } else {
             data = getDataByContinent(data, ['North America', 'Asia'])
-            console.log("d ", data)
+            //console.log("d ", data)
             data = getDataByPopulation(data, 10000000)
         }
 

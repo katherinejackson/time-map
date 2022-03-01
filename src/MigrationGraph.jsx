@@ -51,6 +51,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
     }
 
     const draw = (p5) => {
+        p5.clear();
         p5.image(backgroundImage, 0, 0, canvasWidth, canvasHeight)
         drawGlyphs();
     }
@@ -98,7 +99,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
     }
 
     const drawGlyphs = () => {
-        console.log(pts)
+        //console.log(pts)
         Object.keys(pts).forEach((id) => {
             let pt = pts[id]
             if (id !== hover) {

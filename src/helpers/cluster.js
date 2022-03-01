@@ -21,7 +21,7 @@ export const getMinDistance = (selections, shape, mapPin = false) => {
     let minDistanceY;
 
     if (shape === shapes.SPIRAL.id) {
-        let radius = getRadius(selections)
+        let radius = getRadius(selections, 365)
 
         if (mapPin) {
             radius = radius + 4
