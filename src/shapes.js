@@ -267,7 +267,7 @@ export const migrationRow = (
                 
                 let val = baseline - ((year - interval.low) * increment)
                 //console.log("x ", startX + i * dayWidth, "y ", val)
-                p5.ellipse(startX + i * dayWidth, val, 1, 1)
+                p5.ellipse(startX + i * dayWidth * magnification, val, magnification, 1)
             }
         } else if (fillMissing) {
             p5.fill(colourTheme.missingData, 100)
@@ -620,6 +620,8 @@ export const spiral = (
     let radius = getRadius(selections, locationData.length)
     let innerRing = coreSize
 
+   
+
     if (mapPin) {
         p5.fill(colourTheme.pinColour)
         p5.triangle(x, y, x - pinSize, y - pinSize, x + pinSize, y - pinSize)
@@ -743,7 +745,7 @@ export const migrationSpiral = (
     let radius = getRadius(selections, locationData.length)
     let innerRing = coreSize
 
-    console.log("start", startX)
+    console.log("max radius ", maxRadius)
 
     if (mapPin) {
         p5.fill(colourTheme.pinColour)
@@ -765,7 +767,8 @@ export const migrationSpiral = (
             p5.ellipse(startX, startY, radius * 2, radius * 2 + 2)
         } else {
             for (let i=0; i < locationData.length - 1; i++) {
-                p5.fill(colourTheme.pinBackground)
+                //p5.fill(colourTheme.pinBackground)
+                p5.fill(255, 0, 0)
                 p5.noStroke()
                 p5.arc(startX + p5.cos(angle) * innerRing, startY + p5.sin(angle) * innerRing, spiralWidth * 4, spiralWidth * 4, angle, angle + radianPerDay * 10, p5.PIE)
                 angle += radianPerDay
@@ -812,7 +815,11 @@ export const migrationSpiral = (
             if (encoding === 2) {
                 const x = startX + p5.cos(angle) * innerRing
                 const y = startY + p5.sin(angle) * innerRing
-                p5.arc(x, y, spiralWidth * 2, spiralWidth * 2, angle, angle + radianPerDay * 10, p5.PIE)
+                // console.log("x", x)
+                // console.log("y", y)
+                // console.log("sw ", spiralWidth)
+                //console.log("angle ", angle)
+                //p5.arc(x, y, spiralWidth * 5, spiralWidth * 5, angle, angle + radianPerDay * 10, p5.PIE)
             } else {
                 const val = year - interval.low
                 const x = startX + p5.cos(angle) * (innerRing + val * increment)
