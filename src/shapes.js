@@ -855,7 +855,7 @@ export const migrationSpiral = (
         }
 
         angle += radianPerYear
-        innerRing += (spiralTightness * 15)
+        innerRing += (spiralTightness * 10)
     }
     // locationData.forEach(year => {
     //     for (let day = 0; day < year.length - 1; day++) {

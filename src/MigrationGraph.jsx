@@ -7,6 +7,7 @@ import { drawLegend, drawMigrationLegend } from "./legend";
 import { getManualInterval, getRoundedInterval } from "./helpers/intervals";
 import { spiral, row, migrationRow, getShapeSize,  getPinAdjustment, migrationSpiral } from "./shapes";
 import { shapes, themeColours } from "./constants";
+import { onClick, onHover } from "./helpers/studyEventHandlers";
 import background from "./data/layout-noblobs.png";
 
 const canvasWidth = window.options ? 1200 : window.innerWidth * 0.95;
@@ -19,6 +20,8 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
     const { theme, numColours, numYears, mapPin } = selections
     const [pts, setPts] = useState({});
     const [hover, setHover] = useState(null);
+    const colourTheme = themeColours[theme]
+    const { width, height, maxRadius } = getShapeSize(selections, shape, 41)
     const interval = getRoundedInterval(dataBrackets, numColours)
 
     useEffect(() => {
@@ -53,7 +56,6 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
 
     const draw = (p5) => {
         p5.clear();
-        console.log(data)
         p5.image(backgroundImage, 0, 0, canvasWidth, canvasHeight)
         drawMigrationLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, 41)
         drawGlyphs();
@@ -111,27 +113,27 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
             }
         })
 
-        // if (hover !== null) {
-        //     const pin = pts[hover]
-        //     const hoverpg = p5.createGraphics(pin.width, pin.height)
-        //     hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
+        if (hover !== null) {
+            const pin = pts[hover]
+            const hoverpg = p5.createGraphics(pin.width, pin.height)
+            hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
 
-        //     if (!mapPin) {
-        //         p5.fill(colourTheme.pinBackground, 100)
-        //         p5.noStroke()
-        //         if (shape === shapes.SPIRAL.id) {
-        //             p5.ellipse(pin.x, pin.y, maxRadius * 5, maxRadius * 5)
-        //         } else if (shape === shapes.ROW.id) {
-        //             p5.rect(pin.x - width * 1.5, pin.y - height * 2, width * 3, height * 4)
-        //         }
-        //     }
+            if (!mapPin) {
+                p5.fill(colourTheme.pinBackground, 100)
+                p5.noStroke()
+                if (shape === shapes.SPIRAL.id) {
+                    p5.ellipse(pin.x, pin.y, maxRadius * 5, maxRadius * 5)
+                } else if (shape === shapes.ROW.id) {
+                    p5.rect(pin.x - width * 1.5, pin.y - height * 2, width * 3, height * 4)
+                }
+            }
 
-        //     p5.image(hoverpg, pin.x - pin.width * 0.75, pin.y - pin.height * 0.75)
+            p5.image(hoverpg, pin.x - pin.width * 0.75, pin.y - pin.height * 0.75)
 
-        //     p5.textAlign(p5.CENTER, p5.TOP)
-        //     p5.fill(colourTheme.textColour)
-        //     p5.text(pin.name, pin.x, pin.y + height * 0.75 + 5)
-        // }
+            p5.textAlign(p5.CENTER, p5.TOP)
+            p5.fill(colourTheme.textColour)
+            p5.text(pin.name, pin.x, pin.y + height * 0.75 + 5)
+        }
     }
 
     const getGlyph = (id) => {
@@ -154,7 +156,48 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
         return { pg, width: canvasWidth, height: canvasHeight }
     }
 
-    return <Sketch preload={preload} setup={setup} draw={draw} />
+    const mouseMoved = () => {
+        let ptFound = null
+        let distance = null
+        let pinAdjustment = mapPin ? getPinAdjustment(selections, shape) : 0
+        const xTolerance = shape === 1 ? maxRadius * 3 : width * 1.5
+        const yTolerance = shape === 1 ? maxRadius * 3 : height * 2
+
+        // if user is already hovering, give them a lot of tolerance to keep that hover
+        if (hover !== null) {
+            if (Math.abs(p5.mouseX - pts[hover]['x']) < xTolerance && Math.abs(p5.mouseY - pts[hover]['y'] + pinAdjustment) < yTolerance) {
+                distance = Math.pow(Math.abs(p5.mouseX - pts[hover]['x']), 2) + Math.pow(Math.abs(p5.mouseY - pts[hover]['x'] + pinAdjustment), 2)
+                ptFound = hover
+            }
+        }
+
+        Object.keys(pts).forEach(id => {
+            if (Math.abs(pts[id]['x'] - p5.mouseX) < width / 2 && Math.abs(pts[id]['y'] - p5.mouseY + pinAdjustment) < height / 2) {
+                let newDistance = Math.pow(pts[id]['x'] - p5.mouseX, 2) + Math.pow(pts[id]['y'] - p5.mouseY  + pinAdjustment, 2)
+
+                if ((!distance || newDistance < distance)) {
+                    distance = newDistance
+                    ptFound = id
+                }
+            }
+        })
+
+        if (ptFound && ptFound !== hover) {
+            onHover(pts[ptFound]['name'])
+        }
+
+        if (ptFound !== hover) {
+            setHover(ptFound)
+        }
+    }
+
+    const mouseClicked = () => {
+        if (hover !== null) {
+            onClick(pts[hover]['name'])
+        }
+    }
+
+    return <Sketch preload={preload} setup={setup} draw={draw} mouseMoved={mouseMoved} mouseClicked={mouseClicked} />
 }
 export default MigrationGraph;
 
