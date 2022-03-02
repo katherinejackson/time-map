@@ -1,4 +1,4 @@
-import { colours, manualIntervals, themeColours, shapes, abbreviatedMonths } from './constants'
+import { colours, manualIntervals, themeColours, shapes, abbreviatedMonths, migrationYears } from './constants'
 import { fillColourGradient, setColour } from "./helpers/colours";
 import { formatNumbers, formatTradeNumbers } from './helpers/format';
 import { drawSpiralMonth, getShapeSize, spiralOutline, legendGraphSpiral } from './shapes';
@@ -19,6 +19,23 @@ export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interv
         p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight)
     }
 }
+
+export const drawMigrationLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, dataLength) => {
+    const legendWidth = 350
+    const legendHeight = shape === 1 ? 80 : 50
+    const colourLegendWidth = 350
+    const colourLegendHeight = 30
+    let legendGraphics = p5.createGraphics(legendWidth, legendHeight)
+    drawShapeMigrationLegend(legendGraphics, legendWidth, legendHeight, selections, dataBrackets, shape, encoding, dataLength)
+    p5.image(legendGraphics, canvasWidth - legendWidth, 28)
+
+    if (encoding !== 1) {
+        let colourLegendGraphics = p5.createGraphics(colourLegendWidth, colourLegendHeight)
+        drawColourLegend(colourLegendGraphics, colourLegendWidth, colourLegendHeight, selections, interval, dataType, dataBrackets, shape, encoding)
+        p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight + 28)
+    }
+
+}
 export const drawShapeLegend = (p5, width, height, selections, brackets, shape, encoding) => {
     const { theme } = selections
     const textColour = themeColours[theme].textColour
@@ -30,6 +47,22 @@ export const drawShapeLegend = (p5, width, height, selections, brackets, shape, 
 
     if (shape === 2) {
         drawRowLegend(p5, width, height, brackets, textColour, encoding)
+    } else if (shape === 1) {
+        drawSpiralLegend(p5, width, height, selections, brackets, encoding)
+    }
+}
+
+export const drawShapeMigrationLegend = (p5, width, height, selections, brackets, shape, encoding, dataLength) => {
+    const { theme } = selections
+    const textColour = themeColours[theme].textColour
+    const backgroundColour = themeColours[theme].pinBackground
+
+    p5.fill(backgroundColour)
+    p5.stroke(backgroundColour)
+    p5.rect(0, 0, width, height)
+
+    if (shape === 2) {
+        drawMigrationRowLegend(p5, width, height, brackets, textColour, encoding, dataLength)
     } else if (shape === 1) {
         drawSpiralLegend(p5, width, height, selections, brackets, encoding)
     }
@@ -286,6 +319,52 @@ export const drawRowLegend = (p5, width, height, brackets, textColour, encoding)
         let x = startX + i * spacePerMonth + spacePerMonth / 2
         p5.textSize(6)
         p5.text(abbreviatedMonths[i], x, startY + rectHeight / 2)
+    }
+}
+
+export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, encoding, dataLength) => {
+    const lowString = formatNumbers(brackets.displayLow || brackets.low)
+    const highString = formatNumbers(brackets.displayHigh || brackets.high)
+    const rectWidth = width * 0.90
+    const rectHeight = height * 0.7
+    const startX = ((width - rectWidth) / 2) + 10
+    const startY = (height - rectHeight) / 3
+
+    p5.stroke(textColour)
+    p5.noFill()
+    p5.rect(startX, startY, rectWidth, rectHeight)
+
+    p5.noStroke()
+    p5.fill(textColour)
+    p5.textSize(10)
+
+    if (encoding === 1 || encoding === 3) {
+        p5.textAlign(p5.RIGHT, p5.BOTTOM)
+        p5.text(lowString, startX - 5, startY + rectHeight)
+        p5.textAlign(p5.RIGHT, p5.TOP)
+        p5.text(highString, startX - 5, startY)
+    }
+
+    const spacePerMonth = rectWidth / (dataLength)
+    console.log(spacePerMonth)
+    for (let i = 0; i < dataLength; i++) {
+        let x = startX + i * spacePerMonth
+        p5.stroke(textColour, 100)
+        p5.line(x, startY, x, startY + rectHeight)
+        p5.noStroke()
+    }
+
+    p5.textAlign(p5.CENTER, p5.CENTER)
+
+    for (let i = 0; i < dataLength; i++) {
+        let x = startX + i * spacePerMonth + spacePerMonth / 2
+        p5.textSize(6)
+        // draw year labels horizonally
+        for (let j=0; j< migrationYears[i]; j++) {
+            p5.text(migrationYears[i][j], x, startY + (j*5) + (rectHeight/4))
+        }
+        
+        
     }
 }
 

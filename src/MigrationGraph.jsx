@@ -3,6 +3,7 @@ import p5 from "p5";
 import DataContext from "./DataContext";
 import { scaleLinear } from "d3";
 import Sketch from "react-p5";
+import { drawLegend, drawMigrationLegend } from "./legend";
 import { getManualInterval, getRoundedInterval } from "./helpers/intervals";
 import { spiral, row, migrationRow, getShapeSize,  getPinAdjustment, migrationSpiral } from "./shapes";
 import { shapes, themeColours } from "./constants";
@@ -52,7 +53,9 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
 
     const draw = (p5) => {
         p5.clear();
+        console.log(data)
         p5.image(backgroundImage, 0, 0, canvasWidth, canvasHeight)
+        drawMigrationLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, 41)
         drawGlyphs();
     }
 

@@ -199,7 +199,7 @@ export const migrationRow = (
     numLocations,) => {
     const { numColours, mapPin, opaque, dayWidth, theme, rowHeight, fillMissing, cluster, spaceBetween } = selections
     const colourTheme = themeColours[theme]
-    const { width: tempWidth, height } = getShapeSize(selections, shapes.ROW.id, locationData.length)
+    const { width: tempWidth, height } = getShapeSize(selections, shapes.ROW.id, locationData.length+2)
     // Have to make the pins larger since we only have ~40 datapoints
     const magnification = 9;
     const width = tempWidth * magnification
@@ -270,7 +270,7 @@ export const migrationRow = (
                 
                 let val = baseline - ((year - interval.low) * increment)
                 //console.log("x ", startX + i * dayWidth, "y ", val)
-                p5.ellipse(startX + i * dayWidth * magnification, val, magnification, 1)
+                p5.ellipse(startX + i * dayWidth * magnification, val+7, magnification, 1)
             }
         } else if (fillMissing) {
             p5.fill(colourTheme.missingData, 100)
