@@ -760,7 +760,7 @@ export const migrationSpiral = (
     // console.log(startX, startY)
     // console.log(spiralTightness)
 
-    // console.log("mig spiral : inc", increment)
+    //console.log("mig spiral : inc", increment)
     // console.log("interval range ", interval.range)
     // console.log("rad ", radius)
 
@@ -817,13 +817,15 @@ export const migrationSpiral = (
             }
             const x = startX + p5.cos(angle) * (innerRing + val * increment)
             const y = startY + p5.sin(angle) * (innerRing + val * increment)
+            //console.log(x, y)
             p5.fill(colourTheme.missingData)
             p5.ellipse(x, y, 1, 1)
         }
 
         if (year !== -1) {
             if (encoding === 1) {
-                p5.fill(colourTheme.textColour)
+                //p5.fill(colourTheme.textColour)
+                p5.fill(50)
             } else {
                 setColour(p5, year, numColours, interval, dataType)
             }

@@ -37,6 +37,7 @@ export const getDataBrackets = (data) => {
         })
     })
 
+
     lowest = Math.round(lowest * 100) / 100
     highest = Math.round(highest * 100) / 100
 
@@ -65,14 +66,20 @@ export const getDataBracketsMultiYear = (data, variable) => {
     let low = 0;
 
     Object.keys(data).forEach(id => {
+        //console.log("id ", data[id] )
         Object.keys(data[id][variable]).forEach(year => {
             data[id][variable][year].forEach(day => {
+                //console.log("day ", day)
                 if (!high || day > high) {
                     high = day
                 }
             })
         })
     })
+
+    //console.log(variable)
+
+    //console.log("h ", high, low)
 
     return { high, low, range: high - low }
 }
@@ -115,8 +122,6 @@ export const getMigrationDataBrackets = (data) => {
             }
         });
     });
-    lowest = Math.round(lowest * 100) / 100
-    highest = Math.round(highest * 100) / 100
 
     return { low: lowest, high: highest, range: highest - lowest }
 }
@@ -252,6 +257,7 @@ export const getData = (view, practice) => {
         }
 
 
+
         const dataBrackets = getDataBracketsMultiYear(data, 'cases')
         const logData = getLogData(data)
         const logDataBrackets = getDataBracketsMultiYear(logData, 'cases')
@@ -292,10 +298,14 @@ export const getData = (view, practice) => {
     }
     else if (view === views.MIGRATION_GRAPH.val) {
         const data = migrationData;
+        //console.log("data ", data)
         const dataType = dataSets.MIGRATION.val
         const dataBrackets = getMigrationDataBrackets(migrationData)
+        const logData = getLogMigrationData(data);
+        const logDataBrackets = getMigrationDataBrackets(logData)
+        const combinedBrackets = {...logDataBrackets, displayHigh: dataBrackets.high, displayLow: dataBrackets.low}
 
-        return { data, dataType, dataBrackets }
+        return { data: logData, dataType, dataBrackets: combinedBrackets }
     }
 
     return {}
@@ -469,6 +479,27 @@ const getLogData = (data) => {
             logData[id]['cases'][year] = logYear
         })
 
+    })
+
+    return logData
+}
+
+const getLogMigrationData = (data) => {
+    const logData = JSON.parse(JSON.stringify(data))
+    Object.keys(data).forEach(id => {
+        Object.keys(data[id]["data"]).forEach(year => {
+            let val = data[id]["data"][year]
+            let logVal;
+            //console.log(val)
+            if (val > 0) {
+                logVal = Math.log10(val)
+            } else if (val === -1) {
+                logVal = -1
+            } else {
+                logVal = 0
+            }
+            logData[id]["data"][year] = logVal
+        })
     })
 
     return logData
