@@ -706,8 +706,11 @@ export const spiral = (
                 }
             }
 
+            
             angle += radianPerDay
             innerRing += spiralTightness
+
+        
         }
     })
 
@@ -783,7 +786,7 @@ export const migrationSpiral = (
             for (let i=0; i < locationData.length - 1; i++) {
                 p5.fill(colourTheme.pinBackground)
                 p5.noStroke()
-                p5.arc(startX + p5.cos(angle) * innerRing, startY + p5.sin(angle) * innerRing, spiralWidth * 4, spiralWidth * 4, angle, angle + radianPerYear * 10, p5.PIE)
+                p5.arc(startX + p5.cos(angle) * innerRing, startY + p5.sin(angle) * innerRing, spiralWidth * 10, spiralWidth * 10, angle, angle + radianPerYear * 4, p5.PIE)
                 angle += radianPerYear
                 innerRing += spiralTightness
             }
@@ -803,7 +806,7 @@ export const migrationSpiral = (
     }
 
     
-    for (let i=0; i<locationData.length; i++) {
+    for (let i=0; i<locationData.length-1; i++) {
         let year = locationData[i]
         if (encoding !== 2 && !opaque && !mapPin) {
             let val;
@@ -832,7 +835,7 @@ export const migrationSpiral = (
                 // console.log("y", y)
                 // console.log("sw ", spiralWidth)
                 //console.log("angle ", angle)
-                p5.arc(x, y, spiralWidth * 2, spiralWidth * 2, angle, angle + radianPerYear * 10, p5.PIE)
+                p5.arc(x, y, spiralWidth * 10, spiralWidth * 10, angle, angle + radianPerYear * 4, p5.PIE)
             } else {
                 const val = year - interval.low
                 const x = startX + p5.cos(angle) * (innerRing + val * increment)
@@ -850,7 +853,7 @@ export const migrationSpiral = (
         }
 
         angle += radianPerYear
-        innerRing += spiralTightness
+        innerRing += (spiralTightness * 15)
     }
     // locationData.forEach(year => {
     //     for (let day = 0; day < year.length - 1; day++) {
