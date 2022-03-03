@@ -1,7 +1,7 @@
 import { colours, manualIntervals, themeColours, shapes, abbreviatedMonths, migrationYears } from './constants'
 import { fillColourGradient, setColour } from "./helpers/colours";
 import { formatNumbers, formatTradeNumbers } from './helpers/format';
-import { drawSpiralMonth, getShapeSize, spiralOutline, legendGraphSpiral } from './shapes';
+import { drawSpiralMonth, getShapeSize, spiralOutline, migrationSpiralOutline, legendGraphSpiral, drawMigrationSpiralYear } from './shapes';
 
 
 export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth) => {
@@ -21,18 +21,18 @@ export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interv
 }
 
 export const drawMigrationLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, dataLength) => {
-    const legendWidth = 350
-    const legendHeight = shape === 1 ? 80 : 50
-    const colourLegendWidth = 350
+    const legendWidth = shape === 2 ? 350 : 250
+    const legendHeight = shape === 1 ? 170 : 50
+    const colourLegendWidth = shape === 2 ? 350 : 250
     const colourLegendHeight = 30
     let legendGraphics = p5.createGraphics(legendWidth, legendHeight)
     drawShapeMigrationLegend(legendGraphics, legendWidth, legendHeight, selections, dataBrackets, shape, encoding, dataLength)
-    p5.image(legendGraphics, canvasWidth - legendWidth, 28)
+    p5.image(legendGraphics, canvasWidth - legendWidth, 0)
 
     if (encoding !== 1) {
         let colourLegendGraphics = p5.createGraphics(colourLegendWidth, colourLegendHeight)
         drawColourLegend(colourLegendGraphics, colourLegendWidth, colourLegendHeight, selections, interval, dataType, dataBrackets, shape, encoding)
-        p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight + 28)
+        p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight)
     }
 
 }
@@ -64,7 +64,7 @@ export const drawShapeMigrationLegend = (p5, width, height, selections, brackets
     if (shape === 2) {
         drawMigrationRowLegend(p5, width, height, brackets, textColour, encoding, dataLength)
     } else if (shape === 1) {
-        drawSpiralLegend(p5, width, height, selections, brackets, encoding)
+        drawMigrationSpiralLegend(p5, width, height, selections, brackets, encoding, dataLength)
     }
 }
 
@@ -346,7 +346,6 @@ export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, 
     }
 
     const spacePerMonth = rectWidth / (dataLength)
-    console.log(spacePerMonth)
     for (let i = 0; i < dataLength; i++) {
         let x = startX + i * spacePerMonth
         p5.stroke(textColour, 100)
@@ -384,6 +383,37 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
 
     if (encoding === 1 || encoding === 3) {
         const x = legendWidth * 0.66
+        const textColour = themeColours[selections.theme].textColour
+        spiralOutline(p5, x, startY, selections)
+        p5.stroke(textColour, 150)
+        p5.line(x, startY, x + maxRadius, startY - 20)
+        p5.line(x + rightRadius, startY, x + maxRadius, startY)
+
+        p5.fill(textColour)
+        p5.noStroke()
+        p5.textAlign(p5.LEFT, p5.CENTER)
+        p5.textSize(10)
+        p5.text(lowString, x + maxRadius + 3, startY - 20)
+        p5.text(highString, x + maxRadius + 3, startY)
+    }
+}
+
+export const drawMigrationSpiralLegend = (p5, legendWidth, legendHeight, selections, brackets, encoding, dataLength) => {
+    const lowString = formatNumbers(brackets.displayLow || brackets.low)
+    const highString = formatNumbers(brackets.displayHigh || brackets.high)
+    selections = { ...selections, ['coreSize']: 0, ['spiralWidth']: 20 }
+    const { rightRadius, maxRadius, width, height } = getShapeSize(selections, shapes.SPIRAL.id, dataLength)
+
+    const startX = encoding === 1 || encoding === 3 ? legendWidth * 0.33 : legendWidth / 2
+    const startY = legendHeight / 2
+    const textColour = themeColours[selections.theme].textColour
+
+
+    spiralOutline(p5, startX, startY, selections, dataLength)
+    drawMigrationSpiralYear(p5, startX, startY, selections, dataLength)
+
+    if (encoding === 1 || encoding === 3) {
+        const x = legendWidth * 0.75
         const textColour = themeColours[selections.theme].textColour
         spiralOutline(p5, x, startY, selections)
         p5.stroke(textColour, 150)

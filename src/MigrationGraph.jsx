@@ -64,11 +64,11 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
     const reset = () => {
         let newPts = {};
         const xScale = scaleLinear()
-        .domain([0, 4002])
+        .domain([0, 3991])
         .range([0, canvasWidth]);
 
         const yScale = scaleLinear()
-        .domain([0, 1985])
+        .domain([0, 1994])
         .range([0, canvasHeight]);
 
         Object.keys(data).forEach(id => {
