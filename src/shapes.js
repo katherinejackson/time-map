@@ -786,7 +786,7 @@ export const migrationSpiral = (
             for (let i=0; i < locationData.length - 1; i++) {
                 p5.fill(colourTheme.pinBackground)
                 p5.noStroke()
-                p5.arc(startX + p5.cos(angle) * innerRing, startY + p5.sin(angle) * innerRing, spiralWidth * 10, spiralWidth * 10, angle, angle + radianPerYear * 4, p5.PIE)
+                p5.arc(startX + p5.cos(angle) * innerRing, startY + p5.sin(angle) * innerRing, spiralWidth * 3, spiralWidth * 3, angle, angle + radianPerYear * 10, p5.PIE)
                 angle += radianPerYear
                 innerRing += spiralTightness
             }
@@ -837,7 +837,7 @@ export const migrationSpiral = (
                 // console.log("y", y)
                 // console.log("sw ", spiralWidth)
                 //console.log("angle ", angle)
-                p5.arc(x, y, spiralWidth * 10, spiralWidth * 10, angle, angle + radianPerYear * 4, p5.PIE)
+                p5.arc(x, y, spiralWidth * 3, spiralWidth * 3, angle, angle + radianPerYear * 3, p5.PIE)
             } else {
                 const val = year - interval.low
                 const x = startX + p5.cos(angle) * (innerRing + val * increment)
@@ -857,52 +857,6 @@ export const migrationSpiral = (
         angle += radianPerYear
         innerRing += (spiralTightness * 10)
     }
-    // locationData.forEach(year => {
-    //     for (let day = 0; day < year.length - 1; day++) {
-    //         if (encoding !== 2 && !opaque && !mapPin) {
-    //             let val;
-    //             if (interval.low < 0) {
-    //                 val = -interval.low
-    //             } else {
-    //                 val = 0
-    //             }
-    //             const x = startX + p5.cos(angle) * (innerRing + val * increment)
-    //             const y = startY + p5.sin(angle) * (innerRing + val * increment)
-    //             p5.fill(colourTheme.missingData)
-    //             p5.ellipse(x, y, 1, 1)
-    //         }
-
-    //         if (year[day] !== '') {
-    //             if (encoding === 1) {
-    //                 p5.fill(colourTheme.textColour)
-    //             } else {
-    //                 setColour(p5, year[day], numColours, interval, dataType)
-    //             }
-
-    //             if (encoding === 2) {
-    //                 const x = startX + p5.cos(angle) * innerRing
-    //                 const y = startY + p5.sin(angle) * innerRing
-    //                 p5.arc(x, y, spiralWidth * 2, spiralWidth * 2, angle, angle + radianPerDay * 10, p5.PIE)
-    //             } else {
-    //                 const val = year[day] - interval.low
-    //                 const x = startX + p5.cos(angle) * (innerRing + val * increment)
-    //                 const y = startY + p5.sin(angle) * (innerRing + val * increment)
-    //                 p5.ellipse(x, y, 2, 2)
-    //             }
-    //         } else if (fillMissing) {
-    //             p5.fill(colourTheme.missingData, 100)
-
-    //             if (encoding === 2) {
-    //                 const x = startX + p5.cos(angle) * innerRing
-    //                 const y = startY + p5.sin(angle) * innerRing
-    //                 p5.arc(x, y, spiralWidth * 2, spiralWidth * 2, angle, angle + radianPerDay * 10, p5.PIE)
-    //             }
-    //         }
-
-    //         angle += radianPerDay
-    //         innerRing += spiralTightness
-    //     }
-    // })
 
     if (cluster) {
         p5.fill(colourTheme.textColour)
@@ -921,8 +875,6 @@ export const migrationSpiral = (
             p5.text(numLocations, x, y)
         }
     }
-
-    // drawSpiralMonth(p5, x, y, selections)
 }
 
 export const spiralOutline = (

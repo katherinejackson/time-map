@@ -122,7 +122,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
                 p5.fill(colourTheme.pinBackground, 100)
                 p5.noStroke()
                 if (shape === shapes.SPIRAL.id) {
-                    p5.ellipse(pin.x, pin.y, maxRadius * 5, maxRadius * 5)
+                    p5.ellipse(pin.x, pin.y, maxRadius * 12, maxRadius * 12)
                 } else if (shape === shapes.ROW.id) {
                     p5.rect(pin.x - (width*magnification) * 1.5, pin.y - height * 2, (width * 3)*magnification, height * 4)
                 }
@@ -132,7 +132,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
 
             p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(colourTheme.textColour)
-            p5.text(pin.name, pin.x, pin.y + height * 0.75 + 5)
+            p5.text(pin.name, pin.x, pin.y + height * 0.75 + 15)
         }
     }
 
