@@ -160,7 +160,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
         let ptFound = null
         let distance = null
         let pinAdjustment = mapPin ? getPinAdjustment(selections, shape) : 0
-        const xTolerance = shape === 1 ? maxRadius * 3 : width * 1.5
+        const xTolerance = shape === 1 ? maxRadius * 3 : (width * magnification) * 1.5
         const yTolerance = shape === 1 ? maxRadius * 3 : height * 2
 
         // if user is already hovering, give them a lot of tolerance to keep that hover
@@ -172,7 +172,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
         }
 
         Object.keys(pts).forEach(id => {
-            if (Math.abs(pts[id]['x'] - p5.mouseX) < width / 2 && Math.abs(pts[id]['y'] - p5.mouseY + pinAdjustment) < height / 2) {
+            if (Math.abs(pts[id]['x'] - p5.mouseX) < (width*magnification) / 2 && Math.abs(pts[id]['y'] - p5.mouseY + pinAdjustment) < height / 2) {
                 let newDistance = Math.pow(pts[id]['x'] - p5.mouseX, 2) + Math.pow(pts[id]['y'] - p5.mouseY  + pinAdjustment, 2)
 
                 if ((!distance || newDistance < distance)) {
