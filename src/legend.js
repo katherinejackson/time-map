@@ -1,7 +1,7 @@
 import { colours, manualIntervals, themeColours, shapes, abbreviatedMonths, migrationYears } from './constants'
 import { fillColourGradient, setColour } from "./helpers/colours";
 import { formatNumbers, formatTradeNumbers } from './helpers/format';
-import { drawSpiralMonth, getShapeSize, spiralOutline, migrationSpiralOutline, legendGraphSpiral, drawMigrationSpiralYear } from './shapes';
+import { drawSpiralMonth, getShapeSize, spiralOutline, legendGraphSpiral, drawMigrationSpiralYear } from './shapes';
 
 
 export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth) => {

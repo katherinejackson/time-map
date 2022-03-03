@@ -1,17 +1,17 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
-import p5 from "p5";
+import React, { useState, useEffect, useContext } from "react";
 import DataContext from "./DataContext";
 import { scaleLinear } from "d3";
 import Sketch from "react-p5";
-import { drawLegend, drawMigrationLegend } from "./legend";
-import { getManualInterval, getRoundedInterval } from "./helpers/intervals";
-import { spiral, row, migrationRow, getShapeSize,  getPinAdjustment, migrationSpiral } from "./shapes";
+import { drawMigrationLegend } from "./legend";
+import { getRoundedInterval } from "./helpers/intervals";
+import { migrationRow, getShapeSize,  getPinAdjustment, migrationSpiral } from "./shapes";
 import { shapes, themeColours } from "./constants";
 import { onClick, onHover } from "./helpers/studyEventHandlers";
 import background from "./data/layout-noblobs.png";
 
 const canvasWidth = window.options ? 1200 : window.innerWidth * 0.95;
 const canvasHeight = window.options ? 800 : window.innerHeight * 0.95;
+const magnification = 9;
 
 const MigrationGraph = ({ encoding, selections, shape }) => {
     const [p5, setP5] = useState(null)
@@ -124,7 +124,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
                 if (shape === shapes.SPIRAL.id) {
                     p5.ellipse(pin.x, pin.y, maxRadius * 5, maxRadius * 5)
                 } else if (shape === shapes.ROW.id) {
-                    p5.rect(pin.x - width * 1.5, pin.y - height * 2, width * 3, height * 4)
+                    p5.rect(pin.x - (width*magnification) * 1.5, pin.y - height * 2, (width * 3)*magnification, height * 4)
                 }
             }
 

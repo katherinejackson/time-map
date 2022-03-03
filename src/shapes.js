@@ -960,42 +960,6 @@ export const spiralOutline = (
     p5.line(startX, startY, startX, startY - maxRadius)
 }
 
-export const migrationSpiralOutline = (
-    p5,
-    x,
-    y,
-    selections,
-    dataLength,
-) => {
-    const { spiralWidth, spiralTightness, coreSize, theme } = selections
-    const colourTheme = themeColours[theme]
-    const { maxRadius } = getShapeSize(selections, shapes.SPIRAL.id, dataLength)
-    const startX = x
-    const startY = y
-    let angle = -Math.PI / 2
-    let innerRing = coreSize
-    let outerRing = coreSize + spiralWidth
-
-    p5.fill(colourTheme.textColour)
-    p5.noStroke()
-    for (let i = 0; i < dataLength; i++) {
-        const innerX = startX + p5.cos(angle) * innerRing
-        const innerY = startY + p5.sin(angle) * innerRing
-        p5.ellipse(innerX, innerY, 1, 1)
-
-        const outerX = startX + p5.cos(angle) * outerRing
-        const outerY = startY + p5.sin(angle) * outerRing
-        p5.ellipse(outerX, outerY, 1, 1)
-
-        angle += radianPerYear
-        innerRing += spiralTightness
-        outerRing += spiralTightness
-    }
-
-    p5.stroke(colourTheme.textColour)
-    p5.line(startX, startY, startX, startY - maxRadius)
-}
-
 export const drawSpiralMonth = (p5, x, y, selections) => {
     const { spiralWidth, spiralTightness, coreSize, theme } = selections
     const colourTheme = themeColours[theme]
