@@ -11,7 +11,7 @@ import background from "./data/layout-noblobs.png";
 
 const canvasWidth = window.options ? 1200 : window.innerWidth * 0.95;
 const canvasHeight = window.options ? 800 : window.innerHeight * 0.95;
-const magnification = 9;
+const magnification = 1;
 
 const MigrationGraph = ({ encoding, selections, shape }) => {
     const [p5, setP5] = useState(null)
@@ -21,7 +21,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
     const [pts, setPts] = useState({});
     const [hover, setHover] = useState(null);
     const colourTheme = themeColours[theme]
-    const { width, height, maxRadius } = getShapeSize(selections, shape, 41)
+    const { width, height, maxRadius } = getShapeSize(selections, shape, 410)
     const interval = getRoundedInterval(dataBrackets, numColours)
 
     useEffect(() => {
@@ -105,7 +105,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
     }
 
     const drawGlyphs = () => {
-        //console.log(pts)
+        // console.log(pts)
         Object.keys(pts).forEach((id) => {
             let pt = pts[id]
             if (id !== hover) {
@@ -146,12 +146,21 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
         pg.noStroke()
 
         const ptData = Object.values(data[id]["data"])
+        //console.log(ptData)
 
+        let duplicatedPts = [];
+        for (let i=0; i<ptData.length; i++) {
+            let times = 0;
+            while (times < 10) {
+                duplicatedPts.push(ptData[i])
+                times += 1
+            }
+        }
 
         if (shape === shapes.SPIRAL.id) {
             migrationSpiral(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding)
         } else if (shape === shapes.ROW.id) {
-            migrationRow(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding)
+            migrationRow(pg, dataType, interval, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding)
         }
 
         return { pg, width: canvasWidth, height: canvasHeight }
