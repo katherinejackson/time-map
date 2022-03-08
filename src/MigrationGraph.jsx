@@ -43,7 +43,8 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
     }, [pts, hover])
 
     const preload = (p5) => {
-        setBackgroundImage(p5.loadImage(background))
+        setBackgroundImage(p5.loadImage("https://raw.githubusercontent.com/katherinejackson/time-map/master/src/data/layout-noblobs.png"));
+        //setBackgroundImage(p5.loadImage(background))
     }
 
     const setup = (p5, parent) => {

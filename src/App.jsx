@@ -17,6 +17,7 @@ import MultiComparison from './MultiComparison'
 import MigrationGraph from './MigrationGraph';
 
 const options = window.options || { view: null, shape: 2, encoding: 1, practice: false };
+
 const study = window.options !== undefined
 
 const App = () => {
@@ -78,6 +79,7 @@ const App = () => {
                 <div className="d-flex justify-content-center">
                     {view === views.MAP.val ? <LeafletMap encoding={encoding} selections={selections} shape={shape} /> : null}
                     {view === views.SCATTER.val ? <ScatterPlot encoding={encoding} selections={selections} shape={shape} /> : null}
+                    {view === views.MIGRATION_GRAPH.val ? <MigrationGraph encoding={encoding} selections={selections} shape={shape}/> : null}
                 </div>
             </DataContext.Provider>
         )

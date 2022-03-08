@@ -239,8 +239,14 @@ export const migrationRow = (
     }
 
     if (encoding !== 2) {
+        // this background will be visible 
         p5.fill(colourTheme.pinBackground)
         p5.rect(startX - 2, startY - 2, width + 4, height + 4)
+
+        // draw baseline reference
+        p5.stroke(colourTheme.textColour)
+        //p5.strokeWeight(0.5)
+        p5.line(startX - 2, baseline, (startX - 2) + (width + 4), baseline)
     }
 
 
@@ -270,7 +276,8 @@ export const migrationRow = (
                 
                 let val = baseline - ((year - interval.low) * increment)
                 //console.log("x ", startX + i * dayWidth, "y ", val)
-                p5.ellipse(startX + i * dayWidth * magnification, val+7, magnification, 1)
+                p5.noStroke()
+                p5.ellipse(startX + i * dayWidth * magnification, val+3, magnification/2, 1)
             }
         } else if (fillMissing) {
             p5.fill(colourTheme.missingData, 100)
@@ -804,8 +811,8 @@ export const migrationSpiral = (
             innerRing = coreSize
         }
     }
-
-    
+    //p5.fill(colourTheme.pinBackground)
+    //p5.ellipse(startX, startY, radius * 1.25, radius * 1.25)
     for (let i=0; i<locationData.length-1; i++) {
         let year = locationData[i]
         if (encoding !== 2 && !opaque && !mapPin) {
@@ -819,7 +826,7 @@ export const migrationSpiral = (
             const y = startY + p5.sin(angle) * (innerRing + val * increment)
             //console.log(x, y)
             p5.fill(colourTheme.missingData)
-            p5.ellipse(x, y, 1, 1)
+            p5.ellipse(x, y, 2, 2)
         }
 
         if (year !== -1) {
@@ -842,7 +849,7 @@ export const migrationSpiral = (
                 const val = year - interval.low
                 const x = startX + p5.cos(angle) * (innerRing + val * increment)
                 const y = startY + p5.sin(angle) * (innerRing + val * increment)
-                p5.ellipse(x, y, 2, 2)
+                p5.ellipse(x, y, 4, 4)
             }
         } else if (fillMissing) {
             p5.fill(colourTheme.missingData, 100)

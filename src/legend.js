@@ -28,6 +28,7 @@ export const drawMigrationLegend = (p5, selections, dataBrackets, shape, encodin
     let legendGraphics = p5.createGraphics(legendWidth, legendHeight)
     drawShapeMigrationLegend(legendGraphics, legendWidth, legendHeight, selections, dataBrackets, shape, encoding, dataLength)
     p5.image(legendGraphics, canvasWidth - legendWidth, 0)
+    // p5.save(legendGraphics, "legend-MIGRATION_GRAPH.png");
 
     if (encoding !== 1) {
         let colourLegendGraphics = p5.createGraphics(colourLegendWidth, colourLegendHeight)
