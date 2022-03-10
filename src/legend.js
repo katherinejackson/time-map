@@ -34,6 +34,7 @@ export const drawMigrationLegend = (p5, selections, dataBrackets, shape, encodin
         let colourLegendGraphics = p5.createGraphics(colourLegendWidth, colourLegendHeight)
         drawColourLegend(colourLegendGraphics, colourLegendWidth, colourLegendHeight, selections, interval, dataType, dataBrackets, shape, encoding)
         p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight)
+        p5.save(legendGraphics, "legend-other.png");
     }
 
 }
@@ -217,7 +218,7 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
         counter = counter + rectWidth
     }
 
-    p5.textSize(10)
+    p5.textSize(12)
     p5.fill(textColour)
     p5.textAlign(p5.CENTER, p5.TOP)
     p5.text(formatNumbers(displayLow || low), xStart, legendHeight / 2)

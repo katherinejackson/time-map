@@ -158,7 +158,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
         }
 
         if (shape === shapes.SPIRAL.id) {
-            migrationSpiral(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding)
+            migrationSpiral(pg, dataType, interval, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding)
         } else if (shape === shapes.ROW.id) {
             migrationRow(pg, dataType, interval, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding)
         }

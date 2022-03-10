@@ -2,7 +2,9 @@ export const canvasSize = 200
 
 export const radianPerDay = 0.01721420632
 
-export const radianPerYear = 0.1532484221
+export const legendRadianPerYear = 0.1532484221
+
+export const radianPerYear = 0.01532484221
 
 export const radianPerMonth = 0.52359877559
 

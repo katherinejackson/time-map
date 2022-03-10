@@ -170,7 +170,7 @@ const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
         p5.clear()
         drawGlyphs()
         // drawZoom()
-        drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, mapWidth)
+        drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, mapWidth-230)
 
         if (detailed.length) {
             drawDetailed()

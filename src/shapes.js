@@ -1,4 +1,4 @@
-import { colours, manualIntervals, radianPerDay, radianPerMonth, radianPerYear, shapes, themeColours, pinSize, abbreviatedMonths, migrationYears } from "./constants";
+import { colours, manualIntervals, radianPerDay, radianPerMonth, radianPerYear, legendRadianPerYear, shapes, themeColours, pinSize, abbreviatedMonths, migrationYears } from "./constants";
 import { fillColourGradient, getManualIntervalColour, fillLogColourGradient, getCovidIntervalColour, setColour } from "./helpers/colours";
 
 export const getShapeSize = (selections, shape, dataLength, numLocations = 1) => {
@@ -199,7 +199,6 @@ export const migrationRow = (
     numLocations,) => {
     const { numColours, mapPin, opaque, dayWidth, theme, rowHeight, fillMissing, cluster, spaceBetween } = selections
     const colourTheme = themeColours[theme]
-    console.log(locationData.length)
     const { width: tempWidth, height } = getShapeSize(selections, shapes.ROW.id, locationData.length+2)
     // Have to make the pins larger since we only have ~40 datapoints
     const magnification = 1;
@@ -845,12 +844,12 @@ export const migrationSpiral = (
                 // console.log("y", y)
                 // console.log("sw ", spiralWidth)
                 //console.log("angle ", angle)
-                p5.arc(x, y, spiralWidth * 3, spiralWidth * 3, angle, angle + radianPerYear * 3, p5.PIE)
+                p5.arc(x, y, spiralWidth * 2, spiralWidth * 2, angle, angle + radianPerYear * 10, p5.PIE)
             } else {
                 const val = year - interval.low
                 const x = startX + p5.cos(angle) * (innerRing + val * increment)
                 const y = startY + p5.sin(angle) * (innerRing + val * increment)
-                p5.ellipse(x, y, 4, 4)
+                p5.ellipse(x, y, 1, 1)
             }
         } else if (fillMissing) {
             p5.fill(colourTheme.missingData, 100)
@@ -863,7 +862,7 @@ export const migrationSpiral = (
         }
 
         angle += radianPerYear
-        innerRing += (spiralTightness * 10)
+        innerRing += (spiralTightness)
     }
 
     if (cluster) {
@@ -982,7 +981,7 @@ export const drawMigrationSpiralYear = (p5, x, y, selections, dataLength) => {
             p5.text(migrationYears[Math.floor(i / 2)].slice(2), xText, yText)
         }
 
-        angle += radianPerYear / 2
+        angle += legendRadianPerYear / 2
 
         innerCore += (spiralTightness * 15)
         outerCore += (spiralTightness * 15)
