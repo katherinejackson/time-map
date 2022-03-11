@@ -21,9 +21,9 @@ export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interv
 }
 
 export const drawMigrationLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, dataLength) => {
-    const legendWidth = shape === 2 ? 350 : 250
-    const legendHeight = shape === 1 ? 170 : 50
-    const colourLegendWidth = shape === 2 ? 350 : 250
+    const legendWidth = shape === 2 ? 1350 : 1250
+    const legendHeight = shape === 1 ? 1170 : 150
+    const colourLegendWidth = shape === 2 ? 1350 : 1250
     const colourLegendHeight = 30
     let legendGraphics = p5.createGraphics(legendWidth, legendHeight)
     drawShapeMigrationLegend(legendGraphics, legendWidth, legendHeight, selections, dataBrackets, shape, encoding, dataLength)
@@ -34,7 +34,7 @@ export const drawMigrationLegend = (p5, selections, dataBrackets, shape, encodin
         let colourLegendGraphics = p5.createGraphics(colourLegendWidth, colourLegendHeight)
         drawColourLegend(colourLegendGraphics, colourLegendWidth, colourLegendHeight, selections, interval, dataType, dataBrackets, shape, encoding)
         p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight)
-        p5.save(legendGraphics, "legend-other.png");
+        //p5.save(legendGraphics, "legend-other.png");
     }
 
 }
@@ -219,6 +219,7 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
     }
 
     p5.textSize(12)
+    console.log(p5.textFont())
     p5.fill(textColour)
     p5.textAlign(p5.CENTER, p5.TOP)
     p5.text(formatNumbers(displayLow || low), xStart, legendHeight / 2)
