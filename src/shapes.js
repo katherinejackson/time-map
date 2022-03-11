@@ -896,28 +896,28 @@ export const spiralOutline = (
     const startX = x
     const startY = y
     let angle = -Math.PI / 2
-    let innerRing = coreSize + 45
-    let outerRing = (coreSize + spiralWidth) * 11
+    let innerRing = coreSize
+    let outerRing = coreSize + spiralWidth
 
     p5.fill(colourTheme.textColour)
     p5.noStroke()
     for (let day = 0; day < 365; day++) {
         const innerX = startX + p5.cos(angle) * innerRing
         const innerY = startY + p5.sin(angle) * innerRing
-        p5.ellipse(innerX, innerY, 2, 2)
+        p5.ellipse(innerX, innerY, 1, 1)
 
         const outerX = startX + p5.cos(angle) * outerRing
         const outerY = startY + p5.sin(angle) * outerRing
-        p5.ellipse(outerX, outerY, 6, 6)
+        p5.ellipse(outerX, outerY, 1, 1)
 
         angle += radianPerDay
         innerRing += spiralTightness
-        outerRing += spiralTightness*2
+        outerRing += spiralTightness
     }
 
     p5.stroke(colourTheme.textColour)
-    p5.strokeWeight(4.25)
-    p5.line(startX, startY-5, startX, startY+ p5.sin(angle) * outerRing)
+    p5.strokeWeight(0.5)
+    p5.line(startX, startY, startX, startY - maxRadius)
 }
 
 export const drawSpiralMonth = (p5, x, y, selections) => {
@@ -958,7 +958,7 @@ export const drawMigrationSpiralYear = (p5, x, y, selections, dataLength) => {
     const { spiralWidth, spiralTightness, coreSize, theme } = selections
     const colourTheme = themeColours[theme]
     let innerCore = coreSize
-    let outerCore = (coreSize + spiralTightness * dataLength + spiralWidth) * 12
+    let outerCore = (coreSize + spiralTightness * dataLength + spiralWidth)* 2.5
     let angle = -Math.PI / 2
     p5.fill(colourTheme.textColour)
     p5.textAlign(p5.CENTER, p5.CENTER)
@@ -971,14 +971,14 @@ export const drawMigrationSpiralYear = (p5, x, y, selections, dataLength) => {
             let y2 = y + p5.sin(angle) * outerCore
 
             p5.stroke(colourTheme.textColour, 100)
-            p5.strokeWeight(1)
+            p5.strokeWeight(0.5)
             p5.line(x1, y1, x2, y2)
             p5.noStroke()
         } else {
             let xText = x + p5.cos(angle) * outerCore
             let yText = y + p5.sin(angle) * outerCore
 
-            p5.textSize(14)
+            p5.textSize(6)
             p5.text(migrationYears[Math.floor(i / 2)].slice(2), xText, yText)
         }
 

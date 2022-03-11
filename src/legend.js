@@ -21,9 +21,9 @@ export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interv
 }
 
 export const drawMigrationLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, dataLength) => {
-    const legendWidth = shape === 2 ? 1350 : 1250
-    const legendHeight = shape === 1 ? 1170 : 150
-    const colourLegendWidth = shape === 2 ? 1350 : 1250
+    const legendWidth = shape === 2 ? 350 : 250
+    const legendHeight = shape === 1 ? 170 : 50
+    const colourLegendWidth = shape === 2 ? 350 : 250
     const colourLegendHeight = 30
     let legendGraphics = p5.createGraphics(legendWidth, legendHeight)
     drawShapeMigrationLegend(legendGraphics, legendWidth, legendHeight, selections, dataBrackets, shape, encoding, dataLength)
