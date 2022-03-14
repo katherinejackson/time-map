@@ -2,7 +2,7 @@ import Sketch from "react-p5";
 import React, { useContext, useEffect, useState } from 'react'
 
 import { drawLegend } from "./legend";
-import { spiral, row, getShapeSize,  getPinAdjustment } from "./shapes";
+import { spiral, row, getShapeSize,  getPinAdjustment, migrationRow } from "./shapes";
 import DataContext from "./DataContext";
 import { getManualInterval } from "./helpers/intervals";
 import { shapes, themeColours } from "./constants";
@@ -100,6 +100,11 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth)
         drawGlyphs()
 
+        //console.log(data['USA']['cases']['2020'])
+        let pg = p5.createGraphics(1000, 1000)
+        migrationRow(pg, dataType, interval, data['USA']['cases']['2020'], 500/2, 500 / 2, selections, encoding)
+        p5.save(pg, "pin.png");
+
         p5.noLoop()
     }
 
@@ -123,8 +128,6 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         ptData.push(data[id]['cases']['2020'])
 
 
-
-
         // let ptData = data[id]['cases']['2020']
         // if (numYears === 2) {
         //     ptData = ptData.concat(data[id]['cases']['2021'])
@@ -138,6 +141,8 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         } else if (shape === shapes.ROW.id) {
             row(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding)
         }
+
+ 
 
         return { pg, width: canvasWidth, height: canvasHeight }
     }

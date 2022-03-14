@@ -98,11 +98,16 @@ export const row = (
     const { numColours, mapPin, opaque, dayWidth, theme, rowHeight, fillMissing, cluster, spaceBetween } = selections
     const colourTheme = themeColours[theme]
     const { width, height } = getShapeSize(selections, shapes.ROW.id, 365)
+    // const width = 500
+    // const height = 500
     const startX = x - width / 2
     const startY = mapPin ? y - height - pinSize : y - height / 2
     let baseline = startY + height
     const increment = rowHeight / interval.range
     const middle = baseline - (interval.range / 2 * increment)
+
+    //const dayWidth = width/locationData.length
+
 
 
 
@@ -151,6 +156,8 @@ export const row = (
                     p5.rect(startX + day * dayWidth, baseline - rowHeight, 1, rowHeight)
                 } else {
                     let val = baseline - ((year[day] - interval.low) * increment)
+
+                    // console.log(startX, val)
                     p5.ellipse(startX + day * dayWidth, val, 1, 1)
                 }
             } else if (fillMissing) {
@@ -199,10 +206,12 @@ export const migrationRow = (
     numLocations,) => {
     const { numColours, mapPin, opaque, dayWidth, theme, rowHeight, fillMissing, cluster, spaceBetween } = selections
     const colourTheme = themeColours[theme]
-    const { width: tempWidth, height } = getShapeSize(selections, shapes.ROW.id, locationData.length+2)
+    const { width, height } = getShapeSize(selections, shapes.ROW.id, locationData.length+2)
     // Have to make the pins larger since we only have ~40 datapoints
     const magnification = 1;
-    const width = tempWidth * magnification
+    //const width = tempWidth * magnification
+    // const width = 500
+    // const height = 500
     const startX = x - width / 2
     const startY = mapPin ? y - height - pinSize : y - height / 2
     let baseline = startY + height
@@ -210,6 +219,7 @@ export const migrationRow = (
     const middle = baseline - (interval.range / 2 * increment)
 
     //console.log("int ", interval)
+
     
     //console.log("w ", width, "h ", height)
 
@@ -277,7 +287,7 @@ export const migrationRow = (
                 let val = baseline - ((year - interval.low) * increment)
                 //console.log("x ", startX + i * dayWidth, "y ", val)
                 p5.noStroke()
-                p5.ellipse(startX + i * dayWidth * magnification, val+3, magnification, 1)
+                p5.ellipse(startX + i * dayWidth * magnification, val+3, 1, 1)
             }
         } else if (fillMissing) {
             p5.fill(colourTheme.missingData, 100)

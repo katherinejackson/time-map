@@ -162,6 +162,8 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
         } else if (shape === shapes.ROW.id) {
             migrationRow(pg, dataType, interval, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding)
         }
+        //p5.save(pg, "pin.png");
+
 
         return { pg, width: canvasWidth, height: canvasHeight }
     }
