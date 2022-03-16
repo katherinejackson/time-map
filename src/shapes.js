@@ -290,7 +290,7 @@ export const migrationRow = (
                 p5.ellipse(startX + i * dayWidth * magnification, val+3, 1, 1)
             }
         } else if (fillMissing) {
-            p5.fill(colourTheme.missingData, 100)
+            p5.fill(100, 100)
             //p5.fill( 98, 101, 103 )
 
             if (encoding === 2) {
@@ -891,7 +891,7 @@ export const migrationSpiral = (
                 p5.ellipse(x, y, 1, 1)
             }
         } else if (fillMissing) {
-            p5.fill(colourTheme.missingData, 100)
+            p5.fill(100, 100)
 
             if (encoding === 2) {
                 const x = startX + p5.cos(angle) * innerRing

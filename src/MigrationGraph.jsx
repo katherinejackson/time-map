@@ -12,8 +12,6 @@ import background from "./data/layout-noblobs.png";
 const canvasWidth = window.options ? 1200 : window.innerWidth * 0.95;
 const canvasHeight = window.options ? 800 : window.innerHeight * 0.95;
 
-console.log(canvasWidth, canvasHeight)
-
 const magnification = 1;
 
 const MigrationGraph = ({ encoding, selections, shape }) => {
@@ -126,7 +124,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
                 p5.fill(colourTheme.pinBackground, 100)
                 p5.noStroke()
                 if (shape === shapes.SPIRAL.id) {
-                    p5.ellipse(pin.x, pin.y, maxRadius * 12, maxRadius * 12)
+                    p5.ellipse(pin.x, pin.y, maxRadius * 6.5, maxRadius * 6.5)
                 } else if (shape === shapes.ROW.id) {
                     p5.rect(pin.x - (width*magnification) * 1.5, pin.y - height * 2, (width * 3)*magnification, height * 4)
                 }
@@ -136,7 +134,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
 
             p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(colourTheme.textColour)
-            p5.text(pin.name, pin.x, pin.y + height * 0.75 + 15)
+            p5.text(pin.name, pin.x, pin.y + height * 0.75 + 3)
         }
     }
 
