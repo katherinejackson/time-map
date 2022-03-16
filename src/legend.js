@@ -218,13 +218,36 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
         counter = counter + rectWidth
     }
 
+    let displayRange = displayHigh - displayLow
+    let incr = displayRange/3
+    let increments = [];
+
+    for (let i=displayLow; i<displayHigh; i+=incr) {
+        increments.push(Math.round(i))
+    }
+    increments.push(displayHigh)
+    console.log(increments)
+
     p5.textSize(12)
-    console.log(p5.textFont())
     p5.fill(textColour)
     p5.textAlign(p5.CENTER, p5.TOP)
-    p5.text(formatNumbers(displayLow || low), xStart, legendHeight / 2)
-    p5.text(formatNumbers(displayHigh || high), xStart + width, legendHeight / 2)
+    increments.forEach(num => {
+        let x = calcX(num, xStart, width, brackets)
+        p5.text(formatNumbers(num), x, legendHeight / 2 +3)
+    })
+
+
+    // p5.text(formatNumbers(displayLow || low), xStart, legendHeight / 2)
+    // p5.text(formatNumbers(displayHigh || high), xStart + width, legendHeight / 2)
 }
+
+const calcX = (num, startX, width, xBrackets) => {
+    const dataRange = xBrackets.displayHigh - xBrackets.displayLow
+    const increment = width / dataRange
+
+    return startX + (num - xBrackets.low) * increment
+}
+
 
 export const drawLogarithmicLegend = (p5, x, y, textColour) => {
     const width = 2

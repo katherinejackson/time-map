@@ -245,6 +245,7 @@ const getDataByContinent = (data, continents) => {
 export const getData = (view, practice) => {
     if (view === views.SCATTER.val) {
         let data = covidData
+        console.log("d ", data)
 
 
         if (practice) {

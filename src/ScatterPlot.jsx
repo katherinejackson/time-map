@@ -100,6 +100,8 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
 
         drawXAxis(p5)
         drawYAxis(p5)
+
+        const intervals = []
         drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth)
         drawGlyphs()
 
@@ -129,7 +131,6 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
             ptData.push(data[id]['cases']['2021'])
         }
         ptData.push(data[id]['cases']['2020'])
-
 
         // let ptData = data[id]['cases']['2020']
         // if (numYears === 2) {
@@ -196,10 +197,13 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
 
     const calcX = (num) => {
         const left = xBorder + 10 + width / 2
+       // console.log("left ", left)
         const graphRange = graphWidth - width
-        console.log(xBrackets)
+        //console.log("gr" , graphRange)
         const dataRange = xBrackets.high - xBrackets.low
+        //console.log("dr ", dataRange)
         const increment = graphRange / dataRange
+        //console.log("increment", increment)
 
         return left + (num - xBrackets.low) * increment
     }
