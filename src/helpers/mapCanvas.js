@@ -30,5 +30,7 @@ export const getGlyph = (p5, pin, data, dataType, interval, shape, selections, e
         row(pg, dataType, interval, locationData, width/2, height/2, selections, encoding, numLocations)
     }
 
+    //p5.save(pg, "spiralpin.png");
+
     return { pg, width, height }
 }

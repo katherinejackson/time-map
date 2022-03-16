@@ -6,7 +6,7 @@ import { drawSpiralMonth, getShapeSize, spiralOutline, legendGraphSpiral, drawMi
 
 export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth) => {
     const legendWidth = 220
-    const legendHeight = shape === 1 ? 80 : 50
+    const legendHeight = shape === 1 ? 100 : 70
     const colourLegendWidth = 220
     const colourLegendHeight = 30
     let legendGraphics = p5.createGraphics(legendWidth, legendHeight)
@@ -22,7 +22,7 @@ export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interv
 
 export const drawMigrationLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, dataLength) => {
     const legendWidth = shape === 2 ? 350 : 250
-    const legendHeight = shape === 1 ? 170 : 50
+    const legendHeight = shape === 1 ? 200 : 80
     const colourLegendWidth = shape === 2 ? 350 : 250
     const colourLegendHeight = 30
     let legendGraphics = p5.createGraphics(legendWidth, legendHeight)

@@ -630,6 +630,11 @@ export const spiral = (
     encoding,
     numLocations,
 ) => {
+    // Change selections arg to TEMP
+    // var selections = {...TEMP}
+    // selections.spiralTightness = 0.1
+    // selections.spiralWidth = 75
+    // selections.coreSize = 18
     const { spiralWidth, spiralTightness, coreSize, mapPin, opaque, theme, numColours, fillMissing, cluster } = selections
     const colourTheme = themeColours[theme]
     const increment = spiralWidth / interval.range
@@ -763,6 +768,8 @@ export const migrationSpiral = (
     encoding,
     numLocations,
 ) => {
+
+
     const { spiralWidth, spiralTightness, coreSize, mapPin, opaque, theme, numColours, fillMissing, cluster } = selections
     const colourTheme = themeColours[theme]
     const increment = spiralWidth / interval.range
@@ -770,8 +777,12 @@ export const migrationSpiral = (
     const startX = x
     const startY = mapPin ? y - pinSize - maxRadius : y
     let angle = -Math.PI / 2
-    let radius = getRadius(selections, locationData.length, locationData.length)
+    let radius = getRadius(selections, locationData.length/100, locationData.length/100)
     let innerRing = coreSize
+
+    //console.log(selections)
+
+    //console.log("temp ", temp)
 
     // console.log("max radius ", maxRadius)
     // console.log(startX, startY)
@@ -792,7 +803,7 @@ export const migrationSpiral = (
         }
 
         p5.stroke(colourTheme.pinColour)
-        p5.ellipse(startX, startY, maxRadius * 2, maxRadius * 2)
+        p5.ellipse(startX, startY, maxRadius, maxRadius)
         p5.noStroke()
     } else if (opaque) {
         p5.fill(colourTheme.pinBackground)
@@ -821,8 +832,25 @@ export const migrationSpiral = (
             innerRing = coreSize
         }
     }
+    let tempAngle = angle;
+    let tempInnerRing = innerRing;
+
+    // if (encoding !== 2) {
+    //     for (let i=0; i<locationData.length; i++) {
+    //         const a = startX + p5.cos(angle) * innerRing
+    //         const b = startY + p5.sin(angle) * innerRing
+    //         p5.fill(255)
+    //         p5.arc(a, b, spiralWidth * 3, spiralWidth * 3, angle, angle + radianPerYear * 10, p5.PIE)
+
+    //         angle += radianPerYear
+    //         innerRing += (spiralTightness)
+    //     }
+    // }
+    // angle = tempAngle;
+    // innerRing = tempInnerRing;
     //p5.fill(colourTheme.pinBackground)
-    //p5.ellipse(startX, startY, radius * 1.25, radius * 1.25)
+    //console.log(radius)
+    //p5.ellipse(startX, startY, radius * 3.5, radius * 3.5)
     for (let i=0; i<locationData.length-1; i++) {
         let year = locationData[i]
         if (encoding !== 2 && !opaque && !mapPin) {
@@ -836,6 +864,7 @@ export const migrationSpiral = (
             const y = startY + p5.sin(angle) * (innerRing + val * increment)
             //console.log(x, y)
             p5.fill(colourTheme.missingData)
+            //p5.fill(255, 0, 0)
             p5.ellipse(x, y, 2, 2)
         }
 

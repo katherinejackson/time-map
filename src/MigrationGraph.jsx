@@ -11,6 +11,9 @@ import background from "./data/layout-noblobs.png";
 
 const canvasWidth = window.options ? 1200 : window.innerWidth * 0.95;
 const canvasHeight = window.options ? 800 : window.innerHeight * 0.95;
+
+console.log(canvasWidth, canvasHeight)
+
 const magnification = 1;
 
 const MigrationGraph = ({ encoding, selections, shape }) => {
@@ -162,7 +165,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
         } else if (shape === shapes.ROW.id) {
             migrationRow(pg, dataType, interval, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding)
         }
-        //p5.save(pg, "pin.png");
+        //p5.save(pg, "spiralpin.png");
 
 
         return { pg, width: canvasWidth, height: canvasHeight }

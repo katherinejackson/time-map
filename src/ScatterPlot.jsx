@@ -12,13 +12,16 @@ import { onClick, onHover } from "./helpers/studyEventHandlers";
 const canvasWidth = window.options ? 1200 : window.innerWidth * 0.95
 const canvasHeight = window.options ? 800 : window.innerHeight * 0.95
 
+
+
+
 const xBorder = 50
 const graphWidth = canvasWidth - xBorder * 2
 
 const yBorder = 50
 const graphHeight = canvasHeight - yBorder * 2
 
-const ScatterPlot = ({ encoding, selections, shape }) => {
+const ScatterPlot = ({ encoding, selections, shape, practice }) => {
     const { data, dataBrackets, yBrackets, xBrackets, dataType } = useContext(DataContext)
     const { theme, numColours, numYears, mapPin } = selections
     const colourTheme = themeColours[theme]
@@ -101,9 +104,9 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         drawGlyphs()
 
         //console.log(data['USA']['cases']['2020'])
-        let pg = p5.createGraphics(1000, 1000)
-        migrationRow(pg, dataType, interval, data['USA']['cases']['2020'], 500/2, 500 / 2, selections, encoding)
-        p5.save(pg, "pin.png");
+        //let pg = p5.createGraphics(1000, 1000)
+        //migrationRow(pg, dataType, interval, data['USA']['cases']['2020'], 500/2, 500 / 2, selections, encoding)
+
 
         p5.noLoop()
     }
@@ -141,6 +144,7 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         } else if (shape === shapes.ROW.id) {
             row(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding)
         }
+        //p5.save(pg, "spiralpin.png");
 
  
 
@@ -193,6 +197,7 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
     const calcX = (num) => {
         const left = xBorder + 10 + width / 2
         const graphRange = graphWidth - width
+        console.log(xBrackets)
         const dataRange = xBrackets.high - xBrackets.low
         const increment = graphRange / dataRange
 
@@ -232,13 +237,16 @@ const ScatterPlot = ({ encoding, selections, shape }) => {
         p5.stroke(colourTheme.lineColour)
         p5.line(xBorder, canvasHeight - yBorder, canvasWidth - xBorder, canvasHeight - yBorder)
 
-        const increments = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+        let increments;
+        if (practice) increments = [0.83, 0.87, 0.91, 0.95, 0.99]
+        else increments = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
         p5.textAlign(p5.CENTER, p5.CENTER)
         p5.noStroke()
         p5.fill(colourTheme.textColour)
 
         increments.forEach(num => {
             let x = calcX(num)
+            //console.log(num, x)
             p5.text(num, x, canvasHeight - 40)
         })
 

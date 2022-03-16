@@ -16,7 +16,7 @@ import GraphView from './GraphView'
 import MultiComparison from './MultiComparison'
 import MigrationGraph from './MigrationGraph';
 
-const options = window.options || { view: null, shape: 2, encoding: 1, practice: false };
+const options = window.options || { view: null, shape: 2, encoding: 1, practice: true };
 
 const study = window.options !== undefined
 
@@ -61,7 +61,7 @@ const App = () => {
                                 <SelectionPanel selections={selections} setSelections={setSelections} setX={setX} setY={setY} shape={shape} view={view} x={x} y={y} />
                                 <div className="d-flex justify-content-center">
                                     {view === views.MAP.val ? <LeafletMap encoding={encoding} selections={selections} shape={shape} /> : null}
-                                    {view === views.SCATTER.val ? <ScatterPlot encoding={encoding} selections={selections} shape={shape} /> : null}
+                                    {view === views.SCATTER.val ? <ScatterPlot encoding={encoding} selections={selections} shape={shape} practice={options.practice} /> : null}
                                     {view === views.COMPARISON.val ? <Comparison encoding={encoding} selections={selections} shape={shape} x={x} y={y} /> : null}
                                     {view === views.MULTI_COMPARISON.val ? <MultiComparison encoding={encoding} selections={selections} shape={shape} x={x} y={y} /> : null}
                                     {view === views.MIGRATION_GRAPH.val ? <MigrationGraph encoding={encoding} selections={selections} shape={shape}/> : null}
@@ -78,7 +78,7 @@ const App = () => {
             <DataContext.Provider value={{ data, dataType, yBrackets, dataBrackets, xBrackets, locations, variable }}>
                 <div className="d-flex justify-content-center">
                     {view === views.MAP.val ? <LeafletMap encoding={encoding} selections={selections} shape={shape} /> : null}
-                    {view === views.SCATTER.val ? <ScatterPlot encoding={encoding} selections={selections} shape={shape} /> : null}
+                    {view === views.SCATTER.val ? <ScatterPlot encoding={encoding} selections={selections} shape={shape} practice={options.practice} /> : null}
                     {view === views.MIGRATION_GRAPH.val ? <MigrationGraph encoding={encoding} selections={selections} shape={shape}/> : null}
                 </div>
             </DataContext.Provider>
