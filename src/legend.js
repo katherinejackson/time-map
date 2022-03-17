@@ -5,9 +5,9 @@ import { drawSpiralMonth, getShapeSize, spiralOutline, legendGraphSpiral, drawMi
 
 
 export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth) => {
-    const legendWidth = 220
-    const legendHeight = shape === 1 ? 100 : 70
-    const colourLegendWidth = 220
+    const legendWidth = 225
+    const legendHeight = 100
+    const colourLegendWidth = 225
     const colourLegendHeight = 30
     let legendGraphics = p5.createGraphics(legendWidth, legendHeight)
     drawShapeLegend(legendGraphics, legendWidth, legendHeight, selections, dataBrackets, shape, encoding)
@@ -203,6 +203,8 @@ export const drawManualIntervalLegend = (p5, width, height, legendWidth, legendH
 
 const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numColours, brackets, textColour) => {
     const { high, low, range, displayLow, displayHigh } = brackets
+    // const low = brackets.displayLow || brackets.low
+    // const high = brackets.displayHigh || brackets.high
     const rectWidth = 1
     const xStart = (legendWidth - width) / 2
     const yStart = legendHeight / 2 - height
@@ -218,22 +220,33 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
         counter = counter + rectWidth
     }
 
-    let displayRange = displayHigh - displayLow
-    let incr = displayRange/3
-    let increments = [];
-
-    for (let i=displayLow; i<displayHigh; i+=incr) {
-        increments.push(Math.round(i))
+    let newLow, newHigh;
+    if (typeof(displayHigh) === 'undefined' || typeof(displayLow) === 'undefined') {
+        newLow = low
+        newHigh = high
     }
-    increments.push(displayHigh)
-    console.log(increments)
+    else {
+        newLow = displayLow
+        newHigh = displayHigh
+    }
+    let increments = calculateIntervals(newLow, newHigh, 3, false)
+
+    // let displayRange = displayHigh - displayLow
+    // let incr = displayRange/3
+    // let increments = [];
+
+    // for (let i=displayLow; i<displayHigh; i+=incr) {
+    //     increments.push(Math.round(i))
+    // }
+    // increments.push(displayHigh)
+    // console.log(increments)
 
     p5.textSize(12)
     p5.fill(textColour)
     p5.textAlign(p5.CENTER, p5.TOP)
     increments.forEach(num => {
-        let x = calcX(num, xStart, width, brackets)
-        p5.text(formatNumbers(num), x, legendHeight / 2 +3)
+        let x = calcX(num, xStart, width, newLow, newHigh)
+        p5.text(formatNumbers((Math.round(num * 10)/10)), x, legendHeight / 2 + 3)
     })
 
 
@@ -241,11 +254,29 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
     // p5.text(formatNumbers(displayHigh || high), xStart + width, legendHeight / 2)
 }
 
-const calcX = (num, startX, width, xBrackets) => {
-    const dataRange = xBrackets.displayHigh - xBrackets.displayLow
+const calculateIntervals = (low, high, intervalNum, rounded) => {
+    let displayRange = high - low;
+
+
+    let incr = displayRange/intervalNum;
+    let increments = [];
+
+    for (let i=low; i<=high; i+=incr) {
+        if (rounded) increments.push(Math.round(i))
+        else increments.push(i)
+    }
+    //increments.push(high)
+
+    return increments;
+
+}
+
+const calcX = (num, startX, width, low, high) => {
+    const dataRange = high - low
     const increment = width / dataRange
 
-    return startX + (num - xBrackets.low) * increment
+    // return startX + (num - low) * increment
+    return startX + (num - low) * increment
 }
 
 
@@ -312,6 +343,8 @@ export const drawLogarithmicGradientLegend = (p5, x, y, brackets, textColour) =>
 export const drawRowLegend = (p5, width, height, brackets, textColour, encoding) => {
     const lowString = formatNumbers(brackets.displayLow || brackets.low)
     const highString = formatNumbers(brackets.displayHigh || brackets.high)
+    const low = brackets.displayLow || brackets.low
+    const high = brackets.displayHigh || brackets.high
     const rectWidth = width * 0.7
     const rectHeight = height * 0.7
     const startX = (width - rectWidth) / 2
@@ -325,11 +358,39 @@ export const drawRowLegend = (p5, width, height, brackets, textColour, encoding)
     p5.fill(textColour)
     p5.textSize(10)
 
+    let increments = calculateIntervals(low, high, 2, false);
+    // if (typeof(displayHigh) === 'undefined' && typeof(displayLow) === 'undefined') {
+    //     increments = calculateIntervals(low, high, 2, true)
+    // }
+    // else {
+    //     increments = calculateIntervals(low, high, 2, false)
+    // }
+    console.log(increments)
+
+    
+    let positions = increments.map(i => calcX(i, startY, rectHeight, low, high)).reverse()
+
     if (encoding === 1 || encoding === 3) {
         p5.textAlign(p5.RIGHT, p5.BOTTOM)
-        p5.text(lowString, startX - 5, startY + rectHeight)
-        p5.textAlign(p5.RIGHT, p5.TOP)
-        p5.text(highString, startX - 5, startY)
+        for (let i=0; i<increments.length; i++) {
+            if (typeof(displayHigh) === 'undefined' && typeof(displayLow) === 'undefined') {
+                p5.text(formatNumbers((Math.round(increments[i] * 10)/10)), startX - 5, positions[i] + 5)
+            }
+            else {
+                p5.text(formatNumbers(increments[i]), startX - 5, positions[i] + 5)
+            }
+            
+        }
+        // increments.forEach(num => {
+        //     let x = calcX(num, startY, rectHeight, low, high)
+        //     console.log(x)
+        //     p5.text(formatNumbers(num), startX - 5, x)
+        // })
+
+
+        // p5.text(lowString, startX - 5, startY + rectHeight)
+        // p5.textAlign(p5.RIGHT, p5.TOP)
+        // p5.text(highString, startX - 5, startY)
     }
 
     const spacePerMonth = rectWidth / 12
@@ -351,6 +412,8 @@ export const drawRowLegend = (p5, width, height, brackets, textColour, encoding)
 export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, encoding, dataLength) => {
     const lowString = formatNumbers(brackets.displayLow || brackets.low)
     const highString = formatNumbers(brackets.displayHigh || brackets.high)
+    const low = brackets.displayLow || brackets.low
+    const high = brackets.displayHigh || brackets.high
     const rectWidth = width * 0.90
     const rectHeight = height * 0.7
     const startX = ((width - rectWidth) / 2) + 10
@@ -364,11 +427,18 @@ export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, 
     p5.fill(textColour)
     p5.textSize(10)
 
+    const increments = calculateIntervals(low, high, 2, false)
+    let positions = increments.map(i => calcX(i, startY, rectHeight, low, high)).reverse()
+
     if (encoding === 1 || encoding === 3) {
         p5.textAlign(p5.RIGHT, p5.BOTTOM)
-        p5.text(lowString, startX - 5, startY + rectHeight)
-        p5.textAlign(p5.RIGHT, p5.TOP)
-        p5.text(highString, startX - 5, startY)
+        for (let i=0; i<increments.length; i++) {
+            p5.text(formatNumbers(increments[i]), startX - 5, positions[i] + 5)
+        }
+        // p5.textAlign(p5.RIGHT, p5.BOTTOM)
+        // p5.text(lowString, startX - 5, startY + rectHeight)
+        // p5.textAlign(p5.RIGHT, p5.TOP)
+        // p5.text(highString, startX - 5, startY)
     }
 
     const spacePerMonth = rectWidth / (dataLength)
