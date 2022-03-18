@@ -1,4 +1,5 @@
 import io
+from statistics import mean
 
 fname = "/Users/norahr/Desktop/Norah/CSPIP/projects/time-map/time-map/src/data/ts-positions-graph-2.csv"
 destFile = "/Users/norahr/Desktop/migrationData.js"
@@ -24,6 +25,18 @@ for l in lines[1:]:
     id = l[0] + ">" + l[1]
 
     migration = [float(x) for x in l[4:]]
+    tempSet = set(migration)
+    sortedSet = sorted(tempSet)
+    sub_2014 = mean(sortedSet[1:5])
+    sub_2016 = mean(sortedSet[3:-2])
+    sub_2018 = mean(sortedSet[:-1])
+    
+    migration[-3] = sub_2018
+    migration[-5] = sub_2016
+    migration[-7] = sub_2014
+
+    print(migration)
+
     if len(migration) != len(years):
         raise AssertionError("Migration and years are not the same length")
     else:
