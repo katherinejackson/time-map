@@ -1,6 +1,6 @@
 import io
 
-fname = "/Users/norahr/Desktop/Norah/CSPIP/projects/time-map/time-map/src/data/ts-positions-graph.csv"
+fname = "/Users/norahr/Desktop/Norah/CSPIP/projects/time-map/time-map/src/data/ts-positions-graph-2.csv"
 destFile = "/Users/norahr/Desktop/migrationData.js"
 lines = list()
 try:
@@ -49,4 +49,4 @@ for l in lines[1:]:
 #print(data)
 
 with io.open(destFile, "w") as waf:
-    waf.write("export const bigData = " + str(data))
+    waf.write("export const migrationData = " + str(data))

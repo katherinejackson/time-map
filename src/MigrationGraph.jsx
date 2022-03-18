@@ -44,7 +44,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
     }, [pts, hover])
 
     const preload = (p5) => {
-        setBackgroundImage(p5.loadImage("https://raw.githubusercontent.com/katherinejackson/time-map/master/src/data/layout-noblobs.png"));
+        setBackgroundImage(p5.loadImage("https://raw.githubusercontent.com/katherinejackson/time-map/master/src/data/graph-image.png"));
         //setBackgroundImage(p5.loadImage(background))
     }
 
@@ -66,11 +66,11 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
     const reset = () => {
         let newPts = {};
         const xScale = scaleLinear()
-        .domain([0, 3991])
+        .domain([0, 2400])
         .range([0, canvasWidth]);
 
         const yScale = scaleLinear()
-        .domain([0, 1994])
+        .domain([0, 1600])
         .range([0, canvasHeight]);
 
         Object.keys(data).forEach(id => {
