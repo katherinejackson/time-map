@@ -17,6 +17,8 @@ export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interv
         let colourLegendGraphics = p5.createGraphics(colourLegendWidth, colourLegendHeight)
         drawColourLegend(colourLegendGraphics, colourLegendWidth, colourLegendHeight, selections, interval, dataType, dataBrackets, shape, encoding)
         p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight)
+
+        //p5.save(colourLegendGraphics, "clegend_scatter.png")
     }
 }
 
@@ -34,7 +36,7 @@ export const drawMigrationLegend = (p5, selections, dataBrackets, shape, encodin
         let colourLegendGraphics = p5.createGraphics(colourLegendWidth, colourLegendHeight)
         drawColourLegend(colourLegendGraphics, colourLegendWidth, colourLegendHeight, selections, interval, dataType, dataBrackets, shape, encoding)
         p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight)
-        //p5.save(legendGraphics, "legend-other.png");
+        //p5.save(colourLegendGraphics, "legend-mg.png");
     }
 
 }
@@ -365,7 +367,6 @@ export const drawRowLegend = (p5, width, height, brackets, textColour, encoding)
     // else {
     //     increments = calculateIntervals(low, high, 2, false)
     // }
-    console.log(increments)
 
     
     let positions = increments.map(i => calcX(i, startY, rectHeight, low, high)).reverse()
