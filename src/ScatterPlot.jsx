@@ -22,6 +22,9 @@ const yBorder = 50
 const graphHeight = canvasHeight - yBorder * 2
 
 const ScatterPlot = ({ encoding, selections, shape, practice }) => {
+
+    selections['numYears'] = 2
+    
     const { data, dataBrackets, yBrackets, xBrackets, dataType } = useContext(DataContext)
     const { theme, numColours, numYears, mapPin } = selections
     const colourTheme = themeColours[theme]
@@ -167,11 +170,18 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
             const hoverpg = p5.createGraphics(pin.width, pin.height)
             hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
 
+            let mag = 5
+            let shiftAmount = 5
+            if (selections.spiralWidth === 5) {
+                mag = 6
+                shiftAmount = 12
+            }
+
             if (!mapPin) {
                 p5.fill(colourTheme.pinBackground, 100)
                 p5.noStroke()
                 if (shape === shapes.SPIRAL.id) {
-                    p5.ellipse(pin.x, pin.y, maxRadius * 5, maxRadius * 5)
+                    p5.ellipse(pin.x, pin.y, maxRadius * mag, maxRadius * mag)
                 } else if (shape === shapes.ROW.id) {
                     p5.rect(pin.x - width * 1.5, pin.y - height * 2, width * 3, height * 4)
                 }
@@ -181,7 +191,7 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
 
             p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(colourTheme.textColour)
-            p5.text(pin.name, pin.x, pin.y + height * 0.75 + 5)
+            p5.text(pin.name, pin.x, pin.y + height * 0.75 + shiftAmount)
         }
     }
 

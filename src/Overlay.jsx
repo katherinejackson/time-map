@@ -16,6 +16,9 @@ import { onClick, onHover, onZoom } from "./helpers/studyEventHandlers";
 
 // Displays the pins (w/ hover capability) that are positioned on the map
 const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
+
+    selections['numYears'] = 2
+    
     const map = useMap()
     const { locations, data, dataBrackets, dataType } = useContext(DataContext)
     const { mapPin, theme, cluster } = selections
@@ -191,11 +194,18 @@ const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
             let hoverpg = p5.createGraphics(pin.width, pin.height)
             hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
 
+            let mag = 5
+            let shiftAmount = 5
+            if (selections.spiralWidth === 5) {
+                mag = 6
+                shiftAmount = 12
+            }
+
             if (!mapPin) {
                 p5.fill(colourTheme.background, 200)
                 p5.noStroke()
                 if (shape === shapes.SPIRAL.id) {
-                    p5.ellipse(location.x, location.y, maxRadius * 5, maxRadius * 5)
+                    p5.ellipse(location.x, location.y, maxRadius * mag, maxRadius * mag)
                 } else if (shape === shapes.ROW.id) {
                     p5.rect(location.x - width * 1.5, location.y - height * 2, width * 3, height * 4)
                 }
@@ -214,7 +224,7 @@ const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
             if (mapPin) {
                 p5.text(formatNames(names), location.x, location.y)
             } else {
-                p5.text(formatNames(names), location.x, location.y + height * 0.75 + 5)
+                p5.text(formatNames(names), location.x, location.y + height * 0.75 + shiftAmount)
             }
         }
     }

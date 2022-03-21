@@ -15,6 +15,9 @@ const canvasHeight = window.options ? 800 : window.innerHeight * 0.95;
 const magnification = 1;
 
 const MigrationGraph = ({ encoding, selections, shape }) => {
+
+    selections['numYears'] = 1
+
     const [p5, setP5] = useState(null)
     const { data, dataBrackets, yBrackets, xBrackets, dataType } = useContext(DataContext);
     const [backgroundImage, setBackgroundImage] = useState(null)
@@ -120,11 +123,14 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
             const hoverpg = p5.createGraphics(pin.width, pin.height)
             hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
 
+            let mag = 5.5
+            if (selections.spiralWidth === 5) mag = 12.5
+
             if (!mapPin) {
                 p5.fill(colourTheme.pinBackground, 100)
                 p5.noStroke()
                 if (shape === shapes.SPIRAL.id) {
-                    p5.ellipse(pin.x, pin.y, maxRadius * 6.5, maxRadius * 6.5)
+                    p5.ellipse(pin.x, pin.y, maxRadius * mag, maxRadius * mag)
                 } else if (shape === shapes.ROW.id) {
                     p5.rect(pin.x - (width*magnification) * 1.5, pin.y - height * 2, (width * 3)*magnification, height * 4)
                 }
@@ -134,7 +140,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
 
             p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(colourTheme.textColour)
-            p5.text(pin.name, pin.x, pin.y + height * 0.75 + 3)
+            p5.text(pin.name, pin.x, pin.y + height * 0.75 + 7)
         }
     }
 

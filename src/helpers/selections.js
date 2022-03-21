@@ -12,17 +12,17 @@ const defaultSizes = {
         small: {
             coreSize: 0,
             spiralWidth: 5,
-            spiralTightness: 0.015,
+            spiralTightness: 0.02,
         },
         medium: {
             coreSize: 0,
-            spiralWidth: 15,
-            spiralTightness: 0.02,
+            spiralWidth: 10,
+            spiralTightness: 0.03,
         },
         large: {
             coreSize: 0,
             spiralWidth: 15,
-            spiralTightness: 0.03,
+            spiralTightness: 0.04,
         },
         xlarge: {
             coreSize: 0,

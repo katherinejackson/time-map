@@ -35,8 +35,6 @@ for l in lines[1:]:
     migration[-5] = sub_2016
     migration[-7] = sub_2014
 
-    print(migration)
-
     if len(migration) != len(years):
         raise AssertionError("Migration and years are not the same length")
     else:

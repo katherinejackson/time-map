@@ -136,6 +136,12 @@ export const row = (
     if (encoding !== 2) {
         p5.fill(colourTheme.pinBackground)
         p5.rect(startX - 2, startY - 2, width + 4, height + 4)
+
+        // draw baseline reference
+        p5.stroke(colourTheme.textColour)
+        //p5.strokeWeight(0.5)
+        p5.line(startX - 2, baseline, (startX - 2) + (width + 4), baseline)
+        p5.noStroke()
     }
 
  
@@ -686,6 +692,29 @@ export const spiral = (
         }
     }
 
+    let tempAngle = angle;
+    let tempInnerRing = innerRing;
+
+    if (encoding !== 2) {
+        locationData.forEach(year => {
+            for (let pt = 0; pt < year.length - 1; pt++) {
+
+                const a = startX + p5.cos(angle) * innerRing
+                const b = startY + p5.sin(angle) * innerRing
+                p5.fill(245)
+                let mag = 2
+                if (spiralWidth === 5) mag = 3
+                else if (spiralWidth === 2) mag = 3
+                p5.arc(a, b, spiralWidth * mag, spiralWidth * mag, angle, angle + radianPerDay * 10, p5.PIE)
+
+                angle += radianPerDay
+                innerRing += (spiralTightness + 0.01)
+            }
+        })
+    }
+    angle = tempAngle;
+    innerRing = tempInnerRing;
+
     locationData.forEach(year => {
         for (let day = 0; day < year.length - 1; day++) {
             if (encoding !== 2 && !opaque && !mapPin) {
@@ -697,13 +726,13 @@ export const spiral = (
                 }
                 const x = startX + p5.cos(angle) * (innerRing + val * increment)
                 const y = startY + p5.sin(angle) * (innerRing + val * increment)
-                p5.fill(colourTheme.missingData)
-                p5.ellipse(x, y, 1, 1)
+                p5.fill(255, 0, 0)
+                //p5.ellipse(x, y, 1, 1)
             }
 
             if (year[day] !== '') {
                 if (encoding === 1) {
-                    p5.fill(colourTheme.textColour)
+                    p5.fill(50)
                 } else {
                     setColour(p5, year[day], numColours, interval, dataType)
                 }
@@ -730,7 +759,7 @@ export const spiral = (
 
             
             angle += radianPerDay
-            innerRing += spiralTightness
+            innerRing +=( spiralTightness+0.01)
 
         
         }
@@ -835,19 +864,19 @@ export const migrationSpiral = (
     let tempAngle = angle;
     let tempInnerRing = innerRing;
 
-    // if (encoding !== 2) {
-    //     for (let i=0; i<locationData.length; i++) {
-    //         const a = startX + p5.cos(angle) * innerRing
-    //         const b = startY + p5.sin(angle) * innerRing
-    //         p5.fill(255)
-    //         p5.arc(a, b, spiralWidth * 3, spiralWidth * 3, angle, angle + radianPerYear * 10, p5.PIE)
+    if (encoding !== 2) {
+        for (let i=0; i<locationData.length; i++) {
+            const a = startX + p5.cos(angle) * innerRing
+            const b = startY + p5.sin(angle) * innerRing
+            p5.fill(245)
+            p5.arc(a, b, spiralWidth * 3, spiralWidth * 3, angle, angle + radianPerYear * 10, p5.PIE)
 
-    //         angle += radianPerYear
-    //         innerRing += (spiralTightness)
-    //     }
-    // }
-    // angle = tempAngle;
-    // innerRing = tempInnerRing;
+            angle += radianPerYear
+            innerRing += (spiralTightness)
+        }
+    }
+    angle = tempAngle;
+    innerRing = tempInnerRing;
     //p5.fill(colourTheme.pinBackground)
     //console.log(radius)
     //p5.ellipse(startX, startY, radius * 3.5, radius * 3.5)
@@ -865,7 +894,7 @@ export const migrationSpiral = (
             //console.log(x, y)
             p5.fill(colourTheme.missingData)
             //p5.fill(255, 0, 0)
-            p5.ellipse(x, y, 2, 2)
+            //p5.ellipse(x, y, 2, 2)
         }
 
         if (year !== -1) {
@@ -997,7 +1026,7 @@ export const drawMigrationSpiralYear = (p5, x, y, selections, dataLength) => {
     const { spiralWidth, spiralTightness, coreSize, theme } = selections
     const colourTheme = themeColours[theme]
     let innerCore = coreSize
-    let outerCore = (coreSize + spiralTightness * dataLength + spiralWidth)* 2.5
+    let outerCore = (coreSize + spiralTightness * dataLength + spiralWidth)* 2.3
     let angle = -Math.PI / 2
     p5.fill(colourTheme.textColour)
     p5.textAlign(p5.CENTER, p5.CENTER)
