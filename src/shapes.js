@@ -137,11 +137,12 @@ export const row = (
         p5.fill(colourTheme.pinBackground)
         p5.rect(startX - 2, startY - 2, width + 4, height + 4)
 
-        // draw baseline reference
-        p5.stroke(colourTheme.textColour)
-        //p5.strokeWeight(0.5)
-        p5.line(startX - 2, baseline, (startX - 2) + (width + 4), baseline)
-        p5.noStroke()
+        // // draw baseline reference
+        // p5.stroke(colourTheme.textColour)
+        // //p5.strokeWeight(0.5)
+        // p5.line(startX - 2, baseline, (startX - 2) + (width + 4), baseline)
+        // p5.line(startX - 2, baseline, (startX - 2) + (width + 4), baseline)
+        // p5.noStroke()
     }
 
  
@@ -176,9 +177,15 @@ export const row = (
                 }
             }
         }
-
+        if (encoding != 2) {
+            // draw baseline reference
+            p5.stroke(colourTheme.textColour)
+            //p5.strokeWeight(0.5)
+            p5.line(startX - 2, baseline, (startX - 2) + (width + 4), baseline)
+            p5.noStroke()
+        }
         baseline = baseline - rowHeight - spaceBetween
-        //console.log("bl after ", baseline)
+
     })
 
     if (cluster) {
@@ -986,6 +993,46 @@ export const spiralOutline = (
     p5.stroke(colourTheme.textColour)
     p5.strokeWeight(0.5)
     p5.line(startX, startY, startX, startY - maxRadius)
+}
+
+export const twoYearSpiralOutline = (
+    p5,
+    x,
+    y,
+    selections,
+) => {
+    const { theme } = selections
+    const spiralWidth = 10
+    const spiralTightness = 0.03
+    const coreSize = 0
+    const colourTheme = themeColours[theme]
+    const { maxRadius } = getShapeSize(selections, shapes.SPIRAL.id, 730)
+    const startX = x
+    const startY = y
+    let angle = -Math.PI / 2
+    let innerRing = coreSize
+    let outerRing = coreSize + spiralWidth
+
+    p5.fill(colourTheme.textColour)
+    p5.noStroke()
+    for (let day = 0; day < 730; day++) {
+        const innerX = startX + p5.cos(angle) * innerRing
+        const innerY = startY + p5.sin(angle) * innerRing
+        p5.ellipse(innerX, innerY, 1, 1)
+
+        const outerX = startX + p5.cos(angle) * outerRing
+        const outerY = startY + p5.sin(angle) * outerRing
+        p5.ellipse(outerX, outerY, 1, 1)
+
+        angle += radianPerDay
+        innerRing += (spiralTightness * 1.15)
+        outerRing += (spiralTightness * 1.5)
+    }
+
+    p5.stroke(colourTheme.textColour)
+    p5.strokeWeight(0.5)
+    p5.line(startX, startY, startX, startY - 55)
+
 }
 
 export const drawSpiralMonth = (p5, x, y, selections) => {

@@ -37,19 +37,19 @@ const defaultSizes = {
             spaceBetween: 0,
         },
         small: {
-            dayWidth: 0.125,
-            rowHeight: 5,
-            spaceBetween: 0,
+            dayWidth: 0.0625,
+            rowHeight: 10,
+            spaceBetween: 3,
         },
         medium: {
             dayWidth: 0.125,
             rowHeight: 15,
-            spaceBetween: 0,
+            spaceBetween: 4,
         },
         large: {
             dayWidth: 0.25,
             rowHeight: 20,
-            spaceBetween: 0,
+            spaceBetween: 5,
         },
         xlarge: {
             dayWidth: 0.25,

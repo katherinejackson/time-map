@@ -1,17 +1,21 @@
 import { colours, manualIntervals, themeColours, shapes, abbreviatedMonths, migrationYears } from './constants'
 import { fillColourGradient, setColour } from "./helpers/colours";
 import { formatNumbers, formatTradeNumbers } from './helpers/format';
-import { drawSpiralMonth, getShapeSize, spiralOutline, legendGraphSpiral, drawMigrationSpiralYear } from './shapes';
+import { drawSpiralMonth, getShapeSize, spiralOutline, legendGraphSpiral, drawMigrationSpiralYear, twoYearSpiralOutline } from './shapes';
 
 
 export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth) => {
     const legendWidth = 225
     const legendHeight = shape === 1 ? 150 : 100
-    const colourLegendWidth = 225
+    const colourLegendWidth = 225 + (225/3)
     const colourLegendHeight = 30
     let legendGraphics = p5.createGraphics(legendWidth, legendHeight)
     drawShapeLegend(legendGraphics, legendWidth, legendHeight, selections, dataBrackets, shape, encoding)
     p5.image(legendGraphics, canvasWidth - legendWidth, 0)
+
+    let yearGraphics = p5.createGraphics(legendWidth/3, legendHeight)
+    drawYearLegend(yearGraphics, legendWidth/3, legendHeight, selections, shape)
+    p5.image(yearGraphics, canvasWidth - legendWidth - (legendWidth/3), 0)
 
     if (encoding !== 1) {
         let colourLegendGraphics = p5.createGraphics(colourLegendWidth, colourLegendHeight)
@@ -55,6 +59,24 @@ export const drawShapeLegend = (p5, width, height, selections, brackets, shape, 
         drawSpiralLegend(p5, width, height, selections, brackets, encoding)
     }
 }
+
+export const drawYearLegend = (p5, width, height, selections, shape) => {
+    const { theme } = selections
+    const textColour = themeColours[theme].textColour
+    const backgroundColour = themeColours[theme].pinBackground
+
+    p5.fill(backgroundColour)
+    p5.stroke(backgroundColour)
+    p5.rect(0, 0, width, height)
+
+    if (shape === 2) {
+        drawRowYearLegend(p5, width, height, textColour)
+    } else if (shape === 1) {
+        drawSpiralYearLegend(p5, width, height, selections)
+    }
+}
+
+
 
 export const drawShapeMigrationLegend = (p5, width, height, selections, brackets, shape, encoding, dataLength) => {
     const { theme } = selections
@@ -410,6 +432,37 @@ export const drawRowLegend = (p5, width, height, brackets, textColour, encoding)
     }
 }
 
+export const drawRowYearLegend = (p5, width, height, textColour) => {
+    const rectWidth = width * 0.7
+    const rectHeight = height * 0.7
+    const startX = (width - rectWidth) - 7 
+    const startY = (height - rectHeight) / 3
+    const midX  = startX + (((startX + rectWidth) - startX)/2)
+    const midY = startY + (((startY + rectHeight) - startY)/2)
+
+    p5.stroke(textColour)
+    p5.rect(startX, startY, rectWidth, rectHeight)
+    p5.line(startX, midY, startX + rectWidth, midY)
+
+    p5.fill(textColour)
+    p5.noStroke()
+    p5.text("2020", midX - 13, midY - 10)
+    p5.text("2021", midX - 13, midY + 20)
+
+}
+
+export const drawSpiralYearLegend = (p5, width, height, selections) => {
+    twoYearSpiralOutline(p5, width/2 + 6, height/2 ,selections)
+    const { theme } = selections
+    const textColour = themeColours[theme].textColour
+
+    p5.textSize(8)
+    p5.fill(textColour)
+    p5.noStroke()
+    p5.text("2020", width/2+ 7, height/3 + 10)
+    p5.text("2021", width/2+ 7, height/3 - 5)
+}
+
 export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, encoding, dataLength) => {
     const lowString = formatNumbers(brackets.displayLow || brackets.low)
     const highString = formatNumbers(brackets.displayHigh || brackets.high)
@@ -470,7 +523,7 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
     selections = { ...selections, ['coreSize']: 0, ['spiralWidth']: 20 }
     const { rightRadius, maxRadius, width, height } = getShapeSize(selections, shapes.SPIRAL.id, 365)
 
-    const startX = encoding === 1 || encoding === 3 ? legendWidth * 0.33 : legendWidth / 2
+    const startX = encoding === 1 || encoding === 3 ? legendWidth * 0.30 : legendWidth / 2
     const startY = legendHeight / 2
     const textColour = themeColours[selections.theme].textColour
 
