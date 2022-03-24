@@ -211,6 +211,7 @@ const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
                 }
             }
 
+
             p5.image(hoverpg, location.x - pin.width * 0.75, location.y - pin.height * 0.75)
 
             let names = []
@@ -243,6 +244,7 @@ const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
     }
 
     const setPins = () => {
+        console.log(locations)
         const pins = addLocations(locations, selections, shape, mapPin, map)
         setLocationPins(updateGlyphs(pins))
     }

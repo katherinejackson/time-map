@@ -95,6 +95,11 @@ export const row = (
     encoding,
     numLocations,
 ) => {
+    // Change selections arg to TEMP
+    // var selections = {...TEMP}
+    // selections.dayWidth = 1
+    // selections.rowHeight = 100
+    // selections.coreSize = 18
     const { numColours, mapPin, opaque, dayWidth, theme, rowHeight, fillMissing, cluster, spaceBetween } = selections
     const colourTheme = themeColours[theme]
     const { width, height } = getShapeSize(selections, shapes.ROW.id, 365)
@@ -145,7 +150,7 @@ export const row = (
         // p5.noStroke()
     }
 
- 
+
 
     locationData.forEach(year => {
         for (let day = 0; day < year.length - 1; day++) {
@@ -187,6 +192,12 @@ export const row = (
         baseline = baseline - rowHeight - spaceBetween
 
     })
+        
+    p5.stroke(255)
+    p5.strokeWeight(2)
+    p5.noFill()
+    p5.rect(startX-1, startY-1, width+2, height+2)
+    p5.noStroke()
 
     if (cluster) {
         p5.fill(colourTheme.textColour)

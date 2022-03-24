@@ -532,13 +532,23 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
     drawSpiralMonth(p5, startX, startY, selections)
 
     if (encoding === 1 || encoding === 3) {
-        let mid;
-        if (typeof(brackets.displayLow) === 'undefined' || typeof(brackets.displayHigh) === 'undefined') {
-            mid = Math.round(((brackets.high - brackets.low)/2) * 10)/10
-        }
-        else mid = ((brackets.displayHigh - brackets.displayLow)/2)
+        // let mid;
+        // if (typeof(brackets.displayLow) === 'undefined' || typeof(brackets.displayHigh) === 'undefined') {
+        //     mid = Math.round(((brackets.high - brackets.low)/2) * 10)/10
+        // }
+        // else mid = ((brackets.displayHigh - brackets.displayLow)/2)
 
-     
+        let newHigh, newLow;
+        if (typeof(brackets.displayLow) === 'undefined' || typeof(brackets.displayHigh) === 'undefined') {
+            newLow = brackets.low
+            newHigh = brackets.high
+        }
+        else {
+            newLow = brackets.displayLow
+            newHigh = brackets.displayHigh
+        }
+
+        let increments = calculateIntervals(newLow, newHigh, 2, false)
 
         const x = legendWidth * 0.7
         const textColour = themeColours[selections.theme].textColour
@@ -553,7 +563,7 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
         p5.textAlign(p5.LEFT, p5.CENTER)
         p5.textSize(10)
         p5.text(lowString, x + maxRadius-17, startY - 30)
-        p5.text(formatNumbers(mid), x+maxRadius-14, startY)
+        p5.text(formatNumbers(Math.round(increments[1] * 10)/10), x+maxRadius-14, startY)
         p5.text(highString, x + maxRadius -10, startY + 25)
     }
 }

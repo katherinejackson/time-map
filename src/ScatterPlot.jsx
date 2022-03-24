@@ -148,7 +148,7 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
         } else if (shape === shapes.ROW.id) {
             row(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding)
         }
-        //p5.save(pg, "spiralpin.png");
+        //p5.save(pg, "newrowpin.png");
 
  
 
