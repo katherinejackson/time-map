@@ -2,22 +2,22 @@ export const alaska = [
     {
         "name": "Anchorage",
         "x": 61.21,
-        "y": -149.9
+        "y": -143.9
     },
     {
         "name": "Juneau",
         "x": 58.45,
-        "y": -134.23
+        "y": -130.23
     },
     {
         "name": "Fairbanks",
-        "x": 64.84,
-        "y": -147.65
+        "x": 65.84,
+        "y": -145.65
     },
     {
         "name": "Talkeetna",
         "x": 62.28,
-        "y": -150.08
+        "y": -155.08
     },
     {
         "name": "Barrow",
@@ -46,8 +46,8 @@ export const alaska = [
     },
     {
         "name": "Sitka",
-        "x": 57.18,
-        "y": -135.31
+        "x": 56.18,
+        "y": -137.31
     },
     // {
     //     "name": "Eielson",
@@ -56,8 +56,8 @@ export const alaska = [
     // },
     {
         "name": "Ketchikan",
-        "x": 55.36,
-        "y": -131.67
+        "x": 53.36,
+        "y": -130.67
     },
     // {
     //     "name": "King Salmon",
@@ -67,12 +67,12 @@ export const alaska = [
     {
         "name": "Haines",
         "x": 59.25,
-        "y": -135.45
+        "y": -138.45
     },
     {
         "name": "Kodiak",
-        "x": 57.79,
-        "y": -152.4
+        "x": 55.79,
+        "y": -151.4
     },
     {
         "name": "Kotzebue",
@@ -87,23 +87,23 @@ export const alaska = [
     {
         "name": "Naknek",
         "x": 58.78,
-        "y": -156.9
+        "y": -159.9
     },
     {
         "name": "Bethel",
         "x": 60.79,
-        "y": -161.79
+        "y": -165.79
     },
     {
         "name": "Perryville",
-        "x": 55.9,
+        "x": 53.9,
         "y": -159
     },
-    {
-        "name": "Kodiak",
-        "x": 57.79,
-        "y": -152.41
-    },
+    // {
+    //     "name": "Kodiak",
+    //     "x": 57.79,
+    //     "y": -152.41
+    // },
     {
         "name": "Homer",
         "x": 59.64,

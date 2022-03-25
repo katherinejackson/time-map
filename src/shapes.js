@@ -193,8 +193,9 @@ export const row = (
 
     })
         
+    // draw border around multi year pins
     p5.stroke(255)
-    p5.strokeWeight(2)
+    p5.strokeWeight(1.5)
     p5.noFill()
     p5.rect(startX-1, startY-1, width+2, height+2)
     p5.noStroke()
@@ -228,6 +229,11 @@ export const migrationRow = (
     selections,
     encoding,
     numLocations,) => {
+    // Change selections arg to TEMP
+    // var selections = {...TEMP}
+    // selections.dayWidth = 1
+    // selections.rowHeight = 100
+    // selections.coreSize = 18
     const { numColours, mapPin, opaque, dayWidth, theme, rowHeight, fillMissing, cluster, spaceBetween } = selections
     const colourTheme = themeColours[theme]
     const { width, height } = getShapeSize(selections, shapes.ROW.id, locationData.length+2)
@@ -656,8 +662,8 @@ export const spiral = (
 ) => {
     // Change selections arg to TEMP
     // var selections = {...TEMP}
-    // selections.spiralTightness = 0.1
-    // selections.spiralWidth = 75
+    // selections.spiralTightness = 0.15
+    // selections.spiralWidth = 50
     // selections.coreSize = 18
     const { spiralWidth, spiralTightness, coreSize, mapPin, opaque, theme, numColours, fillMissing, cluster } = selections
     const colourTheme = themeColours[theme]
@@ -815,7 +821,11 @@ export const migrationSpiral = (
     encoding,
     numLocations,
 ) => {
-
+    // Change selections arg to TEMP
+    // var selections = {...TEMP}
+    // selections.spiralTightness = 0.15
+    // selections.spiralWidth = 50
+    // selections.coreSize = 18
 
     const { spiralWidth, spiralTightness, coreSize, mapPin, opaque, theme, numColours, fillMissing, cluster } = selections
     const colourTheme = themeColours[theme]

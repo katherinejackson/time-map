@@ -104,8 +104,8 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
         drawXAxis(p5)
         drawYAxis(p5)
 
-        const intervals = []
-        drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth)
+        const increments = [0, 250000, 500000, 750000, 1000000, 1250000]
+        drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, increments)
         drawGlyphs()
 
         //console.log(data['USA']['cases']['2020'])

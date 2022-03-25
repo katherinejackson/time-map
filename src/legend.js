@@ -4,22 +4,22 @@ import { formatNumbers, formatTradeNumbers } from './helpers/format';
 import { drawSpiralMonth, getShapeSize, spiralOutline, legendGraphSpiral, drawMigrationSpiralYear, twoYearSpiralOutline } from './shapes';
 
 
-export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth) => {
-    const legendWidth = 225
-    const legendHeight = shape === 1 ? 150 : 100
-    const colourLegendWidth = 225 + (225/3)
+export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, increments) => {
+    const legendWidth = 240
+    const legendHeight = shape === 1 ? 150 : 150
+    const colourLegendWidth = 240 + (240/3)
     const colourLegendHeight = 30
     let legendGraphics = p5.createGraphics(legendWidth, legendHeight)
-    drawShapeLegend(legendGraphics, legendWidth, legendHeight, selections, dataBrackets, shape, encoding)
+    drawShapeLegend(legendGraphics, legendWidth, legendHeight, selections, dataBrackets, shape, encoding, increments)
     p5.image(legendGraphics, canvasWidth - legendWidth, 0)
 
     let yearGraphics = p5.createGraphics(legendWidth/3, legendHeight)
-    drawYearLegend(yearGraphics, legendWidth/3, legendHeight, selections, shape)
+    drawYearLegend(yearGraphics, legendWidth/3, legendHeight, selections, shape, increments)
     p5.image(yearGraphics, canvasWidth - legendWidth - (legendWidth/3), 0)
 
     if (encoding !== 1) {
         let colourLegendGraphics = p5.createGraphics(colourLegendWidth, colourLegendHeight)
-        drawColourLegend(colourLegendGraphics, colourLegendWidth, colourLegendHeight, selections, interval, dataType, dataBrackets, shape, encoding)
+        drawColourLegend(colourLegendGraphics, colourLegendWidth, colourLegendHeight, selections, interval, dataType, dataBrackets, increments)
         p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight)
 
         //p5.save(colourLegendGraphics, "clegend_scatter.png")
@@ -44,7 +44,7 @@ export const drawMigrationLegend = (p5, selections, dataBrackets, shape, encodin
     }
 
 }
-export const drawShapeLegend = (p5, width, height, selections, brackets, shape, encoding) => {
+export const drawShapeLegend = (p5, width, height, selections, brackets, shape, encoding, increments) => {
     const { theme } = selections
     const textColour = themeColours[theme].textColour
     const backgroundColour = themeColours[theme].pinBackground
@@ -54,9 +54,9 @@ export const drawShapeLegend = (p5, width, height, selections, brackets, shape, 
     p5.rect(0, 0, width, height)
 
     if (shape === 2) {
-        drawRowLegend(p5, width, height, brackets, textColour, encoding)
+        drawRowLegend(p5, width, height, brackets, textColour, encoding, increments)
     } else if (shape === 1) {
-        drawSpiralLegend(p5, width, height, selections, brackets, encoding)
+        drawSpiralLegend(p5, width, height, selections, brackets, encoding, increments)
     }
 }
 
@@ -94,12 +94,14 @@ export const drawShapeMigrationLegend = (p5, width, height, selections, brackets
     }
 }
 
-export const drawColourLegend = (p5, legendWidth, legendHeight, selections, interval, dataType, brackets) => {
+export const drawColourLegend = (p5, legendWidth, legendHeight, selections, interval, dataType, brackets, increments) => {
     const { theme, numColours } = selections
     const textColour = themeColours[theme].textColour
     const backgroundColour = themeColours[theme].pinBackground
     const width = legendWidth * 0.85
     const height = legendHeight * 0.3
+
+    console.log(increments)
 
     p5.fill(backgroundColour)
     p5.stroke(backgroundColour)
@@ -108,7 +110,7 @@ export const drawColourLegend = (p5, legendWidth, legendHeight, selections, inte
     if (dataType === 'COVID' && numColours === 6) {
         drawManualIntervalLegend(p5, width, height, legendWidth, legendHeight, numColours, interval, dataType, textColour)
     } else if (numColours <= 2 || numColours > 10) {
-        drawGradientLegend(p5, width, height, legendWidth, legendHeight, numColours, brackets, textColour)
+        drawGradientLegend(p5, width, height, legendWidth, legendHeight, numColours, brackets, textColour, increments)
     } else {
         drawIntervalLegend(p5, width, height, legendWidth, legendHeight, numColours, interval, dataType, textColour)
     }
@@ -225,7 +227,7 @@ export const drawManualIntervalLegend = (p5, width, height, legendWidth, legendH
     // p5.text('No Data', x + numColours * length / 2 + 50 + 20, yStart + 15)
 }
 
-const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numColours, brackets, textColour) => {
+const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numColours, brackets, textColour, increments) => {
     const { high, low, range, displayLow, displayHigh } = brackets
     // const low = brackets.displayLow || brackets.low
     // const high = brackets.displayHigh || brackets.high
@@ -235,6 +237,8 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
 
     const increase = range / width
     let counter = 0
+
+    console.log(increments)
 
     p5.noStroke()
     for (let i = low; i < high; i = i + increase) {
@@ -248,12 +252,16 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
     if (typeof(displayHigh) === 'undefined' || typeof(displayLow) === 'undefined') {
         newLow = low
         newHigh = high
+        //increments = [-35, -25, -15, -5, 0, 5, 15, 25, 30]
+        //increments = [-35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30]
     }
     else {
         newLow = displayLow
         newHigh = displayHigh
+        //increments = [0, 250000, 500000, 750000, 1000000, 1250000]
+        //increments = calculateIntervals(newLow, newHigh, 3, false)
     }
-    let increments = calculateIntervals(newLow, newHigh, 3, false)
+
 
     // let displayRange = displayHigh - displayLow
     // let incr = displayRange/3
@@ -364,13 +372,13 @@ export const drawLogarithmicGradientLegend = (p5, x, y, brackets, textColour) =>
     p5.text('No Data', x + 270 / 2 * width + 50 + 20, y + 15)
 }
 
-export const drawRowLegend = (p5, width, height, brackets, textColour, encoding) => {
+export const drawRowLegend = (p5, width, height, brackets, textColour, encoding, increments) => {
     const lowString = formatNumbers(brackets.displayLow || brackets.low)
     const highString = formatNumbers(brackets.displayHigh || brackets.high)
     const low = brackets.displayLow || brackets.low
     const high = brackets.displayHigh || brackets.high
     const rectWidth = width * 0.7
-    const rectHeight = height * 0.7
+    const rectHeight = height * 0.8
     const startX = (width - rectWidth) / 2
     const startY = (height - rectHeight) / 3
 
@@ -382,13 +390,29 @@ export const drawRowLegend = (p5, width, height, brackets, textColour, encoding)
     p5.fill(textColour)
     p5.textSize(10)
 
-    let increments = calculateIntervals(low, high, 2, false);
+    //let increments = calculateIntervals(low, high, 2, false);
     // if (typeof(displayHigh) === 'undefined' && typeof(displayLow) === 'undefined') {
     //     increments = calculateIntervals(low, high, 2, true)
     // }
     // else {
     //     increments = calculateIntervals(low, high, 2, false)
     // }
+
+    // let newLow, newHigh, increments;
+    // if (typeof(brackets.displayHigh) === 'undefined' || typeof(brackets.displayLow) === 'undefined') {
+    //     // newLow = low
+    //     // newHigh = high
+    //     //increments = [-35, -25, -15, -5, 0, 5, 15, 25, 30]
+    //     //increments = [30, 25, 15, 5, 0, -5, -15, -25, -35]
+    //     increments = [-35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30]
+    // }
+    // else {
+    //     // newLow = displayLow
+    //     // newHigh = displayHigh
+    //     increments = [0, 250000, 500000, 750000, 1000000, 1250000]
+    //     //increments = calculateIntervals(newLow, newHigh, 3, false)
+    // }
+
 
     
     let positions = increments.map(i => calcX(i, startY, rectHeight, low, high)).reverse()
@@ -434,9 +458,9 @@ export const drawRowLegend = (p5, width, height, brackets, textColour, encoding)
 
 export const drawRowYearLegend = (p5, width, height, textColour) => {
     const rectWidth = width * 0.7
-    const rectHeight = height * 0.7
+    const rectHeight = height * 0.5
     const startX = (width - rectWidth) - 7 
-    const startY = (height - rectHeight) / 3
+    const startY = (height - rectHeight) / 2
     const midX  = startX + (((startX + rectWidth) - startX)/2)
     const midY = startY + (((startY + rectHeight) - startY)/2)
 
@@ -517,7 +541,7 @@ export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, 
     }
 }
 
-export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brackets, encoding) => {
+export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brackets, encoding, increments) => {
     const lowString = formatNumbers(brackets.displayLow || brackets.low)
     const highString = formatNumbers(brackets.displayHigh || brackets.high)
     selections = { ...selections, ['coreSize']: 0, ['spiralWidth']: 20 }
@@ -538,17 +562,17 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
         // }
         // else mid = ((brackets.displayHigh - brackets.displayLow)/2)
 
-        let newHigh, newLow;
-        if (typeof(brackets.displayLow) === 'undefined' || typeof(brackets.displayHigh) === 'undefined') {
-            newLow = brackets.low
-            newHigh = brackets.high
-        }
-        else {
-            newLow = brackets.displayLow
-            newHigh = brackets.displayHigh
-        }
+        // let newHigh, newLow;
+        // if (typeof(brackets.displayLow) === 'undefined' || typeof(brackets.displayHigh) === 'undefined') {
+        //     newLow = brackets.low
+        //     newHigh = brackets.high
+        // }
+        // else {
+        //     newLow = brackets.displayLow
+        //     newHigh = brackets.displayHigh
+        // }
 
-        let increments = calculateIntervals(newLow, newHigh, 2, false)
+        // let increments = calculateIntervals(newLow, newHigh, 2, false)
 
         const x = legendWidth * 0.7
         const textColour = themeColours[selections.theme].textColour

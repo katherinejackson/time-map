@@ -1,6 +1,7 @@
+import { scaleLinear } from "d3";
 import { bigData as covidData } from "../data/covidData2022";
 import { data as tradeData } from "../data/tradeData"
-import { tempData as mapData } from "../data/tempData"
+import { tempData as mapData, tempData } from "../data/tempData"
 import { views, dataSets } from "../constants";
 import { alaska } from "../data/locationCoords";
 import { migrationData } from "../data/migrationData";
@@ -246,6 +247,8 @@ export const getData = (view, practice) => {
     if (view === views.SCATTER.val) {
         let data = covidData
 
+        console.log(data)
+
         if (practice) {
             data = getDataByContinent(data, ['Europe'])
             data = getDataByPopulation(data, 60000000)
@@ -282,6 +285,25 @@ export const getData = (view, practice) => {
     } else if (view === views.COMPARISON.val || view === views.MAP.val || view === views.MULTI_COMPARISON.val) {
         const data = mapData
         const dataType = dataSets.TEMP.val
+        const unscaledDataBrackets = getDataBrackets(data)
+
+        // scale the data so it begins evenly at -35 and ends at 30
+        const newScale = scaleLinear()
+        .domain([unscaledDataBrackets.low, unscaledDataBrackets.high])
+        .range([-35, 30]);
+
+        data.forEach(d => {
+            for (let val in d.data) {
+                let temp = []
+                let tempData = d.data[val]
+                for (let i=0; i<tempData.length; i++) {
+                    if (val !== '') temp.push(newScale(tempData[i]))
+                    else temp.push(tempData[i])
+                }
+                d.data[val] = temp
+            }
+        })
+
         const dataBrackets = getDataBrackets(data)
 
 
@@ -291,7 +313,7 @@ export const getData = (view, practice) => {
 
         // getMapDataInfo(data, dataBrackets)
 
-        console.log({ data, dataType, dataBrackets })
+        //console.log({ data, dataType, dataBrackets })
 
         return { data, dataType, dataBrackets }
     }
