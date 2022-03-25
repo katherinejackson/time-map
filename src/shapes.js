@@ -1090,6 +1090,8 @@ export const drawSpiralMonth = (p5, x, y, selections) => {
     }
 }
 
+
+
 export const drawMigrationSpiralYear = (p5, x, y, selections, dataLength) => {
     const { spiralWidth, spiralTightness, coreSize, theme } = selections
     const colourTheme = themeColours[theme]

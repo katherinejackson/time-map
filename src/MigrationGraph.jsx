@@ -62,7 +62,8 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
     const draw = (p5) => {
         p5.clear();
         p5.image(backgroundImage, 0, 0, canvasWidth, canvasHeight)
-        drawMigrationLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, 41)
+        let increments = [0, 500000, 1000000, 1500000, 2000000, 2500000, 3000000]
+        drawMigrationLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, 41, increments)
         drawGlyphs();
     }
 
