@@ -6,12 +6,13 @@ import { drawSpiralMonth, getShapeSize, spiralOutline, legendGraphSpiral, drawMi
 
 
 export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, increments) => {
+    console.log(dataType)
     const legendWidth = 240
     const legendHeight = shape === 1 ? 150 : 150
     const colourLegendWidth = 240 + (240/3)
     const colourLegendHeight = 30
     let legendGraphics = p5.createGraphics(legendWidth, legendHeight)
-    drawShapeLegend(legendGraphics, legendWidth, legendHeight, selections, dataBrackets, shape, encoding, increments)
+    drawShapeLegend(legendGraphics, legendWidth, legendHeight, selections, dataBrackets, shape, encoding, dataType, increments)
     p5.image(legendGraphics, canvasWidth - legendWidth, 0)
 
     let yearGraphics = p5.createGraphics(legendWidth/3, legendHeight)
@@ -45,7 +46,7 @@ export const drawMigrationLegend = (p5, selections, dataBrackets, shape, encodin
     }
 
 }
-export const drawShapeLegend = (p5, width, height, selections, brackets, shape, encoding, increments) => {
+export const drawShapeLegend = (p5, width, height, selections, brackets, shape, encoding, dataType, increments) => {
     const { theme } = selections
     const textColour = themeColours[theme].textColour
     const backgroundColour = themeColours[theme].pinBackground
@@ -57,7 +58,7 @@ export const drawShapeLegend = (p5, width, height, selections, brackets, shape, 
     if (shape === 2) {
         drawRowLegend(p5, width, height, brackets, textColour, encoding, increments)
     } else if (shape === 1) {
-        drawSpiralLegend(p5, width, height, selections, brackets, encoding, increments)
+        drawSpiralLegend(p5, width, height, selections, brackets, encoding, dataType, increments)
     }
 }
 
@@ -101,8 +102,6 @@ export const drawColourLegend = (p5, legendWidth, legendHeight, selections, inte
     const backgroundColour = themeColours[theme].pinBackground
     const width = legendWidth * 0.85
     const height = legendHeight * 0.3
-
-    console.log(increments)
 
     p5.fill(backgroundColour)
     p5.stroke(backgroundColour)
@@ -238,8 +237,6 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
 
     const increase = range / width
     let counter = 0
-
-    console.log(increments)
 
     p5.noStroke()
     for (let i = low; i < high; i = i + increase) {
@@ -555,17 +552,13 @@ export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, 
     }
 }
 
-export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brackets, encoding, increments) => {
-    const lowString = formatNumbers(brackets.displayLow || brackets.low)
-    const highString = formatNumbers(brackets.displayHigh || brackets.high)
+export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brackets, encoding, dataType, increments) => {
     selections = { ...selections, ['coreSize']: 0, ['spiralWidth']: 20 }
     const { rightRadius, maxRadius, width, height } = getShapeSize(selections, shapes.SPIRAL.id, 365)
 
     const startX = encoding === 1 || encoding === 3 ? legendWidth * 0.30 : legendWidth / 2
     const startY = legendHeight / 2
     const textColour = themeColours[selections.theme].textColour
-
-
 
     spiralOutline(p5, startX, startY, selections)
     drawSpiralMonth(p5, startX, startY, selections)
@@ -579,7 +572,7 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
         const colourTheme = themeColours[theme]
         let outerCore = coreSize + spiralTightness * 365 + spiralWidth
         let angle = -Math.PI / 2
-        const endPoints = calcPointIndicatorPosition(p5, x, startY, rightRadius, brackets, selections, increments)
+        const endPoints = calcPointIndicatorPosition(p5, x, startY, rightRadius, brackets, selections, dataType, increments)
 
         p5.fill(colourTheme.textColour)
         p5.textAlign(p5.CENTER, p5.CENTER)
@@ -592,7 +585,6 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
                 let y2 = startY + p5.sin(angle) * outerCore
                 positions.push([x2, y2])
             } 
-
             angle += radianPerMonth / 2.5
             outerCore += (spiralTightness * 15)
         }
@@ -600,7 +592,6 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
         for (let i=0; i<increments.length; i++) {
             p5.stroke(colourTheme.textColour, 100)
             p5.line(endPoints[increments[i]][0], endPoints[increments[i]][1], positions[i][0], positions[i][1])
-
         }
 
         for (let i=0; i<increments.length; i++) {
@@ -613,27 +604,51 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
 
         // Draw the line for the last item on scale
         p5.stroke(colourTheme.textColour, 100)
-        p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] + 10, positions[positions.length-1][1]-10)
-        p5.ellipse(positions[positions.length-1][0] + 10, positions[positions.length-1][1]-8, 2, 2)
+        if (dataType === 'TEMP') {
+            p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] + 10, positions[positions.length-1][1]-10)
+            p5.ellipse(positions[positions.length-1][0] + 10, positions[positions.length-1][1]-8, 2, 2)
+        }
+        else {
+            p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] - 15, positions[positions.length-1][1]-5)
+            p5.ellipse(positions[positions.length-1][0] - 15, positions[positions.length-1][1] - 5, 2, 2)
+        }
+        
+  
+        
     }
 }
 
-export const calcPointIndicatorPosition = (p5, startX, startY, rightRadius, brackets, selections, increments) => {
-    const { spiralWidth, spiralTightness, coreSize, theme } = selections
-    const increment = (((startX + rightRadius) - startX) / brackets.range) - 0.15
+export const calcPointIndicatorPosition = (p5, startX, startY, rightRadius, brackets, selections, dataType, increments) => {
+    const low = (brackets.displayLow || brackets.low)
+    const high = (brackets.displayHigh || brackets.high)
+    const range = high - low
+    const { spiralWidth, spiralTightness, coreSize } = selections
+
+    let shiftAmount = 0
+    if (dataType === 'TEMP') shiftAmount = 0.15
+
+    const increment = (((startX + rightRadius) - startX) / range) - shiftAmount
+    console.log(increment)
     let innerRing = coreSize
     let angle = -Math.PI / 2
     let endPoints = {}
 
     for (let i=0; i<increments.length; i++) {
-        const val = increments[i] - brackets.low
+        const val = increments[i] - low
         const x = startX + p5.cos(angle) * (innerRing + val * increment)
         const y = startY + p5.sin(angle) * (innerRing + val * increment)
         p5.ellipse(x, y, 2, 2)
         endPoints[increments[i]] = [x, y]
+
+        let angleDivisor = 1
+        let tightnessShift = 2
+        if (dataType === 'TEMP') {
+            angleDivisor = 1.25
+            tightnessShift = 0
+        } 
                
-        angle += radianPerMonth/1.25
-        innerRing += spiralTightness
+        angle += radianPerMonth/angleDivisor
+        innerRing += (spiralTightness - tightnessShift)
     }
 
     return endPoints
