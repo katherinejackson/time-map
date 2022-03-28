@@ -245,7 +245,6 @@ const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
     }
 
     const setPins = () => {
-        console.log(locations)
         const pins = addLocations(locations, selections, shape, mapPin, map)
         setLocationPins(updateGlyphs(pins))
     }

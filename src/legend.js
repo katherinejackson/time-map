@@ -571,122 +571,72 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
     drawSpiralMonth(p5, startX, startY, selections)
 
     if (encoding === 1 || encoding === 3) {
-        // let mid;
-        // if (typeof(brackets.displayLow) === 'undefined' || typeof(brackets.displayHigh) === 'undefined') {
-        //     mid = Math.round(((brackets.high - brackets.low)/2) * 10)/10
-        // }
-        // else mid = ((brackets.displayHigh - brackets.displayLow)/2)
-
-        // let newHigh, newLow;
-        // if (typeof(brackets.displayLow) === 'undefined' || typeof(brackets.displayHigh) === 'undefined') {
-        //     newLow = brackets.low
-        //     newHigh = brackets.high
-        // }
-        // else {
-        //     newLow = brackets.displayLow
-        //     newHigh = brackets.displayHigh
-        // }
-
-        // let increments = calculateIntervals(newLow, newHigh, 2, false)
-
-
-
-
         const x = legendWidth * 0.7
         const textColour = themeColours[selections.theme].textColour
         spiralOutline(p5, x, startY, selections)
-        p5.stroke(textColour, 150)
-        // p5.line(x, startY, x + maxRadius-20, startY - 30)
-        // p5.line(x+(((x + (rightRadius-10)) - x)/2), startY, x + maxRadius-15, startY)
-        // p5.line(x + rightRadius-20, startY+20, x + maxRadius-10, startY+25)
 
-        console.log(x, x+rightRadius)
-
-        const scaled = scaleLinear()
-        .domain([increments[0], increments[increments.length-1]])
-        .range([x, x+rightRadius-15]);
-
-        let start = 5 * increments.length
-        // increments = increments.reverse()
-        // for (let i=0; i<increments.length; i++) {
-        //     p5.textSize(10)
-        //     p5.text(increments[i], x + maxRadius, startY + start)
-        //     p5.line(scaled(increments[i]), startY + start, x + maxRadius, startY+ start)
-        //     //p5.fill(255, 0, 0)
-        //     //p5.ellipse(scaled(increments[i]), startY, 2, 2)
-        //     start = start - 10
-        // }
-
-        //drawSpiralMonth(p5, x, startY, selections)
-        
         const { spiralWidth, spiralTightness, coreSize, theme } = selections
         const colourTheme = themeColours[theme]
-        let innerCore = coreSize
         let outerCore = coreSize + spiralTightness * 365 + spiralWidth
         let angle = -Math.PI / 2
+        const endPoints = calcPointIndicatorPosition(p5, x, startY, rightRadius, brackets, selections, increments)
+
         p5.fill(colourTheme.textColour)
         p5.textAlign(p5.CENTER, p5.CENTER)
     
+        angle = -Math.PI / 2
         let positions = []
         for (let i = 0; i <= increments.length * 2; i++) {
-
- 
-
-
             if (i % 2 === 0) {
-                let x1 = x + p5.cos(angle) * innerCore
-                let y1 = startY + p5.sin(angle) * innerCore
                 let x2 = x + p5.cos(angle) * outerCore
                 let y2 = startY + p5.sin(angle) * outerCore
-
-                console.log(x1, y1)
-
-                p5.stroke(colourTheme.textColour, 100)
-                p5.line(x1, y1, x2, y2)
-                p5.noStroke()
-
-                positions.push([x1, y1, x2, y2])
+                positions.push([x2, y2])
             } 
 
             angle += radianPerMonth / 2.5
-    
-            innerCore += (spiralTightness * 15)
             outerCore += (spiralTightness * 15)
         }
 
-        const increment = (((x + rightRadius) - x) / brackets.range) - 0.15
-        let innerRing = coreSize
-        angle = -Math.PI / 2
-        let oldX = x
+        for (let i=0; i<increments.length; i++) {
+            p5.stroke(colourTheme.textColour, 100)
+            p5.line(endPoints[increments[i]][0], endPoints[increments[i]][1], positions[i][0], positions[i][1])
+
+        }
 
         for (let i=0; i<increments.length; i++) {
             p5.fill(textColour)
             p5.noStroke()
             p5.textAlign(p5.LEFT, p5.CENTER)
             p5.textSize(8)
-            p5.text(formatNumbers(increments[i]), positions[i+1][2], positions[i+1][3])
-
-            
-
-            const val = increments[i] - brackets.low
-            const x = oldX + p5.cos(angle) * (innerRing + val * increment)
-            const y = startY + p5.sin(angle) * (innerRing + val * increment)
-            p5.ellipse(x, y, 2, 2)
-
-                   
-            angle += radianPerMonth/1.25
-            innerRing +=( spiralTightness)
+            p5.text(formatNumbers(increments[i]), positions[i+1][0], positions[i+1][1])
         }
-   
-        
-        p5.fill(textColour)
-        p5.noStroke()
-        p5.textAlign(p5.LEFT, p5.CENTER)
-        p5.textSize(10)
-        //p5.text(lowString, x + maxRadius-17, startY - 30)
-        //p5.text(formatNumbers(Math.round(increments[1] * 10)/10), x+maxRadius-14, startY)
-        //p5.text(highString, x + maxRadius -10, startY + 25)
+
+        // Draw the line for the last item on scale
+        p5.stroke(colourTheme.textColour, 100)
+        p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] + 10, positions[positions.length-1][1]-10)
+        p5.ellipse(positions[positions.length-1][0] + 10, positions[positions.length-1][1]-8, 2, 2)
     }
+}
+
+export const calcPointIndicatorPosition = (p5, startX, startY, rightRadius, brackets, selections, increments) => {
+    const { spiralWidth, spiralTightness, coreSize, theme } = selections
+    const increment = (((startX + rightRadius) - startX) / brackets.range) - 0.15
+    let innerRing = coreSize
+    let angle = -Math.PI / 2
+    let endPoints = {}
+
+    for (let i=0; i<increments.length; i++) {
+        const val = increments[i] - brackets.low
+        const x = startX + p5.cos(angle) * (innerRing + val * increment)
+        const y = startY + p5.sin(angle) * (innerRing + val * increment)
+        p5.ellipse(x, y, 2, 2)
+        endPoints[increments[i]] = [x, y]
+               
+        angle += radianPerMonth/1.25
+        innerRing += spiralTightness
+    }
+
+    return endPoints
 }
 
 export const drawMigrationSpiralLegend = (p5, legendWidth, legendHeight, selections, brackets, encoding, dataLength) => {
