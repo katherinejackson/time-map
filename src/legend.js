@@ -6,17 +6,19 @@ import { drawSpiralMonth, getShapeSize, spiralOutline, legendGraphSpiral, drawMi
 
 
 export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, increments) => {
-    const legendWidth = 240
+    const legendWidth = encoding === 2 ? 150 : 240
     const legendHeight = shape === 1 ? 150 : 150
-    const colourLegendWidth = 240 + (240/3)
+    const colourLegendWidth = encoding === 2 ? 2*legendWidth : 240+240/3
     const colourLegendHeight = 30
+    const yearLegendWidth = encoding === 2 ? 150 : 240/3
+
     let legendGraphics = p5.createGraphics(legendWidth, legendHeight)
     drawShapeLegend(legendGraphics, legendWidth, legendHeight, selections, dataBrackets, shape, encoding, dataType, increments)
     p5.image(legendGraphics, canvasWidth - legendWidth, 0)
 
-    let yearGraphics = p5.createGraphics(legendWidth/3, legendHeight)
-    drawYearLegend(yearGraphics, legendWidth/3, legendHeight, selections, shape, increments)
-    p5.image(yearGraphics, canvasWidth - legendWidth - (legendWidth/3), 0)
+    let yearGraphics = p5.createGraphics(legendWidth, legendHeight)
+    drawYearLegend(yearGraphics, yearLegendWidth, legendHeight, selections, shape, increments)
+    p5.image(yearGraphics, canvasWidth - legendWidth - yearLegendWidth, 0)
 
     if (encoding !== 1) {
         let colourLegendGraphics = p5.createGraphics(colourLegendWidth, colourLegendHeight)
@@ -484,7 +486,7 @@ export const drawRowYearLegend = (p5, width, height, textColour) => {
 }
 
 export const drawSpiralYearLegend = (p5, width, height, selections) => {
-    twoYearSpiralOutline(p5, width/2 + 6, height/2 ,selections)
+    twoYearSpiralOutline(p5, width/2 + 10, height/2 ,selections)
     const { theme } = selections
     const textColour = themeColours[theme].textColour
 
@@ -717,8 +719,8 @@ export const drawMigrationSpiralLegend = (p5, legendWidth, legendHeight, selecti
 
         // Draw the line for the last item on scale
         p5.stroke(colourTheme.textColour, 100)
-        p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0], positions[positions.length-1][1]-20)
-        p5.ellipse(positions[positions.length-1][0], positions[positions.length-1][1]-20, 2, 2)
+        p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] + 10, positions[positions.length-1][1]-25)
+        p5.ellipse(positions[positions.length-1][0] + 10, positions[positions.length-1][1]-25, 2, 2)
         
   
 

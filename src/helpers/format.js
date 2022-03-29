@@ -2,7 +2,11 @@ export const formatNumbers = (num) => {
     if (num >= 1000000000) {
         return `${Math.floor(num/1000000000)} B`
     } else if (num >= 1000000) {
-        return `${(num/1000000).toFixed(1)} M`
+        let temp = (num/1000000).toFixed(1)
+        let splitNum = temp.split(".")
+        if (splitNum[1] === '0') return `${splitNum[0]} M`
+        else return `${temp} M`
+        //return `${(num/1000000).toFixed(1)} M`
     } else if (num >= 1000) {
         return `${Math.floor(num/1000)} K`
     } else {
