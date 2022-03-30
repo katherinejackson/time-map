@@ -247,8 +247,6 @@ export const getData = (view, practice) => {
     if (view === views.SCATTER.val) {
         let data = covidData
 
-        console.log(data)
-
         if (practice) {
             data = getDataByContinent(data, ['Europe'])
             data = getDataByPopulation(data, 60000000)
@@ -257,8 +255,6 @@ export const getData = (view, practice) => {
             //console.log("d ", data)
             data = getDataByPopulation(data, 10000000)
         }
-
-
 
         const dataBrackets = getDataBracketsMultiYear(data, 'cases')
         const logData = getLogData(data)
@@ -319,7 +315,7 @@ export const getData = (view, practice) => {
     }
     else if (view === views.MIGRATION_GRAPH.val) {
         const data = migrationData;
-        //console.log("data ", data)
+        console.log("data ", data)
         const dataType = dataSets.MIGRATION.val
         const dataBrackets = getMigrationDataBrackets(migrationData)
         const logData = getLogMigrationData(data);

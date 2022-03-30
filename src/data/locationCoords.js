@@ -249,7 +249,7 @@ export const sask = [
 export const yukon = [
     {
         "name": "Whitehorse",
-        "x": 60.7,
+        "x": 59.7,
         "y": -135.36
     },
     {
@@ -260,6 +260,6 @@ export const yukon = [
     {
         "name": "Faro",
         "x": 62.2,
-        "y": -133.5
+        "y": -130.5
     }
 ]

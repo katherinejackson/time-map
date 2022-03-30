@@ -16,7 +16,7 @@ import GraphView from './GraphView'
 import MultiComparison from './MultiComparison'
 import MigrationGraph from './MigrationGraph';
 
-const options = window.options || { view: null, shape: 2, encoding: 1, practice: true };
+const options = window.options || { view: null, shape: 2, encoding: 1, practice: false };
 
 const study = window.options !== undefined
 
@@ -31,7 +31,7 @@ const App = () => {
     const locations = options.practice ? yukon : alaska
 
     selections['practice'] = options.practice
-
+    
     useEffect(() => {
         setX(null)
         setY(null)

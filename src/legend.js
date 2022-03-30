@@ -431,7 +431,6 @@ export const drawRowLegend = (p5, width, height, brackets, textColour, encoding,
 
     
     let positions = increments.map(i => calcY(i, startY, rectHeight, low, high))  //.reverse()
-    console.log(positions)
 
     if (encoding === 1 || encoding === 3) {
         p5.textAlign(p5.RIGHT, p5.BOTTOM)
@@ -558,7 +557,7 @@ export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, 
 }
 
 export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brackets, encoding, dataType, increments) => {
-    selections = { ...selections, ['coreSize']: 0, ['spiralWidth']: 20 }
+    selections = { ...selections, ['coreSize']: 0, ['spiralWidth']: 20, ['spiralTightness']: 0.03 }
     const { rightRadius, maxRadius, width, height } = getShapeSize(selections, shapes.SPIRAL.id, 365)
 
     const startX = encoding === 1 || encoding === 3 ? legendWidth * 0.30 : legendWidth / 2
@@ -609,20 +608,27 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
             p5.text(formatNumbers(increments[i]), positions[i+1][0], positions[i+1][1])
         }
 
-        let lastElementXShift = 15
-        let lastElementYShift = 8;
-        if (selections.practice) {
-            lastElementXShift = 20
-            lastElementYShift = 15
-        }
+
 
         // Draw the line for the last item on scale
         p5.stroke(colourTheme.textColour, 100)
         if (dataType === 'TEMP') {
-            p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] + 10, positions[positions.length-1][1]-10)
-            p5.ellipse(positions[positions.length-1][0] + 10, positions[positions.length-1][1]-8, 2, 2)
+            let lastElementXShift = 10
+            let lastElementYShift = 8;
+            if (selections.practice) {
+                lastElementXShift = 5
+                lastElementYShift = 10
+            }
+            p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] + lastElementXShift, positions[positions.length-1][1]-lastElementYShift)
+            p5.ellipse(positions[positions.length-1][0] + lastElementXShift, positions[positions.length-1][1]- lastElementYShift, 2, 2)
         }
         else {
+            let lastElementXShift = 15
+            let lastElementYShift = 8;
+            if (selections.practice) {
+                lastElementXShift = 20
+                lastElementYShift = 15
+            }
             p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] - lastElementXShift, positions[positions.length-1][1]-lastElementYShift)
             p5.ellipse(positions[positions.length-1][0] - lastElementXShift, positions[positions.length-1][1] - lastElementYShift, 2, 2)
         }
@@ -669,15 +675,12 @@ export const calcPointIndicatorPosition = (p5, startX, startY, rightRadius, brac
 }
 
 export const drawMigrationSpiralLegend = (p5, legendWidth, legendHeight, selections, brackets, encoding, dataType, dataLength, increments) => {
-    const lowString = formatNumbers(brackets.displayLow || brackets.low)
-    const highString = formatNumbers(brackets.displayHigh || brackets.high)
-    selections = { ...selections, ['coreSize']: 0, ['spiralWidth']: 20 }
+    selections = { ...selections, ['coreSize']: 0, ['spiralWidth']: 20, ['spiralTightness']: 0.03 }
     const { rightRadius, maxRadius, width, height } = getShapeSize(selections, shapes.SPIRAL.id, dataLength)
 
     const startX = encoding === 1 || encoding === 3 ? legendWidth * 0.37 : legendWidth / 2
     const startY = legendHeight / 2 + 10
     const textColour = themeColours[selections.theme].textColour
-
 
     spiralOutline(p5, startX, startY, selections, dataLength)
     drawMigrationSpiralYear(p5, startX, startY, selections, dataLength)
