@@ -32,7 +32,6 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
     const [hover, setHover] = useState(null)
     const interval = getManualInterval(dataBrackets, numColours, dataType)
 
-    console.log(dataBrackets)
 
     useEffect(() => {
         if (p5) {

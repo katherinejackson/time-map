@@ -4,6 +4,7 @@ import { scaleLinear } from "d3";
 import Sketch from "react-p5";
 import { drawMigrationLegend } from "./legend";
 import { getRoundedInterval } from "./helpers/intervals";
+import { filterMigrationData } from "./helpers/data";
 import { migrationRow, getShapeSize,  getPinAdjustment, migrationSpiral } from "./shapes";
 import { shapes, themeColours } from "./constants";
 import { onClick, onHover } from "./helpers/studyEventHandlers";
@@ -91,7 +92,10 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
                 height,
             }
         });
-        setPts(newPts);
+        // Decide what countries to display depending on whether practice mode is on/off
+        const practiceCountries = ['Italy>France', 'Romania>Germany', 'Bulgaria>Turkey']
+        let newPoints = filterMigrationData(newPts, practiceCountries, selections.practice)
+        setPts(newPoints);
     }
 
 
@@ -106,11 +110,11 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
                 height,
             }
         });
+
         setPts(newPts)
     }
 
     const drawGlyphs = () => {
-        // console.log(pts)
         Object.keys(pts).forEach((id) => {
             let pt = pts[id]
             if (id !== hover) {

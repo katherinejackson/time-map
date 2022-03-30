@@ -243,6 +243,19 @@ const getDataByContinent = (data, continents) => {
     return newData
 }
 
+export const filterMigrationData = (data, countries, isPractice) => {
+    const newData = {}
+    Object.keys(data).forEach(country => {
+        if (countries.includes(country)) {
+            if (isPractice) newData[country] = data[country]
+        }
+        else if (!countries.includes(country)) {
+            if (!isPractice) newData[country] = data[country]
+        }
+    })
+    return newData
+}
+
 export const getData = (view, practice) => {
     if (view === views.SCATTER.val) {
         let data = covidData
@@ -279,6 +292,9 @@ export const getData = (view, practice) => {
         return { data: tradeData, dataType, dataBrackets, variable: var1 }
 
     } else if (view === views.COMPARISON.val || view === views.MAP.val || view === views.MULTI_COMPARISON.val) {
+        
+
+
         const data = mapData
         const dataType = dataSets.TEMP.val
         const unscaledDataBrackets = getDataBrackets(data)
@@ -315,9 +331,8 @@ export const getData = (view, practice) => {
     }
     else if (view === views.MIGRATION_GRAPH.val) {
         const data = migrationData;
-        console.log("data ", data)
         const dataType = dataSets.MIGRATION.val
-        const dataBrackets = getMigrationDataBrackets(migrationData)
+        const dataBrackets = getMigrationDataBrackets(data)
         const logData = getLogMigrationData(data);
         const logDataBrackets = getMigrationDataBrackets(logData)
         const combinedBrackets = {...logDataBrackets, displayHigh: dataBrackets.high, displayLow: dataBrackets.low}

@@ -551,8 +551,6 @@ export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, 
         for (let j=0; j< migrationYears[i]; j++) {
             p5.text(migrationYears[i][j], x, startY + (j*5) + (rectHeight/4))
         }
-        
-        
     }
 }
 

@@ -31,7 +31,6 @@ const App = () => {
     const locations = options.practice ? yukon : alaska
 
     selections['practice'] = options.practice
-    
     useEffect(() => {
         setX(null)
         setY(null)
