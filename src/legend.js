@@ -6,11 +6,17 @@ import { drawSpiralMonth, getShapeSize, spiralOutline, legendGraphSpiral, drawMi
 
 
 export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, increments) => {
-    const legendWidth = encoding === 2 ? 150 : 240
-    const legendHeight = shape === 1 ? 150 : 150
-    const colourLegendWidth = encoding === 2 ? 2*legendWidth : 240+240/3
+    let legendWidth = encoding === 2 ? 150 : 240
+    const legendHeight = 150
     const colourLegendHeight = 30
-    const yearLegendWidth = encoding === 2 ? 150 : 240/3
+    let yearLegendWidth = encoding === 2 ? 150 : 240/3
+    // increase size of row legend when encoding is colour
+    if (encoding === 2 && shape === 2) {
+        yearLegendWidth = 240/3
+        legendWidth = 240
+    }
+
+    const colourLegendWidth = legendWidth + yearLegendWidth
 
     let legendGraphics = p5.createGraphics(legendWidth, legendHeight)
     drawShapeLegend(legendGraphics, legendWidth, legendHeight, selections, dataBrackets, shape, encoding, dataType, increments)
@@ -507,8 +513,6 @@ export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, 
     const startX = ((width - rectWidth) / 2) + 10
     const startY = (height - rectHeight) / 2
 
-    console.log(brackets)
-
     p5.stroke(textColour)
     p5.noFill()
     p5.rect(startX, startY, rectWidth, rectHeight)
@@ -605,6 +609,13 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
             p5.text(formatNumbers(increments[i]), positions[i+1][0], positions[i+1][1])
         }
 
+        let lastElementXShift = 15
+        let lastElementYShift = 8;
+        if (selections.practice) {
+            lastElementXShift = 20
+            lastElementYShift = 15
+        }
+
         // Draw the line for the last item on scale
         p5.stroke(colourTheme.textColour, 100)
         if (dataType === 'TEMP') {
@@ -612,8 +623,8 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
             p5.ellipse(positions[positions.length-1][0] + 10, positions[positions.length-1][1]-8, 2, 2)
         }
         else {
-            p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] - 15, positions[positions.length-1][1]-5)
-            p5.ellipse(positions[positions.length-1][0] - 15, positions[positions.length-1][1] - 5, 2, 2)
+            p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] - lastElementXShift, positions[positions.length-1][1]-lastElementYShift)
+            p5.ellipse(positions[positions.length-1][0] - lastElementXShift, positions[positions.length-1][1] - lastElementYShift, 2, 2)
         }
         
   

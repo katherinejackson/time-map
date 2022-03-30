@@ -6,13 +6,11 @@ import { spiral, row, getShapeSize,  getPinAdjustment, migrationRow } from "./sh
 import DataContext from "./DataContext";
 import { getManualInterval } from "./helpers/intervals";
 import { shapes, themeColours } from "./constants";
-import { formatNumbers } from "./helpers/format"
+import { formatNumbers, formatYAxisNumbers } from "./helpers/format"
 import { onClick, onHover } from "./helpers/studyEventHandlers";
 
 const canvasWidth = window.options ? 1200 : window.innerWidth * 0.95
 const canvasHeight = window.options ? 800 : window.innerHeight * 0.95
-
-
 
 
 const xBorder = 50
@@ -33,6 +31,8 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
     const [pts, setPts] = useState({})
     const [hover, setHover] = useState(null)
     const interval = getManualInterval(dataBrackets, numColours, dataType)
+
+    console.log(dataBrackets)
 
     useEffect(() => {
         if (p5) {
@@ -104,7 +104,9 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
         drawXAxis(p5)
         drawYAxis(p5)
 
-        const increments = [0, 250000, 500000, 750000, 1000000, 1250000]
+        let increments;
+        if (practice) increments = [0, 75000, 150000, 225000, 300000, 375000, 450000]
+        else increments = [0, 250000, 500000, 750000, 1000000, 1250000]
         drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, increments)
         drawGlyphs()
 
@@ -233,7 +235,7 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
         let yWalker = canvasHeight - yBorder
         for (let i = 0; i < numSteps; i = i + 1) {
             p5.textAlign(p5.RIGHT, p5.CENTER)
-            p5.text(formatNumbers(Math.pow(2, i + logLow)), xBorder - 2, yWalker)
+            p5.text(formatYAxisNumbers(Math.pow(2, i + logLow)), xBorder - 2, yWalker)
             yWalker = yWalker - spacePer
         }
 

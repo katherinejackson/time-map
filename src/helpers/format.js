@@ -14,6 +14,18 @@ export const formatNumbers = (num) => {
     }
 }
 
+export const formatYAxisNumbers = (num) => {
+    if (num >= 1000000000) {
+        return `${Math.floor(num/1000000000)} B`
+    } else if (num >= 1000000) {
+        return `${Math.floor(num/1000000)} M`
+    } else if (num >= 1000) {
+        return `${Math.floor(num/1000)} K`
+    } else {
+        return num
+    }
+}
+
 export const formatTradeNumbers = (num) => {
     if (num >= 1000000) {
         return `${Math.floor(num/1000000)} B`
