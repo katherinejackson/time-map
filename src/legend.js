@@ -30,9 +30,11 @@ export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interv
         let colourLegendGraphics = p5.createGraphics(colourLegendWidth, colourLegendHeight)
         drawColourLegend(colourLegendGraphics, colourLegendWidth, colourLegendHeight, selections, interval, dataType, dataBrackets, increments)
         p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight)
-
-        //p5.save(colourLegendGraphics, "clegend_scatter.png")
+        
     }
+    //p5.save(legendGraphics, "dlegend_map.png")
+ 
+    
 }
 
 export const drawMigrationLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, dataLength, increments) => {
@@ -43,14 +45,15 @@ export const drawMigrationLegend = (p5, selections, dataBrackets, shape, encodin
     let legendGraphics = p5.createGraphics(legendWidth, legendHeight)
     drawShapeMigrationLegend(legendGraphics, legendWidth, legendHeight, selections, dataBrackets, shape, encoding, dataType, dataLength, increments)
     p5.image(legendGraphics, canvasWidth - legendWidth, 0)
-    // p5.save(legendGraphics, "legend-MIGRATION_GRAPH.png");
+    //p5.save(legendGraphics, "legend-MIGRATION_GRAPH.png");
 
     if (encoding !== 1) {
         let colourLegendGraphics = p5.createGraphics(colourLegendWidth, colourLegendHeight)
         drawColourLegend(colourLegendGraphics, colourLegendWidth, colourLegendHeight, selections, interval, dataType, dataBrackets, increments)
         p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight - 5)
-        //p5.save(colourLegendGraphics, "legend-mg.png");
+       // p5.save(colourLegendGraphics, "legend-mg.png");
     }
+
 
 }
 export const drawShapeLegend = (p5, width, height, selections, brackets, shape, encoding, dataType, increments) => {
@@ -278,7 +281,7 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
     // increments.push(displayHigh)
     // console.log(increments)
 
-    p5.textSize(12)
+    p5.textSize(10)
     p5.fill(textColour)
     p5.textAlign(p5.CENTER, p5.TOP)
     increments.forEach(num => {
@@ -466,7 +469,7 @@ export const drawRowLegend = (p5, width, height, brackets, textColour, encoding,
     p5.textAlign(p5.CENTER, p5.CENTER)
     for (let i = 0; i < 12; i++) {
         let x = startX + i * spacePerMonth + spacePerMonth / 2
-        p5.textSize(6)
+        p5.textSize(8)
         p5.text(abbreviatedMonths[i], x, startY + rectHeight / 2)
     }
 }
@@ -483,6 +486,7 @@ export const drawRowYearLegend = (p5, width, height, textColour) => {
     p5.rect(startX, startY, rectWidth, rectHeight)
     p5.line(startX, midY, startX + rectWidth, midY)
 
+    p5.textSize(10)
     p5.fill(textColour)
     p5.noStroke()
     p5.text("2020", midX - 13, midY - 10)
@@ -518,7 +522,7 @@ export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, 
 
     p5.noStroke()
     p5.fill(textColour)
-    p5.textSize(10)
+    p5.textSize(8)
 
     //const increments = calculateIntervals(low, high, 2, false)
     let positions = increments.map(i => calcX(i, startY, rectHeight, low, high)).reverse()
@@ -526,7 +530,7 @@ export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, 
     if (encoding === 1 || encoding === 3) {
         p5.textAlign(p5.RIGHT, p5.BOTTOM)
         for (let i=0; i<increments.length; i++) {
-            p5.text(formatNumbers(increments[i]), startX - 5, positions[i] + 10)
+            p5.text(formatNumbers(increments[i]), startX - 5, positions[i] + 5)
         }
         // p5.textAlign(p5.RIGHT, p5.BOTTOM)
         // p5.text(lowString, startX - 5, startY + rectHeight)
@@ -546,10 +550,9 @@ export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, 
 
     for (let i = 0; i < dataLength; i++) {
         let x = startX + i * spacePerMonth + spacePerMonth / 2
-        p5.textSize(6)
         // draw year labels horizonally
         for (let j=0; j< migrationYears[i]; j++) {
-            p5.text(migrationYears[i][j], x, startY + (j*5) + (rectHeight/4))
+            p5.text(migrationYears[i][j], x, startY + (j*6) + (rectHeight/4))
         }
     }
 }
@@ -602,7 +605,7 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
             p5.fill(textColour)
             p5.noStroke()
             p5.textAlign(p5.LEFT, p5.CENTER)
-            p5.textSize(8)
+            p5.textSize(10)
             p5.text(formatNumbers(increments[i]), positions[i+1][0], positions[i+1][1])
         }
 

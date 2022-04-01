@@ -321,7 +321,6 @@ export const migrationRow = (
             }
         } else if (fillMissing) {
             p5.fill(100, 100)
-            //p5.fill( 98, 101, 103 )
 
             if (encoding === 2) {
                 p5.rect(startX + i * dayWidth, baseline - rowHeight, 1, rowHeight)
@@ -1072,14 +1071,14 @@ export const drawSpiralMonth = (p5, x, y, selections) => {
             let x2 = x + p5.cos(angle) * outerCore
             let y2 = y + p5.sin(angle) * outerCore
 
-            p5.stroke(colourTheme.textColour, 100)
+            p5.stroke(colourTheme.textColour, 200)
             p5.line(x1, y1, x2, y2)
             p5.noStroke()
         } else {
             let xText = x + p5.cos(angle) * outerCore
             let yText = y + p5.sin(angle) * outerCore
 
-            p5.textSize(6)
+            p5.textSize(8)
             p5.text(abbreviatedMonths[Math.floor(i / 2)], xText, yText)
         }
 

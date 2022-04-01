@@ -145,7 +145,9 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
 
             p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(colourTheme.textColour)
-            p5.text(pin.name, pin.x, pin.y + height * 0.75 + 7)
+            //p5.text(pin.name, pin.x, pin.y + height * 0.75 + 7)
+            let newName = pin.name.split(">").join(' \u2192\ ')
+            p5.text(newName, pin.x, pin.y + height * 0.75 + 7)
         }
     }
 
