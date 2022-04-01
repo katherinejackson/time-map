@@ -53,6 +53,7 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
 
     const reset = () => {
         let newPts = {}
+        console.log(data)
 
         Object.keys(data).forEach(id => {
             let x = calcX(data[id]['human_development_index'])
