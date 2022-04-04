@@ -128,9 +128,8 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
             const hoverpg = p5.createGraphics(pin.width, pin.height)
             hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
 
-            let mag = 8
+            let mag = 5.5
             if (selections.spiralWidth === 5) mag = 12.5
-            else if (selections.spiralWidth === 15) mag = 6
 
             if (!mapPin) {
                 p5.fill(colourTheme.pinBackground, 100)

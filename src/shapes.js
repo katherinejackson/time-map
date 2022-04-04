@@ -292,13 +292,11 @@ export const migrationRow = (
 
     for (let i=0; i<locationData.length; i++) {
         let year = locationData[i];
-
         if (year !== -1) {
+    
             // distance
             if (encoding === 1) {
-                // p5.fill(colourTheme.textColour)
-                p5.fill(249, 231, 159)
-       
+                p5.fill(colourTheme.textColour)
             } else {
                 setColour(p5, year, numColours, interval, dataType)
             }
@@ -308,7 +306,7 @@ export const migrationRow = (
                 // console.log("baseline ", baseline)
                 // console.log("rowHeight ", rowHeight)
                 
-                p5.rect(startX + i * dayWidth, baseline - rowHeight, 1, rowHeight)
+                p5.rect(startX + i * dayWidth * magnification, baseline - rowHeight, magnification, rowHeight)
             } else {
                 // console.log("bl ", baseline)
                 // console.log("year ", year)
@@ -319,11 +317,10 @@ export const migrationRow = (
                 let val = baseline - ((year - interval.low) * increment)
                 //console.log("x ", startX + i * dayWidth, "y ", val)
                 p5.noStroke()
-                p5.ellipse(startX + i * dayWidth, val+3, 1, 1)
+                p5.ellipse(startX + i * dayWidth * magnification, val+3, 1, 1)
             }
         } else if (fillMissing) {
-            //p5.fill(100, 100)
-            p5.fill(255)
+            p5.fill(100, 100)
 
             if (encoding === 2) {
                 p5.rect(startX + i * dayWidth, baseline - rowHeight, 1, rowHeight)
