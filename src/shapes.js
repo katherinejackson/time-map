@@ -195,7 +195,7 @@ export const row = (
     })
         
     // draw border around multi year pins + highlight the key pins
-    if (selections.highlightOptions[dataType].includes(id)) p5.stroke(255, 0, 0)
+    if (selections.highlightOptions[dataType].includes(id)) p5.stroke(0, 255, 0)
     else p5.stroke(255)
 
     p5.strokeWeight(1.5)
@@ -301,7 +301,7 @@ export const migrationRow = (
     
             // distance
             if (encoding === 1) {
-                p5.fill(colourTheme.textColour)
+                p5.fill(249, 231, 159)
             } else {
                 setColour(p5, year, numColours, interval, dataType)
             }
@@ -325,7 +325,7 @@ export const migrationRow = (
                 p5.ellipse(startX + i * dayWidth * magnification, val+3, 1, 1)
             }
         } else if (fillMissing) {
-            p5.fill(100, 100)
+            p5.fill(255, 100)
 
             if (encoding === 2) {
                 p5.rect(startX + i * dayWidth, baseline - rowHeight, 1, rowHeight)
@@ -334,7 +334,7 @@ export const migrationRow = (
             }
         }
         // draw border around multi year pins + highlight the key pins
-        if (selections.highlightOptions[dataType].includes(id)) p5.stroke(255, 0, 0)
+        if (selections.highlightOptions[dataType].includes(id)) p5.stroke(0, 255, 0)
         else p5.stroke(255)
 
         p5.strokeWeight(1)
@@ -671,6 +671,7 @@ export const spiral = (
     selections,
     encoding,
     numLocations,
+    id
 ) => {
     // Change selections arg to TEMP
     // var selections = {...TEMP}
@@ -801,6 +802,15 @@ export const spiral = (
         }
     })
 
+    if (selections.highlightOptions[dataType].includes(id)) {
+        p5.stroke(0, 255, 0)
+        p5.noFill()
+        p5.ellipse(startX, startY, maxRadius*2.5, maxRadius*2.5)
+    }
+    else p5.noStroke()
+
+
+
     if (cluster) {
         p5.fill(colourTheme.textColour)
         p5.textSize(10)
@@ -832,6 +842,7 @@ export const migrationSpiral = (
     selections,
     encoding,
     numLocations,
+    id
 ) => {
     // Change selections arg to TEMP
     // var selections = {...TEMP}
@@ -972,6 +983,13 @@ export const migrationSpiral = (
         angle += radianPerYear
         innerRing += (spiralTightness)
     }
+
+    if (selections.highlightOptions[dataType].includes(id)) {
+        p5.stroke(0, 255, 0)
+        p5.noFill()
+        p5.ellipse(startX, startY, maxRadius*2.5, maxRadius*2.5)
+    }
+    else p5.noStroke()
 
     if (cluster) {
         p5.fill(colourTheme.textColour)
