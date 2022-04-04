@@ -157,7 +157,7 @@ export const row = (
         for (let day = 0; day < year.length - 1; day++) {
             if (year[day] !== '') {
                 if (encoding === 1) {
-                    p5.fill(colourTheme.textColour)
+                    p5.fill(249, 231, 159)
                 } else {
                     setColour(p5, year[day], numColours, interval, dataType)
                 }
@@ -174,7 +174,7 @@ export const row = (
                     p5.ellipse(startX + day * dayWidth, val, 1, 1)
                 }
             } else if (fillMissing) {
-                p5.fill(colourTheme.missingData, 100)
+                p5.fill(255, 100)
 
                 if (encoding === 2) {
                     p5.rect(startX + day * dayWidth, baseline - rowHeight, 1, rowHeight)
@@ -325,7 +325,8 @@ export const migrationRow = (
                 p5.ellipse(startX + i * dayWidth * magnification, val+3, 1, 1)
             }
         } else if (fillMissing) {
-            p5.fill(255, 100)
+            p5.noStroke()
+            p5.fill(200, 100)
 
             if (encoding === 2) {
                 p5.rect(startX + i * dayWidth, baseline - rowHeight, 1, rowHeight)

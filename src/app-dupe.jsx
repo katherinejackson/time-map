@@ -35,25 +35,26 @@ const App = () => {
     const { data, dataType, dataBrackets, yBrackets, xBrackets, variable } = getData(view, options.practice)
     const [selections, setSelections] = useState(getDefaultSelections())
     const locations = options.practice ? yukon : alaska
-    const [highlightOptions, setHighlightOptions] = useState([])
 
     window.triggerHighlight = (hIO = []) => {
-        setHighlightOptions(hIO)
+        console.log("triggered")
         let temp = {...selections, 
             'highlightOptions': {
-            "TEMP": highlightOptions, 
-            "COVID": highlightOptions, 
-            "MIGRATION": highlightOptions
+            "TEMP": hIO, 
+            "COVID": hIO, 
+            "MIGRATION": hIO
             }
         }
         setSelections(temp)
+        console.log("sel", selections)
+        return "hello"
     }
 
     selections['practice'] = options.practice
     selections['highlightOptions'] = {
-        "TEMP": highlightOptions, 
-        "COVID": highlightOptions, 
-        "MIGRATION": highlightOptions
+        "TEMP": [], 
+        "COVID": [], 
+        "MIGRATION": []
     }
 
     useEffect(() => {
