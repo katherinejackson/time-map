@@ -174,7 +174,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
         if (shape === shapes.SPIRAL.id) {
             migrationSpiral(pg, dataType, interval, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding)
         } else if (shape === shapes.ROW.id) {
-            migrationRow(pg, dataType, interval, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding)
+            migrationRow(pg, dataType, interval, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, id)
         }
         //p5.save(pg, "spiralpin.png");
 

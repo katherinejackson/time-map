@@ -94,6 +94,7 @@ export const row = (
     selections,
     encoding,
     numLocations,
+    id
 ) => {
     // Change selections arg to TEMP
     // var selections = {...TEMP}
@@ -193,8 +194,10 @@ export const row = (
 
     })
         
-    // draw border around multi year pins
-    p5.stroke(255)
+    // draw border around multi year pins + highlight the key pins
+    if (selections.highlightOptions[dataType].includes(id)) p5.stroke(255, 0, 0)
+    else p5.stroke(255)
+
     p5.strokeWeight(1.5)
     p5.noFill()
     p5.rect(startX-1, startY-1, width+2, height+2)
@@ -228,7 +231,9 @@ export const migrationRow = (
     y,
     selections,
     encoding,
-    numLocations,) => {
+    numLocations,
+    id
+    ) => {
     // Change selections arg to TEMP
     // var selections = {...TEMP}
     // selections.dayWidth = 1
@@ -327,7 +332,15 @@ export const migrationRow = (
             } else {
                 p5.ellipse(startX + i * dayWidth, middle, 1, 1)
             }
-            }
+        }
+        // draw border around multi year pins + highlight the key pins
+        if (selections.highlightOptions[dataType].includes(id)) p5.stroke(255, 0, 0)
+        else p5.stroke(255)
+
+        p5.strokeWeight(1)
+        p5.noFill()
+        p5.rect(startX-1, startY-1, width+2, height+2)
+        p5.noStroke()
     }
 
     if (cluster) {

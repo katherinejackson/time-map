@@ -21,9 +21,9 @@ const options = window.options || { view: null, shape: 2, encoding: 1, practice:
 const study = window.options !== undefined
 
 const highlightOptions = {
-    SCATTER: ["China", "Turkey"],
-    MAP: ["Homer", "Sitka"],
-    MIGRATION_GRAPH: ["Croatia>Serbia", "Germany>Italy"]
+    COVID: ["China", "Turkey"],
+    TEMP: ["Homer", "Sitka"],
+    MIGRATION: ["Croatia>Serbia", "Germany>Italy"]
 }
 
 const App = () => {
@@ -37,6 +37,8 @@ const App = () => {
     const locations = options.practice ? yukon : alaska
 
     selections['practice'] = options.practice
+    selections['highlightOptions'] = highlightOptions
+
     useEffect(() => {
         setX(null)
         setY(null)

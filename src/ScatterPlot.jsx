@@ -12,7 +12,6 @@ import { onClick, onHover } from "./helpers/studyEventHandlers";
 const canvasWidth = window.options ? 1200 : window.innerWidth * 0.95
 const canvasHeight = window.options ? 800 : window.innerHeight * 0.95
 
-
 const xBorder = 50
 const graphWidth = canvasWidth - xBorder * 2
 
@@ -22,7 +21,7 @@ const graphHeight = canvasHeight - yBorder * 2
 const ScatterPlot = ({ encoding, selections, shape, practice }) => {
 
     selections['numYears'] = 2
-    
+
     const { data, dataBrackets, yBrackets, xBrackets, dataType } = useContext(DataContext)
     const { theme, numColours, numYears, mapPin } = selections
     const colourTheme = themeColours[theme]
@@ -31,7 +30,6 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
     const [pts, setPts] = useState({})
     const [hover, setHover] = useState(null)
     const interval = getManualInterval(dataBrackets, numColours, dataType)
-
 
     useEffect(() => {
         if (p5) {
@@ -143,11 +141,14 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
 
         // ptData = [[...ptData]]
 
+        // console.log(data[id].location)
+        // console.log(ptData)
+
 
         if (shape === shapes.SPIRAL.id) {
-            spiral(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding)
+            spiral(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, data[id].location)
         } else if (shape === shapes.ROW.id) {
-            row(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding)
+            row(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, data[id].location)
         }
         //p5.save(pg, "newrowpin.png");
 
