@@ -20,6 +20,12 @@ const options = window.options || { view: null, shape: 2, encoding: 1, practice:
 
 const study = window.options !== undefined
 
+const highlightOptions = {
+    SCATTER: ["China", "Turkey"],
+    MAP: ["Homer", "Sitka"],
+    MIGRATION_GRAPH: ["Croatia>Serbia", "Germany>Italy"]
+}
+
 const App = () => {
     const [view, setView] = useState(options.view)
     const [shape, setShape] = useState(options.shape)
