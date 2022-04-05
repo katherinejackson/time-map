@@ -41,9 +41,9 @@ const App = () => {
         setHighlightOptions(hIO)
         let temp = {...selections, 
             'highlightOptions': {
-            "TEMP": highlightOptions, 
-            "COVID": highlightOptions, 
-            "MIGRATION": highlightOptions
+                "TEMP": highlightOptions, 
+                "COVID": highlightOptions, 
+                "MIGRATION": highlightOptions
             }
         }
         setSelections(temp)

@@ -502,8 +502,8 @@ export const drawSpiralYearLegend = (p5, width, height, selections) => {
     p5.textSize(8)
     p5.fill(textColour)
     p5.noStroke()
-    p5.text("2020", width/2+ 7, height/3 + 10)
-    p5.text("2021", width/2+ 7, height/3 - 5)
+    p5.text("2020", width/2+ 12, height/3 + 10)
+    p5.text("2021", width/2+ 12, height/3 - 5)
 }
 
 export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, encoding, dataLength, increments) => {
