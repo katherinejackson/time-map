@@ -174,12 +174,16 @@ export const row = (
                     p5.ellipse(startX + day * dayWidth, val, 1, 1)
                 }
             } else if (fillMissing) {
-                p5.fill(255, 100)
+                p5.noStroke()
 
                 if (encoding === 2) {
+                    p5.fill(150, 100)
                     p5.rect(startX + day * dayWidth, baseline - rowHeight, 1, rowHeight)
                 } else {
-                    p5.ellipse(startX + day * dayWidth, middle, 1, 1)
+                    if (encoding === 1) p5.fill(133, 193, 233)
+                    else if (encoding === 3) p5.fill(255, 100)
+                    let val = baseline - ((rowHeight)/2)
+                    p5.ellipse(startX + day * dayWidth, val, 1, 1)
                 }
             }
         }
@@ -241,7 +245,8 @@ export const migrationRow = (
     // selections.coreSize = 18
     const { numColours, mapPin, opaque, dayWidth, theme, rowHeight, fillMissing, cluster, spaceBetween } = selections
     const colourTheme = themeColours[theme]
-    const { width, height } = getShapeSize(selections, shapes.ROW.id, locationData.length+2)
+    const { width, height: temp } = getShapeSize(selections, shapes.ROW.id, locationData.length+2)
+    const height = temp + spaceBetween
     // Have to make the pins larger since we only have ~40 datapoints
     const magnification = 1;
     //const width = tempWidth * magnification
@@ -301,6 +306,7 @@ export const migrationRow = (
     
             // distance
             if (encoding === 1) {
+                // colour data points yellow
                 p5.fill(249, 231, 159)
             } else {
                 setColour(p5, year, numColours, interval, dataType)
@@ -311,7 +317,7 @@ export const migrationRow = (
                 // console.log("baseline ", baseline)
                 // console.log("rowHeight ", rowHeight)
                 
-                p5.rect(startX + i * dayWidth * magnification, baseline - rowHeight, magnification, rowHeight)
+                p5.rect(startX + i * dayWidth * magnification, baseline - height, magnification, rowHeight + spaceBetween)
             } else {
                 // console.log("bl ", baseline)
                 // console.log("year ", year)
@@ -326,11 +332,13 @@ export const migrationRow = (
             }
         } else if (fillMissing) {
             p5.noStroke()
-            p5.fill(200, 100)
-
+            
             if (encoding === 2) {
-                p5.rect(startX + i * dayWidth, baseline - rowHeight, 1, rowHeight)
+                p5.fill(150, 100)
+                p5.rect(startX + i * dayWidth, baseline - height, 1, height)
             } else {
+                if (encoding === 1) p5.fill(133, 193, 233)
+                else if (encoding === 3) p5.fill(255, 100)
                 p5.ellipse(startX + i * dayWidth, middle, 1, 1)
             }
         }
@@ -739,7 +747,7 @@ export const spiral = (
 
                 const a = startX + p5.cos(angle) * innerRing
                 const b = startY + p5.sin(angle) * innerRing
-                p5.fill(245)
+                p5.fill(colourTheme.pinBackground)
                 let mag = 2
                 if (spiralWidth === 5) mag = 3
                 else if (spiralWidth === 2) mag = 3
@@ -770,7 +778,7 @@ export const spiral = (
 
             if (year[day] !== '') {
                 if (encoding === 1) {
-                    p5.fill(50)
+                    p5.fill(249, 231, 159)
                 } else {
                     setColour(p5, year[day], numColours, interval, dataType)
                 }
@@ -792,6 +800,19 @@ export const spiral = (
                     const x = startX + p5.cos(angle) * innerRing
                     const y = startY + p5.sin(angle) * innerRing
                     p5.arc(x, y, spiralWidth * 2, spiralWidth * 2, angle, angle + radianPerDay * 10, p5.PIE)
+                }
+                else {
+                    if (encoding === 1) p5.fill(133, 193, 233)
+                    else if (encoding === 3) p5.fill(255, 100)
+                    let val;
+                    if (interval.low < 0) {
+                        val = -interval.low
+                    } else {
+                        val = (interval.high-interval.low)/2
+                    }
+                    const x = startX + p5.cos(angle) * (innerRing + val * increment)
+                    const y = startY + p5.sin(angle) * (innerRing + val * increment)
+                    p5.ellipse(x, y, 1, 1)
                 }
             }
 
@@ -920,7 +941,7 @@ export const migrationSpiral = (
         for (let i=0; i<locationData.length; i++) {
             const a = startX + p5.cos(angle) * innerRing
             const b = startY + p5.sin(angle) * innerRing
-            p5.fill(245)
+            p5.fill(colourTheme.pinBackground)
             p5.arc(a, b, spiralWidth * 3, spiralWidth * 3, angle, angle + radianPerYear * 10, p5.PIE)
 
             angle += radianPerYear
@@ -952,7 +973,7 @@ export const migrationSpiral = (
         if (year !== -1) {
             if (encoding === 1) {
                 //p5.fill(colourTheme.textColour)
-                p5.fill(50)
+                p5.fill(249, 231, 159)
             } else {
                 setColour(p5, year, numColours, interval, dataType)
             }
@@ -978,6 +999,19 @@ export const migrationSpiral = (
                 const x = startX + p5.cos(angle) * innerRing
                 const y = startY + p5.sin(angle) * innerRing
                 p5.arc(x, y, spiralWidth * 2, spiralWidth * 2, angle, angle + radianPerYear * 10, p5.PIE)
+            }
+            else {
+                if (encoding === 1) p5.fill(133, 193, 233)
+                else if (encoding === 3) p5.fill(255, 100)
+                let val;
+                if (interval.low < 0) {
+                    val = -interval.low
+                } else {
+                    val = (interval.high-interval.low)/2
+                }
+                const x = startX + p5.cos(angle) * (innerRing + val * increment)
+                const y = startY + p5.sin(angle) * (innerRing + val * increment)
+                p5.ellipse(x, y, 1, 1)
             }
         }
 
