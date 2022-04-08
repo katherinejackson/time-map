@@ -198,6 +198,8 @@ export const getLocationData = (id, selections, data) => {
     let newData = []
 
     let years = Object.keys(data[id].data)
+    console.log(id)
+    console.log(data[id])
     let currentYearIndex = years.indexOf('2021')
     if (currentYearIndex > -1) {
         years.splice(currentYearIndex, 1)

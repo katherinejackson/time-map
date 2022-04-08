@@ -11,8 +11,9 @@ export const getGlyph = (p5, pin, data, dataType, interval, shape, selections, e
     pg.clear()
     pg.noStroke()
 
-    // console.log("data ", data)
-
+    //console.log("data ", data)
+    console.log(pin.name, pin.locations)
+    
     let locationData = []
     const ids = pin.locations
     const numLocations = ids.length
