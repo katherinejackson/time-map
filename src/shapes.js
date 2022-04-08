@@ -139,9 +139,12 @@ export const row = (
         p5.noStroke()
     }
 
+    p5.fill(colourTheme.pinBackground)
+    p5.rect(startX - 2, startY - 2, width + 4, height + 4)
+
     if (encoding !== 2) {
-        p5.fill(colourTheme.pinBackground)
-        p5.rect(startX - 2, startY - 2, width + 4, height + 4)
+        // p5.fill(colourTheme.pinBackground)
+        // p5.rect(startX - 2, startY - 2, width + 4, height + 4)
 
         // // draw baseline reference
         // p5.stroke(colourTheme.textColour)
