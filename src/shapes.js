@@ -677,7 +677,7 @@ export const spiral = (
     p5,
     dataType,
     interval,
-    locationData,
+    data,
     x,
     y,
     selections,
@@ -690,6 +690,7 @@ export const spiral = (
     // selections.spiralTightness = 0.15
     // selections.spiralWidth = 50
     // selections.coreSize = 18
+    let locationData = data.reverse()
     const { spiralWidth, spiralTightness, coreSize, mapPin, opaque, theme, numColours, fillMissing, cluster } = selections
     const colourTheme = themeColours[theme]
     const increment = spiralWidth / interval.range
@@ -699,6 +700,9 @@ export const spiral = (
     let angle = -Math.PI / 2
     let radius = getRadius(selections, 365,  locationData.length)
     let innerRing = coreSize
+ 
+
+    console.log(locationData)
 
     // console.log("interval range ", interval.range)
     // console.log("spiral : increment", increment)
