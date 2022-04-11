@@ -702,13 +702,8 @@ export const spiral = (
     let innerRing = coreSize
  
 
-    console.log(locationData)
-
     // console.log("interval range ", interval.range)
     // console.log("spiral : increment", increment)
-
-
-
    
 
     if (mapPin) {
