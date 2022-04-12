@@ -58,7 +58,38 @@ const defaultSizes = {
         },
     }
 }
-export const getDefaultSelections = () => {
+
+const migrationRowSizes = {
+    xsmall: {
+        dayWidth: 0.0625,
+        rowHeight: 5,
+        spaceBetween: 0,
+    },
+    small: {
+        dayWidth: 0.11,
+        rowHeight: 11,
+        spaceBetween: 3,
+    },
+    medium: {
+        dayWidth: 0.19,
+        rowHeight: 19,
+        spaceBetween: 4,
+    },
+    large: {
+        dayWidth: 0.26,
+        rowHeight: 26,
+        spaceBetween: 5,
+    },
+    xlarge: {
+        dayWidth: 0.25,
+        rowHeight: 30,
+        spaceBetween: 0,
+    }
+}
+
+export const getDefaultSelections = (dataType) => {
+
+    console.log(dataType)
     let selections = {
         mapPin: false,
         opaque: false,
@@ -70,15 +101,17 @@ export const getDefaultSelections = () => {
         numColours: 360,
     }
 
-    return {...selections, ...getShapeSelections(shapes.SPIRAL.id), ...getShapeSelections(shapes.ROW.id)}
+    return {...selections, ...getShapeSelections(shapes.SPIRAL.id, dataType), ...getShapeSelections(shapes.ROW.id, dataType)}
 }
 
-export const getShapeSelections = (shape) => {
+export const getShapeSelections = (shape, dataType) => {
     if (shape === shapes.SPIRAL.id) {
         return defaultSizes['spiral'][size]
 
-    } else if (shape === shapes.ROW.id) {
-        return defaultSizes['row'][size]
+    } 
+    else if (shape === shapes.ROW.id) {
+        if (dataType === 'MIGRATION') return migrationRowSizes[size]
+        else return defaultSizes['row'][size]
     }
 }
 

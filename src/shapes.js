@@ -270,6 +270,8 @@ export const migrationRow = (
 
     //console.log("int ", interval)
 
+    p5.background(0)
+
     
     //console.log("w ", width, "h ", height)
 
@@ -306,7 +308,7 @@ export const migrationRow = (
         // draw baseline reference
         p5.stroke(colourTheme.textColour)
         //p5.strokeWeight(0.5)
-        p5.line(startX - 2, baseline, (startX - 2) + (width + 4), baseline)
+        //p5.line(startX - 2, baseline, (startX - 2) + (width + 4), baseline)
     }
 
 
@@ -321,6 +323,7 @@ export const migrationRow = (
             } else {
                 setColour(p5, year, numColours, interval, dataType)
             }
+            p5.fill(255, 0, 0)
             // colour
             if (encoding === 2) {
                 //console.log("y ", baseline - rowHeight)
@@ -345,10 +348,12 @@ export const migrationRow = (
             
             if (encoding === 2) {
                 p5.fill(150, 100)
+                p5.fill(255, 0, 0)
                 p5.rect(startX + i * dayWidth, baseline - height, 1, height)
             } else {
                 if (encoding === 1) p5.fill(133, 193, 233)
                 else if (encoding === 3) p5.fill(255, 100)
+                p5.fill(255, 0, 0)
                 p5.ellipse(startX + i * dayWidth, middle, 1, 1)
             }
         }
@@ -358,7 +363,7 @@ export const migrationRow = (
 
         p5.strokeWeight(1)
         p5.noFill()
-        p5.rect(startX-1, startY-1, width+2, height+2)
+        //p5.rect(startX-1, startY-1, width+2, height+2)
         p5.noStroke()
     }
 
@@ -909,6 +914,8 @@ export const migrationSpiral = (
     // console.log("interval range ", interval.range)
     // console.log("rad ", radius)
 
+    p5.background(0)
+
     if (mapPin) {
         p5.fill(colourTheme.pinColour)
         p5.triangle(x, y, x - pinSize, y - pinSize, x + pinSize, y - pinSize)
@@ -992,7 +999,7 @@ export const migrationSpiral = (
             } else {
                 setColour(p5, year, numColours, interval, dataType)
             }
-
+            p5.fill(255, 0, 0)
             if (encoding === 2) {
                 const x = startX + p5.cos(angle) * innerRing
                 const y = startY + p5.sin(angle) * innerRing
@@ -1009,6 +1016,7 @@ export const migrationSpiral = (
             }
         } else if (fillMissing) {
             p5.fill(100, 100)
+            p5.fill(255, 0, 0)
 
             if (encoding === 2) {
                 const x = startX + p5.cos(angle) * innerRing
@@ -1018,6 +1026,7 @@ export const migrationSpiral = (
             else {
                 if (encoding === 1) p5.fill(133, 193, 233)
                 else if (encoding === 3) p5.fill(255, 100)
+                p5.fill(255, 0, 0)
                 let val;
                 if (interval.low < 0) {
                     val = -interval.low
@@ -1037,7 +1046,7 @@ export const migrationSpiral = (
     if (selections.highlightOptions[dataType].includes(id)) {
         p5.stroke(0, 255, 0)
         p5.noFill()
-        p5.ellipse(startX, startY, maxRadius*2.5, maxRadius*2.5)
+        //p5.ellipse(startX, startY, maxRadius*2.5, maxRadius*2.5)
     }
     else p5.noStroke()
 

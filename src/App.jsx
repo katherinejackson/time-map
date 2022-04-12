@@ -33,7 +33,7 @@ const App = () => {
     const [x, setX] = useState(null)
     const [y, setY] = useState(null)
     const { data, dataType, dataBrackets, yBrackets, xBrackets, variable } = getData(view, options.practice)
-    const [selections, setSelections] = useState(getDefaultSelections())
+    const [selections, setSelections] = useState(getDefaultSelections(dataType))
     const locations = options.practice ? yukon : alaska
     const [highlightOptions, setHighlightOptions] = useState([])
 
