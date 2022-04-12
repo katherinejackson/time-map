@@ -96,7 +96,8 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
     const draw = (p5) => {
         p5.clear()
         p5.textAlign(p5.CENTER, p5.CENTER)
-        p5.background(colourTheme.background)
+        //p5.background(colourTheme.background)
+        p5.background(0)
 
         drawXAxis(p5)
         drawYAxis(p5)
@@ -150,7 +151,7 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
         } else if (shape === shapes.ROW.id) {
             row(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, data[id].location)
         }
-        //p5.save(pg, "newrowpin.png");
+        //p5.save(pg, "newlarge");
 
  
 

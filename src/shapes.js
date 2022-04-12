@@ -114,6 +114,10 @@ export const row = (
 
     //const dayWidth = width/locationData.length
 
+    console.log(dayWidth)
+
+    p5.background(0)
+
 
 
 
@@ -139,8 +143,8 @@ export const row = (
         p5.noStroke()
     }
 
-    p5.fill(colourTheme.pinBackground)
-    p5.rect(startX - 2, startY - 2, width + 4, height + 4)
+    // p5.fill(colourTheme.pinBackground)
+    // p5.rect(startX - 2, startY - 2, width + 4, height + 4)
 
     if (encoding !== 2) {
         // p5.fill(colourTheme.pinBackground)
@@ -164,6 +168,7 @@ export const row = (
                 } else {
                     setColour(p5, year[day], numColours, interval, dataType)
                 }
+                p5.fill(255, 0, 0);
 
                 if (encoding === 2) {
                     //console.log("y ", baseline - rowHeight)
@@ -181,10 +186,12 @@ export const row = (
 
                 if (encoding === 2) {
                     p5.fill(150, 100)
+                    p5.fill(255, 0, 0);
                     p5.rect(startX + day * dayWidth, baseline - rowHeight, 1, rowHeight)
                 } else {
                     if (encoding === 1) p5.fill(133, 193, 233)
                     else if (encoding === 3) p5.fill(255, 100)
+                    p5.fill(255, 0, 0);
                     let val = baseline - ((rowHeight)/2)
                     p5.ellipse(startX + day * dayWidth, val, 1, 1)
                 }
@@ -194,7 +201,7 @@ export const row = (
             // draw baseline reference
             p5.stroke(colourTheme.textColour)
             //p5.strokeWeight(0.5)
-            p5.line(startX - 2, baseline, (startX - 2) + (width + 4), baseline)
+            //p5.line(startX - 2, baseline, (startX - 2) + (width + 4), baseline)
             p5.noStroke()
         }
         baseline = baseline - rowHeight - spaceBetween
@@ -202,13 +209,13 @@ export const row = (
     })
         
     // draw border around multi year pins + highlight the key pins
-    if (selections.highlightOptions[dataType].includes(id)) p5.stroke(0, 255, 0)
-    else p5.stroke(255)
+    // if (selections.highlightOptions[dataType].includes(id)) p5.stroke(0, 255, 0)
+    // else p5.stroke(255)
 
-    p5.strokeWeight(1.5)
-    p5.noFill()
-    p5.rect(startX-1, startY-1, width+2, height+2)
-    p5.noStroke()
+    // p5.strokeWeight(1.5)
+    // p5.noFill()
+    // p5.rect(startX-1, startY-1, width+2, height+2)
+    // p5.noStroke()
 
     if (cluster) {
         p5.fill(colourTheme.textColour)
@@ -701,6 +708,9 @@ export const spiral = (
     let radius = getRadius(selections, 365,  locationData.length)
     let innerRing = coreSize
  
+    p5.background(0)
+
+
 
     // console.log("interval range ", interval.range)
     // console.log("spiral : increment", increment)
@@ -784,6 +794,7 @@ export const spiral = (
                 } else {
                     setColour(p5, year[day], numColours, interval, dataType)
                 }
+                p5.fill(255, 0, 0)
 
                 if (encoding === 2) {
                     const x = startX + p5.cos(angle) * innerRing
@@ -797,6 +808,7 @@ export const spiral = (
                 }
             } else if (fillMissing) {
                 p5.fill(colourTheme.missingData, 100)
+                p5.fill(255, 0, 0)
 
                 if (encoding === 2) {
                     const x = startX + p5.cos(angle) * innerRing
@@ -806,6 +818,7 @@ export const spiral = (
                 else {
                     if (encoding === 1) p5.fill(133, 193, 233)
                     else if (encoding === 3) p5.fill(255, 100)
+                    p5.fill(255, 0, 0)
                     let val;
                     if (interval.low < 0) {
                         val = -interval.low

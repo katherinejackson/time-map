@@ -1,6 +1,6 @@
 import { shapes, themes } from '../constants'
 
-const size = window?.options?.size || 'medium'
+const size = window?.options?.size || 'large'
 
 const defaultSizes = {
     spiral: {
@@ -37,18 +37,18 @@ const defaultSizes = {
             spaceBetween: 0,
         },
         small: {
-            dayWidth: 0.0625,
-            rowHeight: 10,
+            dayWidth: 0.11,
+            rowHeight: 11,
             spaceBetween: 3,
         },
         medium: {
-            dayWidth: 0.125,
-            rowHeight: 15,
+            dayWidth: 0.19,
+            rowHeight: 19,
             spaceBetween: 4,
         },
         large: {
-            dayWidth: 0.25,
-            rowHeight: 20,
+            dayWidth: 0.26,
+            rowHeight: 26,
             spaceBetween: 5,
         },
         xlarge: {
@@ -103,8 +103,8 @@ export const getShapeSelectionOptions = (shape) => {
         }
     } else if (shape === shapes.ROW.id) {
         return {
-            dayWidth: { name: 'Day Width', values: [0.03125, 0.0625, 0.125, 0.25, 0.5] },
-            rowHeight: { name: 'Row Height', values: [1, 2, 5, 10, 15, 20, 25, 30] },
+            dayWidth: { name: 'Day Width', values: [0.03125, 0.0625, 0.11, 0.125, 0.19, 0.25, 0.26, 0.5] },
+            rowHeight: { name: 'Row Height', values: [1, 2, 5, 10, 11, 15, 19, 20, 25, 26, 30] },
             spaceBetween: { name: 'Space between Rows', values: [0, 1, 2, 3, 4, 5] }
         }
     }
