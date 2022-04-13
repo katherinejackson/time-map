@@ -33,9 +33,11 @@ const App = () => {
     const [x, setX] = useState(null)
     const [y, setY] = useState(null)
     const { data, dataType, dataBrackets, yBrackets, xBrackets, variable } = getData(view, options.practice)
-    const [selections, setSelections] = useState(getDefaultSelections(dataType))
+    const [selections, setSelections] = useState(getDefaultSelections())
     const locations = options.practice ? yukon : alaska
     const [highlightOptions, setHighlightOptions] = useState([])
+
+    console.log(selections)
 
     window.triggerHighlight = (hIO = []) => {
         setHighlightOptions(hIO)

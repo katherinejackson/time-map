@@ -902,6 +902,8 @@ export const migrationSpiral = (
     let radius = getRadius(selections, locationData.length/100, locationData.length/100)
     let innerRing = coreSize
 
+    console.log(spiralTightness, spiralWidth)
+
     //console.log(selections)
 
     //console.log("temp ", temp)

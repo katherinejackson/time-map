@@ -20,7 +20,7 @@ const graphHeight = canvasHeight - yBorder * 2
 
 const ScatterPlot = ({ encoding, selections, shape, practice }) => {
 
-    selections['numYears'] = 2
+    selections['numYears'] = 1
 
     const { data, dataBrackets, yBrackets, xBrackets, dataType } = useContext(DataContext)
     const { theme, numColours, numYears, mapPin } = selections
@@ -151,7 +151,7 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
         } else if (shape === shapes.ROW.id) {
             row(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, data[id].location)
         }
-        //p5.save(pg, "newlarge");
+        //p5.save(pg, "new1year");
 
  
 

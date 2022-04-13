@@ -8,6 +8,7 @@ import { filterMigrationData } from "./helpers/data";
 import { migrationRow, getShapeSize,  getPinAdjustment, migrationSpiral } from "./shapes";
 import { shapes, themeColours } from "./constants";
 import { onClick, onHover } from "./helpers/studyEventHandlers";
+import { getMigrationSizes } from "./helpers/selections";
 import background from "./data/layout-noblobs.png";
 
 const canvasWidth = window.options ? 1200 : window.innerWidth * 0.95;
@@ -17,6 +18,11 @@ const magnification = 1;
 
 const MigrationGraph = ({ encoding, selections, shape }) => {
 
+    
+    let newSizes = getMigrationSizes(shape);
+    for (let val in newSizes) {
+        selections[val] = newSizes[val];
+    }
     selections['numYears'] = 1
 
     const [p5, setP5] = useState(null)
@@ -176,7 +182,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
         } else if (shape === shapes.ROW.id) {
             migrationRow(pg, dataType, interval, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, id)
         }
-        //p5.save(pg, "mgsmallpin.png");
+       p5.save(pg, "mgrownewmed1.png");
 
 
         return { pg, width: canvasWidth, height: canvasHeight }

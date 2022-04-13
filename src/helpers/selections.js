@@ -1,6 +1,6 @@
 import { shapes, themes } from '../constants'
 
-const size = window?.options?.size || 'large'
+const size = window?.options?.size || 'medium'
 
 const defaultSizes = {
     spiral: {
@@ -59,37 +59,64 @@ const defaultSizes = {
     }
 }
 
-const migrationRowSizes = {
-    xsmall: {
-        dayWidth: 0.0625,
-        rowHeight: 5,
-        spaceBetween: 0,
+export const migrationDefaultSizes = {
+    spiral: {
+        xsmall: {
+            coreSize: 0,
+            spiralWidth: 2,
+            spiralTightness: 0.015,
+        },
+        small: {
+            coreSize: 0,
+            spiralWidth: 6,
+            spiralTightness: 0.02,
+        },
+        medium: {
+            coreSize: 0,
+            spiralWidth: 11,
+            spiralTightness: 0.03,
+        },
+        large: {
+            coreSize: 0,
+            spiralWidth: 15,
+            spiralTightness: 0.04,
+        },
+        xlarge: {
+            coreSize: 0,
+            spiralWidth: 20,
+            spiralTightness: 0.03,
+        },
     },
-    small: {
-        dayWidth: 0.11,
-        rowHeight: 11,
-        spaceBetween: 3,
-    },
-    medium: {
-        dayWidth: 0.19,
-        rowHeight: 19,
-        spaceBetween: 4,
-    },
-    large: {
-        dayWidth: 0.26,
-        rowHeight: 26,
-        spaceBetween: 5,
-    },
-    xlarge: {
-        dayWidth: 0.25,
-        rowHeight: 30,
-        spaceBetween: 0,
+    row: {
+        xsmall: {
+            dayWidth: 0.0625,
+            rowHeight: 5,
+            spaceBetween: 0,
+        },
+        small: {
+            dayWidth: 0.0725,
+            rowHeight: 7,
+            spaceBetween: 3,
+        },
+        medium: {
+            dayWidth: 0.129,
+            rowHeight: 12,
+            spaceBetween: 4,
+        },
+        large: {
+            dayWidth: 0.175,
+            rowHeight: 17,
+            spaceBetween: 5,
+        },
+        xlarge: {
+            dayWidth: 0.25,
+            rowHeight: 30,
+            spaceBetween: 0,
+        },
     }
 }
 
-export const getDefaultSelections = (dataType) => {
-
-    console.log(dataType)
+export const getDefaultSelections = () => {
     let selections = {
         mapPin: false,
         opaque: false,
@@ -101,17 +128,26 @@ export const getDefaultSelections = (dataType) => {
         numColours: 360,
     }
 
-    return {...selections, ...getShapeSelections(shapes.SPIRAL.id, dataType), ...getShapeSelections(shapes.ROW.id, dataType)}
+    return {...selections, ...getShapeSelections(shapes.SPIRAL.id), ...getShapeSelections(shapes.ROW.id)}
 }
 
-export const getShapeSelections = (shape, dataType) => {
+export const getShapeSelections = (shape) => {
+
     if (shape === shapes.SPIRAL.id) {
         return defaultSizes['spiral'][size]
-
     } 
     else if (shape === shapes.ROW.id) {
-        if (dataType === 'MIGRATION') return migrationRowSizes[size]
-        else return defaultSizes['row'][size]
+        return defaultSizes['row'][size]
+    }
+}
+
+export const getMigrationSizes = (shape) => {
+
+    if (shape === shapes.SPIRAL.id) {
+        return migrationDefaultSizes['spiral'][size]
+    } 
+    else if (shape === shapes.ROW.id) {
+        return migrationDefaultSizes['row'][size]
     }
 }
 
