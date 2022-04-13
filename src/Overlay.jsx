@@ -31,6 +31,8 @@ const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
     const [hover, setHover] = useState(null)
     const { width, height, maxRadius } = getShapeSize(selections, shape, 365)
 
+    console.log("selections: ", selections)
+
     useEffect(() => {
         if (locations && p5) {
             resetPins()

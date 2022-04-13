@@ -25,6 +25,8 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
     }
     selections['numYears'] = 1
 
+    console.log("selections: ", selections)
+
     const [p5, setP5] = useState(null)
     const { data, dataBrackets, yBrackets, xBrackets, dataType } = useContext(DataContext);
     const [backgroundImage, setBackgroundImage] = useState(null)
@@ -182,7 +184,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
         } else if (shape === shapes.ROW.id) {
             migrationRow(pg, dataType, interval, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, id)
         }
-       p5.save(pg, "mgrownewmed1.png");
+       //p5.save(pg, "mgrownewmed1.png");
 
 
         return { pg, width: canvasWidth, height: canvasHeight }

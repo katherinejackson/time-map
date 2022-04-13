@@ -37,8 +37,6 @@ const App = () => {
     const locations = options.practice ? yukon : alaska
     const [highlightOptions, setHighlightOptions] = useState([])
 
-    console.log(selections)
-
     window.triggerHighlight = (hIO = []) => {
         setHighlightOptions(hIO)
         let temp = {...selections, 

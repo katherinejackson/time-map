@@ -20,7 +20,7 @@ const graphHeight = canvasHeight - yBorder * 2
 
 const ScatterPlot = ({ encoding, selections, shape, practice }) => {
 
-    selections['numYears'] = 1
+    selections['numYears'] = 2
 
     const { data, dataBrackets, yBrackets, xBrackets, dataType } = useContext(DataContext)
     const { theme, numColours, numYears, mapPin } = selections
@@ -30,6 +30,8 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
     const [pts, setPts] = useState({})
     const [hover, setHover] = useState(null)
     const interval = getManualInterval(dataBrackets, numColours, dataType)
+
+    console.log("selections: ", selections)
 
     useEffect(() => {
         if (p5) {
@@ -96,8 +98,8 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
     const draw = (p5) => {
         p5.clear()
         p5.textAlign(p5.CENTER, p5.CENTER)
-        //p5.background(colourTheme.background)
-        p5.background(0)
+        p5.background(colourTheme.background)
+
 
         drawXAxis(p5)
         drawYAxis(p5)

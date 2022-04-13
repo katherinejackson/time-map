@@ -114,11 +114,7 @@ export const row = (
 
     //const dayWidth = width/locationData.length
 
-    console.log(dayWidth)
-
-    p5.background(0)
-
-
+    console.log("selections: ", selections)
 
 
     //console.log("LENGTH ", locationData)
@@ -143,8 +139,8 @@ export const row = (
         p5.noStroke()
     }
 
-    // p5.fill(colourTheme.pinBackground)
-    // p5.rect(startX - 2, startY - 2, width + 4, height + 4)
+    p5.fill(colourTheme.pinBackground)
+    p5.rect(startX - 2, startY - 2, width + 4, height + 4)
 
     if (encoding !== 2) {
         // p5.fill(colourTheme.pinBackground)
@@ -168,7 +164,6 @@ export const row = (
                 } else {
                     setColour(p5, year[day], numColours, interval, dataType)
                 }
-                p5.fill(255, 0, 0);
 
                 if (encoding === 2) {
                     //console.log("y ", baseline - rowHeight)
@@ -186,12 +181,10 @@ export const row = (
 
                 if (encoding === 2) {
                     p5.fill(150, 100)
-                    p5.fill(255, 0, 0);
                     p5.rect(startX + day * dayWidth, baseline - rowHeight, 1, rowHeight)
                 } else {
                     if (encoding === 1) p5.fill(133, 193, 233)
                     else if (encoding === 3) p5.fill(255, 100)
-                    p5.fill(255, 0, 0);
                     let val = baseline - ((rowHeight)/2)
                     p5.ellipse(startX + day * dayWidth, val, 1, 1)
                 }
@@ -200,8 +193,8 @@ export const row = (
         if (encoding != 2) {
             // draw baseline reference
             p5.stroke(colourTheme.textColour)
-            //p5.strokeWeight(0.5)
-            //p5.line(startX - 2, baseline, (startX - 2) + (width + 4), baseline)
+            p5.strokeWeight(0.5)
+            p5.line(startX - 2, baseline, (startX - 2) + (width + 4), baseline)
             p5.noStroke()
         }
         baseline = baseline - rowHeight - spaceBetween
@@ -209,13 +202,13 @@ export const row = (
     })
         
     // draw border around multi year pins + highlight the key pins
-    // if (selections.highlightOptions[dataType].includes(id)) p5.stroke(0, 255, 0)
-    // else p5.stroke(255)
+    if (selections.highlightOptions[dataType].includes(id)) p5.stroke(0, 255, 0)
+    else p5.stroke(255)
 
-    // p5.strokeWeight(1.5)
-    // p5.noFill()
-    // p5.rect(startX-1, startY-1, width+2, height+2)
-    // p5.noStroke()
+    p5.strokeWeight(1.5)
+    p5.noFill()
+    p5.rect(startX-1, startY-1, width+2, height+2)
+    p5.noStroke()
 
     if (cluster) {
         p5.fill(colourTheme.textColour)
@@ -270,12 +263,11 @@ export const migrationRow = (
 
     //console.log("int ", interval)
 
-    p5.background(0)
 
     
     //console.log("w ", width, "h ", height)
 
-
+    console.log("selections: ", selections)
 
 
     //console.log("LENGTH ", locationData)
@@ -323,7 +315,6 @@ export const migrationRow = (
             } else {
                 setColour(p5, year, numColours, interval, dataType)
             }
-            p5.fill(255, 0, 0)
             // colour
             if (encoding === 2) {
                 //console.log("y ", baseline - rowHeight)
@@ -348,12 +339,10 @@ export const migrationRow = (
             
             if (encoding === 2) {
                 p5.fill(150, 100)
-                p5.fill(255, 0, 0)
                 p5.rect(startX + i * dayWidth, baseline - height, 1, height)
             } else {
                 if (encoding === 1) p5.fill(133, 193, 233)
                 else if (encoding === 3) p5.fill(255, 100)
-                p5.fill(255, 0, 0)
                 p5.ellipse(startX + i * dayWidth, middle, 1, 1)
             }
         }
@@ -363,7 +352,7 @@ export const migrationRow = (
 
         p5.strokeWeight(1)
         p5.noFill()
-        //p5.rect(startX-1, startY-1, width+2, height+2)
+        p5.rect(startX-1, startY-1, width+2, height+2)
         p5.noStroke()
     }
 
@@ -712,10 +701,6 @@ export const spiral = (
     let angle = -Math.PI / 2
     let radius = getRadius(selections, 365,  locationData.length)
     let innerRing = coreSize
- 
-    p5.background(0)
-
-
 
     // console.log("interval range ", interval.range)
     // console.log("spiral : increment", increment)
@@ -789,7 +774,6 @@ export const spiral = (
                 }
                 const x = startX + p5.cos(angle) * (innerRing + val * increment)
                 const y = startY + p5.sin(angle) * (innerRing + val * increment)
-                p5.fill(255, 0, 0)
                 //p5.ellipse(x, y, 1, 1)
             }
 
@@ -799,7 +783,6 @@ export const spiral = (
                 } else {
                     setColour(p5, year[day], numColours, interval, dataType)
                 }
-                p5.fill(255, 0, 0)
 
                 if (encoding === 2) {
                     const x = startX + p5.cos(angle) * innerRing
@@ -813,7 +796,6 @@ export const spiral = (
                 }
             } else if (fillMissing) {
                 p5.fill(colourTheme.missingData, 100)
-                p5.fill(255, 0, 0)
 
                 if (encoding === 2) {
                     const x = startX + p5.cos(angle) * innerRing
@@ -823,7 +805,6 @@ export const spiral = (
                 else {
                     if (encoding === 1) p5.fill(133, 193, 233)
                     else if (encoding === 3) p5.fill(255, 100)
-                    p5.fill(255, 0, 0)
                     let val;
                     if (interval.low < 0) {
                         val = -interval.low
@@ -850,8 +831,6 @@ export const spiral = (
         p5.ellipse(startX, startY, maxRadius*2.5, maxRadius*2.5)
     }
     else p5.noStroke()
-
-
 
     if (cluster) {
         p5.fill(colourTheme.textColour)
@@ -902,8 +881,6 @@ export const migrationSpiral = (
     let radius = getRadius(selections, locationData.length/100, locationData.length/100)
     let innerRing = coreSize
 
-    console.log(spiralTightness, spiralWidth)
-
     //console.log(selections)
 
     //console.log("temp ", temp)
@@ -915,8 +892,6 @@ export const migrationSpiral = (
     //console.log("mig spiral : inc", increment)
     // console.log("interval range ", interval.range)
     // console.log("rad ", radius)
-
-    p5.background(0)
 
     if (mapPin) {
         p5.fill(colourTheme.pinColour)
@@ -1001,7 +976,6 @@ export const migrationSpiral = (
             } else {
                 setColour(p5, year, numColours, interval, dataType)
             }
-            p5.fill(255, 0, 0)
             if (encoding === 2) {
                 const x = startX + p5.cos(angle) * innerRing
                 const y = startY + p5.sin(angle) * innerRing
@@ -1018,7 +992,6 @@ export const migrationSpiral = (
             }
         } else if (fillMissing) {
             p5.fill(100, 100)
-            p5.fill(255, 0, 0)
 
             if (encoding === 2) {
                 const x = startX + p5.cos(angle) * innerRing
@@ -1028,7 +1001,6 @@ export const migrationSpiral = (
             else {
                 if (encoding === 1) p5.fill(133, 193, 233)
                 else if (encoding === 3) p5.fill(255, 100)
-                p5.fill(255, 0, 0)
                 let val;
                 if (interval.low < 0) {
                     val = -interval.low
@@ -1048,7 +1020,7 @@ export const migrationSpiral = (
     if (selections.highlightOptions[dataType].includes(id)) {
         p5.stroke(0, 255, 0)
         p5.noFill()
-        //p5.ellipse(startX, startY, maxRadius*2.5, maxRadius*2.5)
+        p5.ellipse(startX, startY, maxRadius*2.5, maxRadius*2.5)
     }
     else p5.noStroke()
 
