@@ -1,4 +1,5 @@
 import { scaleLinear } from 'd3';
+import p5 from 'p5';
 import { colours, manualIntervals, themeColours, shapes, abbreviatedMonths, migrationYears, radianPerMonth } from './constants'
 import { fillColourGradient, setColour } from "./helpers/colours";
 import { formatNumbers, formatTradeNumbers } from './helpers/format';
@@ -26,15 +27,33 @@ export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interv
     drawYearLegend(yearGraphics, yearLegendWidth, legendHeight, selections, shape, increments)
     p5.image(yearGraphics, canvasWidth - legendWidth - yearLegendWidth, 0)
 
+    let infoGraphics = p5.createGraphics(colourLegendWidth, 15)
+    drawInfoLegend(infoGraphics, colourLegendWidth, legendHeight, selections)
+    p5.image(infoGraphics, canvasWidth - colourLegendWidth, legendHeight)
+
+
     if (encoding !== 1) {
         let colourLegendGraphics = p5.createGraphics(colourLegendWidth, colourLegendHeight)
         drawColourLegend(colourLegendGraphics, colourLegendWidth, colourLegendHeight, selections, interval, dataType, dataBrackets, increments)
-        p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight)
+        p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight + 15)
         
     }
     //p5.save(legendGraphics, "dlegend_map.png")
  
     
+}
+
+export const drawInfoLegend = (p5, width, height, selections) => {
+    const { theme } = selections
+    const textColour = themeColours[theme].textColour
+    const backgroundColour = themeColours[theme].pinBackground
+
+    p5.fill(backgroundColour)
+    p5.noStroke()
+    p5.rect(0, 0, width, 30)
+
+    p5.fill(textColour)
+    p5.text("K = thousands      M = millions", width/4, 10)
 }
 
 export const drawMigrationLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, dataLength, increments) => {
@@ -47,10 +66,14 @@ export const drawMigrationLegend = (p5, selections, dataBrackets, shape, encodin
     p5.image(legendGraphics, canvasWidth - legendWidth, 0)
     //p5.save(legendGraphics, "legend-MIGRATION_GRAPH.png");
 
+    let infoGraphics = p5.createGraphics(colourLegendWidth, 15)
+    drawInfoLegend(infoGraphics, colourLegendWidth, legendHeight, selections)
+    p5.image(infoGraphics, canvasWidth - colourLegendWidth, legendHeight)
+
     if (encoding !== 1) {
         let colourLegendGraphics = p5.createGraphics(colourLegendWidth, colourLegendHeight)
         drawColourLegend(colourLegendGraphics, colourLegendWidth, colourLegendHeight, selections, interval, dataType, dataBrackets, increments)
-        p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight - 5)
+        p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight + 10)
        // p5.save(colourLegendGraphics, "legend-mg.png");
     }
 

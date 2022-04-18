@@ -167,13 +167,13 @@ export const getShapeSelectionOptions = (shape) => {
     if (shape === shapes.SPIRAL.id) {
         return {
             coreSize: { name: 'Core Size', values: [0, 1, 2, 3, 4, 5, 6, 7, 8] },
-            spiralWidth: { name: 'Spiral Width', values: [1, 2, 5, 10, 15, 20, 25, 30, 35] },
+            spiralWidth: { name: 'Spiral Width', values: [1, 2, 5, 6, 10, 11, 15, 20, 25, 30, 35] },
             spiralTightness: { name: 'Spiral Tightness', values: [0.01, 0.015, 0.02, 0.03, 0.04] }
         }
     } else if (shape === shapes.ROW.id) {
         return {
-            dayWidth: { name: 'Day Width', values: [0.03125, 0.0625, 0.11, 0.125, 0.19, 0.25, 0.26, 0.5] },
-            rowHeight: { name: 'Row Height', values: [1, 2, 5, 10, 11, 15, 19, 20, 25, 26, 30] },
+            dayWidth: { name: 'Day Width', values: [0.03125, 0.0625, 0.0725, 0.11,, 0.129, 0.125, 0.175, 0.19, 0.25, 0.26, 0.5] },
+            rowHeight: { name: 'Row Height', values: [1, 2, 5, 7, 10, 11, 12, 15, 17, 19, 20, 25, 26, 30] },
             spaceBetween: { name: 'Space between Rows', values: [0, 1, 2, 3, 4, 5] }
         }
     }

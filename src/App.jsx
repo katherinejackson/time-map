@@ -51,9 +51,10 @@ const App = () => {
 
     selections['practice'] = options.practice
     selections['highlightOptions'] = {
+        // "TEMP": highlightOptions, 
         "TEMP": highlightOptions, 
         "COVID": highlightOptions, 
-        "MIGRATION": highlightOptions
+        "MIGRATION": ["Germany>Italy", "India>Canada"]
     }
 
     useEffect(() => {

@@ -114,9 +114,6 @@ export const row = (
 
     //const dayWidth = width/locationData.length
 
-    console.log("selections: ", selections)
-
-
     //console.log("LENGTH ", locationData)
     // console.log("x ", x)
     // console.log("starty ", startY)
@@ -162,6 +159,7 @@ export const row = (
                 if (encoding === 1) {
                     p5.fill(249, 231, 159)
                 } else {
+                    //console.log(id)
                     setColour(p5, year[day], numColours, interval, dataType)
                 }
 
@@ -266,8 +264,6 @@ export const migrationRow = (
 
     
     //console.log("w ", width, "h ", height)
-
-    console.log("selections: ", selections)
 
 
     //console.log("LENGTH ", locationData)
@@ -755,6 +751,17 @@ export const spiral = (
                 else if (spiralWidth === 2) mag = 3
                 p5.arc(a, b, spiralWidth * mag, spiralWidth * mag, angle, angle + radianPerDay * 10, p5.PIE)
 
+                p5.fill(215, 219, 221)
+                let val;
+                if (interval.low < 0) {
+                    val = -interval.low
+                } else {
+                    val = (interval.high-interval.low)/2
+                }
+                const x = startX + p5.cos(angle) * (innerRing + val * increment)
+                const y = startY + p5.sin(angle) * (innerRing + val * increment)
+                p5.ellipse(x, y, 1, 1)
+
                 angle += radianPerDay
                 innerRing += (spiralTightness + 0.01)
             }
@@ -827,8 +834,11 @@ export const spiral = (
 
     if (selections.highlightOptions[dataType].includes(id)) {
         p5.stroke(0, 255, 0)
+        p5.strokeWeight(3)
         p5.noFill()
-        p5.ellipse(startX, startY, maxRadius*2.5, maxRadius*2.5)
+        let mag = 2.75
+        if (spiralWidth === 5) mag = 3.5
+        p5.ellipse(startX, startY, maxRadius*mag, maxRadius*mag)
     }
     else p5.noStroke()
 
@@ -943,6 +953,17 @@ export const migrationSpiral = (
             p5.fill(colourTheme.pinBackground)
             p5.arc(a, b, spiralWidth * 3, spiralWidth * 3, angle, angle + radianPerYear * 10, p5.PIE)
 
+            p5.fill(215, 219, 221)
+            let val;
+            if (interval.low < 0) {
+                val = -interval.low
+            } else {
+                val = (interval.high-interval.low)/2
+            }
+            const x = startX + p5.cos(angle) * (innerRing + val * increment)
+            const y = startY + p5.sin(angle) * (innerRing + val * increment)
+            p5.ellipse(x, y, 1, 1)
+
             angle += radianPerYear
             innerRing += (spiralTightness)
         }
@@ -1019,8 +1040,11 @@ export const migrationSpiral = (
 
     if (selections.highlightOptions[dataType].includes(id)) {
         p5.stroke(0, 255, 0)
+        p5.strokeWeight(3)
         p5.noFill()
-        p5.ellipse(startX, startY, maxRadius*2.5, maxRadius*2.5)
+        let mag = 2.75
+        if (spiralWidth === 5) mag = 3.5
+        p5.ellipse(startX, startY, maxRadius*mag, maxRadius*mag)
     }
     else p5.noStroke()
 

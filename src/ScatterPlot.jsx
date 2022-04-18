@@ -31,7 +31,7 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
     const [hover, setHover] = useState(null)
     const interval = getManualInterval(dataBrackets, numColours, dataType)
 
-    console.log("selections: ", selections)
+    //console.log("selections: ", selections)
 
     useEffect(() => {
         if (p5) {
@@ -106,9 +106,10 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
 
         let increments;
         if (practice) increments = [0, 75000, 150000, 225000, 300000, 375000, 450000]
-        else increments = [0, 250000, 500000, 750000, 1000000, 1250000]
+        else increments = [0, 100000, 200000, 300000, 400000, 500000]
         drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, increments)
         drawGlyphs()
+        //increments = [0, 250000, 500000, 750000, 1000000, 1250000]
 
         //console.log(data['USA']['cases']['2020'])
         //let pg = p5.createGraphics(1000, 1000)
@@ -179,7 +180,7 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
             let shiftAmount = 5
             if (selections.spiralWidth === 5) {
                 mag = 6
-                shiftAmount = 12
+                shiftAmount = 8
             }
 
             if (!mapPin) {

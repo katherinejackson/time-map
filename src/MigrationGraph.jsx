@@ -25,7 +25,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
     }
     selections['numYears'] = 1
 
-    console.log("selections: ", selections)
+    //console.log("selections: ", selections)
 
     const [p5, setP5] = useState(null)
     const { data, dataBrackets, yBrackets, xBrackets, dataType } = useContext(DataContext);

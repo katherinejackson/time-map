@@ -67,9 +67,13 @@ export const getDataBracketsMultiYear = (data, variable) => {
     let low = 0;
 
     Object.keys(data).forEach(id => {
-        //console.log("id ", data[id] )
-        Object.keys(data[id][variable]).forEach(year => {
-            data[id][variable][year].forEach(day => {
+        //console.log("id ", data[id][variable] )
+        // remove 2022 because it skews the data brackets and we don't use 2022 data
+        let edited = Object.fromEntries(Object.entries(data[id][variable])
+            .filter(([key]) => key !== '2022')
+        );
+        Object.keys(edited).forEach(year => {
+            edited[year].forEach(day => {
                 //console.log("day ", day)
                 if (!high || day > high) {
                     high = day
@@ -268,6 +272,8 @@ export const getData = (view, practice) => {
             //console.log("d ", data)
             data = getDataByPopulation(data, 10000000)
         }
+
+        
 
         const dataBrackets = getDataBracketsMultiYear(data, 'cases')
         const logData = getLogData(data)
