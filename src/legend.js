@@ -342,7 +342,7 @@ const calcX = (num, startX, width, low, high) => {
     return startX + (num - low) * increment
 }
 
-const calcY = (num, startY, height, low, high) => {
+export const calcY = (num, startY, height, low, high) => {
     const dataRange = high - low
     const increment = height / dataRange
 

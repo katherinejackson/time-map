@@ -27,7 +27,8 @@ export const getGlyph = (p5, pin, data, dataType, interval, shape, selections, e
     if (shape === shapes.SPIRAL.id) {
         spiral(pg, dataType, interval, locationData, width/2, height/2, selections, encoding, numLocations, pin.name)
     } else if (shape === shapes.ROW.id) {
-        row(pg, dataType, interval, locationData, width/2, height/2, selections, encoding, numLocations, pin.name)
+        let increments = [-35, -25, -15, -5, 0, 5, 15, 25, 30]
+        row(pg, dataType, interval, locationData, width/2, height/2, selections, encoding, numLocations, pin.name, increments)
     }
 
     //p5.save(pg, "rowpin.png");

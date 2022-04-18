@@ -1,5 +1,6 @@
 import { colours, manualIntervals, radianPerDay, radianPerMonth, radianPerYear, legendRadianPerYear, shapes, themeColours, pinSize, abbreviatedMonths, migrationYears } from "./constants";
 import { fillColourGradient, getManualIntervalColour, fillLogColourGradient, getCovidIntervalColour, setColour } from "./helpers/colours";
+import { calcY } from "./legend";
 
 export const getShapeSize = (selections, shape, dataLength, numLocations = 1) => {
     if (shape === shapes.SPIRAL.id) {
@@ -94,7 +95,8 @@ export const row = (
     selections,
     encoding,
     numLocations,
-    id
+    id,
+    increments
 ) => {
     // Change selections arg to TEMP
     // var selections = {...TEMP}
@@ -153,7 +155,17 @@ export const row = (
 
 
 
+
+
     locationData.forEach(year => {
+        // draw guidelines
+        for (let i=0; i<increments.length; i++) {
+            let val = calcY(increments[i], baseline, rowHeight, Math.min(...increments), Math.max(...increments))
+            p5.stroke(255)
+            p5.strokeWeight(0.25)
+            p5.line(startX, val-rowHeight, startX + width, val-rowHeight)
+        }
+
         for (let day = 0; day < year.length - 1; day++) {
             if (year[day] !== '') {
                 if (encoding === 1) {
@@ -237,7 +249,8 @@ export const migrationRow = (
     selections,
     encoding,
     numLocations,
-    id
+    id,
+    increments
     ) => {
     // Change selections arg to TEMP
     // var selections = {...TEMP}
@@ -260,7 +273,6 @@ export const migrationRow = (
     const middle = baseline - (interval.range / 2 * increment)
 
     //console.log("int ", interval)
-
 
     
     //console.log("w ", width, "h ", height)
@@ -299,6 +311,13 @@ export const migrationRow = (
         //p5.line(startX - 2, baseline, (startX - 2) + (width + 4), baseline)
     }
 
+    // draw guidelines
+    for (let i=0; i<increments.length; i++) {
+        let val = calcY(increments[i], baseline, height, Math.min(...increments), Math.max(...increments))
+        p5.stroke(255)
+        p5.strokeWeight(0.5)
+        p5.line(startX, val-height, startX + width, val-height)
+    }
 
     for (let i=0; i<locationData.length; i++) {
         let year = locationData[i];
