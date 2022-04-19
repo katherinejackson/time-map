@@ -105,8 +105,9 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
         drawYAxis(p5)
 
         let increments;
-        if (practice) increments = [0, 75000, 150000, 225000, 300000, 375000, 450000]
-        else increments = [10, 100, 1000, 10000, 100000, 1000000]
+        // if (practice) increments = [0, 75000, 150000, 225000, 300000, 375000, 450000]
+        // else 
+        increments = [10, 100, 1000, 10000, 100000, 1000000]
         drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, increments)
         drawGlyphs()
         //increments = [0, 250000, 500000, 750000, 1000000, 1250000]

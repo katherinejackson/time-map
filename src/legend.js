@@ -89,7 +89,7 @@ export const drawShapeLegend = (p5, width, height, selections, brackets, shape, 
     p5.rect(0, 0, width, height)
 
     if (shape === 2) {
-        drawRowLegend(p5, width, height, brackets, textColour, encoding, increments)
+        drawRowLegend(p5, width, height, brackets, textColour, encoding, dataType, increments)
     } else if (shape === 1) {
         drawSpiralLegend(p5, width, height, selections, brackets, encoding, dataType, increments)
     }
@@ -315,11 +315,11 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
 
     increments.forEach(num => {
         let x = calcX(num, xStart, width, newLow, newHigh)
-        if (dataType === 'TEMP') {
-            p5.text(formatNumbers((Math.round(num * 10) / 10)), x, legendHeight / 2 + 3)
+        if (dataType === 'COVID') {
+            p5.text(formatNumbers((Math.round(num * 10) / 10)), dataLogScale(num), legendHeight / 2 + 3)
         }
         else {
-            p5.text(formatNumbers((Math.round(num * 10) / 10)), dataLogScale(num), legendHeight / 2 + 3)
+            p5.text(formatNumbers((Math.round(num * 10) / 10)), x, legendHeight / 2 + 3)
         }
 
     })
@@ -425,7 +425,7 @@ export const drawLogarithmicGradientLegend = (p5, x, y, brackets, textColour) =>
     p5.text('No Data', x + 270 / 2 * width + 50 + 20, y + 15)
 }
 
-export const drawRowLegend = (p5, width, height, brackets, textColour, encoding, increments) => {
+export const drawRowLegend = (p5, width, height, brackets, textColour, encoding, dataType, increments) => {
     const lowString = formatNumbers(brackets.displayLow || brackets.low)
     const highString = formatNumbers(brackets.displayHigh || brackets.high)
     const low = brackets.displayLow || brackets.low
@@ -476,7 +476,13 @@ export const drawRowLegend = (p5, width, height, brackets, textColour, encoding,
 
     // let positions = increments.map(i => calcY(i, startY, rectHeight, low, high))
 
-    let positions = increments.map(i => dataLogScale(i)).reverse()
+    let positions;
+    if (dataType === 'TEMP') {
+        positions = increments.map(i => calcY(i, startY, rectHeight, low, high))
+    }
+    else {
+        positions = increments.map(i => dataLogScale(i)).reverse()
+    }
 
     if (encoding === 1 || encoding === 3) {
         p5.textAlign(p5.RIGHT, p5.BOTTOM)
@@ -671,7 +677,7 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
             let lastElementYShift = 8;
             if (selections.practice) {
                 lastElementXShift = 20
-                lastElementYShift = 15
+                lastElementYShift = 6
             }
             p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] - lastElementXShift, positions[positions.length-1][1]-lastElementYShift)
             p5.ellipse(positions[positions.length-1][0] - lastElementXShift, positions[positions.length-1][1] - lastElementYShift, 2, 2)
@@ -696,16 +702,23 @@ export const calcPointIndicatorPosition = (p5, startX, startY, rightRadius, brac
     let angle = -Math.PI / 2
     let endPoints = {}
 
+    // Logarithmic Scale
+    let dataLogScale = scaleLog()
+        .domain([min(increments), max(increments)])
+        .range([low, high]);
+
     // calculate where line ends inside spiral
     for (let i=0; i<increments.length; i++) {
-        const val = increments[i] - low
+        let val;
+        if (dataType === 'COVID') val = dataLogScale(increments[i]) - low
+        else val = increments[i] - low
         const x = startX + p5.cos(angle) * (innerRing + val * increment)
         const y = startY + p5.sin(angle) * (innerRing + val * increment)
         p5.ellipse(x, y, 2, 2)
         endPoints[increments[i]] = [x, y]
 
         let angleDivisor = 1
-        let tightnessShift = 2
+        let tightnessShift = 2.5
         if (dataType === 'TEMP' || dataType === 'MIGRATION') {
             angleDivisor = 1.25
             tightnessShift = 0
@@ -714,7 +727,6 @@ export const calcPointIndicatorPosition = (p5, startX, startY, rightRadius, brac
         angle += radianPerMonth/angleDivisor
         innerRing += (spiralTightness - tightnessShift)
     }
-
     return endPoints
 }
 
