@@ -143,7 +143,7 @@ export const drawColourLegend = (p5, legendWidth, legendHeight, selections, inte
     if (dataType === 'COVID' && numColours === 6) {
         drawManualIntervalLegend(p5, width, height, legendWidth, legendHeight, numColours, interval, dataType, textColour)
     } else if (numColours <= 2 || numColours > 10) {
-        drawGradientLegend(p5, width, height, legendWidth, legendHeight, numColours, brackets, textColour, increments)
+        drawGradientLegend(p5, width, height, legendWidth, legendHeight, numColours, brackets, textColour, increments, dataType)
     } else {
         drawIntervalLegend(p5, width, height, legendWidth, legendHeight, numColours, interval, dataType, textColour)
     }
@@ -260,7 +260,7 @@ export const drawManualIntervalLegend = (p5, width, height, legendWidth, legendH
     // p5.text('No Data', x + numColours * length / 2 + 50 + 20, yStart + 15)
 }
 
-const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numColours, brackets, textColour, increments) => {
+const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numColours, brackets, textColour, increments, dataType) => {
     const { high, low, range, displayLow, displayHigh } = brackets
     // const low = brackets.displayLow || brackets.low
     // const high = brackets.displayHigh || brackets.high
@@ -315,7 +315,13 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
 
     increments.forEach(num => {
         let x = calcX(num, xStart, width, newLow, newHigh)
-        p5.text(formatNumbers((Math.round(num * 10) / 10)), dataLogScale(num), legendHeight / 2 + 3)
+        if (dataType === 'TEMP') {
+            p5.text(formatNumbers((Math.round(num * 10) / 10)), x, legendHeight / 2 + 3)
+        }
+        else {
+            p5.text(formatNumbers((Math.round(num * 10) / 10)), dataLogScale(num), legendHeight / 2 + 3)
+        }
+
     })
 
 
