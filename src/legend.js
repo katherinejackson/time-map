@@ -1,4 +1,4 @@
-import { scaleLinear } from 'd3';
+import { scaleLinear, scaleLog, min, max } from 'd3';
 import p5 from 'p5';
 import { colours, manualIntervals, themeColours, shapes, abbreviatedMonths, migrationYears, radianPerMonth } from './constants'
 import { fillColourGradient, setColour } from "./helpers/colours";
@@ -307,9 +307,15 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
     p5.textSize(10)
     p5.fill(textColour)
     p5.textAlign(p5.CENTER, p5.TOP)
+
+    // Logarithmic Scale
+    let dataLogScale = scaleLog()
+        .domain([min(increments), max(increments)])
+        .range([xStart + 5, width]);
+
     increments.forEach(num => {
         let x = calcX(num, xStart, width, newLow, newHigh)
-        p5.text(formatNumbers((Math.round(num * 10)/10)), x, legendHeight / 2 + 3)
+        p5.text(formatNumbers((Math.round(num * 10) / 10)), dataLogScale(num), legendHeight / 2 + 3)
     })
 
 
@@ -455,8 +461,16 @@ export const drawRowLegend = (p5, width, height, brackets, textColour, encoding,
     // }
 
 
-    
-    let positions = increments.map(i => calcY(i, startY, rectHeight, low, high))  //.reverse()
+    // let positions = increments.map(i => calcY(i, startY, rectHeight, low, high))  //.reverse()
+
+    // Logarithmic Scale
+    let dataLogScale = scaleLog()
+    .domain([min(increments), max(increments)])
+    .range([startY + 5, rectHeight]);
+
+    // let positions = increments.map(i => calcY(i, startY, rectHeight, low, high))
+
+    let positions = increments.map(i => dataLogScale(i)).reverse()
 
     if (encoding === 1 || encoding === 3) {
         p5.textAlign(p5.RIGHT, p5.BOTTOM)
