@@ -46,6 +46,7 @@ export const getColourFromSet = (pt, interval, colourSet) => {
 
 export const fillColourGradient = (p5, pt, brackets, numColours) => {
     const { high, low, range } = brackets
+    //console.log(brackets)
     if (numColours === 1) {
         const scaledPt = Math.abs(-1 * low + pt)
         p5.colorMode(p5.HSB, 255, range, 1)

@@ -1,6 +1,6 @@
 import { shapes, themes } from '../constants'
 
-const size = window?.options?.size || 'medium'
+const size = window?.options?.size || 'large'
 
 const defaultSizes = {
     spiral: {

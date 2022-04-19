@@ -164,6 +164,8 @@ export const row = (
             p5.stroke(255)
             p5.strokeWeight(0.25)
             p5.line(startX, val-rowHeight, startX + width, val-rowHeight)
+            p5.noStroke();
+            
         }
 
         for (let day = 0; day < year.length - 1; day++) {
@@ -1062,7 +1064,7 @@ export const migrationSpiral = (
         p5.strokeWeight(3)
         p5.noFill()
         let mag = 2.75
-        if (spiralWidth === 5) mag = 3.5
+        if (spiralWidth === 5 || spiralWidth === 6) mag = 4
         p5.ellipse(startX, startY, maxRadius*mag, maxRadius*mag)
     }
     else p5.noStroke()

@@ -273,8 +273,6 @@ export const getData = (view, practice) => {
             data = getDataByPopulation(data, 10000000)
         }
 
-        
-
         const dataBrackets = getDataBracketsMultiYear(data, 'cases')
         const logData = getLogData(data)
         const logDataBrackets = getDataBracketsMultiYear(logData, 'cases')
@@ -507,6 +505,7 @@ const getLogData = (data) => {
             yearData.forEach(day => {
                 if (day > 0) {
                     logYear.push(Math.log10(day))
+                    //logYear.push(day)
                 } else if (day === '') {
                     logYear.push('')
                 } else {
