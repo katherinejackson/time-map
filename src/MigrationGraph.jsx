@@ -72,6 +72,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
         p5.clear();
         p5.image(backgroundImage, 0, 0, canvasWidth, canvasHeight)
         let increments = [0, 500000, 1000000, 1500000, 2000000, 2500000, 3000000]
+        //[10, 100, 1000, 10000, 100000, 1000000, 10000000]
         drawMigrationLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, 41, increments)
         drawGlyphs();
     }
@@ -136,8 +137,8 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
             const hoverpg = p5.createGraphics(pin.width, pin.height)
             hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
 
-            let mag = 5.5
-            if (selections.spiralWidth === 5) mag = 12.5
+            let mag = 6.5
+            if (selections.spiralWidth === 6) mag = 9
 
             if (!mapPin) {
                 p5.fill(colourTheme.pinBackground, 100)
@@ -145,7 +146,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
                 if (shape === shapes.SPIRAL.id) {
                     p5.ellipse(pin.x, pin.y, maxRadius * mag, maxRadius * mag)
                 } else if (shape === shapes.ROW.id) {
-                    p5.rect(pin.x - (width*magnification) * 1.5, pin.y - height * 2, (width * 3)*magnification, height * 4)
+                    p5.rect(pin.x - (width*magnification) * 1.5, pin.y - height * 2, (width * 3)*magnification, height * 5)
                 }
             }
 
@@ -154,8 +155,25 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
             p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(colourTheme.textColour)
             //p5.text(pin.name, pin.x, pin.y + height * 0.75 + 7)
-            let newName = pin.name.split(">").join(' \u2192\ ')
-            p5.text(newName, pin.x, pin.y + height * 0.75 + 7)
+            let newName;
+            if (shape === shapes.SPIRAL.id) {
+                newName = pin.name.split(">").join(' \u2192\ \n')
+                if (selections.spiralWidth === 15) {
+                    p5.text(newName, pin.x, pin.y + height * 0.75 + 15)
+                }
+                else if (selections.spiralWidth === 6) {
+                    p5.text(newName, pin.x, pin.y + height * 0.75 + 10)
+                }
+                else {
+                    p5.text(newName, pin.x, pin.y + height * 0.75 + 11)
+                }
+                
+            }
+            else if (shape === shapes.ROW.id) {
+                newName = pin.name.split(">").join(' \u2192\ ')
+                p5.text(newName, pin.x, pin.y + height * 0.75 + 9)
+            }
+            
         }
     }
 

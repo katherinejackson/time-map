@@ -63,7 +63,7 @@ export const fillColourGradient = (p5, pt, brackets, numColours) => {
         const newPt = Math.floor(pt / high * 256)
         p5.fill(colours['COVID'][256][newPt])
     } else if (numColours === 360) {
-        const newPt = Math.floor((range - (-1 * low + pt)) * 255 / range)
+        const newPt = Math.floor((range - (-1 * low + pt)) * 270 / range)
         //sconsole.log(pt, newPt)
         p5.colorMode(p5.HSB, 360, 100, 100)
         p5.fill(newPt, 100, 95)

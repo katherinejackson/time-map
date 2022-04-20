@@ -1063,9 +1063,9 @@ export const migrationSpiral = (
         p5.stroke(0, 255, 0)
         p5.strokeWeight(3)
         p5.noFill()
-        let mag = 2.75
-        if (spiralWidth === 5 || spiralWidth === 6) mag = 4
-        p5.ellipse(startX, startY, maxRadius*mag, maxRadius*mag)
+        let mag = 2.5
+        if (spiralWidth === 5 || spiralWidth === 6) mag = 3
+        p5.ellipse(startX-3, startY-3, maxRadius*mag, maxRadius*mag)
     }
     else p5.noStroke()
 

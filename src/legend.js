@@ -320,6 +320,7 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
         }
         else {
             p5.text(formatNumbers((Math.round(num * 10) / 10)), x, legendHeight / 2 + 3)
+           
         }
 
     })
@@ -573,7 +574,13 @@ export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, 
     p5.fill(textColour)
     p5.textSize(8)
 
+    // // Logarithmic Scale
+    // let dataLogScale = scaleLog()
+    //     .domain([min(increments), max(increments)])
+    //     .range([startY + 5, rectHeight]);
+
     //const increments = calculateIntervals(low, high, 2, false)
+    //let positions = increments.map(i => dataLogScale(i)).reverse()
     let positions = increments.map(i => calcX(i, startY, rectHeight, low, high)).reverse()
 
     if (encoding === 1 || encoding === 3) {

@@ -16,7 +16,7 @@ import GraphView from './GraphView'
 import MultiComparison from './MultiComparison'
 import MigrationGraph from './MigrationGraph';
 
-const options = window.options || { view: null, shape: 2, encoding: 1, practice: true };
+const options = window.options || { view: null, shape: 2, encoding: 1, practice: false };
 
 const study = window.options !== undefined
 
@@ -54,7 +54,7 @@ const App = () => {
         // "TEMP": highlightOptions, 
         "TEMP": highlightOptions, 
         "COVID": highlightOptions, 
-        "MIGRATION": ["Germany>Italy", "India>Canada"]
+        "MIGRATION": ["India>Canada"]
     }
 
     useEffect(() => {
