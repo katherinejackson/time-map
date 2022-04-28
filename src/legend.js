@@ -27,15 +27,18 @@ export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interv
     drawYearLegend(yearGraphics, yearLegendWidth, legendHeight, selections, shape, increments)
     p5.image(yearGraphics, canvasWidth - legendWidth - yearLegendWidth, 0)
 
-    let infoGraphics = p5.createGraphics(colourLegendWidth, 15)
-    drawInfoLegend(infoGraphics, colourLegendWidth, legendHeight, selections)
-    p5.image(infoGraphics, canvasWidth - colourLegendWidth, legendHeight)
-
-
+    let extraSpace = 0
+    if (dataType !== "TEMP") {
+        extraSpace = 15
+        let infoGraphics = p5.createGraphics(colourLegendWidth, 15)
+        drawInfoLegend(infoGraphics, colourLegendWidth, legendHeight, selections)
+        p5.image(infoGraphics, canvasWidth - colourLegendWidth, legendHeight)
+    }
+  
     if (encoding !== 1) {
         let colourLegendGraphics = p5.createGraphics(colourLegendWidth, colourLegendHeight)
         drawColourLegend(colourLegendGraphics, colourLegendWidth, colourLegendHeight, selections, interval, dataType, dataBrackets, increments)
-        p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight + 15)
+        p5.image(colourLegendGraphics, canvasWidth - colourLegendWidth, legendHeight + extraSpace)
         
     }
     //p5.save(legendGraphics, "dlegend_map.png")
@@ -549,11 +552,16 @@ export const drawSpiralYearLegend = (p5, width, height, selections) => {
     const { theme } = selections
     const textColour = themeColours[theme].textColour
 
-    p5.textSize(8)
-    p5.fill(textColour)
+    p5.textSize(12)
+
     p5.noStroke()
-    p5.text("2020", width/2+ 12, height/3 + 10)
-    p5.text("2021", width/2+ 12, height/3 - 5)
+    p5.fill(255, 105, 180)
+    p5.ellipse(width/2 - 30, height - 30, 7.5, 7.5)
+    p5.fill(230, 230, 250)
+    p5.ellipse(width/2 + 20, height - 30, 7.5, 7.5)
+    p5.fill(textColour)
+    p5.text("2020", width/2 - 25, height - 25)
+    p5.text("2021", width/2 + 25, height - 25)
 }
 
 export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, encoding, dataLength, increments) => {
@@ -687,7 +695,7 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
                 lastElementYShift = 6
             }
             p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] - lastElementXShift, positions[positions.length-1][1]-lastElementYShift)
-            p5.ellipse(positions[positions.length-1][0] - lastElementXShift, positions[positions.length-1][1] - lastElementYShift, 2, 2)
+            //p5.ellipse(positions[positions.length-1][0] - lastElementXShift, positions[positions.length-1][1] - lastElementYShift, 2, 2)
         }
         
   
@@ -721,7 +729,7 @@ export const calcPointIndicatorPosition = (p5, startX, startY, rightRadius, brac
         else val = increments[i] - low
         const x = startX + p5.cos(angle) * (innerRing + val * increment)
         const y = startY + p5.sin(angle) * (innerRing + val * increment)
-        p5.ellipse(x, y, 2, 2)
+        //p5.ellipse(x, y, 2, 2)
         endPoints[increments[i]] = [x, y]
 
         let angleDivisor = 1
@@ -797,7 +805,7 @@ export const drawMigrationSpiralLegend = (p5, legendWidth, legendHeight, selecti
         // Draw the line for the last item on scale
         p5.stroke(colourTheme.textColour, 100)
         p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] + 10, positions[positions.length-1][1]-25)
-        p5.ellipse(positions[positions.length-1][0] + 10, positions[positions.length-1][1]-25, 2, 2)
+        //p5.ellipse(positions[positions.length-1][0] + 10, positions[positions.length-1][1]-25, 2, 2)
         
   
 

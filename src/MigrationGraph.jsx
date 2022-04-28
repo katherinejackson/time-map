@@ -203,7 +203,7 @@ const MigrationGraph = ({ encoding, selections, shape }) => {
             let increments = [500000, 1000000, 1500000, 2000000, 2500000, 3000000]
             migrationRow(pg, dataType, interval, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, id, increments)
         }
-       //p5.save(pg, "mgrownewmed1.png");
+       //p5.save(pg, "mgpins.png");
 
 
         return { pg, width: canvasWidth, height: canvasHeight }

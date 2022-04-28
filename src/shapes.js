@@ -196,7 +196,7 @@ export const row = (
                     p5.rect(startX + day * dayWidth, baseline - rowHeight, 1, rowHeight)
                 } else {
                     if (encoding === 1) p5.fill(133, 193, 233)
-                    else if (encoding === 3) p5.fill(255, 100)
+                    else if (encoding === 3) p5.fill(255)
                     let val = baseline - ((rowHeight)/2)
                     p5.ellipse(startX + day * dayWidth, val, 1, 1)
                 }
@@ -705,9 +705,9 @@ export const spiral = (
 ) => {
     // Change selections arg to TEMP
     // var selections = {...TEMP}
-    // selections.spiralTightness = 0.15
-    // selections.spiralWidth = 50
-    // selections.coreSize = 18
+    // selections.spiralTightness = 0.12
+    // selections.spiralWidth = 40
+    // selections.coreSize = 15
     let locationData = data.reverse()
     const { spiralWidth, spiralTightness, coreSize, mapPin, opaque, theme, numColours, fillMissing, cluster } = selections
     const colourTheme = themeColours[theme]
@@ -772,7 +772,7 @@ export const spiral = (
                 else if (spiralWidth === 2) mag = 3
                 p5.arc(a, b, spiralWidth * mag, spiralWidth * mag, angle, angle + radianPerDay * 10, p5.PIE)
 
-                p5.fill(215, 219, 221)
+                p5.fill(144, 148, 151)
                 let val;
                 if (interval.low < 0) {
                     val = -interval.low
@@ -820,10 +820,10 @@ export const spiral = (
                     const val = year[day] - interval.low
                     const x = startX + p5.cos(angle) * (innerRing + val * increment)
                     const y = startY + p5.sin(angle) * (innerRing + val * increment)
-                    p5.ellipse(x, y, 2, 2)
+                    p5.ellipse(x, y, 1, 1)
                 }
             } else if (fillMissing) {
-                p5.fill(colourTheme.missingData, 100)
+                p5.fill(255)
 
                 if (encoding === 2) {
                     const x = startX + p5.cos(angle) * innerRing
@@ -832,7 +832,7 @@ export const spiral = (
                 }
                 else {
                     if (encoding === 1) p5.fill(133, 193, 233)
-                    else if (encoding === 3) p5.fill(255, 100)
+                    else if (encoding === 3) p5.fill(255)
                     let val;
                     if (interval.low < 0) {
                         val = -interval.low
@@ -1145,17 +1145,22 @@ export const twoYearSpiralOutline = (
     p5.fill(colourTheme.textColour)
     p5.noStroke()
     for (let day = 0; day < 730; day++) {
-        const innerX = startX + p5.cos(angle) * innerRing
-        const innerY = startY + p5.sin(angle) * innerRing
-        p5.ellipse(innerX, innerY, 1, 1)
+        if (day < 365) {
+            p5.fill(255, 105, 180)
+            const innerX = startX + p5.cos(angle) * innerRing
+            const innerY = startY + p5.sin(angle) * innerRing
+            p5.ellipse(innerX, innerY, 1, 1)
+        }
+        else p5.fill(230, 230, 250)
+     
 
         const outerX = startX + p5.cos(angle) * outerRing
         const outerY = startY + p5.sin(angle) * outerRing
         p5.ellipse(outerX, outerY, 1, 1)
 
         angle += radianPerDay
-        innerRing += (spiralTightness * 1.15)
-        outerRing += (spiralTightness * 1.5)
+        innerRing += (spiralTightness * 1)
+        outerRing += (spiralTightness * 1.55)
     }
 
     p5.stroke(colourTheme.textColour)

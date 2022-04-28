@@ -31,7 +31,7 @@ export const getGlyph = (p5, pin, data, dataType, interval, shape, selections, e
         row(pg, dataType, interval, locationData, width/2, height/2, selections, encoding, numLocations, pin.name, increments)
     }
 
-    //p5.save(pg, "rowpin.png");
+    //p5.save(pg, "finalmappin.png");
 
     return { pg, width, height }
 }
