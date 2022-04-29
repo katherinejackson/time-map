@@ -635,7 +635,7 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
     if (encoding === 1 || encoding === 3) {
         const x = legendWidth * 0.7
         const textColour = themeColours[selections.theme].textColour
-        spiralOutline(p5, x, startY, selections)
+        spiralOutline(p5, x, startY, selections, true)
 
         const { spiralWidth, spiralTightness, coreSize, theme } = selections
         const colourTheme = themeColours[theme]
@@ -654,6 +654,7 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
                 let y2 = startY + p5.sin(angle) * outerCore
                 positions.push([x2, y2])
             } 
+            
             angle += radianPerMonth / 2.5
             outerCore += (spiralTightness * 15)
         }
@@ -753,13 +754,13 @@ export const drawMigrationSpiralLegend = (p5, legendWidth, legendHeight, selecti
     const startY = legendHeight / 2 + 10
     const textColour = themeColours[selections.theme].textColour
 
-    spiralOutline(p5, startX, startY, selections, dataLength)
+    spiralOutline(p5, startX, startY, selections)
     drawMigrationSpiralYear(p5, startX, startY, selections, dataLength)
 
     if (encoding === 1 || encoding === 3) {
         const x = legendWidth * 0.75
         const textColour = themeColours[selections.theme].textColour
-        spiralOutline(p5, x, startY, selections)
+        spiralOutline(p5, x, startY, selections, true)
 
         const { spiralWidth, spiralTightness, coreSize, theme } = selections
         const colourTheme = themeColours[theme]

@@ -364,10 +364,16 @@ export const migrationRow = (
             }
         }
         // draw border around multi year pins + highlight the key pins
-        if (selections.highlightOptions[dataType].includes(id)) p5.stroke(0, 255, 0)
-        else p5.stroke(255)
+        if (selections.highlightOptions[dataType].includes(id)) {
+            p5.stroke(30, 132, 73)
+            p5.strokeWeight(3)
+        }
+        else {
+            p5.strokeWeight(1)
+            p5.stroke(255)
+        }
 
-        p5.strokeWeight(1)
+        
         p5.noFill()
         p5.rect(startX-1, startY-1, width+2, height+2)
         p5.noStroke()
@@ -766,7 +772,7 @@ export const spiral = (
 
                 const a = startX + p5.cos(angle) * innerRing
                 const b = startY + p5.sin(angle) * innerRing
-                p5.fill(colourTheme.pinBackground)
+                p5.fill( 98, 101, 103)
                 let mag = 2
                 if (spiralWidth === 5) mag = 3
                 else if (spiralWidth === 2) mag = 3
@@ -1093,6 +1099,7 @@ export const spiralOutline = (
     x,
     y,
     selections,
+    isDistanceLegend=false
 ) => {
     const { spiralWidth, spiralTightness, coreSize, theme } = selections
     const colourTheme = themeColours[theme]
@@ -1101,6 +1108,7 @@ export const spiralOutline = (
     const startY = y
     let angle = -Math.PI / 2
     let innerRing = coreSize
+    let middleRing = coreSize + (spiralWidth/2)
     let outerRing = coreSize + spiralWidth
 
     p5.fill(colourTheme.textColour)
@@ -1110,12 +1118,21 @@ export const spiralOutline = (
         const innerY = startY + p5.sin(angle) * innerRing
         p5.ellipse(innerX, innerY, 1, 1)
 
+        if (isDistanceLegend) {
+            p5.fill( 215, 219, 221)
+            const middleX = startX + p5.cos(angle) * middleRing
+            const middleY = startY + p5.sin(angle) * middleRing
+            p5.ellipse(middleX, middleY, 0.25, 0.25)
+            p5.fill(colourTheme.textColour)
+        }
+
         const outerX = startX + p5.cos(angle) * outerRing
         const outerY = startY + p5.sin(angle) * outerRing
         p5.ellipse(outerX, outerY, 1, 1)
 
         angle += radianPerDay
         innerRing += spiralTightness
+        middleRing += spiralTightness
         outerRing += spiralTightness
     }
 

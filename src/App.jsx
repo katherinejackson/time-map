@@ -54,7 +54,7 @@ const App = () => {
         // "TEMP": highlightOptions, 
         "TEMP": highlightOptions, 
         "COVID": highlightOptions, 
-        "MIGRATION": highlightOptions
+        "MIGRATION": ["Turkey>Germany"]
     }
 
     useEffect(() => {
