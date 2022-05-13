@@ -82,9 +82,7 @@ export const getDataBracketsMultiYear = (data, variable) => {
         })
     })
 
-    //console.log(variable)
-
-    //console.log("h ", high, low)
+    high = Math.ceil(high)
 
     return { high, low, range: high - low }
 }
@@ -264,6 +262,12 @@ export const getData = (view, practice) => {
     if (view === views.SCATTER.val) {
         let data = covidData
 
+
+        const dataBrackets = getDataBracketsMultiYear(data, 'cases')
+        data = getLogData(data)
+        const logDataBrackets = getDataBracketsMultiYear(data, 'cases')
+        const dataType = dataSets.COVID.val
+
         if (practice) {
             data = getDataByContinent(data, ['Europe'])
             data = getDataByPopulation(data, 60000000)
@@ -272,10 +276,6 @@ export const getData = (view, practice) => {
             data = getDataByPopulation(data, 10000000)
         }
 
-        const dataBrackets = getDataBracketsMultiYear(data, 'cases')
-        const logData = getLogData(data)
-        const logDataBrackets = getDataBracketsMultiYear(logData, 'cases')
-        const dataType = dataSets.COVID.val
         const yBrackets = getVariableBrackets(data, 'population')
         const xBrackets = getVariableBrackets(data, 'human_development_index')
         const combinedBrackets = {...logDataBrackets, displayHigh: dataBrackets.high, displayLow: dataBrackets.low}
@@ -283,7 +283,9 @@ export const getData = (view, practice) => {
         // getCovidDataInfo(data)
         //console.log(Object.keys(data).length + ' countries')
 
-        return { data: logData, dataType, dataBrackets: combinedBrackets, yBrackets, xBrackets }
+        console.log(combinedBrackets)
+
+        return { data, dataType, dataBrackets: combinedBrackets, yBrackets, xBrackets }
 
     } else if (view === views.GRAPH.val) {
         let var1 = 'import'
