@@ -26,6 +26,7 @@ export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interv
     let yearGraphics = p5.createGraphics(legendWidth, legendHeight)
     drawYearLegend(yearGraphics, yearLegendWidth, legendHeight, selections, shape, increments)
     p5.image(yearGraphics, canvasWidth - legendWidth - yearLegendWidth, 0)
+    //p5.save(yearGraphics, "yrLegend.png")
 
     let extraSpace = 0
     if (dataType !== "TEMP") {
