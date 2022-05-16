@@ -318,11 +318,13 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
         .range([xStart + 5, width]);
 
     increments.forEach(num => {
-        let x = calcX(num, xStart, width, newLow, newHigh)
         if (dataType === 'COVID') {
-            p5.text(formatNumbers((Math.round(num * 10) / 10)), dataLogScale(num), legendHeight / 2 + 3)
+            let logVal = Math.log10(num)
+            let x = ((logVal / brackets.range) * width) + xStart
+            p5.text(formatNumbers((Math.round(num * 10) / 10)), x, legendHeight / 2 + 3)
         }
         else {
+            let x = calcX(num, xStart, width, newLow, newHigh)
             p5.text(formatNumbers((Math.round(num * 10) / 10)), x, legendHeight / 2 + 3)
            
         }
@@ -355,7 +357,6 @@ const calcX = (num, startX, width, low, high) => {
     const dataRange = high - low
     const increment = width / dataRange
 
-    // return startX + (num - low) * increment
     return startX + (num - low) * increment
 }
 
