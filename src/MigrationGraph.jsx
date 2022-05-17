@@ -16,13 +16,16 @@ const canvasHeight = window.options ? 800 : window.innerHeight * 0.95;
 
 const magnification = 1;
 
-const MigrationGraph = ({ encoding, selections, shape }) => {
+const MigrationGraph = ({ encoding, selections, shape, study }) => {
 
-    
-    let newSizes = getMigrationSizes(shape);
-    for (let val in newSizes) {
-        selections[val] = newSizes[val];
+    // If in study mode, then we need to use the pre-set sizes
+    if (study) {
+        let newSizes = getMigrationSizes(shape);
+        for (let val in newSizes) {
+            selections[val] = newSizes[val];
+        }
     }
+
     selections['numYears'] = 1
 
     //console.log("selections: ", selections)
