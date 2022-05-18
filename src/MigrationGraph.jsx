@@ -74,7 +74,7 @@ const MigrationGraph = ({ encoding, selections, shape, study }) => {
     const draw = (p5) => {
         p5.clear();
         p5.image(backgroundImage, 0, 0, canvasWidth, canvasHeight)
-        let increments = [0, 500000, 1000000, 1500000, 2000000, 2500000, 3000000]
+        let increments = [100, 1000, 10000, 100000, 1000000]
         //[10, 100, 1000, 10000, 100000, 1000000, 10000000]
         drawMigrationLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, 41, increments)
         drawGlyphs();
@@ -201,10 +201,10 @@ const MigrationGraph = ({ encoding, selections, shape, study }) => {
         }
 
         if (shape === shapes.SPIRAL.id) {
-            migrationSpiral(pg, dataType, interval, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, id)
+            migrationSpiral(pg, dataType, dataBrackets, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, id)
         } else if (shape === shapes.ROW.id) {
-            let increments = [500000, 1000000, 1500000, 2000000, 2500000, 3000000]
-            migrationRow(pg, dataType, interval, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, id, increments)
+            let increments = [100, 1000, 10000, 100000, 1000000]
+            migrationRow(pg, dataType, dataBrackets, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, id, increments)
         }
        //p5.save(pg, "mgpins.png");
 

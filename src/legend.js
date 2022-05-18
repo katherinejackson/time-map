@@ -322,9 +322,11 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
             let logVal = Math.log10(num)
             let x = ((logVal / brackets.range) * width) + xStart
             p5.text(formatNumbers((Math.round(num * 10) / 10)), x, legendHeight / 2 + 3)
-        }
-        else {
+        } else if (dataType === 'TEMP') {
             let x = calcX(num, xStart, width, newLow, newHigh)
+            p5.text(formatNumbers((Math.round(num * 10) / 10)), x, legendHeight / 2 + 3)
+        } else {
+            let x = (((Math.log10(num) - low) * width)/range) + xStart
             p5.text(formatNumbers((Math.round(num * 10) / 10)), x, legendHeight / 2 + 3)
            
         }
@@ -594,9 +596,11 @@ export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, 
     let positions = increments.map(i => calcX(i, startY, rectHeight, low, high)).reverse()
 
     if (encoding === 1 || encoding === 3) {
-        p5.textAlign(p5.RIGHT, p5.BOTTOM)
+        p5.textAlign(p5.RIGHT, p5.CENTER)
+        let numStart = startY + rectHeight
         for (let i=0; i<increments.length; i++) {
-            p5.text(formatNumbers(increments[i]), startX - 5, positions[i] + 5)
+            let y = numStart - ((Math.log10(increments[i]) - brackets.low)/brackets.range) * rectHeight
+            p5.text(formatNumbers(increments[i]), startX - 5, y)
         }
         // p5.textAlign(p5.RIGHT, p5.BOTTOM)
         // p5.text(lowString, startX - 5, startY + rectHeight)
@@ -648,7 +652,7 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
         p5.fill(colourTheme.textColour)
         p5.textAlign(p5.CENTER, p5.CENTER)
     
-        angle = -Math.PI / 2
+        angle = -Math.PI / 2 + radianPerMonth
         let positions = []
         for (let i = 0; i <= increments.length * 2; i++) {
             if (i % 2 === 0) {
@@ -673,36 +677,10 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
             p5.noStroke()
             p5.textAlign(p5.LEFT, p5.CENTER)
             p5.textSize(10)
-            p5.text(formatNumbers(increments[i]), positions[i+1][0], positions[i+1][1])
+            let shift = 0;
+            if (i === increments.length-1 && dataType === 'COVID') shift = 5
+            p5.text(formatNumbers(increments[i]), positions[i][0], positions[i][1]+ shift)
         }
-
-
-
-        // Draw the line for the last item on scale
-        p5.stroke(colourTheme.textColour, 100)
-        if (dataType === 'TEMP') {
-            let lastElementXShift = 10
-            let lastElementYShift = 8;
-            if (selections.practice) {
-                lastElementXShift = 5
-                lastElementYShift = 10
-            }
-            p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] + lastElementXShift, positions[positions.length-1][1]-lastElementYShift)
-            //p5.ellipse(positions[positions.length-1][0] + lastElementXShift, positions[positions.length-1][1]- lastElementYShift, 2, 2)
-        }
-        else {
-            let lastElementXShift = 15
-            let lastElementYShift = 10;
-            if (selections.practice) {
-                lastElementXShift = 20
-                lastElementYShift = 12
-            }
-            p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] - lastElementXShift, positions[positions.length-1][1]-lastElementYShift)
-            //p5.ellipse(positions[positions.length-1][0] - lastElementXShift, positions[positions.length-1][1] - lastElementYShift, 2, 2)
-        }
-        
-  
-        
     }
 }
 
@@ -712,10 +690,18 @@ export const calcPointIndicatorPosition = (p5, startX, startY, rightRadius, brac
     const range = high - low
     const { spiralWidth, spiralTightness, coreSize } = selections
 
-    let shiftAmount = 0
-    if (dataType === 'TEMP') shiftAmount = 0.15
+    // let shiftAmount = 0
+    // if (dataType === 'TEMP') shiftAmount = 0.15
 
-    const increment = (((startX + rightRadius) - startX) / range) - shiftAmount
+    // let angleDivisor = 1
+    // let tightnessShift = 2.5
+    // if (dataType === 'TEMP' || dataType === 'MIGRATION') {
+    //     angleDivisor = 1.25
+    //     tightnessShift = 0
+    // } 
+
+    // const increment = (((startX + rightRadius) - startX) / range) - shiftAmount
+    const increment = spiralWidth/brackets.range
     let innerRing = coreSize
     let angle = -Math.PI / 2
     let endPoints = {}
@@ -728,22 +714,29 @@ export const calcPointIndicatorPosition = (p5, startX, startY, rightRadius, brac
     // calculate where line ends inside spiral
     for (let i=0; i<increments.length; i++) {
         let val;
-        if (dataType === 'COVID') val = dataLogScale(increments[i]) - low
-        else val = increments[i] - low
+        if (dataType === 'COVID' || dataType === 'MIGRATION') {
+            val = Math.log10(increments[i]) - brackets.low
+        } else {
+            val = increments[i] - low
+        }
         const x = startX + p5.cos(angle) * (innerRing + val * increment)
         const y = startY + p5.sin(angle) * (innerRing + val * increment)
-        //p5.ellipse(x, y, 2, 2)
-        endPoints[increments[i]] = [x, y]
 
-        let angleDivisor = 1
-        let tightnessShift = 2.5
-        if (dataType === 'TEMP' || dataType === 'MIGRATION') {
-            angleDivisor = 1.25
-            tightnessShift = 0
-        } 
+        //p5.ellipse(x, y, 2, 2)
+
+
+        endPoints[increments[i]] = [x, y]
                
-        angle += radianPerMonth/angleDivisor
-        innerRing += (spiralTightness - tightnessShift)
+        angle += radianPerMonth
+
+        // if (dataType === 'COVID') {
+        //     innerRing += spiralTightness * 25
+        // } else if (dataType === 'MIGRATION') {
+        //     innerRing += spiralTightness
+        // }
+
+        innerRing += spiralTightness * 35
+
     }
     return endPoints
 }
@@ -774,7 +767,7 @@ export const drawMigrationSpiralLegend = (p5, legendWidth, legendHeight, selecti
         p5.textAlign(p5.CENTER, p5.CENTER)
 
     
-        angle = -Math.PI / 2
+        angle = -Math.PI / 2  + radianPerMonth
         let positions = []
         for (let i = 0; i <= increments.length * 2; i++) {
             if (i % 2 === 0) {
@@ -802,13 +795,9 @@ export const drawMigrationSpiralLegend = (p5, legendWidth, legendHeight, selecti
 
             // let yShift = 0
             // if (i === increments.length - 1) yShift = 10
-            p5.text(formatNumbers(increments[i]), positions[i+1][0], positions[i+1][1])
+            p5.text(formatNumbers(increments[i]), positions[i][0], positions[i][1])
         }
 
-        // Draw the line for the last item on scale
-        p5.stroke(colourTheme.textColour, 100)
-        p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] + 10, positions[positions.length-1][1]-25)
-        //p5.ellipse(positions[positions.length-1][0] + 10, positions[positions.length-1][1]-25, 2, 2)
         
   
 

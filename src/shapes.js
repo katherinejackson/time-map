@@ -315,10 +315,10 @@ export const migrationRow = (
 
     // draw guidelines
     for (let i=0; i<increments.length; i++) {
-        let val = calcY(increments[i], baseline, height, Math.min(...increments), Math.max(...increments))
+        let val = baseline - ((Math.log10(increments[i]) - interval.low)/interval.range) * height
         p5.stroke(255)
         p5.strokeWeight(0.5)
-        p5.line(startX, val-height, startX + width, val-height)
+        p5.line(startX, val, startX + width, val)
     }
 
     for (let i=0; i<locationData.length; i++) {
@@ -346,10 +346,11 @@ export const migrationRow = (
                 // console.log("incre", increment)
         
                 
-                let val = baseline - ((year - interval.low) * increment)
+                // let val = baseline - ((year - interval.low) * increment)
+                let val = baseline - ((year - interval.low)/interval.range) * height
                 //console.log("x ", startX + i * dayWidth, "y ", val)
                 p5.noStroke()
-                p5.ellipse(startX + i * dayWidth * magnification, val+3, 1, 1)
+                p5.ellipse(startX + i * dayWidth * magnification, val+1, 1, 1)
             }
         } else if (fillMissing) {
             p5.noStroke()
@@ -978,7 +979,7 @@ export const migrationSpiral = (
             const a = startX + p5.cos(angle) * innerRing
             const b = startY + p5.sin(angle) * innerRing
             p5.fill(colourTheme.pinBackground)
-            p5.arc(a, b, spiralWidth * 3, spiralWidth * 3, angle, angle + radianPerYear * 10, p5.PIE)
+            p5.arc(a, b, spiralWidth * 2, spiralWidth * 2, angle, angle + radianPerYear * 10, p5.PIE)
 
             p5.fill(215, 219, 221)
             let val;

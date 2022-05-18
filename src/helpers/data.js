@@ -283,7 +283,7 @@ export const getData = (view, practice) => {
         // getCovidDataInfo(data)
         //console.log(Object.keys(data).length + ' countries')
 
-        console.log(combinedBrackets)
+        //console.log(combinedBrackets)
 
         return { data, dataType, dataBrackets: combinedBrackets, yBrackets, xBrackets }
 
