@@ -677,7 +677,9 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
             p5.noStroke()
             p5.textAlign(p5.LEFT, p5.CENTER)
             p5.textSize(10)
-            p5.text(formatNumbers(increments[i]), positions[i][0], positions[i][1])
+            let shift = 0;
+            if (i === increments.length-1 && dataType === 'COVID') shift = 5
+            p5.text(formatNumbers(increments[i]), positions[i][0], positions[i][1]+ shift)
         }
     }
 }
@@ -720,7 +722,7 @@ export const calcPointIndicatorPosition = (p5, startX, startY, rightRadius, brac
         const x = startX + p5.cos(angle) * (innerRing + val * increment)
         const y = startY + p5.sin(angle) * (innerRing + val * increment)
 
-        p5.ellipse(x, y, 2, 2)
+        //p5.ellipse(x, y, 2, 2)
 
 
         endPoints[increments[i]] = [x, y]
