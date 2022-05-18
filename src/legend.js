@@ -679,7 +679,7 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
             p5.textSize(10)
             p5.text(formatNumbers(increments[i]), positions[i][0], positions[i][1])
         }
-
+    }
 }
 
 export const calcPointIndicatorPosition = (p5, startX, startY, rightRadius, brackets, selections, dataType, increments) => {
