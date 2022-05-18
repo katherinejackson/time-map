@@ -1167,7 +1167,7 @@ export const twoYearSpiralOutline = (
             p5.fill(255, 105, 180)
             const innerX = startX + p5.cos(angle) * innerRing
             const innerY = startY + p5.sin(angle) * innerRing
-            p5.ellipse(innerX, innerY, 1, 1)
+            //p5.ellipse(innerX, innerY, 1, 1)
         }
         else p5.fill(230, 230, 250)
      
@@ -1183,7 +1183,7 @@ export const twoYearSpiralOutline = (
 
     p5.stroke(colourTheme.textColour)
     p5.strokeWeight(0.5)
-    p5.line(startX, startY, startX, startY - 55)
+    p5.line(startX, startY-5, startX, startY - 55)
 
 }
 

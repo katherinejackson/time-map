@@ -26,6 +26,7 @@ export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interv
     let yearGraphics = p5.createGraphics(legendWidth, legendHeight)
     drawYearLegend(yearGraphics, yearLegendWidth, legendHeight, selections, shape, increments)
     p5.image(yearGraphics, canvasWidth - legendWidth - yearLegendWidth, 0)
+    //p5.save(yearGraphics, "yrLegend.png")
 
     let extraSpace = 0
     if (dataType !== "TEMP") {
@@ -679,34 +680,6 @@ export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brac
             p5.text(formatNumbers(increments[i]), positions[i][0], positions[i][1])
         }
 
-
-
-        // // Draw the line for the last item on scale
-        // p5.stroke(colourTheme.textColour, 100)
-        // if (dataType === 'TEMP') {
-        //     let lastElementXShift = 10
-        //     let lastElementYShift = 8;
-        //     if (selections.practice) {
-        //         lastElementXShift = 5
-        //         lastElementYShift = 10
-        //     }
-        //     p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] + lastElementXShift, positions[positions.length-1][1]-lastElementYShift)
-        //     p5.ellipse(positions[positions.length-1][0] + lastElementXShift, positions[positions.length-1][1]- lastElementYShift, 2, 2)
-        // }
-        // else {
-        //     let lastElementXShift = 15
-        //     let lastElementYShift = 8;
-        //     if (selections.practice) {
-        //         lastElementXShift = 20
-        //         lastElementYShift = 6
-        //     }
-        //     p5.line(positions[positions.length-1][0], positions[positions.length-1][1], positions[positions.length-1][0] - lastElementXShift, positions[positions.length-1][1]-lastElementYShift)
-        //     //p5.ellipse(positions[positions.length-1][0] - lastElementXShift, positions[positions.length-1][1] - lastElementYShift, 2, 2)
-        // }
-        
-  
-        
-    }
 }
 
 export const calcPointIndicatorPosition = (p5, startX, startY, rightRadius, brackets, selections, dataType, increments) => {
