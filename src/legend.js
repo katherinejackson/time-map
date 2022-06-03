@@ -2,7 +2,7 @@ import { scaleLog, min, max } from 'd3';
 import { colours, manualIntervals, themeColours, shapes, abbreviatedMonths, migrationYears, radianPerDay, legendRadianPerYear, radianPerMonth } from './constants'
 import { fillColourGradient, setColour } from "./helpers/colours";
 import { formatNumbers, formatTradeNumbers } from './helpers/format';
-import { getShapeSize, doubleSpiral, legendGraphSpiral, singleSpiral } from './shapes';
+import { doubleSpiral, legendGraphSpiral, singleSpiral } from './shapes';
 
 
 export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, increments) => {
@@ -25,7 +25,6 @@ export const drawLegend = (p5, selections, dataBrackets, shape, encoding, interv
     let yearGraphics = p5.createGraphics(legendWidth, legendHeight)
     drawYearLegend(yearGraphics, yearLegendWidth, legendHeight, selections, shape, increments)
     p5.image(yearGraphics, canvasWidth - legendWidth - yearLegendWidth, 0)
-    //p5.save(yearGraphics, "yrLegend.png")
 
     let extraSpace = 0
     if (dataType !== "TEMP") {
@@ -251,17 +250,11 @@ export const drawManualIntervalLegend = (p5, width, height, legendWidth, legendH
     } else {
         p5.text(formatNumbers(intervals[intervals.length - 1]), xStart + counter * length, legendHeight / 2)
     }
-
-    // p5.fill(200)
-    // p5.rect(x + numColours * length / 2 + 50, yStart, 40, 10)
-    // p5.fill(textColour)
-    // p5.text('No Data', x + numColours * length / 2 + 50 + 20, yStart + 15)
 }
 
 const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numColours, brackets, textColour, increments, dataType) => {
     const { high, low, range, displayLow, displayHigh } = brackets
-    // const low = brackets.displayLow || brackets.low
-    // const high = brackets.displayHigh || brackets.high
+
     const rectWidth = 1
     const xStart = (legendWidth - width) / 2
     const yStart = legendHeight / 2 - height
@@ -281,26 +274,12 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
     if (typeof (displayHigh) === 'undefined' || typeof (displayLow) === 'undefined') {
         newLow = low
         newHigh = high
-        //increments = [-35, -25, -15, -5, 0, 5, 15, 25, 30]
-        //increments = [-35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30]
     }
     else {
         newLow = displayLow
         newHigh = displayHigh
-        //increments = [0, 250000, 500000, 750000, 1000000, 1250000]
-        //increments = calculateIntervals(newLow, newHigh, 3, false)
     }
 
-
-    // let displayRange = displayHigh - displayLow
-    // let incr = displayRange/3
-    // let increments = [];
-
-    // for (let i=displayLow; i<displayHigh; i+=incr) {
-    //     increments.push(Math.round(i))
-    // }
-    // increments.push(displayHigh)
-    // console.log(increments)
 
     p5.textSize(10)
     p5.fill(textColour)
@@ -326,27 +305,6 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
         }
 
     })
-
-
-    // p5.text(formatNumbers(displayLow || low), xStart, legendHeight / 2)
-    // p5.text(formatNumbers(displayHigh || high), xStart + width, legendHeight / 2)
-}
-
-const calculateIntervals = (low, high, intervalNum, rounded) => {
-    let displayRange = high - low;
-
-
-    let incr = displayRange / intervalNum;
-    let increments = [];
-
-    for (let i = low; i <= high; i += incr) {
-        if (rounded) increments.push(Math.round(i))
-        else increments.push(i)
-    }
-    //increments.push(high)
-
-    return increments;
-
 }
 
 const calcX = (num, startX, width, low, high) => {
@@ -542,15 +500,6 @@ export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, 
     p5.fill(textColour)
     p5.textSize(8)
 
-    // // Logarithmic Scale
-    // let dataLogScale = scaleLog()
-    //     .domain([min(increments), max(increments)])
-    //     .range([startY + 5, rectHeight]);
-
-    //const increments = calculateIntervals(low, high, 2, false)
-    //let positions = increments.map(i => dataLogScale(i)).reverse()
-    let positions = increments.map(i => calcX(i, startY, rectHeight, low, high)).reverse()
-
     if (encoding === 1 || encoding === 3) {
         p5.textAlign(p5.RIGHT, p5.CENTER)
         let numStart = startY + rectHeight
@@ -558,10 +507,6 @@ export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, 
             let y = numStart - ((Math.log10(increments[i]) - brackets.low) / brackets.range) * rectHeight
             p5.text(formatNumbers(increments[i]), startX - 5, y)
         }
-        // p5.textAlign(p5.RIGHT, p5.BOTTOM)
-        // p5.text(lowString, startX - 5, startY + rectHeight)
-        // p5.textAlign(p5.RIGHT, p5.TOP)
-        // p5.text(highString, startX - 5, startY)
     }
 
     const spacePerMonth = rectWidth / (dataLength)
@@ -585,61 +530,17 @@ export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, 
 
 export const drawSpiralLegend = (p5, legendWidth, legendHeight, selections, brackets, encoding, dataType, increments) => {
     selections = { ...selections, ['coreSize']: 0, ['spiralWidth']: 20, ['spiralTightness']: 0.03 }
-    const { rightRadius, maxRadius, width, height } = getShapeSize(selections, shapes.SPIRAL.id, 365)
 
     const startX = encoding === 1 || encoding === 3 ? legendWidth * 0.30 : legendWidth / 2
     const startY = legendHeight / 2 + 10
-    const textColour = themeColours[selections.theme].textColour
 
     doubleSpiral(p5, startX, startY, selections)
     drawSpiralMonth(p5, startX, startY, selections)
 
     if (encoding === 1 || encoding === 3) {
-
-
         const x = legendWidth * 0.75
-        const textColour = themeColours[selections.theme].textColour
         doubleSpiral(p5, x, startY, selections)
         drawDistanceSpiral(p5, x, startY, brackets, selections, dataType, increments)
-
-        // const { spiralWidth, spiralTightness, coreSize, theme } = selections
-        // const colourTheme = themeColours[theme]
-        // let outerCore = coreSize + spiralTightness * 365 + spiralWidth
-        // let angle = -Math.PI / 2
-        // const endPoints = calcPointIndicatorPosition(p5, x, startY, rightRadius, brackets, selections, dataType, increments)
-
-        // p5.fill(colourTheme.textColour)
-        // p5.textAlign(p5.CENTER, p5.CENTER)
-
-        // angle = -Math.PI / 2 + radianPerMonth
-        // let positions = []
-        // for (let i = 0; i <= increments.length * 2; i++) {
-        //     if (i % 2 === 0) {
-        //         let x2 = x + p5.cos(angle) * outerCore
-        //         let y2 = startY + p5.sin(angle) * outerCore
-        //         positions.push([x2, y2])
-        //     }
-
-        //     angle += radianPerMonth / 2.5
-        //     outerCore += (spiralTightness * 15)
-        // }
-
-        // // draw line from label to pt inside spiral
-        // for (let i = 0; i < increments.length; i++) {
-        //     p5.stroke(colourTheme.textColour, 100)
-        //     p5.line(endPoints[increments[i]][0], endPoints[increments[i]][1], positions[i][0], positions[i][1])
-        // }
-
-        // // place labels
-        // for (let i = 0; i < increments.length; i++) {
-        //     p5.fill(textColour)
-        //     p5.noStroke()
-        //     p5.textAlign(p5.LEFT, p5.CENTER)
-        //     p5.textSize(10)
-        //     let shift = 0;
-        //     if (i === increments.length - 1 && dataType === 'COVID') shift = 5
-        //     p5.text(formatNumbers(increments[i]), positions[i][0], positions[i][1] + shift)
-        // }
     }
 }
 
@@ -699,8 +600,6 @@ const drawDistanceSpiral = (p5, startX, startY, brackets, selections, dataType, 
         }
     }
 
-
-
     const endPoints = calcPointIndicatorPosition(p5, x1, y1, x3, y3, dataType, increments)
     let textStart = y1 + 15
     let textEnd = y3 - 30
@@ -735,11 +634,9 @@ export const calcPointIndicatorPosition = (p5, startX, startY, endX, endY, dataT
 
 export const drawMigrationSpiralLegend = (p5, legendWidth, legendHeight, selections, brackets, encoding, dataType, dataLength, increments) => {
     selections = { ...selections, ['coreSize']: 0, ['spiralWidth']: 20, ['spiralTightness']: 0.03 }
-    const { rightRadius, maxRadius, width, height } = getShapeSize(selections, shapes.SPIRAL.id, dataLength)
 
     const startX = encoding === 1 || encoding === 3 ? legendWidth * 0.37 : legendWidth / 2
     const startY = legendHeight / 2 + 10
-    const textColour = themeColours[selections.theme].textColour
 
     singleSpiral(p5, startX, startY, selections)
     drawMigrationSpiralYear(p5, startX, startY, selections, dataLength)
@@ -809,7 +706,6 @@ export const drawMigrationSpiralYear = (p5, x, y, selections, dataLength) => {
 
 export const drawSpiralMonth = (p5, x, y, selections) => {
     const { spiralWidth, spiralTightness, coreSize, theme } = selections
-    const colourTheme = themeColours[theme]
     let innerCore = coreSize
     let outerCore = coreSize + spiralTightness * 365 + spiralWidth * 1.5
     let angle = -Math.PI / 2
