@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import DataContext from "./DataContext";
 import { scaleLinear } from "d3";
 import Sketch from "react-p5";
-import { drawMigrationLegend } from "./legend";
+import { drawLegend, drawMigrationLegend } from "./legend";
 import { getRoundedInterval } from "./helpers/intervals";
 import { filterMigrationData } from "./helpers/data";
 import { migrationRow, getShapeSize,  getPinAdjustment, migrationSpiral } from "./shapes";
@@ -75,7 +75,6 @@ const MigrationGraph = ({ encoding, selections, shape, study }) => {
         p5.clear();
         p5.image(backgroundImage, 0, 0, canvasWidth, canvasHeight)
         let increments = [100, 1000, 10000, 100000, 1000000]
-        //[10, 100, 1000, 10000, 100000, 1000000, 10000000]
         drawMigrationLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, 41, increments)
         drawGlyphs();
     }
