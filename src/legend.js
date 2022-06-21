@@ -56,9 +56,9 @@ export const drawInfoLegend = (p5, width, height, selections) => {
 }
 
 export const drawMigrationLegend = (p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, dataLength, increments) => {
-    const legendWidth = shape === 2 ? 350 : 255
+    const legendWidth = shape === 1 ? 300 : 350
     const legendHeight = shape === 1 ? 200 : 80
-    const colourLegendWidth = shape === 2 ? 350 : 255
+    const colourLegendWidth = shape === 1 ? 300 : 350
     const colourLegendHeight = 30
     let legendGraphics = p5.createGraphics(legendWidth, legendHeight)
     drawShapeMigrationLegend(legendGraphics, legendWidth, legendHeight, selections, dataBrackets, shape, encoding, dataType, dataLength, increments)
@@ -635,7 +635,7 @@ export const calcPointIndicatorPosition = (p5, startX, startY, endX, endY, dataT
 export const drawMigrationSpiralLegend = (p5, legendWidth, legendHeight, selections, brackets, encoding, dataType, dataLength, increments) => {
     selections = { ...selections, ['coreSize']: 0, ['spiralWidth']: 20, ['spiralTightness']: 0.03 }
 
-    const startX = encoding === 1 || encoding === 3 ? legendWidth * 0.37 : legendWidth / 2
+    const startX = encoding === 1 || encoding === 3 ? legendWidth * 0.33 : legendWidth / 2
     const startY = legendHeight / 2 + 10
 
     singleSpiral(p5, startX, startY, selections)
@@ -673,7 +673,7 @@ export const drawMigrationSpiralYear = (p5, x, y, selections, dataLength) => {
     const { spiralWidth, spiralTightness, coreSize, theme } = selections
     const colourTheme = themeColours[theme]
     let innerCore = coreSize
-    let outerCore = coreSize + spiralWidth * 2.8
+    let outerCore = coreSize + spiralWidth * 3.7
     let angle = -Math.PI / 2
     p5.fill(colourTheme.textColour)
     p5.textAlign(p5.CENTER, p5.CENTER)
@@ -693,7 +693,7 @@ export const drawMigrationSpiralYear = (p5, x, y, selections, dataLength) => {
             let xText = x + p5.cos(angle) * outerCore
             let yText = y + p5.sin(angle) * outerCore
 
-            p5.textSize(6)
+            p5.textSize(9)
             p5.text(migrationYears[Math.floor(i / 2)].slice(2), xText, yText)
         }
 
