@@ -13,27 +13,17 @@ export const getManualInterval = (dataBrackets, numColours, dataType) => {
 }
 
 export const getInterval = (dataBrackets, numColours) => {
-    if (numColours === 360) {
-        numColours = 1
-    }
 
     const range = dataBrackets.high - dataBrackets.low
-    const interval = range / numColours
+    const interval = range
 
-    return { interval, high: dataBrackets.high, low: dataBrackets.low, range }
+    return {  range, high: dataBrackets.high, low: dataBrackets.low, range }
 }
 
 export const getRoundedInterval = (dataBrackets, numColours) => {
-    if (numColours === 360) {
-        numColours = 1
-    }
-
-    
-
     const range = dataBrackets.high - dataBrackets.low
-    const interval = Math.ceil((range / numColours) / 5) * 5
-    const coverage = numColours * interval
-    const difference = coverage - (dataBrackets.high - dataBrackets.low)
+    const interval = Math.ceil((range) / 5) * 5
+    const difference = interval - (dataBrackets.high - dataBrackets.low)
     const newHigh = Math.ceil((dataBrackets.high + difference / 2) / 5) * 5
     const newLow = Math.ceil((dataBrackets.low - difference / 2) / 5) * 5
 

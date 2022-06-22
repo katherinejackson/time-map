@@ -125,7 +125,7 @@ export const getDefaultSelections = () => {
         theme: themes.DARK.val,
         cluster: false,
         numYears: 1,
-        numColours: 360,
+        numColours: 'rainbow',
     }
 
     return {...selections, ...getShapeSelections(shapes.SPIRAL.id), ...getShapeSelections(shapes.ROW.id)}
@@ -159,7 +159,7 @@ export const getBasicSelectionOptions = () => {
         theme: { name: 'Theme', values: Object.keys(themes) },
         cluster: { name: 'Cluster Data Points', values: [true, false] },
         numYears: { name: 'Number of Years', values: [1, 2, 3] },
-        numColours: { name: 'Number of Colours', values: [1, 2, 3, 4, 5, 6, 7, 8, 360] },
+        numColours: { name: 'Number of Colours', values: ['rainbow', 'viridis', 'magma', 'redBlue'] },
     }
 }
 

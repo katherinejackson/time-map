@@ -137,13 +137,7 @@ export const drawColourLegend = (p5, legendWidth, legendHeight, selections, inte
     p5.stroke(backgroundColour)
     p5.rect(0, 0, legendWidth, legendHeight)
 
-    if (dataType === 'COVID' && numColours === 6) {
-        drawManualIntervalLegend(p5, width, height, legendWidth, legendHeight, numColours, interval, dataType, textColour)
-    } else if (numColours <= 2 || numColours > 10) {
-        drawGradientLegend(p5, width, height, legendWidth, legendHeight, numColours, brackets, textColour, increments, dataType)
-    } else {
-        drawIntervalLegend(p5, width, height, legendWidth, legendHeight, numColours, interval, dataType, textColour)
-    }
+    drawGradientLegend(p5, width, height, legendWidth, legendHeight, numColours, brackets, textColour, increments, dataType)
 }
 
 export const drawIntervalLegend = (p5, width, height, legendWidth, legendHeight, numColours, interval, dataType, textColour) => {
