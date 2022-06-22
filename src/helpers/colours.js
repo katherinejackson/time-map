@@ -1,4 +1,4 @@
-import { colours, magma, redBlue, viridis } from "../constants";
+import { colours, magma, redBlue, viridis, turbo } from "../constants";
 
 export const setColour = (p5, pt, numColours, interval, dataType) => {
     fillColourGradient(p5, pt, interval, numColours)
@@ -32,9 +32,13 @@ export const getColourFromSet = (pt, interval, colourSet) => {
 export const fillColourGradient = (p5, pt, brackets, numColours) => {
     const { low, range } = brackets
     if (numColours === 'rainbow') {
-        const newPt = Math.floor((range - (-1 * low + pt)) * 270 / range)
-        p5.colorMode(p5.HSB, 360, 100, 100)
-        p5.fill(newPt, 100, 95)
+        const newPt = Math.max((pt - low), 0) / range
+        if (newPt >= 0 && newPt <= 255) {
+            setTurboFill(p5, newPt)
+        } else {
+            console.log(low, pt, newPt)
+            p5.fill(0)
+        }
     } else if (numColours === 'viridis') {
         const newPt = Math.floor(Math.max((pt - low), 0) * 256 / range)
         if (newPt >= 0 && newPt <= 255) {
@@ -112,4 +116,17 @@ export const getCovidIntervalColour = (pt, colourSet, intervalSet) => {
     }
 
     return colourSet[colourSet.length - counter - 1]
+}
+
+const setTurboFill = (p5, val) => {
+    // val should be between 0.0 and 1.0x
+    let x = Math.max(0.0, Math.min(1.0, val));
+    let a = Math.round(x * 255.0);
+    let b = Math.min(255, a + 1);
+    let f = x * 255.0 - a;
+    let red = turbo[a][0] + (turbo[b][0] - turbo[a][0]) * f;
+    let green = turbo[a][1] + (turbo[b][1] - turbo[a][1]) * f;
+    let blue = turbo[a][2] + (turbo[b][2] - turbo[a][2]) * f;
+
+    p5.fill(red * 255, green * 255, blue * 255);
 }
