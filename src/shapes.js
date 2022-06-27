@@ -1,4 +1,4 @@
-import { colours, manualIntervals, radianPerDay, radianPerMonth, radianPerYear,  shapes, themeColours, pinSize} from "./constants";
+import { colours, manualIntervals, radianPerDay, radianPerMonth, radianPerYear, shapes, themeColours, pinSize } from "./constants";
 import { fillColourGradient, getManualIntervalColour, fillLogColourGradient, getCovidIntervalColour, setColour } from "./helpers/colours";
 import { calcY } from "./legend";
 
@@ -173,9 +173,12 @@ export const row = (
 
     })
 
-    // draw border around multi year pins + highlight the key pins
-    if (selections.highlightOptions[dataType].includes(id)) p5.stroke(0, 255, 0)
-    else p5.stroke(255)
+    // draw border around multi year pins + highlight the key pinsƒ
+    if (selections.highlightOptions[dataType].includes(id)) {
+        p5.stroke(255, 0, 0)
+    } else {
+        p5.stroke(255)
+    }
 
     p5.strokeWeight(1.5)
     p5.noFill()
@@ -290,7 +293,7 @@ export const migrationRow = (
         }
         // draw border around multi year pins + highlight the key pins
         if (selections.highlightOptions[dataType].includes(id)) {
-            p5.stroke(30, 132, 73)
+            p5.stroke(255, 0 ,0)
             p5.strokeWeight(3)
         }
         else {
@@ -764,7 +767,7 @@ export const spiral = (
     })
 
     if (selections.highlightOptions[dataType].includes(id)) {
-        p5.stroke(0, 255, 0)
+        p5.stroke(255, 0, 0)
         p5.strokeWeight(3)
         p5.noFill()
         let mag = 2.75
@@ -931,7 +934,7 @@ export const migrationSpiral = (
     }
 
     if (selections.highlightOptions[dataType].includes(id)) {
-        p5.stroke(0, 255, 0)
+        p5.stroke(255, 0, 0)
         p5.strokeWeight(3)
         p5.noFill()
         let mag = 2.5
@@ -964,7 +967,7 @@ export const doubleSpiral = (
     x,
     y,
     selections,
-    multicolor=false,
+    multicolor = false,
 ) => {
     const { spiralWidth, spiralTightness, coreSize } = selections
     const startX = x
@@ -981,7 +984,7 @@ export const doubleSpiral = (
     }
 
     for (let year = 1; year <= 2; year++) {
-        if (year  == 2) {
+        if (year == 2) {
             p5.fill(255)
             p5.stroke(255)
         }
