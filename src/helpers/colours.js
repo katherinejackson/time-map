@@ -42,7 +42,8 @@ export const fillColourGradient = (p5, pt, brackets, numColours) => {
     } else if (numColours === 'viridis') {
         const newPt = Math.floor(Math.max((pt - low), 0) * 256 / range)
         if (newPt >= 0 && newPt <= 255) {
-            p5.fill(p5.color(viridis[newPt]))
+            //flip the scale so that blues are cold on temp data
+            p5.fill(p5.color(viridis[viridis.length - newPt - 1]))
         } else {
             console.log(low, pt, newPt)
             p5.fill(0)
