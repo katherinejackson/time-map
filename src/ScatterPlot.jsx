@@ -31,8 +31,6 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
     const [hover, setHover] = useState(null)
     const interval = getManualInterval(dataBrackets, numColours, dataType)
 
-    //console.log("selections: ", selections)
-
     useEffect(() => {
         if (p5) {
             reset()
@@ -105,16 +103,9 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
         drawYAxis(p5)
 
         let increments;
-        // if (practice) increments = [0, 75000, 150000, 225000, 300000, 375000, 450000]
-        // else 
         increments = [1, 10, 100, 1000, 10000, 100000, 1000000]
         drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, increments)
         drawGlyphs()
-        //increments = [0, 250000, 500000, 750000, 1000000, 1250000]
-
-        //console.log(data['USA']['cases']['2020'])
-        //let pg = p5.createGraphics(1000, 1000)
-        //migrationRow(pg, dataType, interval, data['USA']['cases']['2020'], 500/2, 500 / 2, selections, encoding)
 
 
         p5.noLoop()
@@ -139,36 +130,20 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
         }
         ptData.push(data[id]['cases']['2020'])
 
-        // let ptData = data[id]['cases']['2020']
-        // if (numYears === 2) {
-        //     ptData = ptData.concat(data[id]['cases']['2021'])
-        // }
-
-        // ptData = [[...ptData]]
-
-        // console.log(data[id].location)
-        // console.log(ptData)
-
-
         if (shape === shapes.SPIRAL.id) {
             spiral(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, data[id].location)
         } else if (shape === shapes.ROW.id) {
             let increments = [75000, 150000, 225000, 300000, 375000, 450000]
             row(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, data[id].location, increments)
         }
-        //p5.save(pg, "final pin");
-
- 
 
         return { pg, width: canvasWidth, height: canvasHeight }
     }
 
     const drawGlyphs = () => {
-        //console.log(pts)
         Object.keys(pts).forEach((id) => {
             let pt = pts[id]
             if (id !== hover) {
-                // p5.image(pt.pg, pt.x - pt.width / 2, pt.y - pt.height / 2)
                 p5.image(pt.pg, pt.x - pt.width / 2, pt.y - pt.height / 2)
             }
         })
@@ -215,13 +190,9 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
 
     const calcX = (num) => {
         const left = xBorder + 10 + width / 2
-       // console.log("left ", left)
         const graphRange = graphWidth - width
-        //console.log("gr" , graphRange)
         const dataRange = xBrackets.high - xBrackets.low
-        //console.log("dr ", dataRange)
         const increment = graphRange / dataRange
-        //console.log("increment", increment)
 
         return left + (num - xBrackets.low) * increment
     }
@@ -268,7 +239,6 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
 
         increments.forEach(num => {
             let x = calcX(num)
-            //console.log(num, x)
             p5.text(num, x, canvasHeight - 40)
         })
 

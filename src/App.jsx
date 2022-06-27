@@ -20,12 +20,6 @@ const options = window.options || { view: null, shape: 2, encoding: 1, practice:
 
 const study = window.options !== undefined
 
-// var highlightOptions = {
-//     COVID: ["China", "Turkey"],
-//     TEMP: ["Homer", "Sitka"],
-//     MIGRATION: ["Croatia>Serbia", "Germany>Italy"]
-// }
-
 const App = () => {
     const [view, setView] = useState(options.view)
     const [shape, setShape] = useState(options.shape)
@@ -51,7 +45,6 @@ const App = () => {
 
     selections['practice'] = options.practice
     selections['highlightOptions'] = {
-        // "TEMP": highlightOptions, 
         "TEMP": highlightOptions, 
         "COVID": highlightOptions, 
         "MIGRATION": highlightOptions
