@@ -173,13 +173,15 @@ export const row = (
 
     })
 
-    // draw border around multi year pins + highlight the key pinsƒ
+    // draw border around multi year pins + highlight the key pins
     if (selections.highlightOptions[dataType].includes(id)) {
         p5.stroke(255, 0, 0)
-    } else {
-        p5.stroke(255)
+        p5.strokeWeight(1.5)
+        p5.noFill()
+        p5.rect(startX - 3, startY - 3, width + 6, height + 6)
     }
 
+    p5.stroke(255)
     p5.strokeWeight(1.5)
     p5.noFill()
     p5.rect(startX - 1, startY - 1, width + 2, height + 2)
@@ -255,7 +257,7 @@ export const migrationRow = (
     for (let i = 0; i < increments.length; i++) {
         let val = baseline - ((Math.log10(increments[i]) - interval.low) / interval.range) * height
         p5.stroke(255)
-        p5.strokeWeight(0.5)
+        p5.strokeWeight(0.25)
         p5.line(startX, val, startX + width, val)
     }
 
@@ -293,15 +295,14 @@ export const migrationRow = (
         }
         // draw border around multi year pins + highlight the key pins
         if (selections.highlightOptions[dataType].includes(id)) {
-            p5.stroke(255, 0 ,0)
-            p5.strokeWeight(3)
-        }
-        else {
-            p5.strokeWeight(1)
-            p5.stroke(255)
+            p5.stroke(255, 0, 0)
+            p5.strokeWeight(1.5)
+            p5.noFill()
+            p5.rect(startX - 3, startY - 3, width + 6, height + 6)
         }
 
-
+        p5.strokeWeight(1)
+        p5.stroke(255)
         p5.noFill()
         p5.rect(startX - 1, startY - 1, width + 2, height + 2)
         p5.noStroke()
@@ -768,7 +769,7 @@ export const spiral = (
 
     if (selections.highlightOptions[dataType].includes(id)) {
         p5.stroke(255, 0, 0)
-        p5.strokeWeight(3)
+        p5.strokeWeight(1.5)
         p5.noFill()
         let mag = 2.75
         if (spiralWidth === 5) mag = 3.5
@@ -935,7 +936,7 @@ export const migrationSpiral = (
 
     if (selections.highlightOptions[dataType].includes(id)) {
         p5.stroke(255, 0, 0)
-        p5.strokeWeight(3)
+        p5.strokeWeight(1.5)
         p5.noFill()
         let mag = 2.5
         if (spiralWidth === 5 || spiralWidth === 6) mag = 3
