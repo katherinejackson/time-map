@@ -139,16 +139,15 @@ const MigrationGraph = ({ encoding, selections, shape, study }) => {
             const hoverpg = p5.createGraphics(pin.width, pin.height)
             hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
 
-            let mag = 6.5
-            if (selections.spiralWidth === 6) mag = 9
+            const mag = selections.spiralWidth === 6  ? 9 : 6.5
 
             if (!mapPin) {
-                p5.fill(colourTheme.pinBackground, 100)
+                p5.fill(colourTheme.pinBackground, 200)
                 p5.noStroke()
                 if (shape === shapes.SPIRAL.id) {
                     p5.ellipse(pin.x, pin.y, maxRadius * mag, maxRadius * mag)
                 } else if (shape === shapes.ROW.id) {
-                    p5.rect(pin.x - (width*magnification) * 1.5, pin.y - height * 2, (width * 3)*magnification, height * 5)
+                    p5.rect(pin.x - width * 1.5 - 12, pin.y - height * 2.5, width * 3 + 24, height * 5 + 10)
                 }
             }
 
@@ -156,7 +155,7 @@ const MigrationGraph = ({ encoding, selections, shape, study }) => {
 
             p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(colourTheme.textColour)
-            //p5.text(pin.name, pin.x, pin.y + height * 0.75 + 7)
+
             let newName;
             if (shape === shapes.SPIRAL.id) {
                 newName = pin.name.split(">").join(' \u2192\ \n')
