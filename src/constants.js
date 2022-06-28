@@ -36,7 +36,7 @@ export const themeColours = {
         lineColour: 200,
         textColour: 255,
         pinColour: 200,
-        pinBackground: 80,
+        pinBackground: 120,
         missingData: 150,
         name: 'DARK',
     },
