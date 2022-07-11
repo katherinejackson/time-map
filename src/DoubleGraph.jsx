@@ -12,9 +12,9 @@ const canvasHeight = window.innerHeight
 
 const edgeLength = 200
 
-const DoubleGraph = ({ }) => {
+const DoubleGraph = () => {
     const [p5, setP5] = useState(null)
-    const { background, textColour, lineColour } = themeColours['DEFAULT']
+    const { background, textColour } = themeColours['DEFAULT']
     const spiralSelections = { ...getDefaultSelections(shapes.SPIRAL.id), ['numColours']: 7, ['spiralWidth']: 80 }
     const rowSelections = { ...getDefaultSelections(shapes.ROW.id), ['numColours']: 7 }
     const { data, dataBrackets, dataType, variable } = useContext(DataContext)

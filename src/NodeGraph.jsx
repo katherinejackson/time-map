@@ -2,7 +2,7 @@ import Sketch from "react-p5";
 import React, { useContext, useEffect, useState } from 'react'
 
 import { drawGraphLegend, drawImportYearLegend } from "./legend";
-import { getGraphRadius, graphSpiral, legendGraphSpiral } from "./shapes";
+import { getGraphRadius, graphSpiral } from "./shapes";
 import DataContext from "./DataContext";
 import { shapes, themeColours } from "./constants";
 import { getDefaultSelections } from "./helpers/selections";
@@ -13,7 +13,7 @@ const canvasHeight = window.innerHeight
 const Graph = () => {
     const [p5, setP5] = useState(null)
     const { background, lineColour, textColour } = themeColours['DEFAULT']
-    const spiralSelections = { ...getDefaultSelections(shapes.SPIRAL.id), ['numColours']: 7,  ['spiralWidth']: 80 }
+    const spiralSelections = { ...getDefaultSelections(shapes.SPIRAL.id), ['numColours']: 7, ['spiralWidth']: 80 }
     const { data, dataType, variable } = useContext(DataContext)
     const [pts, setPts] = useState([])
     const countryData = { ...data }
@@ -72,7 +72,7 @@ const Graph = () => {
         setPts(pts)
     }
 
-    
+
 
 
 
@@ -80,7 +80,7 @@ const Graph = () => {
         let x;
         let y;
 
-        drawImportYearLegend(p5, canvasWidth-150, 100, data, spiralSelections, background)
+        drawImportYearLegend(p5, canvasWidth - 150, 100, data, spiralSelections, background)
 
         console.log(pts)
 

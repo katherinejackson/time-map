@@ -71,7 +71,7 @@ const generateData = () => {
     return data
 }
 
-const BridgeGraph = ({ }) => {
+const BridgeGraph = () => {
     const [p5, setP5] = useState(null)
     const { background, textColour, pinBackground } = themeColours['DEFAULT']
     const data = generateData()
