@@ -1,37 +1,34 @@
 import Sketch from "react-p5";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMap } from "react-leaflet";
 
 import { drawLegend } from "./legend";
 import { getLocationData } from "./helpers/data";
 import { getDefaultSelections } from "./helpers/selections";
-import { shapes, themeColours } from "./constants";
+import { dataSets, shapes, themeColours } from "./constants";
 import { getRoundedInterval } from "./helpers/intervals";
 import { calculateClusters, addLocations } from "./helpers/cluster";
 import { row, getRowSize, getPinAdjustment, getShapeSize } from "./shapes";
-import DataContext from "./DataContext";
 import { getGlyph } from "./helpers/mapCanvas";
 import { formatNames } from "./helpers/format";
 import { onClick, onHover, onZoom } from "./helpers/studyEventHandlers";
+import { getData } from './helpers/data'
+import { alaska, yukon } from "./data/locationCoords"
 
 // Displays the pins (w/ hover capability) that are positioned on the map
-const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
-
-    selections['numYears'] = 2
-    
+const Overlay = ({ encoding, mapWidth, mapHeight, practice, selections, shape, size }) => {
     const map = useMap()
-    const { locations, data, dataBrackets, dataType } = useContext(DataContext)
+    const { data, dataSet: dataType, dataBrackets } = getData(dataSets.TEMP.val, practice)
+    const locations = practice ? yukon : alaska
     const { mapPin, theme, cluster } = selections
     const [shouldCluster, setShouldCluster] = useState(cluster)
     const colourTheme = themeColours[theme]
     const [p5, setP5] = useState(null)
     const interval = getRoundedInterval(dataBrackets, selections.numColours)
     const [locationPins, setLocationPins] = useState([])
-    const [detailed, setDetailed] = useState([])
+    const [detailed, ] = useState([])
     const [hover, setHover] = useState(null)
     const { width, height, maxRadius } = getShapeSize(selections, shape, 365)
-
-    //console.log("selections: ", selections)
 
     useEffect(() => {
         if (locations && p5) {
@@ -69,7 +66,7 @@ const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
     }, [p5, locationPins, detailed, cluster, shape])
 
     const drawDetailedRect = (x, y, id, detailedSelections) => {
-        let locationData = getLocationData(id, selections, data)
+        let locationData = getLocationData(id, selections.numYears, data)
         const { rowWidth, pinHeight } = getRowSize(detailedSelections, 365)
         const startX = x - rowWidth / 2;
         const startY = y - pinHeight / 2
@@ -126,55 +123,16 @@ const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
     }
 
     const mouseClicked = (p5) => {
-        let pinAdjustment = 0
-
-        if (mapPin) {
-            pinAdjustment = getPinAdjustment(selections, shape)
-        }
-
-        // if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 20 && p5.mouseY < 50) {
-        //     map.zoomIn(0.5)
-
-        // } else if (p5.mouseX > 20 && p5.mouseX < 50 && p5.mouseY > 50 && p5.mouseY < 80) {
-        //     map.zoomOut(0.5)
-        // } else {
-
         if (hover !== null) {
             let val = locationPins[hover]['name']
             onClick(val)
-            // let pin = locationPins[locationFound.index]
-            // let allDisplayed = true
-            // pin.locations.forEach(id => {
-            //     if (!detailed.includes(id)) {
-            //         allDisplayed = false
-            //     }
-            // })
-
-            // if (allDisplayed) {
-            //     let newDetailed = [...detailed]
-            //     pin.locations.forEach(id => {
-            //         let index = newDetailed.indexOf(id)
-            //         newDetailed.splice(index, 1)
-            //     })
-            //     setDetailed(newDetailed)
-            // } else {
-            //     let newDetailed = [...detailed]
-            //     pin.locations.forEach(id => {
-            //         if (!detailed.includes(id)) {
-            //             newDetailed.push(id)
-            //         }
-            //     })
-
-            //     setDetailed(newDetailed)
-            // }
-            // }
         }
     }
 
     const redrawOverlay = () => {
         p5.clear()
         drawGlyphs()
-        // drawZoom()
+
         const increments = [-35, -25, -15, -5, 0, 5, 15, 25, 30]
         drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, mapWidth-230, increments)
 
@@ -262,29 +220,14 @@ const Overlay = ({ encoding, selections, shape, mapWidth, mapHeight }) => {
         return glyphs
     }
 
-    const drawZoom = () => {
-        p5.fill(255)
-        p5.stroke(50)
-        p5.rect(20, 20, 30, 30)
-        p5.rect(20, 50, 30, 30)
-
-        p5.fill(0)
-        p5.textSize(10)
-        p5.textAlign(p5.CENTER, p5.CENTER)
-        p5.text("+", 35, 35)
-        p5.text("-", 35, 65)
-        p5.noStroke()
-    }
-
     const drawDetailed = () => {
-        let newSelections = getDefaultSelections(shapes.ROW.id)
+        let newSelections = getDefaultSelections(shapes.ROW.id, size)
         newSelections = {
             ...newSelections,
             numColours: selections.numColours,
             dayWidth: 0.25,
         }
 
-        // const { pinHeight } = getRowSize(newSelections, detailed.length, newSelections.numYears)
         const { pinHeight } = getRowSize(newSelections, 365)
         const locationHeight = pinHeight + 30
 

@@ -7,17 +7,15 @@ export const getManualInterval = (dataBrackets, numColours, dataType) => {
 
     let high = dataBrackets.high
     let low = dataBrackets.low
-    let range = dataBrackets.high - dataBrackets.low 
+    let range = dataBrackets.high - dataBrackets.low
 
-    return { intervals: manualIntervals[dataType][numColours], high, low, range}
+    return { intervals: manualIntervals[dataType][numColours], high, low, range }
 }
 
-export const getInterval = (dataBrackets, numColours) => {
-
+export const getInterval = (dataBrackets) => {
     const range = dataBrackets.high - dataBrackets.low
-    const interval = range
 
-    return {  range, high: dataBrackets.high, low: dataBrackets.low, range }
+    return { range, high: dataBrackets.high, low: dataBrackets.low, range }
 }
 
 export const getRoundedInterval = (dataBrackets, numColours) => {

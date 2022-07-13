@@ -1,7 +1,8 @@
 import React from 'react'
 
 import { getBasicSelectionOptions, getShapeSelectionOptions } from './helpers/selections'
-import { shapes, views } from './constants'
+import { dataSets, shapes, views } from './constants'
+import { getMigrationSizes, getShapeSelections } from "./helpers/selections";
 
 const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x, y }) => {
     const basicOptions = getBasicSelectionOptions()
@@ -20,7 +21,19 @@ const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x,
             val = parseFloat(val)
         }
 
-        setSelections({ ...selections, [option]: val })
+        let row = {}
+        let spiral = {}
+        if (option === 'size') {
+            if (selections.dataType === dataSets.MIGRATION.val) {
+                spiral = getMigrationSizes(1, selections.size)
+                row = getMigrationSizes(2, selections.size)
+            } else {
+                spiral = getShapeSelections(1, val)
+                row = getShapeSelections(2, val)
+            }
+        }
+
+        setSelections({ ...selections, [option]: val, ...row, ...spiral })
     }
 
     const getValString = (val) => {
@@ -50,17 +63,6 @@ const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x,
                     </select>
                 </div>
             ) : null}
-
-            <div className="col justify-content-center gap-3">
-                {Object.keys(shapeOptions).map(option => (
-                    <div className="row justify-content-center gap-3" key={`${option}-selection`}>
-                        <label className="col-form-label w-auto">{shapeOptions[option]['name']}</label>
-                        <select className="form-select w-auto" defaultValue={selections[option]} disabled={option === x || option === y} onChange={event => handleSelectionChange(event, option)}>
-                            {shapeOptions[option]['values'].map(val => <option key={`basicOption-${option}-${val}`} value={val}>{val}</option>)}
-                        </select>
-                    </div>
-                ))}
-            </div>
 
             <div className="col justify-content-center gap-3">
                 {Object.keys(basicOptions).map(option => (

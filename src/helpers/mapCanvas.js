@@ -10,19 +10,15 @@ export const getGlyph = (p5, pin, data, dataType, interval, shape, selections, e
 
     pg.clear()
     pg.noStroke()
-
-    //console.log("data ", data)
     
     let locationData = []
     const ids = pin.locations
     const numLocations = ids.length
     if (ids.length === 1) {
-        locationData = getLocationData(ids[0], selections, data)
+        locationData = getLocationData(ids[0], selections.numYears, data)
     } else {
-        locationData = averageData(ids, selections, data)
+        locationData = averageData(ids, selections.numYears, data)
     }
-
-    //console.log("interval ", interval)
 
     if (shape === shapes.SPIRAL.id) {
         spiral(pg, dataType, interval, locationData, width/2, height/2, selections, encoding, numLocations, pin.name)
@@ -30,8 +26,6 @@ export const getGlyph = (p5, pin, data, dataType, interval, shape, selections, e
         let increments = [-35, -25, -15, -5, 0, 5, 15, 25, 30]
         row(pg, dataType, interval, locationData, width/2, height/2, selections, encoding, numLocations, pin.name, increments)
     }
-
-    //p5.save(pg, "finalmappin.png");
 
     return { pg, width, height }
 }

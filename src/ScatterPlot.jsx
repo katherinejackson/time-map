@@ -1,13 +1,13 @@
 import Sketch from "react-p5";
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { drawLegend } from "./legend";
-import { spiral, row, getShapeSize,  getPinAdjustment, migrationRow } from "./shapes";
-import DataContext from "./DataContext";
+import { spiral, row, getShapeSize, getPinAdjustment } from "./shapes";
 import { getManualInterval } from "./helpers/intervals";
-import { shapes, themeColours } from "./constants";
-import { formatNumbers, formatYAxisNumbers } from "./helpers/format"
+import { dataSets, shapes, themeColours } from "./constants";
+import { formatYAxisNumbers } from "./helpers/format"
 import { onClick, onHover } from "./helpers/studyEventHandlers";
+import { getData } from './helpers/data'
 
 const canvasWidth = window.options ? 1200 : window.innerWidth * 0.95
 const canvasHeight = window.options ? 800 : window.innerHeight * 0.95
@@ -18,11 +18,8 @@ const graphWidth = canvasWidth - xBorder * 2
 const yBorder = 50
 const graphHeight = canvasHeight - yBorder * 2
 
-const ScatterPlot = ({ encoding, selections, shape, practice }) => {
-
-    selections['numYears'] = 2
-
-    const { data, dataBrackets, yBrackets, xBrackets, dataType } = useContext(DataContext)
+const ScatterPlot = ({ encoding, selections, shape, practice, size }) => {
+    const { data, dataSet: dataType, dataBrackets, yBrackets, xBrackets, } = getData(dataSets.COVID.val, practice)
     const { theme, numColours, numYears, mapPin } = selections
     const colourTheme = themeColours[theme]
     const [p5, setP5] = useState(null)
@@ -30,6 +27,7 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
     const [pts, setPts] = useState({})
     const [hover, setHover] = useState(null)
     const interval = getManualInterval(dataBrackets, numColours, dataType)
+    const increments = [1, 10, 100, 1000, 10000, 100000, 1000000]
 
     useEffect(() => {
         if (p5) {
@@ -98,15 +96,11 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
         p5.textAlign(p5.CENTER, p5.CENTER)
         p5.background(colourTheme.background)
 
-
         drawXAxis(p5)
         drawYAxis(p5)
 
-        let increments;
-        increments = [1, 10, 100, 1000, 10000, 100000, 1000000]
         drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, canvasWidth, increments)
         drawGlyphs()
-
 
         p5.noLoop()
     }
@@ -121,9 +115,9 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
 
         const ptData = []
 
-        if (numYears === 3) {            
+        if (numYears === 3) {
             ptData.push(data[id]['cases']['2022'])
-            ptData.push(data[id]['cases']['2021']) 
+            ptData.push(data[id]['cases']['2021'])
         }
         else if (numYears === 2) {
             ptData.push(data[id]['cases']['2021'])
@@ -133,7 +127,6 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
         if (shape === shapes.SPIRAL.id) {
             spiral(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, data[id].location)
         } else if (shape === shapes.ROW.id) {
-            let increments = [75000, 150000, 225000, 300000, 375000, 450000]
             row(pg, dataType, interval, ptData, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, data[id].location, increments)
         }
 
@@ -263,7 +256,7 @@ const ScatterPlot = ({ encoding, selections, shape, practice }) => {
 
         Object.keys(pts).forEach(id => {
             if (Math.abs(pts[id]['x'] - p5.mouseX) < width / 2 && Math.abs(pts[id]['y'] - p5.mouseY + pinAdjustment) < height / 2) {
-                let newDistance = Math.pow(pts[id]['x'] - p5.mouseX, 2) + Math.pow(pts[id]['y'] - p5.mouseY  + pinAdjustment, 2)
+                let newDistance = Math.pow(pts[id]['x'] - p5.mouseX, 2) + Math.pow(pts[id]['y'] - p5.mouseY + pinAdjustment, 2)
 
                 if ((!distance || newDistance < distance)) {
                     distance = newDistance

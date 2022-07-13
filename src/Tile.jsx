@@ -1,21 +1,47 @@
 import Sketch from "react-p5";
 import React, { useEffect, useState, useContext } from "react";
 
-import { shapes, themeColours } from './constants'
+import { dataSets, shapes, themeColours } from './constants'
 import { getInterval } from "./helpers/intervals";
-import { row, spiral} from "./shapes";
+import { migrationRow, migrationSpiral, row, spiral } from "./shapes";
 import { drawLegend } from "./legend";
-import DataContext from "./DataContext";
-import { getLocationData } from "./helpers/data";
+import { getData, getLocationData } from './helpers/data'
 
 
-const Tile = ({ encoding, numX, selections, shape}) => {
-    const { locations, data, dataBrackets, dataType } = useContext(DataContext)
-    const { theme } = selections
+const getSingleData = (data, dataSet) => {
+    if (dataSet === dataSets.COVID.val) {
+        const ptData = []
+        ptData.push(data['CAN']['cases']['2021'])
+        ptData.push(data['CAN']['cases']['2020'])
+
+        return { ptData, id: 'CAD', increments: [1, 10, 100, 1000, 10000, 100000, 1000000] }
+    } else if (dataSet === dataSets.TEMP.val) {
+        const ptData = getLocationData(1, 2, data)
+
+        return { ptData, id: 1, increments: [-35, -25, -15, -5, 0, 5, 15, 25, 30] }
+    } else if (dataSet === dataSets.MIGRATION.val) {
+        const ptData = Object.values(data['Ecuador>Spain']["data"])
+
+        let duplicatedPts = [];
+        for (let i = 0; i < ptData.length; i++) {
+            let times = 0;
+            while (times < 10) {
+                duplicatedPts.push(ptData[i])
+                times += 1
+            }
+        }
+
+        return { ptData: duplicatedPts, id: 'Ecuador>Spain', increments: [100, 1000, 10000, 100000, 1000000] }
+    }
+}
+
+const Tile = ({ encoding, selections, shape }) => {
+    const { theme, dataSet } = selections
+    const { data, dataSet: dataType, dataBrackets } = getData(dataSet, false)
+    const { ptData, id, increments } = getSingleData(data, dataSet)
     const colourTheme = themeColours[theme]
     const interval = getInterval(dataBrackets, selections.numColours)
     const [p5, setP5] = useState(null)
-    // const canvasSize = window.innerWidth * 0.95 / numX
     const canvasSize = 150
 
     useEffect(() => {
@@ -25,14 +51,18 @@ const Tile = ({ encoding, numX, selections, shape}) => {
 
     }, [selections, p5])
 
-    const drawPin = (x, y, id) => {
-        let locationData = getLocationData(id, selections, data)
-
-        if (shape === shapes.SPIRAL.id) {
-            spiral(p5, dataType, interval, locationData, x, y, selections, encoding, 1)
-        } else if (shape === shapes.ROW.id) {
-            row(p5, dataType, interval, locationData, x, y, selections, encoding, 1)
-        } 
+    const drawPin = (x, y) => {
+        if (dataSet === dataSets.MIGRATION.val) {
+            selections = { ...selections, ['numYears']: 1 }
+            shape === shapes.SPIRAL.id ? migrationSpiral(p5, dataType, interval, ptData, x, y, selections, encoding, 1, id)
+                : migrationRow(p5, dataType, interval, ptData, x, y, selections, encoding, 1, id, increments)
+        } else {
+            if (shape === shapes.SPIRAL.id) {
+                spiral(p5, dataType, interval, ptData, x, y, selections, encoding, 1, id)
+            } else if (shape === shapes.ROW.id) {
+                row(p5, dataType, interval, ptData, x, y, selections, encoding, 1, id, increments)
+            }
+        }
     }
 
     const setup = (p5, parent) => {
@@ -47,7 +77,7 @@ const Tile = ({ encoding, numX, selections, shape}) => {
         p5.stroke(colourTheme.lineColour)
         p5.rect(0, 0, canvasSize, canvasSize)
         p5.noStroke()
-        drawPin(canvasSize / 2, canvasSize / 2, [0])
+        drawPin(canvasSize / 2, canvasSize / 2)
 
         p5.noLoop()
     }

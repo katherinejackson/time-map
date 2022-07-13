@@ -23,7 +23,7 @@ const mapOptions = {
 }
 
 
-const LeafletMap = ({ selections, shape, encoding }) => {
+const LeafletMap = ({ selections, shape, encoding, size, practice }) => {
     const theme = selections.theme
 
     return (
@@ -31,7 +31,7 @@ const LeafletMap = ({ selections, shape, encoding }) => {
             {theme === 'DEFAULT' ? <DefaultMap /> : null}
             {theme === 'DARK' ? <DarkMap /> : null}
             {theme === 'COLOUR_DARK' ? <ColourDarkMap /> : null}
-            <Overlay encoding={encoding} selections={selections} shape={shape} mapWidth={mapWidth} mapHeight={mapHeight} />
+            <Overlay encoding={encoding} mapWidth={mapWidth} mapHeight={mapHeight} practice={practice} selections={selections} shape={shape} size={size}/>
         </MapContainer>
     );
 }

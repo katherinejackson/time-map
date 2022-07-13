@@ -1,5 +1,5 @@
 import { scaleLog, min, max } from 'd3';
-import { colours, manualIntervals, themeColours, shapes, abbreviatedMonths, migrationYears, radianPerDay, legendRadianPerYear, radianPerMonth } from './constants'
+import { colours, manualIntervals, themeColours, abbreviatedMonths, migrationYears, radianPerDay, legendRadianPerYear, radianPerMonth } from './constants'
 import { fillColourGradient, setColour } from "./helpers/colours";
 import { formatNumbers, formatTradeNumbers } from './helpers/format';
 import { doubleSpiral, legendGraphSpiral, singleSpiral } from './shapes';
@@ -279,11 +279,6 @@ const drawGradientLegend = (p5, width, height, legendWidth, legendHeight, numCol
     p5.fill(textColour)
     p5.textAlign(p5.CENTER, p5.TOP)
 
-    // Logarithmic Scale
-    let dataLogScale = scaleLog()
-        .domain([min(increments), max(increments)])
-        .range([xStart + 5, width]);
-
     increments.forEach(num => {
         if (dataType === 'COVID') {
             let logVal = Math.log10(num)
@@ -380,8 +375,6 @@ export const drawLogarithmicGradientLegend = (p5, x, y, brackets, textColour) =>
 }
 
 export const drawRowLegend = (p5, width, height, brackets, textColour, encoding, dataType, increments) => {
-    const lowString = formatNumbers(brackets.displayLow || brackets.low)
-    const highString = formatNumbers(brackets.displayHigh || brackets.high)
     const low = brackets.displayLow || brackets.low
     const high = brackets.displayHigh || brackets.high
     const rectWidth = width * 0.7
@@ -477,10 +470,6 @@ export const drawSpiralYearLegend = (p5, width, height, selections) => {
 }
 
 export const drawMigrationRowLegend = (p5, width, height, brackets, textColour, encoding, dataLength, increments) => {
-    const lowString = formatNumbers(brackets.displayLow || brackets.low)
-    const highString = formatNumbers(brackets.displayHigh || brackets.high)
-    const low = brackets.displayLow || brackets.low
-    const high = brackets.displayHigh || brackets.high
     const rectWidth = width * 0.85
     const rectHeight = height * 0.8
     const startX = ((width - rectWidth) / 2) + 10
@@ -603,7 +592,7 @@ const drawDistanceSpiral = (p5, startX, startY, brackets, selections, dataType, 
     p5.textAlign(p5.LEFT, p5.CENTER)
     p5.textSize(10)
     for (let i = 0; i < increments.length; i++) {
-        if (dataType !== 'TEMP' || i % 2 == 0) {
+        if (dataType !== 'TEMP' || i % 2 === 0) {
             p5.stroke(0)
             p5.line(x1 + spiralWidth * 1.5, textStart - increment * i, endPoints[increments[i]][0], endPoints[increments[i]][1])
             p5.noStroke()
@@ -699,7 +688,7 @@ export const drawMigrationSpiralYear = (p5, x, y, selections, dataLength) => {
 }
 
 export const drawSpiralMonth = (p5, x, y, selections) => {
-    const { spiralWidth, spiralTightness, coreSize, theme } = selections
+    const { spiralWidth, spiralTightness, coreSize } = selections
     let innerCore = coreSize
     let outerCore = coreSize + spiralTightness * 365 + spiralWidth * 1.5
     let angle = -Math.PI / 2

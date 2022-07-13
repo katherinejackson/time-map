@@ -196,7 +196,7 @@ export const averageData = (locations, selections, allData) => {
     return newData
 }
 
-export const getLocationData = (id, selections, data) => {
+export const getLocationData = (id, numYears, data) => {
     let newData = []
 
     let years = Object.keys(data[id].data)
@@ -205,8 +205,8 @@ export const getLocationData = (id, selections, data) => {
         years.splice(currentYearIndex, 1)
     }
 
-    if (years.length - selections.numYears > 0) {
-        years = years.slice(years.length - selections.numYears, years.length)
+    if (years.length - numYears > 0) {
+        years = years.slice(years.length - numYears, years.length)
     }
 
     years.forEach(year => {
@@ -258,15 +258,13 @@ export const filterMigrationData = (data, countries, isPractice) => {
     return newData
 }
 
-export const getData = (view, practice) => {
-    if (view === views.SCATTER.val) {
+export const getData = (dataSet, practice) => {
+    if (dataSet === dataSets.COVID.val) {
         let data = covidData
-
 
         const dataBrackets = getDataBracketsMultiYear(data, 'cases')
         data = getLogData(data)
         const logDataBrackets = getDataBracketsMultiYear(data, 'cases')
-        const dataType = dataSets.COVID.val
 
         if (practice) {
             data = getDataByContinent(data, ['Europe'])
@@ -278,42 +276,32 @@ export const getData = (view, practice) => {
 
         const yBrackets = getVariableBrackets(data, 'population')
         const xBrackets = getVariableBrackets(data, 'human_development_index')
-        const combinedBrackets = {...logDataBrackets, displayHigh: dataBrackets.high, displayLow: dataBrackets.low}
+        const combinedBrackets = { ...logDataBrackets, displayHigh: dataBrackets.high, displayLow: dataBrackets.low }
 
-        // getCovidDataInfo(data)
-        //console.log(Object.keys(data).length + ' countries')
+        return { data, dataSet, dataBrackets: combinedBrackets, yBrackets, xBrackets }
 
-        //console.log(combinedBrackets)
-
-        return { data, dataType, dataBrackets: combinedBrackets, yBrackets, xBrackets }
-
-    } else if (view === views.GRAPH.val) {
+    } else if (dataSet === dataSets.TRADE.val) {
         let var1 = 'import'
         let var2 = 'tradeBalance'
         const dataBrackets = getTradeDataBrackets(tradeData, var1)
-        const dataType = dataSets.TRADE.val
         getAverage(tradeData, var2)
 
-        return { data: tradeData, dataType, dataBrackets, variable: var1 }
+        return { data: tradeData, dataSet, dataBrackets, variable: var1 }
 
-    } else if (view === views.COMPARISON.val || view === views.MAP.val || view === views.MULTI_COMPARISON.val) {
-        
-
-
+    } else if (dataSet === dataSets.TEMP.val) {
         const data = mapData
-        const dataType = dataSets.TEMP.val
         const unscaledDataBrackets = getDataBrackets(data)
 
         // scale the data so it begins evenly at -35 and ends at 30
         const newScale = scaleLinear()
-        .domain([unscaledDataBrackets.low, unscaledDataBrackets.high])
-        .range([-35, 30]);
+            .domain([unscaledDataBrackets.low, unscaledDataBrackets.high])
+            .range([-35, 30]);
 
         data.forEach(d => {
             for (let val in d.data) {
                 let temp = []
                 let tempData = d.data[val]
-                for (let i=0; i<tempData.length; i++) {
+                for (let i = 0; i < tempData.length; i++) {
                     if (val !== '') temp.push(newScale(tempData[i]))
                     else temp.push(tempData[i])
                 }
@@ -323,26 +311,16 @@ export const getData = (view, practice) => {
 
         const dataBrackets = getDataBrackets(data)
 
-
-        // mapData.forEach(i => {
-        //     console.log(i.name, Object.keys(i.data))
-        // })
-
-        // getMapDataInfo(data, dataBrackets)
-
-        //console.log({ data, dataType, dataBrackets })
-
-        return { data, dataType, dataBrackets }
+        return { data, dataSet, dataBrackets }
     }
-    else if (view === views.MIGRATION_GRAPH.val) {
+    else if (dataSet === dataSets.MIGRATION.val) {
         const data = migrationData;
-        const dataType = dataSets.MIGRATION.val
         const dataBrackets = getMigrationDataBrackets(data)
         const logData = getLogMigrationData(data);
         const logDataBrackets = getMigrationDataBrackets(logData)
-        const combinedBrackets = {...logDataBrackets, displayHigh: dataBrackets.high, displayLow: dataBrackets.low}
+        const combinedBrackets = { ...logDataBrackets, displayHigh: dataBrackets.high, displayLow: dataBrackets.low }
 
-        return { data: logData, dataType, dataBrackets: combinedBrackets }
+        return { data: logData, dataSet, dataBrackets: combinedBrackets }
     }
 
     return {}
@@ -386,7 +364,7 @@ const getMapDataInfo = (data, dataBrackets) => {
     Object.keys(data).forEach((location, index) => {
         const locationData = data[location].data
         const years = Object.keys(locationData)
-        
+
         let currentYearIndex = years.indexOf('2021')
         if (currentYearIndex > -1) {
             years.splice(currentYearIndex, 1)
@@ -438,7 +416,6 @@ const getMapDataInfo = (data, dataBrackets) => {
     })
 
     mapInfo = { ...mapInfo, ...getTotals(locations) }
-    console.log(mapInfo)
 }
 
 const getTotals = (locations) => {

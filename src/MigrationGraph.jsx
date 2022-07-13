@@ -1,44 +1,38 @@
-import React, { useState, useEffect, useContext } from "react";
-import DataContext from "./DataContext";
+import React, { useState, useEffect } from "react";
 import { scaleLinear } from "d3";
 import Sketch from "react-p5";
-import { drawLegend, drawMigrationLegend } from "./legend";
+import { drawMigrationLegend } from "./legend";
 import { getRoundedInterval } from "./helpers/intervals";
 import { filterMigrationData } from "./helpers/data";
-import { migrationRow, getShapeSize,  getPinAdjustment, migrationSpiral } from "./shapes";
-import { shapes, themeColours } from "./constants";
+import { migrationRow, getShapeSize, getPinAdjustment, migrationSpiral } from "./shapes";
+import { dataSets, shapes, themeColours } from "./constants";
 import { onClick, onHover } from "./helpers/studyEventHandlers";
 import { getMigrationSizes } from "./helpers/selections";
-import background from "./data/layout-noblobs.png";
+import { getData } from './helpers/data'
 
 const canvasWidth = window.options ? 1200 : window.innerWidth * 0.95;
 const canvasHeight = window.options ? 800 : window.innerHeight * 0.95;
-
 const magnification = 1;
 
-const MigrationGraph = ({ encoding, selections, shape, study }) => {
-
-    // If in study mode, then we need to use the pre-set sizes
-    if (study) {
-        let newSizes = getMigrationSizes(shape);
-        for (let val in newSizes) {
-            selections[val] = newSizes[val];
-        }
-    }
-
-    selections['numYears'] = 1
-
-    //console.log("selections: ", selections)
-
+const MigrationGraph = ({ encoding, practice, selections, shape, study, size }) => {
     const [p5, setP5] = useState(null)
-    const { data, dataBrackets, yBrackets, xBrackets, dataType } = useContext(DataContext);
+    const { data, dataSet: dataType, dataBrackets } = getData(dataSets.MIGRATION.val, practice)
     const [backgroundImage, setBackgroundImage] = useState(null)
-    const { theme, numColours, numYears, mapPin } = selections
+    const { theme, numColours, mapPin } = selections
     const [pts, setPts] = useState({});
     const [hover, setHover] = useState(null);
     const colourTheme = themeColours[theme]
     const { width, height, maxRadius } = getShapeSize(selections, shape, 410)
     const interval = getRoundedInterval(dataBrackets, numColours)
+
+    // If in study mode, then we need to use the pre-set sizes
+    if (study) {
+        let newSizes = getMigrationSizes(shape, size);
+
+        for (let val in newSizes) {
+            selections[val] = newSizes[val];
+        }
+    }
 
     useEffect(() => {
         if (p5) {
@@ -60,7 +54,6 @@ const MigrationGraph = ({ encoding, selections, shape, study }) => {
 
     const preload = (p5) => {
         setBackgroundImage(p5.loadImage("https://raw.githubusercontent.com/katherinejackson/time-map/master/src/data/graph-image.png"));
-        //setBackgroundImage(p5.loadImage(background))
     }
 
     const setup = (p5, parent) => {
@@ -82,12 +75,12 @@ const MigrationGraph = ({ encoding, selections, shape, study }) => {
     const reset = () => {
         let newPts = {};
         const xScale = scaleLinear()
-        .domain([0, 2400])
-        .range([0, canvasWidth]);
+            .domain([0, 2400])
+            .range([0, canvasWidth]);
 
         const yScale = scaleLinear()
-        .domain([0, 1600])
-        .range([0, canvasHeight]);
+            .domain([0, 1600])
+            .range([0, canvasHeight]);
 
         Object.keys(data).forEach(id => {
             let x = xScale(data[id]["x"]);
@@ -139,7 +132,7 @@ const MigrationGraph = ({ encoding, selections, shape, study }) => {
             const hoverpg = p5.createGraphics(pin.width, pin.height)
             hoverpg.image(pin.pg, 0, 0, pin.width * 1.5, pin.height * 1.5)
 
-            const mag = selections.spiralWidth === 6  ? 9 : 6.5
+            const mag = selections.spiralWidth === 6 ? 9 : 6.5
 
             if (!mapPin) {
                 p5.fill(colourTheme.pinBackground, 200)
@@ -168,13 +161,13 @@ const MigrationGraph = ({ encoding, selections, shape, study }) => {
                 else {
                     p5.text(newName, pin.x, pin.y + height * 0.75 + 11)
                 }
-                
+
             }
             else if (shape === shapes.ROW.id) {
                 newName = pin.name.split(">").join(' \u2192\ ')
                 p5.text(newName, pin.x, pin.y + height * 0.75 + 9)
             }
-            
+
         }
     }
 
@@ -187,10 +180,9 @@ const MigrationGraph = ({ encoding, selections, shape, study }) => {
         pg.noStroke()
 
         const ptData = Object.values(data[id]["data"])
-        //console.log(ptData)
 
         let duplicatedPts = [];
-        for (let i=0; i<ptData.length; i++) {
+        for (let i = 0; i < ptData.length; i++) {
             let times = 0;
             while (times < 10) {
                 duplicatedPts.push(ptData[i])
@@ -198,14 +190,13 @@ const MigrationGraph = ({ encoding, selections, shape, study }) => {
             }
         }
 
+        selections['numYears'] = 1
         if (shape === shapes.SPIRAL.id) {
             migrationSpiral(pg, dataType, dataBrackets, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, id)
         } else if (shape === shapes.ROW.id) {
             let increments = [100, 1000, 10000, 100000, 1000000]
             migrationRow(pg, dataType, dataBrackets, duplicatedPts, canvasWidth / 2, canvasHeight / 2, selections, encoding, 1, id, increments)
         }
-       //p5.save(pg, "mgpins.png");
-
 
         return { pg, width: canvasWidth, height: canvasHeight }
     }
@@ -226,8 +217,8 @@ const MigrationGraph = ({ encoding, selections, shape, study }) => {
         }
 
         Object.keys(pts).forEach(id => {
-            if (Math.abs(pts[id]['x'] - p5.mouseX) < (width*magnification) / 2 && Math.abs(pts[id]['y'] - p5.mouseY + pinAdjustment) < height / 2) {
-                let newDistance = Math.pow(pts[id]['x'] - p5.mouseX, 2) + Math.pow(pts[id]['y'] - p5.mouseY  + pinAdjustment, 2)
+            if (Math.abs(pts[id]['x'] - p5.mouseX) < (width * magnification) / 2 && Math.abs(pts[id]['y'] - p5.mouseY + pinAdjustment) < height / 2) {
+                let newDistance = Math.pow(pts[id]['x'] - p5.mouseX, 2) + Math.pow(pts[id]['y'] - p5.mouseY + pinAdjustment, 2)
 
                 if ((!distance || newDistance < distance)) {
                     distance = newDistance
@@ -253,4 +244,5 @@ const MigrationGraph = ({ encoding, selections, shape, study }) => {
 
     return <Sketch preload={preload} setup={setup} draw={draw} mouseMoved={mouseMoved} mouseClicked={mouseClicked} />
 }
+
 export default MigrationGraph;

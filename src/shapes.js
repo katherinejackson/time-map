@@ -104,7 +104,6 @@ export const row = (
     const startY = mapPin ? y - height - pinSize : y - height / 2
     let baseline = startY + height
     const increment = rowHeight / interval.range
-    const middle = baseline - (interval.range / 2 * increment)
 
     if (mapPin) {
         p5.stroke(50)
@@ -162,7 +161,7 @@ export const row = (
                 }
             }
         }
-        if (encoding != 2) {
+        if (encoding !== 2) {
             // draw baseline reference
             p5.stroke(colourTheme.textColour)
             p5.strokeWeight(0.5)
@@ -707,18 +706,6 @@ export const spiral = (
 
     locationData.forEach(year => {
         for (let day = 0; day < year.length - 1; day++) {
-            if (encoding !== 2 && !opaque && !mapPin) {
-                let val;
-                if (interval.low < 0) {
-                    val = -interval.low
-                } else {
-                    val = 0
-                }
-                const x = startX + p5.cos(angle) * (innerRing + val * increment)
-                const y = startY + p5.sin(angle) * (innerRing + val * increment)
-                //p5.ellipse(x, y, 1, 1)
-            }
-
             if (year[day] !== '') {
                 if (encoding === 1) {
                     p5.fill(249, 231, 159)
@@ -880,14 +867,6 @@ export const migrationSpiral = (
     for (let i = 0; i < locationData.length - 1; i++) {
         let year = locationData[i]
         if (encoding !== 2 && !opaque && !mapPin) {
-            let val;
-            if (interval.low < 0) {
-                val = -interval.low
-            } else {
-                val = 0
-            }
-            const x = startX + p5.cos(angle) * (innerRing + val * increment)
-            const y = startY + p5.sin(angle) * (innerRing + val * increment)
             p5.fill(colourTheme.missingData)
         }
 
@@ -985,7 +964,7 @@ export const doubleSpiral = (
     }
 
     for (let year = 1; year <= 2; year++) {
-        if (year == 2) {
+        if (year === 2) {
             p5.fill(255)
             p5.stroke(255)
         }
@@ -1008,7 +987,7 @@ export const singleSpiral = (
     y,
     selections,
 ) => {
-    const { spiralWidth, spiralTightness, coreSize, theme } = selections
+    const { spiralWidth, spiralTightness, coreSize } = selections
     const startX = x
     const startY = y
     let angle = -Math.PI / 2
@@ -1051,7 +1030,6 @@ export const radialBarSpark = (
     let spiralTightness = selections.spiralTightness
     let angle = -Math.PI / 2
     let innerRing = selections.coreSize
-    let outerRing = innerRing + spiralWidth * 2
     let numColours = selections.numColours
     let increment = (spiralWidth * 2) / interval.range
     let zeroRing = innerRing + spiralWidth
@@ -1106,7 +1084,6 @@ export const radialBarSpark = (
             angle += radianPerDay
             zeroRing += spiralTightness
             innerRing += spiralTightness
-            outerRing += spiralTightness
 
             let x2 = startX + p5.cos(angle) * (zeroRing + val2 * increment)
             let y2 = startY + p5.sin(angle) * (zeroRing + val2 * increment)

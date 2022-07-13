@@ -36,7 +36,6 @@ export const fillColourGradient = (p5, pt, brackets, numColours) => {
         if (newPt >= 0 && newPt <= 255) {
             setTurboFill(p5, newPt)
         } else {
-            console.log(low, pt, newPt)
             p5.fill(0)
         }
     } else if (numColours === 'viridis') {
@@ -45,7 +44,6 @@ export const fillColourGradient = (p5, pt, brackets, numColours) => {
             //flip the scale so that blues are cold on temp data
             p5.fill(p5.color(viridis[viridis.length - newPt - 1]))
         } else {
-            console.log(low, pt, newPt)
             p5.fill(0)
         }
     } else if (numColours === 'magma') {
@@ -53,7 +51,6 @@ export const fillColourGradient = (p5, pt, brackets, numColours) => {
         if (newPt >= 0 && newPt <= 255) {
             p5.fill(p5.color(magma[newPt]))
         } else {
-            console.log(low, pt, newPt)
             p5.fill(0)
         }
     } else if (numColours === 'redBlue') {
@@ -61,7 +58,6 @@ export const fillColourGradient = (p5, pt, brackets, numColours) => {
         if (newPt >= 0 && newPt <= 255) {
             p5.fill(p5.color(redBlue[255 - newPt]))
         } else {
-            console.log(low, pt, newPt)
             p5.fill(0)
         }
     }

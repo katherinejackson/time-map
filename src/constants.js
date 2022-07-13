@@ -41,7 +41,7 @@ export const themeColours = {
         name: 'DARK',
     },
     COLOUR_DARK: {
-        background: 0,
+        background: 25,
         lineColour: 200,
         textColour: 255,
         pinColour: 200,
@@ -137,6 +137,12 @@ export const encodings = {
     DISTANCE_COLOUR: {id: 3, name: "Distance and Colour"},
 }
 
+export const sizes = {
+    SMALL: { id: 1, name: "small" },
+    MEDIUM: { id: 2, name: "medium" },
+    LARGE: {id: 3, name: "large"},
+}
+
 export const dataSets = {
     TEMP: { id: 1, name: 'Average Temperature', val: 'TEMP' },
     WIND: { id: 2, name: 'Wind', val: 'WIND' },
@@ -148,11 +154,11 @@ export const dataSets = {
 
 export const views = {
     COMPARISON: { id: 1, name: 'Comparison', val: 'COMPARISON' },
+    MULTI_COMPARISON: {id: 5, name: 'Multi Comparison', val: 'MULTI_COMPARISON'},
     MAP: { id: 2, name: 'Map', val: 'MAP' },
     SCATTER: { id: 3, name: 'Scatter Plot', val: 'SCATTER' },
+    MIGRATION_GRAPH: {id: 6, name: "Migration Graph", val: "MIGRATION_GRAPH"},
     GRAPH: { id: 4, name: 'Graph', val: 'GRAPH' },
-    MULTI_COMPARISON: {id: 5, name: 'Multi Comparison', val: 'MULTI_COMPARISON'},
-    MIGRATION_GRAPH: {id: 6, name: "Migration Graph", val: "MIGRATION_GRAPH"}
 }
 
 export const yearIndicators = {

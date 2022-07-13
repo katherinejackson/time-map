@@ -1,7 +1,5 @@
 import { shapes, themes } from '../constants'
 
-const size = window?.options?.size || 'medium'
-
 const defaultSizes = {
     spiral: {
         xsmall: {
@@ -120,32 +118,32 @@ export const getDefaultSelections = () => {
     let selections = {
         mapPin: false,
         opaque: false,
-        // yearIndication: null,
         fillMissing: true,
         theme: themes.DARK.val,
         cluster: false,
-        numYears: 1,
+        numYears: 2,
         numColours: 'viridis',
+        size: 'medium',
+        dataSet: 'COVID',
     }
 
-    return {...selections, ...getShapeSelections(shapes.SPIRAL.id), ...getShapeSelections(shapes.ROW.id)}
+    return { ...selections, ...getShapeSelections(shapes.SPIRAL.id), ...getShapeSelections(shapes.ROW.id) }
 }
 
-export const getShapeSelections = (shape) => {
 
+export const getShapeSelections = (shape, size = 'medium') => {
     if (shape === shapes.SPIRAL.id) {
         return defaultSizes['spiral'][size]
-    } 
+    }
     else if (shape === shapes.ROW.id) {
         return defaultSizes['row'][size]
     }
 }
 
-export const getMigrationSizes = (shape) => {
-
+export const getMigrationSizes = (shape, size = 'medium') => {
     if (shape === shapes.SPIRAL.id) {
         return migrationDefaultSizes['spiral'][size]
-    } 
+    }
     else if (shape === shapes.ROW.id) {
         return migrationDefaultSizes['row'][size]
     }
@@ -153,13 +151,15 @@ export const getMigrationSizes = (shape) => {
 
 export const getBasicSelectionOptions = () => {
     return {
-        mapPin: { name: 'Map Pin', values: [true, false] },
-        opaque: { name: 'Opaque Background', values: [true, false] },
-        fillMissing: { name: 'Fill Missing Data', values: [true, false] },
+        // mapPin: { name: 'Map Pin', values: [true, false] },
+        // opaque: { name: 'Opaque Background', values: [true, false] },
+        // fillMissing: { name: 'Fill Missing Data', values: [true, false] },
         theme: { name: 'Theme', values: Object.keys(themes) },
-        cluster: { name: 'Cluster Data Points', values: [true, false] },
-        numYears: { name: 'Number of Years', values: [1, 2, 3] },
-        numColours: { name: 'Number of Colours', values: ['rainbow', 'viridis', 'magma', 'redBlue'] },
+        // cluster: { name: 'Cluster Data Points', values: [true, false] },
+        // numYears: { name: 'Number of Years', values: [1, 2, 3] },
+        numColours: { name: 'Color Scheme', values: ['rainbow', 'viridis', 'magma', 'redBlue'] },
+        size: { name: 'Size', values: ['small', 'medium', 'large'] },
+        dataSet: { name: 'Data Set', values: ['COVID', 'TEMP', 'MIGRATION'] }
     }
 }
 
@@ -172,7 +172,7 @@ export const getShapeSelectionOptions = (shape) => {
         }
     } else if (shape === shapes.ROW.id) {
         return {
-            dayWidth: { name: 'Day Width', values: [0.03125, 0.0625, 0.0725, 0.11,, 0.129, 0.125, 0.175, 0.19, 0.25, 0.26, 0.5] },
+            dayWidth: { name: 'Day Width', values: [0.03125, 0.0625, 0.0725, 0.11, , 0.129, 0.125, 0.175, 0.19, 0.25, 0.26, 0.5] },
             rowHeight: { name: 'Row Height', values: [1, 2, 5, 7, 10, 11, 12, 15, 17, 19, 20, 25, 26, 30] },
             spaceBetween: { name: 'Space between Rows', values: [0, 1, 2, 3, 4, 5] }
         }
@@ -181,6 +181,6 @@ export const getShapeSelectionOptions = (shape) => {
 
 export const getAllOptions = (shape) => {
     const basicOpts = getBasicSelectionOptions()
-    const shapeOpts = getShapeSelectionOptions(shape)
-    return { ...basicOpts, ...shapeOpts }
+    // const shapeOpts = getShapeSelectionOptions(shape)
+    return { ...basicOpts }
 }

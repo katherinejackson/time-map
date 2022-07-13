@@ -21,7 +21,7 @@ const MultiComparison = ({ selections }) => {
                             key={`x-${shape} y-${encoding}`}
                         >
                             {/* {`shape: ${shape} encoding: ${encoding}`} */}
-                            {getSizeString(shapes[shape].id)}
+                            {/* {getSizeString(shapes[shape].id)} */}
                             <Tile
                                 encoding={encodings[encoding].id}
                                 key={`shape: ${shape} encoding: ${encoding}`}

@@ -30,8 +30,8 @@ const Comparison = ({ selections, shape, encoding, x, y }) => {
                             key={`x-${x}-${xval} y-${y}-${yval}`}
                             // title={options[x].name + ': ' + xval + '  ' + options[y].name + ': ' + yval }
                         >
-                            {options[x].name + ': ' + xval + '  ' + options[y].name + ': ' + yval + '  '}
-                            {getSizeString(xval, yval)}
+                            {/* {options[x].name + ': ' + xval + '  ' + options[y].name + ': ' + yval + '  '} */}
+                            {/* {getSizeString(xval, yval)} */}
                             <Tile
                                 encoding={encoding}
                                 key={`xval: ${xval} yval: ${yval}`}
