@@ -158,7 +158,7 @@ export const views = {
     MAP: { id: 2, name: 'Map', val: 'MAP' },
     SCATTER: { id: 3, name: 'Scatter Plot', val: 'SCATTER' },
     MIGRATION_GRAPH: {id: 6, name: "Migration Graph", val: "MIGRATION_GRAPH"},
-    GRAPH: { id: 4, name: 'Graph', val: 'GRAPH' },
+    // GRAPH: { id: 4, name: 'Graph', val: 'GRAPH' },
 }
 
 export const yearIndicators = {

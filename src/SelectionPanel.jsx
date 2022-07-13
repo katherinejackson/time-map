@@ -1,13 +1,15 @@
 import React from 'react'
 
-import { getBasicSelectionOptions, getShapeSelectionOptions } from './helpers/selections'
-import { dataSets, shapes, views } from './constants'
+import { getBasicSelectionOptions } from './helpers/selections'
+import { dataSets, views } from './constants'
 import { getMigrationSizes, getShapeSelections } from "./helpers/selections";
 
 const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x, y }) => {
-    const basicOptions = getBasicSelectionOptions()
-    const shapeOptions = view !== views.MULTI_COMPARISON.val ? getShapeSelectionOptions(shape) : {...getShapeSelectionOptions(shapes.SPIRAL.id), ...getShapeSelectionOptions(shapes.ROW.id)}
-    const options = { ...basicOptions, ...shapeOptions }
+    const options = getBasicSelectionOptions()
+
+    if (view !== views.COMPARISON.val && view !== views.MULTI_COMPARISON.val) {
+        delete options['dataSet']
+    }
 
     const handleSelectionChange = (event, option) => {
         let val = event.target.value
@@ -65,11 +67,11 @@ const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x,
             ) : null}
 
             <div className="col justify-content-center gap-3">
-                {Object.keys(basicOptions).map(option => (
+                {Object.keys(options).map(option => (
                     <div className="row justify-content-center gap-3" key={`${option}-selection`}>
-                        <label className="col-form-label w-auto">{basicOptions[option]['name']}</label>
+                        <label className="col-form-label w-auto">{options[option]['name']}</label>
                         <select className="form-select w-auto" defaultValue={selections[option]} disabled={option === x || option === y} onChange={event => handleSelectionChange(event, option)} >
-                            {basicOptions[option]['values'].map(val => <option key={`basicOption-${option}-${val}`} value={val}>{getValString(val)}</option>)}
+                            {options[option]['values'].map(val => <option key={`basicOption-${option}-${val}`} value={val}>{getValString(val)}</option>)}
                         </select>
                     </div>
                 ))}
