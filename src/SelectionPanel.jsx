@@ -27,8 +27,8 @@ const SelectionPanel = ({ selections, setSelections, shape, setX, setY, view, x,
         let spiral = {}
         if (option === 'size') {
             if (selections.dataType === dataSets.MIGRATION.val) {
-                spiral = getMigrationSizes(1, selections.size)
-                row = getMigrationSizes(2, selections.size)
+                spiral = getMigrationSizes(1, val)
+                row = getMigrationSizes(2, val)
             } else {
                 spiral = getShapeSelections(1, val)
                 row = getShapeSelections(2, val)
