@@ -134,7 +134,7 @@ const Overlay = ({ encoding, mapWidth, mapHeight, practice, selections, shape, s
         drawGlyphs()
 
         const increments = [-35, -25, -15, -5, 0, 5, 15, 25, 30]
-        drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, mapWidth-230, increments)
+        drawLegend(p5, selections, dataBrackets, shape, encoding, interval, dataType, mapWidth, increments)
 
         if (detailed.length) {
             drawDetailed()
