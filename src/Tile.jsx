@@ -1,24 +1,24 @@
 import Sketch from "react-p5";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 
 import { dataSets, shapes, themeColours } from './constants'
 import { getInterval } from "./helpers/intervals";
 import { migrationRow, migrationSpiral, row, spiral } from "./shapes";
-import { drawLegend } from "./legend";
 import { getData, getLocationData } from './helpers/data'
+import { getMigrationSizes, getShapeSelections } from "./helpers/selections";
 
 
 const getSingleData = (data, dataSet) => {
     if (dataSet === dataSets.COVID.val) {
         const ptData = []
-        ptData.push(data['CAN']['cases']['2021'])
-        ptData.push(data['CAN']['cases']['2020'])
+        ptData.push(data['USA']['cases']['2021'])
+        ptData.push(data['USA']['cases']['2020'])
 
-        return { ptData, id: 'CAD', increments: [1, 10, 100, 1000, 10000, 100000, 1000000] }
+        return { ptData, id: 'USA', increments: [1, 10, 100, 1000, 10000, 100000, 1000000] }
     } else if (dataSet === dataSets.TEMP.val) {
-        const ptData = getLocationData(1, 2, data)
+        const ptData = getLocationData(15, 2, data)
 
-        return { ptData, id: 1, increments: [-35, -25, -15, -5, 0, 5, 15, 25, 30] }
+        return { ptData, id: 15, increments: [-35, -25, -15, -5, 0, 5, 15, 25, 30] }
     } else if (dataSet === dataSets.MIGRATION.val) {
         const ptData = Object.values(data['Ecuador>Spain']["data"])
 
@@ -43,6 +43,18 @@ const Tile = ({ encoding, selections, shape }) => {
     const interval = getInterval(dataBrackets, selections.numColours)
     const [p5, setP5] = useState(null)
     const canvasSize = 150
+    let rowSizes = {}
+    let spiralSizes = {}
+
+    if (selections.dataType === dataSets.MIGRATION.val) {
+        spiralSizes = getMigrationSizes(1, selections.size)
+        rowSizes = getMigrationSizes(2, selections.size)
+    } else {
+        spiralSizes = getShapeSelections(1, selections.size)
+        rowSizes = getShapeSelections(2, selections.size)
+    }
+
+    selections = { ...selections, ...rowSizes, ...spiralSizes }
 
     useEffect(() => {
         if (p5) {

@@ -124,7 +124,7 @@ export const getDefaultSelections = () => {
         numYears: 2,
         numColours: 'viridis',
         size: 'medium',
-        dataSet: 'COVID',
+        dataSet: 'MIGRATION',
     }
 
     return { ...selections, ...getShapeSelections(shapes.SPIRAL.id), ...getShapeSelections(shapes.ROW.id) }
