@@ -51,7 +51,7 @@ const App = () => {
     useEffect(() => {
         setX(null)
         setY(null)
-    }, [shape, view])
+    }, [view])
 
     const handleViewChange = (event) => {
         setView(event.target.value)
