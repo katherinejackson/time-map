@@ -1,5 +1,6 @@
 import { colours, manualIntervals, radianPerDay, radianPerMonth, radianPerYear, shapes, themeColours, pinSize } from "./constants";
 import { fillColourGradient, getManualIntervalColour, fillLogColourGradient, getCovidIntervalColour, setColour } from "./helpers/colours";
+import { getShapeSelections } from "./helpers/selections";
 import { calcY } from "./legend";
 
 export const getShapeSize = (selections, shape, dataLength, numLocations = 1) => {
@@ -949,7 +950,7 @@ export const doubleSpiral = (
     selections,
     multicolor = false,
 ) => {
-    const { spiralWidth, spiralTightness, coreSize } = selections
+    const { spiralWidth, spiralTightness, coreSize } = getShapeSelections(1, 'xlarge')
     const startX = x
     const startY = y
     let angle = -Math.PI / 2
