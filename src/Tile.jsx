@@ -42,7 +42,7 @@ const Tile = ({ encoding, selections, shape }) => {
     const colourTheme = themeColours[theme]
     const interval = getInterval(dataBrackets, selections.numColours)
     const [p5, setP5] = useState(null)
-    const canvasSize = 150
+    const canvasSize = 120
     let rowSizes = {}
     let spiralSizes = {}
 
@@ -86,7 +86,6 @@ const Tile = ({ encoding, selections, shape }) => {
         p5.clear()
         p5.stroke(0)
         p5.fill(colourTheme.background)
-        p5.stroke(colourTheme.lineColour)
         p5.rect(0, 0, canvasSize, canvasSize)
         p5.noStroke()
         drawPin(canvasSize / 2, canvasSize / 2)
