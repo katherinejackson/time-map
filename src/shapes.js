@@ -1,4 +1,4 @@
-import { colours, manualIntervals, radianPerDay, radianPerMonth, radianPerYear, shapes, themeColours, pinSize } from "./constants";
+import { colours, manualIntervals, radianPerDay, radianPerMonth, radianPerYear, shapes, themeColours, pinSize, dataSets } from "./constants";
 import { fillColourGradient, getManualIntervalColour, fillLogColourGradient, getCovidIntervalColour, setColour } from "./helpers/colours";
 import { getShapeSelections } from "./helpers/selections";
 import { calcY } from "./legend";
@@ -39,7 +39,11 @@ export const getRadiusAtDay = (day, selections, numYears = selections.numYears) 
 
     const numDays = 365 * (numYears - 1) + day
 
-    return (coreSize + spiralTightness * numDays) + spiralWidth
+    if (selections.dataSet === dataSets.MIGRATION.val) {
+        return (coreSize + spiralTightness * numDays) + spiralWidth
+    } 
+    
+    return ((coreSize + (spiralTightness + 0.01) * numDays) + spiralWidth)
 }
 
 export const getGraphRadius = (selections, numSections) => {
