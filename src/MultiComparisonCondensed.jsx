@@ -14,7 +14,7 @@ const getSingleData = (data, dataSet) => {
         ptData.push(data['USA']['cases']['2021'])
         ptData.push(data['USA']['cases']['2020'])
 
-        return { ptData, id: 'USA', increments: [1, 10, 100, 1000, 10000, 100000, 1000000] }
+        return { ptData, id: 'USA', increments: [75000, 150000, 225000, 300000, 375000, 450000] }
     } else if (dataSet === dataSets.TEMP.val) {
         const ptData = getLocationData(15, 2, data)
 
