@@ -630,7 +630,7 @@ export const spiral = (
     numLocations,
     id
 ) => {
-    let locationData = data.reverse()
+    let locationData = [data[1], data[0]]
     const { spiralWidth, spiralTightness, coreSize, mapPin, opaque, theme, numColours, fillMissing, cluster } = selections
     const colourTheme = themeColours[theme]
     const increment = spiralWidth / interval.range
